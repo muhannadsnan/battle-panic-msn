@@ -1,0 +1,15 @@
+{
+  "name": "battle-panic-clone",
+  "version": "1.0.0",
+  "description": "A Battle Panic clone built with Phaser 3",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": ["game", "phaser", "tower-defense", "battle-panic"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,790 @@
+// Audio Manager - Handles all game audio using Web Audio API
+class AudioManager {
+    constructor() {
+        this.audioContext = null;
+        this.musicEnabled = true;
+        this.sfxEnabled = true;
+        this.allMuted = false;  // Master mute
+        this.musicVolume = AUDIO_CONFIG.musicVolume;
+        this.sfxVolume = AUDIO_CONFIG.sfxVolume;
+        this.currentMusic = null;
+        this.musicGain = null;
+        this.sfxGain = null;
+
+        this.init();
+    }
+
+    init() {
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Create gain nodes for volume control
+            this.musicGain = this.audioContext.createGain();
+            this.musicGain.gain.value = this.musicVolume;
+            this.musicGain.connect(this.audioContext.destination);
+
+            this.sfxGain = this.audioContext.createGain();
+            this.sfxGain.gain.value = this.sfxVolume;
+            this.sfxGain.connect(this.audioContext.destination);
+        } catch (e) {
+            console.warn('Web Audio API not supported:', e);
+        }
+    }
+
+    resume() {
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+    }
+
+    // Play a hit sound effect - more realistic thud/impact
+    playHit() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Low thud for impact
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(120 + Math.random() * 40, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(50, this.audioContext.currentTime + 0.08);
+        osc.type = 'sine';
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 300;
+
+        gain.gain.setValueAtTime(0.25, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.1);
+
+        // Add slight noise for flesh impact
+        const bufferSize = this.audioContext.sampleRate * 0.05;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 6);
+        }
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        noise.buffer = buffer;
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.value = 400;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseGain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        noise.start();
+    }
+
+    // Play sword clash sound
+    playSwordHit() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Metallic clash
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.value = 800 + Math.random() * 400;
+        osc.type = 'sawtooth';
+        filter.type = 'highpass';
+        filter.frequency.value = 1000;
+
+        gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.08);
+    }
+
+    // Play arrow/projectile sound
+    playArrow() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(600, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.15);
+        osc.type = 'sine';
+
+        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.15);
+    }
+
+    // Play magic sound
+    playMagic() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const osc = this.audioContext.createOscillator();
+        const osc2 = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.value = 400;
+        osc2.frequency.value = 405;
+        osc.type = 'sine';
+        osc2.type = 'sine';
+
+        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+
+        osc.start();
+        osc2.start();
+        osc.stop(this.audioContext.currentTime + 0.3);
+        osc2.stop(this.audioContext.currentTime + 0.3);
+    }
+
+    // Play explosion sound
+    playExplosion() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const bufferSize = this.audioContext.sampleRate * 0.3;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+        }
+
+        const noise = this.audioContext.createBufferSource();
+        const filter = this.audioContext.createBiquadFilter();
+        const gain = this.audioContext.createGain();
+
+        noise.buffer = buffer;
+        filter.type = 'lowpass';
+        filter.frequency.value = 500;
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        gain.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+
+        noise.start();
+    }
+
+    // Play death sound - more realistic grunt/thud
+    playDeath() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Low grunt
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(180, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, this.audioContext.currentTime + 0.2);
+        osc.type = 'sine';
+
+        gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.25);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.25);
+
+        // Body fall thud
+        setTimeout(() => {
+            if (!this.audioContext || this.allMuted) return;
+            const thud = this.audioContext.createOscillator();
+            const thudGain = this.audioContext.createGain();
+            thud.connect(thudGain);
+            thudGain.connect(this.sfxGain);
+            thud.frequency.value = 50;
+            thud.type = 'sine';
+            thudGain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+            thudGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+            thud.start();
+            thud.stop(this.audioContext.currentTime + 0.1);
+        }, 100);
+    }
+
+    // Play gold mining sound - quiet pickaxe hit
+    playGold() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Quiet metallic tap
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(800, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.05);
+        osc.type = 'sine';
+
+        gain.gain.setValueAtTime(0.04, this.audioContext.currentTime);  // Very quiet
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.08);
+    }
+
+    // Play wood chop sound - axe hitting wood
+    playWood() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Wood chop - low thud with crack
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        // Low woody thunk
+        osc.frequency.setValueAtTime(200, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, this.audioContext.currentTime + 0.1);
+        osc.type = 'sine';
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 300;
+
+        gain.gain.setValueAtTime(0.12, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.15);
+
+        // Add crack/snap noise
+        const bufferSize = this.audioContext.sampleRate * 0.08;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 4);
+        }
+
+        const noise = this.audioContext.createBufferSource();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        const noiseGain = this.audioContext.createGain();
+
+        noise.buffer = buffer;
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.value = 600;
+
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+
+        noiseGain.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+        noise.start();
+    }
+
+    // Play spawn sound
+    playSpawn() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(200, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.15);
+        osc.type = 'sine';
+
+        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.15);
+    }
+
+    // Play wave start sound
+    playWaveStart() {
+        if (!this.sfxEnabled || !this.audioContext) return;
+        this.resume();
+
+        const notes = [400, 500, 600, 800];
+        notes.forEach((freq, i) => {
+            setTimeout(() => {
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.sfxGain);
+
+                osc.frequency.value = freq;
+                osc.type = 'square';
+
+                gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.15);
+            }, i * 100);
+        });
+    }
+
+    // Play button click
+    playClick() {
+        if (!this.sfxEnabled || !this.audioContext) return;
+        this.resume();
+
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.value = 600;
+        osc.type = 'sine';
+
+        gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.05);
+    }
+
+    // Play castle destroyed explosion - big dramatic boom
+    playCastleDestroyed() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Deep rumbling explosion
+        const osc1 = this.audioContext.createOscillator();
+        const osc2 = this.audioContext.createOscillator();
+        const gain1 = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain1);
+        gain1.connect(this.sfxGain);
+
+        osc1.frequency.setValueAtTime(60, this.audioContext.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(20, this.audioContext.currentTime + 1.5);
+        osc2.frequency.setValueAtTime(45, this.audioContext.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(15, this.audioContext.currentTime + 1.5);
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 150;
+
+        gain1.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+        gain1.gain.linearRampToValueAtTime(0.6, this.audioContext.currentTime + 0.1);
+        gain1.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 1.5);
+
+        osc1.start();
+        osc2.start();
+        osc1.stop(this.audioContext.currentTime + 1.5);
+        osc2.stop(this.audioContext.currentTime + 1.5);
+
+        // Crumbling debris noise
+        const bufferSize = this.audioContext.sampleRate * 1.2;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 1.5);
+        }
+
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        noise.buffer = buffer;
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.value = 400;
+        noiseFilter.Q.value = 0.5;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseGain.gain.setValueAtTime(0.35, this.audioContext.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 1.2);
+        noise.start();
+
+        // Secondary crunch
+        setTimeout(() => {
+            if (!this.audioContext || this.allMuted) return;
+            const crunch = this.audioContext.createOscillator();
+            const crunchGain = this.audioContext.createGain();
+            crunch.connect(crunchGain);
+            crunchGain.connect(this.sfxGain);
+            crunch.frequency.setValueAtTime(100, this.audioContext.currentTime);
+            crunch.frequency.exponentialRampToValueAtTime(30, this.audioContext.currentTime + 0.4);
+            crunch.type = 'sine';
+            crunchGain.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+            crunchGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+            crunch.start();
+            crunch.stop(this.audioContext.currentTime + 0.5);
+        }, 200);
+    }
+
+    // Play castle hit sound - heavy stone impact
+    playCastleHit() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Deep rumbling impact
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(80, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.audioContext.currentTime + 0.2);
+        osc.type = 'sine';
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 200;
+
+        gain.gain.setValueAtTime(0.35, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.25);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.25);
+
+        // Stone crumble noise
+        const bufferSize = this.audioContext.sampleRate * 0.15;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+        }
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        noise.buffer = buffer;
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.value = 300;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseGain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        noise.start();
+    }
+
+    // Start epic background music
+    startMusic() {
+        if (!this.musicEnabled || !this.audioContext || this.currentMusic) return;
+        this.resume();
+
+        this.playEpicMusic();
+    }
+
+    playEpicMusic() {
+        if (!this.audioContext || !this.musicEnabled) return;
+
+        // Modern ambient/chill battle music - smooth and pleasant
+        const bpm = 85; // Slower, more relaxed tempo
+        const beatMs = 60000 / bpm;
+        const barMs = beatMs * 4;
+        const loopDuration = barMs * 8; // 8 bars loop (~22 seconds)
+
+        // Smooth pad sound with gentle attack
+        const playPad = (freq, duration, delay, volume = 0.04) => {
+            if (!this.musicEnabled) return;
+
+            setTimeout(() => {
+                if (!this.musicEnabled || !this.audioContext) return;
+
+                const osc = this.audioContext.createOscillator();
+                const osc2 = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
+
+                osc.connect(filter);
+                osc2.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.musicGain);
+
+                // Detuned oscillators for rich sound
+                osc.frequency.value = freq;
+                osc2.frequency.value = freq * 1.002; // Slight detune
+                osc.type = 'sine';
+                osc2.type = 'sine';
+
+                // Warm low-pass filter
+                filter.type = 'lowpass';
+                filter.frequency.value = 800;
+                filter.Q.value = 0.5;
+
+                const now = this.audioContext.currentTime;
+                const dur = duration / 1000;
+
+                // Smooth envelope - slow attack, long release
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(volume, now + 0.3);
+                gain.gain.setValueAtTime(volume, now + dur * 0.7);
+                gain.gain.linearRampToValueAtTime(0, now + dur);
+
+                osc.start(now);
+                osc2.start(now);
+                osc.stop(now + dur);
+                osc2.stop(now + dur);
+            }, delay);
+        };
+
+        // Soft melodic bell/pluck sound
+        const playBell = (freq, delay, volume = 0.03) => {
+            if (!this.musicEnabled) return;
+
+            setTimeout(() => {
+                if (!this.musicEnabled || !this.audioContext) return;
+
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.musicGain);
+
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 2000;
+
+                const now = this.audioContext.currentTime;
+                gain.gain.setValueAtTime(volume, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 2);
+
+                osc.start(now);
+                osc.stop(now + 2);
+            }, delay);
+        };
+
+        // Soft bass with smooth attack
+        const playBass = (freq, duration, delay, volume = 0.06) => {
+            if (!this.musicEnabled) return;
+
+            setTimeout(() => {
+                if (!this.musicEnabled || !this.audioContext) return;
+
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.musicGain);
+
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 200;
+
+                const now = this.audioContext.currentTime;
+                const dur = duration / 1000;
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(volume, now + 0.1);
+                gain.gain.setValueAtTime(volume * 0.8, now + dur * 0.5);
+                gain.gain.linearRampToValueAtTime(0, now + dur);
+
+                osc.start(now);
+                osc.stop(now + dur);
+            }, delay);
+        };
+
+        // Gentle shaker/percussion
+        const playShaker = (delay, volume = 0.015) => {
+            if (!this.musicEnabled) return;
+
+            setTimeout(() => {
+                if (!this.musicEnabled || !this.audioContext) return;
+
+                const bufferSize = this.audioContext.sampleRate * 0.08;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+                }
+
+                const noise = this.audioContext.createBufferSource();
+                const filter = this.audioContext.createBiquadFilter();
+                const gain = this.audioContext.createGain();
+
+                noise.buffer = buffer;
+                filter.type = 'bandpass';
+                filter.frequency.value = 8000;
+                filter.Q.value = 1;
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.musicGain);
+
+                gain.gain.setValueAtTime(volume, this.audioContext.currentTime);
+                noise.start();
+            }, delay);
+        };
+
+        const playLoop = () => {
+            if (!this.musicEnabled) return;
+
+            // Chord progression: Am - F - C - G (pleasant and uplifting)
+            const chords = [
+                { root: 220, third: 262, fifth: 330 },  // Am
+                { root: 175, third: 220, fifth: 262 },  // F
+                { root: 262, third: 330, fifth: 392 },  // C
+                { root: 196, third: 247, fifth: 294 },  // G
+            ];
+
+            // Play warm pad chords (2 bars each)
+            chords.forEach((chord, i) => {
+                const startTime = i * barMs * 2;
+                playPad(chord.root, barMs * 2, startTime, 0.035);
+                playPad(chord.third, barMs * 2, startTime + 50, 0.025);
+                playPad(chord.fifth, barMs * 2, startTime + 100, 0.025);
+            });
+
+            // Smooth bass line
+            const bassNotes = [
+                { freq: 110, time: 0 },           // A2
+                { freq: 110, time: barMs },
+                { freq: 87, time: barMs * 2 },    // F2
+                { freq: 87, time: barMs * 3 },
+                { freq: 131, time: barMs * 4 },   // C3
+                { freq: 131, time: barMs * 5 },
+                { freq: 98, time: barMs * 6 },    // G2
+                { freq: 98, time: barMs * 7 },
+            ];
+
+            bassNotes.forEach(note => {
+                playBass(note.freq, barMs * 0.9, note.time);
+            });
+
+            // Gentle melodic bells (pentatonic - always sounds good)
+            const melodyNotes = [
+                { freq: 440, time: beatMs * 0 },      // A4
+                { freq: 523, time: beatMs * 2 },      // C5
+                { freq: 587, time: beatMs * 4 },      // D5
+                { freq: 659, time: beatMs * 7 },      // E5
+                { freq: 440, time: beatMs * 8 },
+                { freq: 392, time: beatMs * 10 },     // G4
+                { freq: 523, time: beatMs * 12 },
+                { freq: 440, time: beatMs * 15 },
+                { freq: 349, time: beatMs * 16 },     // F4
+                { freq: 440, time: beatMs * 18 },
+                { freq: 523, time: beatMs * 20 },
+                { freq: 587, time: beatMs * 23 },
+                { freq: 523, time: beatMs * 24 },
+                { freq: 659, time: beatMs * 26 },
+                { freq: 784, time: beatMs * 28 },     // G5
+                { freq: 659, time: beatMs * 30 },
+            ];
+
+            melodyNotes.forEach(note => {
+                playBell(note.freq, note.time, 0.025);
+            });
+
+            // Gentle shaker on off-beats
+            for (let bar = 0; bar < 8; bar++) {
+                for (let beat = 0; beat < 4; beat++) {
+                    // Shaker on beats 2 and 4, and some 8th notes
+                    if (beat === 1 || beat === 3) {
+                        playShaker(bar * barMs + beat * beatMs);
+                    }
+                    if (beat === 0 || beat === 2) {
+                        playShaker(bar * barMs + beat * beatMs + beatMs * 0.5, 0.01);
+                    }
+                }
+            }
+        };
+
+        // Start the loop
+        playLoop();
+        this.currentMusic = setInterval(playLoop, loopDuration);
+    }
+
+    stopMusic() {
+        if (this.currentMusic) {
+            clearInterval(this.currentMusic);
+            this.currentMusic = null;
+        }
+    }
+
+    toggleMusic() {
+        this.musicEnabled = !this.musicEnabled;
+        if (this.musicEnabled && !this.allMuted) {
+            this.startMusic();
+        } else {
+            this.stopMusic();
+        }
+        return this.musicEnabled;
+    }
+
+    toggleSfx() {
+        this.sfxEnabled = !this.sfxEnabled;
+        return this.sfxEnabled;
+    }
+
+    // Mute ALL sounds (master mute)
+    toggleMuteAll() {
+        this.allMuted = !this.allMuted;
+        if (this.allMuted) {
+            this.stopMusic();
+            if (this.musicGain) this.musicGain.gain.value = 0;
+            if (this.sfxGain) this.sfxGain.gain.value = 0;
+        } else {
+            if (this.musicGain) this.musicGain.gain.value = this.musicVolume;
+            if (this.sfxGain) this.sfxGain.gain.value = this.sfxVolume;
+            if (this.musicEnabled) this.startMusic();
+        }
+        return this.allMuted;
+    }
+
+    isMuted() {
+        return this.allMuted;
+    }
+
+    setMusicVolume(volume) {
+        this.musicVolume = volume;
+        if (this.musicGain) {
+            this.musicGain.gain.value = volume;
+        }
+    }
+
+    setSfxVolume(volume) {
+        this.sfxVolume = volume;
+        if (this.sfxGain) {
+            this.sfxGain.gain.value = volume;
+        }
+    }
+}
+
+// Global instance
+const audioManager = new AudioManager();

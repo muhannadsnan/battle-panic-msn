@@ -1,0 +1,152 @@
+BATTLE PANIC - FREE GAME ASSETS GUIDE
+======================================
+
+This game uses procedural (code-generated) graphics by default.
+To use real sprite graphics, download free assets and place them in these folders.
+
+RECOMMENDED FREE ASSET SOURCES:
+-------------------------------
+
+1. ITCH.IO (Best for 2D game assets)
+   https://itch.io/game-assets/free/tag-2d
+
+   Recommended packs:
+   - "Tiny RPG - Forest" by Ansimuz
+   - "Medieval Fantasy Character Pack" by OcO
+   - "Pixel Fantasy Caves" by Szadi art
+   - "Free RPG World Tileset" by finalbossblues
+   - "Free 2D Battle Backgrounds" by craftpix
+
+2. OPENGAMEART.ORG
+   https://opengameart.org/
+
+   Search for:
+   - "medieval characters"
+   - "fantasy tileset"
+   - "castle sprites"
+   - "goblin orc skeleton sprites"
+
+3. KENNEY.NL (High quality, no attribution required)
+   https://kenney.nl/assets
+
+   Look for:
+   - "Tiny Dungeon"
+   - "Medieval RTS"
+   - "RPG items"
+
+4. CRAFTPIX.NET (Free section)
+   https://craftpix.net/freebies/
+
+   Good for:
+   - Character sprites
+   - Tilesets
+   - UI elements
+
+
+FOLDER STRUCTURE & REQUIRED FILES:
+----------------------------------
+
+assets/
+  backgrounds/
+    sky.png           - Sky background (960x200)
+    mountains.png     - Mountain silhouettes (960x100)
+    grass.png         - Grass field (960x300)
+    dirt_path.png     - Dirt road texture (960x170)
+
+  tiles/
+    grass.png         - Grass tile (32x32 or 64x64)
+    dirt.png          - Dirt tile (32x32 or 64x64)
+
+  buildings/
+    castle.png        - Player castle (128x150)
+    castle_damaged.png - Damaged castle
+    castle_destroyed.png - Destroyed castle
+
+  units/
+    peasant_idle.png  - Peasant idle spritesheet (64x64 per frame)
+    peasant_walk.png  - Peasant walk animation
+    peasant_attack.png - Peasant attack animation
+    archer_idle.png   - Archer idle spritesheet
+    archer_walk.png   - Archer walk animation
+    archer_attack.png - Archer attack animation
+    knight_idle.png   - Knight idle spritesheet
+    knight_walk.png   - Knight walk animation
+    knight_attack.png - Knight attack animation
+    wizard_idle.png   - Wizard idle spritesheet
+    wizard_walk.png   - Wizard walk animation
+    wizard_attack.png - Wizard attack animation
+    giant_idle.png    - Giant idle (96x96 per frame)
+    giant_walk.png    - Giant walk animation
+    giant_attack.png  - Giant attack animation
+
+  enemies/
+    goblin_idle.png   - Goblin idle (48x48 per frame)
+    goblin_walk.png   - Goblin walk animation
+    goblin_attack.png - Goblin attack animation
+    orc_idle.png      - Orc idle (64x64 per frame)
+    orc_walk.png      - Orc walk animation
+    orc_attack.png    - Orc attack animation
+    skeleton_idle.png - Skeleton idle (48x48 per frame)
+    skeleton_walk.png - Skeleton walk animation
+    skeleton_attack.png - Skeleton attack animation
+    troll_idle.png    - Troll idle (80x80 per frame)
+    troll_walk.png    - Troll walk animation
+    troll_attack.png  - Troll attack animation
+    darkknight_idle.png - Dark Knight idle (64x64 per frame)
+    darkknight_walk.png - Dark Knight walk animation
+    darkknight_attack.png - Dark Knight attack animation
+    demon_idle.png    - Demon idle (72x72 per frame)
+    demon_walk.png    - Demon walk animation
+    demon_attack.png  - Demon attack animation
+    dragon_idle.png   - Dragon idle (128x128 per frame)
+    dragon_walk.png   - Dragon walk animation
+    dragon_attack.png - Dragon attack animation
+
+  projectiles/
+    arrow.png         - Arrow sprite (32x8)
+    fireball.png      - Fireball sprite (24x24)
+    magic_bolt.png    - Magic projectile (16x16)
+
+  resources/
+    gold_mine.png     - Gold mine sprite (80x60)
+    wood_pile.png     - Wood pile sprite (80x60)
+    gold_coin.png     - Gold coin icon (24x24)
+    wood_log.png      - Wood log icon (24x24)
+
+  ui/
+    button.png        - Button background (100x50)
+    panel.png         - UI panel background
+    icon_gold.png     - Gold icon (20x20)
+    icon_wood.png     - Wood icon (20x20)
+    healthbar_frame.png - Health bar frame
+    healthbar_fill.png - Health bar fill
+
+  effects/
+    explosion.png     - Explosion spritesheet (64x64 per frame, 8 frames)
+    hit.png           - Hit effect spritesheet (32x32 per frame, 4 frames)
+    sparkle.png       - Sparkle particle (16x16)
+
+
+SPRITESHEET FORMAT:
+-------------------
+Spritesheets should be horizontal strips with each frame side by side.
+Example: A 4-frame 64x64 walk animation = 256x64 PNG
+
+Frame layout: [Frame1][Frame2][Frame3][Frame4]
+
+
+TIPS:
+-----
+1. The game will automatically use procedural graphics if assets aren't found
+2. You can replace assets one at a time - missing assets use procedural fallback
+3. For best results, use pixel art with similar style across all assets
+4. PNG format with transparency recommended
+5. Keep file sizes small for faster loading
+
+
+QUICK START:
+------------
+1. Go to https://itch.io/game-assets/free/tag-medieval
+2. Download a medieval/fantasy character pack
+3. Rename and organize sprites into the folders above
+4. Refresh the game - new sprites will be loaded automatically!
