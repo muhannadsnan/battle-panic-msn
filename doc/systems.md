@@ -244,6 +244,7 @@ Manages sound effects and music playback.
 | Method | Description |
 |--------|-------------|
 | `playClick()` | UI button click |
+| `playWarning()` | Not enough resources (two low beeps) |
 | `playSpawn()` | Unit spawned |
 | `playSwordHit()` | Melee attack |
 | `playArrow()` | Arrow shot |

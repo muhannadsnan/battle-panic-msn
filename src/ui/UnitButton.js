@@ -62,8 +62,9 @@ class UnitButton extends Phaser.GameObjects.Container {
         }).setOrigin(0.5).setVisible(false);
         this.add(this.percentText);
 
-        // Hotkey indicator - top left corner
-        this.hotkeyText = scene.add.text(-38, -40, hotkey, {
+        // Affordable count indicator - top left corner (shows how many can be produced)
+        this.affordableCount = 0;
+        this.hotkeyText = scene.add.text(-38, -40, '0', {
             fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -142,9 +143,14 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         // Click still works for instant spawn
         this.background.on('pointerdown', () => {
-            if (this.isEnabled && this.isUnlocked) {
-                audioManager.playClick();
-                this.onClick();
+            if (this.isUnlocked) {
+                if (this.isEnabled) {
+                    audioManager.playClick();
+                    this.onClick();
+                } else {
+                    // Not enough resources - play warning
+                    audioManager.playWarning();
+                }
             }
         });
 
@@ -483,6 +489,27 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.woodCost = woodCost;
         this.goldCostText.setText(`${goldCost}`);
         this.woodCostText.setText(`${woodCost}`);
+    }
+
+    updateAffordableCount(gold, wood) {
+        // Calculate how many units can be produced with current resources
+        const byGold = Math.floor(gold / this.goldCost);
+        const byWood = Math.floor(wood / this.woodCost);
+        this.affordableCount = Math.min(byGold, byWood);
+
+        // Update display
+        this.hotkeyText.setText(`${this.affordableCount}`);
+
+        // Color based on affordability
+        if (this.affordableCount >= 5) {
+            this.hotkeyText.setColor('#00ff00'); // Green - plenty
+        } else if (this.affordableCount >= 2) {
+            this.hotkeyText.setColor('#ffff00'); // Yellow - some
+        } else if (this.affordableCount >= 1) {
+            this.hotkeyText.setColor('#ffaa00'); // Orange - low
+        } else {
+            this.hotkeyText.setColor('#ff4444'); // Red - none
+        }
     }
 
     getUnlockWave(unitType) {

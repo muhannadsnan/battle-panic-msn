@@ -1179,6 +1179,9 @@ class GameScene extends Phaser.Scene {
             const canAfford = this.gold >= stats.goldCost && this.wood >= stats.woodCost;
             button.setEnabled(canAfford && button.isUnlocked);
 
+            // Update affordable count display
+            button.updateAffordableCount(this.gold, this.wood);
+
             // Update hover-to-spawn progress
             button.updateSpawnProgress(delta);
         });

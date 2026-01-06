@@ -374,6 +374,36 @@ class AudioManager {
         osc.stop(this.audioContext.currentTime + 0.05);
     }
 
+    // Play warning sound - not enough resources
+    playWarning() {
+        if (!this.sfxEnabled || !this.audioContext) return;
+        this.resume();
+
+        // Two quick low beeps
+        const playBeep = (delay) => {
+            setTimeout(() => {
+                if (!this.audioContext) return;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.sfxGain);
+
+                osc.frequency.value = 200;
+                osc.type = 'sine';
+
+                gain.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.1);
+            }, delay);
+        };
+
+        playBeep(0);
+        playBeep(120);
+    }
+
     // Play castle destroyed explosion - big dramatic boom
     playCastleDestroyed() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
