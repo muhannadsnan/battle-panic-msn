@@ -57,7 +57,7 @@ class MenuScene extends Phaser.Scene {
         const saveData = saveSystem.load();
 
         // Stats display
-        this.add.text(width / 2, 220, `Highest Wave: ${saveData.highestWave}  |  Total Gold: ${saveData.totalGoldEarned}`, {
+        this.add.text(width / 2, 220, `Highest Wave: ${saveData.highestWave}`, {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
@@ -83,13 +83,6 @@ class MenuScene extends Phaser.Scene {
 
         // Buy me a coffee button (bottom right)
         this.createCoffeeButton(width - 100, height - 60);
-
-        // Instructions
-        this.add.text(width / 2, 550, 'Press 1-5 to spawn units  |  Defend your castle from waves of enemies!', {
-            fontSize: '14px',
-            fontFamily: 'Arial',
-            color: '#666666'
-        }).setOrigin(0.5);
 
         // Version
         this.add.text(10, height - 20, 'v1.0.0', {
@@ -256,71 +249,43 @@ class MenuScene extends Phaser.Scene {
     createBuyXPButton(x, y) {
         const container = this.add.container(x, y);
 
-        // Background with gold/XP color
-        const bg = this.add.rectangle(0, 0, 160, 70, 0x2E4A8E);
-        bg.setStrokeStyle(3, 0x44DDFF);
+        // Background - greyed out (disabled)
+        const bg = this.add.rectangle(0, 0, 160, 70, 0x333333);
+        bg.setStrokeStyle(3, 0x555555);
         container.add(bg);
 
-        // Star icon for XP
+        // Star icon for XP (dimmed)
         const star = this.add.text(-50, 0, '⭐', {
             fontSize: '32px'
         }).setOrigin(0.5);
+        star.setAlpha(0.4);
         container.add(star);
 
-        // Animate star
-        this.tweens.add({
-            targets: star,
-            angle: 360,
-            duration: 3000,
-            repeat: -1
-        });
-
-        // Text
+        // Text (dimmed)
         const text = this.add.text(20, -10, '10 XP', {
             fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#44DDFF'
+            color: '#666666'
         }).setOrigin(0.5);
         container.add(text);
 
         const text2 = this.add.text(20, 12, 'for $2', {
             fontSize: '14px',
             fontFamily: 'Arial',
-            color: '#FFFFFF'
+            color: '#555555'
         }).setOrigin(0.5);
         container.add(text2);
 
-        // Make interactive
-        bg.setInteractive({ useHandCursor: true });
+        // "Coming Soon" label
+        const comingSoon = this.add.text(0, 28, 'Coming Soon', {
+            fontSize: '10px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        container.add(comingSoon);
 
-        bg.on('pointerover', () => {
-            bg.setFillStyle(0x3E5A9E);
-            this.tweens.add({
-                targets: container,
-                scaleX: 1.05,
-                scaleY: 1.05,
-                duration: 100
-            });
-        });
-
-        bg.on('pointerout', () => {
-            bg.setFillStyle(0x2E4A8E);
-            this.tweens.add({
-                targets: container,
-                scaleX: 1,
-                scaleY: 1,
-                duration: 100
-            });
-        });
-
-        bg.on('pointerdown', () => {
-            // Open Buy Me a Coffee with preset for $2 (10 XP)
-            // User will need to manually add XP after payment confirmation
-            // Or integrate with a payment webhook in the future
-            window.open('https://www.buymeacoffee.com/masterassassin', '_blank');
-            this.showXPPurchaseInfo();
-        });
+        // No interactivity - button is disabled
 
         return container;
     }

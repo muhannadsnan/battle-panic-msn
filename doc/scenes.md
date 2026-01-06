@@ -85,11 +85,11 @@ Main menu with navigation and monetization.
 |---------|----------|--------|
 | Title "BATTLE PANIC" | Top center | Animated bounce |
 | Subtitle | Below title | Static |
-| Stats display | Center | Shows highest wave, total gold |
+| Stats display | Center | Shows highest wave |
 | PLAY button | Center | Starts GameScene |
 | UPGRADES button | Center | Opens UpgradeScene |
 | Reset Upgrades | Center | Opens reset dialog |
-| Buy XP ($2) | Bottom left | Opens donation + XP claim |
+| Buy XP ($2) | Bottom left | Disabled (Coming Soon) |
 | Buy Me a Coffee | Bottom right | Opens donation page |
 
 ### Methods
@@ -116,16 +116,11 @@ Buy Me a Coffee button with:
 - Links to: `buymeacoffee.com/masterassassin`
 
 **`createBuyXPButton(x, y)`**
-XP purchase button:
-- Spinning star icon
+XP purchase button (currently disabled):
+- Greyed out star icon
 - Shows "10 XP for $2"
-- Opens donation page + claim dialog
-
-**`showXPPurchaseInfo()`**
-Dialog after clicking Buy XP:
-- Thanks message
-- "CLAIM 10 XP" button (adds XP to save)
-- Cancel button
+- "Coming Soon" label
+- Not interactive
 
 **`confirmResetUpgrades()`**
 Reset confirmation dialog:
