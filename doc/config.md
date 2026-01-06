@@ -90,7 +90,7 @@ const WAVE_CONFIG = {
     baseWoodReward: 20,       // Wood for completing wave 1
     goldPerWave: 10,          // Additional gold per wave number
     woodPerWave: 8,           // Additional wood per wave number
-    timeBetweenWaves: 8000,   // 8 seconds between waves
+    timeBetweenWaves: 3000,   // 3 seconds between waves
     spawnInterval: 1000,      // Base spawn interval (decreases at higher waves)
     enemyHealthScaling: 0.08, // +8% HP per wave (reduced for easier gameplay)
     enemyDamageScaling: 0.06  // +6% damage per wave (reduced for easier gameplay)

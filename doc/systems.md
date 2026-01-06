@@ -141,7 +141,7 @@ Wave finished:
 2. Notifies scene via `onWaveComplete(wave, gold, wood)`
 
 **`scheduleNextWave()`**
-Schedules next wave after `timeBetweenWaves` (8 seconds).
+Schedules next wave after `timeBetweenWaves` (3 seconds).
 
 **`pause()` / `resume()`**
 Pauses/resumes spawn and wave timers.
