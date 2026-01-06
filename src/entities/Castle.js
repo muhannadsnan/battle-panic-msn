@@ -1,4 +1,4 @@
-// Castle Class - CARTOONY castle with upgrades
+// Castle Class - CARTOONY castle with upgrades and arrow defense
 class Castle extends Phaser.GameObjects.Container {
     constructor(scene, x, y, isPlayer = true, maxHealth = 100) {
         super(scene, x, y);
@@ -9,6 +9,13 @@ class Castle extends Phaser.GameObjects.Container {
         this.currentHealth = maxHealth;
         this.isDead = false;
         this.level = 1;
+
+        // Castle arrow attack properties
+        this.attackRange = 300;      // How far castle can shoot
+        this.attackSpeed = 2000;     // Attack every 2 seconds
+        this.arrowDamage = 5;        // Base arrow damage
+        this.lastAttackTime = 0;
+        this.target = null;
 
         // Create the detailed castle
         this.spriteContainer = scene.add.container(0, 0);
@@ -310,6 +317,10 @@ class Castle extends Phaser.GameObjects.Container {
         this.currentHealth = Math.min(this.currentHealth, this.maxHealth);
         this.updateHealthBar();
 
+        // Scale attack stats with level
+        this.arrowDamage = 5 + (this.level - 1) * 2;        // +2 damage per level
+        this.attackSpeed = Math.max(800, 2000 - (this.level - 1) * 100);  // Faster attacks
+
         // Castle grows bigger with each level!
         // Level 1 = 0.6 scale (small castle), Level 10 = 1.4 scale (grand palace)
         const minScale = 0.6;
@@ -524,5 +535,74 @@ class Castle extends Phaser.GameObjects.Container {
         this.setAlpha(1);
         this.spriteContainer.setScale(1);
         this.spriteContainer.y = 0;
+    }
+
+    update(time, delta) {
+        if (this.isDead) return;
+
+        // Find closest enemy in range
+        this.target = this.findTarget();
+
+        if (this.target && time - this.lastAttackTime >= this.attackSpeed) {
+            this.shootArrow(time);
+        }
+    }
+
+    findTarget() {
+        if (!this.scene.enemies) return null;
+
+        let closestEnemy = null;
+        let closestDistance = this.attackRange;
+
+        this.scene.enemies.getChildren().forEach(enemy => {
+            if (!enemy.active || enemy.isDead) return;
+
+            const distance = Phaser.Math.Distance.Between(
+                this.x, this.y,
+                enemy.x, enemy.y
+            );
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestEnemy = enemy;
+            }
+        });
+
+        return closestEnemy;
+    }
+
+    shootArrow(time) {
+        this.lastAttackTime = time;
+
+        // Play arrow sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playArrow();
+        }
+
+        // Create arrow projectile from tower positions
+        const towerOffsets = [
+            { x: -55, y: -80 },  // Left tower
+            { x: 55, y: -80 },   // Right tower
+            { x: 0, y: -100 }    // Center tower
+        ];
+
+        // Shoot from a random tower
+        const tower = Phaser.Math.RND.pick(towerOffsets);
+
+        const projectile = new Projectile(
+            this.scene,
+            this.x + tower.x,
+            this.y + tower.y,
+            this.target,
+            {
+                damage: this.arrowDamage,
+                speed: 350,
+                color: 0xFFAA00,
+                isPlayerProjectile: true,
+                projectileType: 'arrow'
+            }
+        );
+
+        this.scene.projectiles.add(projectile);
     }
 }

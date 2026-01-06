@@ -63,18 +63,20 @@ Located in `ENEMY_TYPES` object. Similar stats to units plus:
 | `woodReward` | Wood dropped on death |
 | `isBoss` | If true, applies boss multipliers |
 
-### Enemy Stats Table
+### Enemy Stats Table (25% easier)
 
 | Enemy | HP | DMG | Speed | Range | Gold | Wood | Appears |
 |-------|-----|-----|-------|-------|------|------|---------|
-| Goblin | 15 | 3 | 85 | 25 | 6 | 4 | Wave 1+ |
-| Orc | 40 | 6 | 55 | 30 | 14 | 10 | Wave 2+ |
-| Skeleton | 28 | 5 | 65 | 28 | 10 | 6 | Wave 4+ |
-| Skeleton Archer | 25 | 10 | 50 | 180 | 15 | 10 | Wave 6+ |
-| Troll | 150 | 20 | 35 | 40 | 30 | 20 | Wave 8+ |
-| Dark Knight | 100 | 15 | 55 | 35 | 25 | 15 | Wave 12+ |
-| Demon | 200 | 25 | 45 | 35 | 50 | 30 | Wave 18+ |
-| Dragon (Boss) | 500 | 40 | 40 | 150 | 150 | 100 | Every 10 waves |
+| Goblin | 11 | 2 | 85 | 25 | 6 | 4 | Wave 1+ |
+| Orc | 30 | 4 | 55 | 30 | 14 | 10 | Wave 2+ |
+| Skeleton | 21 | 4 | 65 | 28 | 10 | 6 | Wave 4+ |
+| Skeleton Archer | 19 | 7 | 50 | 180 | 15 | 10 | Wave 6+ |
+| Troll | 112 | 15 | 35 | 40 | 30 | 20 | Wave 8+ |
+| Dark Knight | 75 | 11 | 55 | 35 | 25 | 15 | Wave 12+ |
+| Demon | 150 | 19 | 45 | 35 | 50 | 30 | Wave 18+ |
+| Dragon (Boss) | 375 | 30 | 40 | 150 | 150 | 100 | Every 10 waves |
+
+*Note: All enemy HP and damage reduced by 25% for easier early game.*
 
 ---
 
@@ -89,9 +91,9 @@ const WAVE_CONFIG = {
     goldPerWave: 10,          // Additional gold per wave number
     woodPerWave: 8,           // Additional wood per wave number
     timeBetweenWaves: 8000,   // 8 seconds between waves
-    spawnInterval: 1000,      // 1 second between enemy spawns
-    enemyHealthScaling: 0.12, // +12% HP per wave
-    enemyDamageScaling: 0.10  // +10% damage per wave
+    spawnInterval: 1000,      // Base spawn interval (decreases at higher waves)
+    enemyHealthScaling: 0.08, // +8% HP per wave (reduced for easier gameplay)
+    enemyDamageScaling: 0.06  // +6% damage per wave (reduced for easier gameplay)
 };
 ```
 
@@ -101,8 +103,18 @@ const WAVE_CONFIG = {
 
 ### Enemy Scaling
 Enemies get stronger each wave:
-- Health: `baseHP * (1 + wave * 0.12)`
-- Damage: `baseDMG * (1 + wave * 0.10)`
+- Health: `baseHP * (1 + wave * 0.08)`
+- Damage: `baseDMG * (1 + wave * 0.06)`
+
+### Spawn Speed Scaling
+Higher waves spawn enemies faster to keep action intense:
+
+| Wave | Burst Size | Spawn Interval |
+|------|------------|----------------|
+| 1-5 | 1 enemy | ~1.0s |
+| 6-10 | 2 enemies | ~0.7s |
+| 11-15 | 3 enemies | ~0.5s |
+| 16+ | 4 enemies | ~0.4s |
 
 ---
 
@@ -132,9 +144,11 @@ Located in `UPGRADE_CONFIG`:
 
 ```javascript
 const UPGRADE_CONFIG = {
-    maxLevel: 5,              // Maximum upgrade level
-    costMultiplier: 1.8,      // Cost increase per level
-    statBoostPercent: 15      // +15% stats per level
+    maxLevel: 10,             // Maximum upgrade level
+    costMultiplier: 1.5,      // XP cost scaling
+    // Exponential bonus formula:
+    // HP bonus = 2^(level-1) - 1
+    // DMG bonus = 2^level - 2
 };
 ```
 
@@ -142,20 +156,37 @@ const UPGRADE_CONFIG = {
 - Level 1→2: 1 XP
 - Level 2→3: 2 XP
 - Level 3→4: 3 XP
-- Level 4→5: 4 XP
+- ... continues to level 10
 
 ### Unit Unlock Costs (XP)
 - Knight: 2 XP
 - Wizard: 3 XP
 - Giant: 5 XP
 
-### Stats Per Level
-Each level increases HP and damage by 15%:
-- Level 1: 100% (base)
-- Level 2: 115%
-- Level 3: 130%
-- Level 4: 145%
-- Level 5: 160%
+### Exponential Stats System
+Upgrades now use **exponential growth** - each level doubles the previous bonus!
+
+| Level | HP Bonus | DMG Bonus | Per-Level HP | Per-Level DMG |
+|-------|----------|-----------|--------------|---------------|
+| 1 | +0 | +0 | - | - |
+| 2 | +1 | +2 | +1 | +2 |
+| 3 | +3 | +6 | +2 | +4 |
+| 4 | +7 | +14 | +4 | +8 |
+| 5 | +15 | +30 | +8 | +16 |
+| 6 | +31 | +62 | +16 | +32 |
+| 7 | +63 | +126 | +32 | +64 |
+| 8 | +127 | +254 | +64 | +128 |
+| 9 | +255 | +510 | +128 | +256 |
+| 10 | +511 | +1022 | +256 | +512 |
+
+### Example: Peasant (Base 25 HP, 5 DMG)
+| Level | HP | DMG |
+|-------|-----|------|
+| 1 | 25 | 5 |
+| 5 | 40 | 35 |
+| 10 | 536 | 1027 |
+
+Upgrades become **extremely powerful** at higher levels!
 
 ---
 

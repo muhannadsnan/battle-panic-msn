@@ -151,7 +151,7 @@ Each enemy type has unique visuals:
 
 **File:** `src/entities/Castle.js`
 
-The player's base that must be defended.
+The player's base that must be defended. **Also shoots arrows at enemies!**
 
 ### Class: `Castle extends Phaser.GameObjects.Container`
 
@@ -166,8 +166,34 @@ new Castle(scene, x, y)
 | `maxHealth` | number | Maximum HP (from upgrades) |
 | `currentHealth` | number | Current HP |
 | `isDestroyed` | boolean | Game over state |
+| `attackRange` | number | Arrow range (300px) |
+| `attackSpeed` | number | MS between shots |
+| `arrowDamage` | number | Damage per arrow |
+| `level` | number | Castle upgrade level (1-10) |
+
+#### Arrow Attack System
+The castle automatically shoots arrows at nearby enemies:
+- **Range**: 300 pixels
+- **Base Damage**: 5 (scales with level)
+- **Base Attack Speed**: 2000ms (scales with level)
+- Arrows shoot from random tower (left, right, or center)
+
+#### Stats by Level
+| Level | Arrow Damage | Attack Speed | HP Bonus |
+|-------|--------------|--------------|----------|
+| 1 | 5 | 2.0s | +0 |
+| 5 | 13 | 1.6s | +100 |
+| 10 | 23 | 1.0s | +225 |
 
 #### Key Methods
+
+**`update(time, delta)`**
+- Finds closest enemy in range
+- Shoots arrow if target found and cooldown ready
+
+**`shootArrow(time)`**
+- Creates arrow projectile from random tower
+- Plays arrow sound
 
 **`takeDamage(amount)`**
 - Applies armor reduction from upgrades
@@ -178,13 +204,16 @@ new Castle(scene, x, y)
 **`heal(amount)`**
 Restores HP (not currently used but available)
 
+**`setLevel(level)`**
+Updates castle level, scales attack stats and HP
+
 #### Visual
 Castle is drawn with rectangles forming:
-- Main tower with battlements
-- Central keep
-- Windows
-- Door
-- Flag on top
+- Three towers (left, right, center)
+- Main wall with battlements
+- Windows with animated glow
+- Animated torches
+- Flags with wave animation
 
 ---
 

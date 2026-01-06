@@ -47,11 +47,13 @@ Creates floating red `-damage` text that fades upward.
 Creates floating green `+amount` text that fades upward.
 
 **`getStatsWithUpgrades(baseStats, upgradeLevel)`**
-Calculates final unit stats with upgrade bonuses:
+Calculates final unit stats with **exponential** upgrade bonuses:
 ```javascript
-health = baseHealth * (1 + (level-1) * 0.15)
-damage = baseDamage * (1 + (level-1) * 0.15)
-attackSpeed = baseAttackSpeed - (level-1) * 50  // min 300ms
+hpBonus = 2^(level-1) - 1    // +1, +3, +7, +15, +31...
+dmgBonus = 2^level - 2       // +2, +6, +14, +30, +62...
+health = baseHealth + hpBonus
+damage = baseDamage + dmgBonus
+attackSpeed = baseAttackSpeed - (level-1) * 30  // min 300ms
 ```
 
 ---
@@ -114,10 +116,19 @@ Begins a new wave:
 4. Starts spawn timer
 
 **`spawnNextEnemy()`**
-Spawns one enemy from queue:
-1. Pops enemy from `enemiesToSpawn`
-2. Calls `scene.spawnEnemy(type, direction)`
-3. Schedules next spawn (1000ms + random)
+Spawns enemies with burst spawning at higher waves:
+1. Calculates burst size based on wave (1-4 enemies at once)
+2. Pops enemies from `enemiesToSpawn`
+3. Calls `scene.spawnEnemy(type, direction)` for each
+4. Schedules next spawn (faster at higher waves)
+
+**Burst Spawning:**
+| Wave | Enemies per burst | Spawn interval |
+|------|-------------------|----------------|
+| 1-5 | 1 | ~1.0s |
+| 6-10 | 2 | ~0.7s |
+| 11-15 | 3 | ~0.5s |
+| 16+ | 4 | ~0.4s |
 
 **`onEnemyKilled()`**
 Called when enemy dies:
@@ -245,11 +256,17 @@ Manages sound effects and music playback.
 
 #### Music Methods
 
-**`playMusic(key)`**
-Starts background music with looping.
+**`startMusic()`**
+Starts procedural background music with looping.
 
 **`stopMusic()`**
-Stops current music.
+Stops current music and clears interval.
+
+**`pauseMusic()`**
+Pauses music playback (used when game is paused).
+
+**`resumeMusic()`**
+Resumes music playback after pause.
 
 **`setMusicVolume(volume)`**
 Sets music volume (0-1).

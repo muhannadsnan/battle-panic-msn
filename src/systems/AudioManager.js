@@ -5,6 +5,7 @@ class AudioManager {
         this.musicEnabled = true;
         this.sfxEnabled = true;
         this.allMuted = false;  // Master mute
+        this.musicPaused = false;  // For game pause
         this.musicVolume = AUDIO_CONFIG.musicVolume;
         this.sfxVolume = AUDIO_CONFIG.sfxVolume;
         this.currentMusic = null;
@@ -653,7 +654,7 @@ class AudioManager {
         };
 
         const playLoop = () => {
-            if (!this.musicEnabled) return;
+            if (!this.musicEnabled || this.musicPaused) return;
 
             // Chord progression: Am - F - C - G (pleasant and uplifting)
             const chords = [
@@ -735,6 +736,16 @@ class AudioManager {
             clearInterval(this.currentMusic);
             this.currentMusic = null;
         }
+        this.musicPaused = false;
+    }
+
+    pauseMusic() {
+        // Just set flag - the loop checks this
+        this.musicPaused = true;
+    }
+
+    resumeMusic() {
+        this.musicPaused = false;
     }
 
     toggleMusic() {

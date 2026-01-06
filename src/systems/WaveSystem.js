@@ -130,17 +130,28 @@ class WaveSystem {
             return;
         }
 
-        const enemyData = this.enemiesToSpawn.shift();
-        this.enemiesSpawned++;
+        // Spawn multiple enemies at once for higher waves (burst spawning)
+        // Wave 1-5: 1 enemy at a time
+        // Wave 6-10: 2 enemies at a time
+        // Wave 11-15: 3 enemies at a time
+        // Wave 16+: 4 enemies at a time
+        const burstSize = Math.min(4, 1 + Math.floor(this.currentWave / 5));
 
-        // Notify scene to spawn enemy with direction
-        if (this.scene.spawnEnemy) {
-            this.scene.spawnEnemy(enemyData.type, enemyData.direction);
+        for (let i = 0; i < burstSize && this.enemiesToSpawn.length > 0; i++) {
+            const enemyData = this.enemiesToSpawn.shift();
+            this.enemiesSpawned++;
+
+            // Notify scene to spawn enemy with direction
+            if (this.scene.spawnEnemy) {
+                this.scene.spawnEnemy(enemyData.type, enemyData.direction);
+            }
         }
 
-        // Schedule next spawn
+        // Schedule next spawn - faster at higher waves
         if (this.enemiesToSpawn.length > 0) {
-            const spawnDelay = WAVE_CONFIG.spawnInterval + Math.random() * 300;
+            // Base interval decreases with wave: 1000ms -> down to 400ms minimum
+            const baseInterval = Math.max(400, WAVE_CONFIG.spawnInterval - (this.currentWave - 1) * 50);
+            const spawnDelay = baseInterval + Math.random() * 200;
             this.spawnTimer = this.scene.time.delayedCall(spawnDelay, () => {
                 this.spawnNextEnemy();
             });

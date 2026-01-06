@@ -258,19 +258,19 @@ class GameScene extends Phaser.Scene {
     }
 
     createAxeCursor() {
-        // Custom axe cursor container - BIGGER axe
+        // Custom axe cursor container - pivots from bottom of handle
         this.axeCursor = this.add.container(0, 0);
         this.axeCursor.setDepth(2000); // Always on top
         this.axeCursor.setVisible(false);
 
-        // Axe handle (bigger)
-        this.axeCursor.add(this.add.rectangle(0, 20, 10, 50, 0xC4956A));
-        this.axeCursor.add(this.add.rectangle(2, 20, 6, 46, 0xD4A57A));
+        // Axe handle (offset so bottom is at 0,0 for pivot)
+        this.axeCursor.add(this.add.rectangle(0, -25, 10, 50, 0xC4956A));
+        this.axeCursor.add(this.add.rectangle(2, -25, 6, 46, 0xD4A57A));
 
-        // Axe head (bigger)
-        this.axeCursor.add(this.add.rectangle(-18, -4, 32, 22, 0x8899AA));
-        this.axeCursor.add(this.add.rectangle(-26, -4, 14, 18, 0x7789AA));
-        this.axeCursor.add(this.add.rectangle(-10, -10, 18, 8, 0xBBCCDD)); // shine
+        // Axe head (offset for bottom pivot)
+        this.axeCursor.add(this.add.rectangle(-18, -49, 32, 22, 0x8899AA));
+        this.axeCursor.add(this.add.rectangle(-26, -49, 14, 18, 0x7789AA));
+        this.axeCursor.add(this.add.rectangle(-10, -55, 18, 8, 0xBBCCDD)); // shine
 
         // Track if we're over a mine
         this.isOverMine = false;
@@ -1040,10 +1040,10 @@ class GameScene extends Phaser.Scene {
     }
 
     updateAxeCursor() {
-        // Animate axe cursor with chopping motion when over mines
+        // Animate axe cursor with chopping motion when over mines (2x faster)
         if (!this.isOverMine || !this.axeCursor) return;
 
-        this.axeChopPhase += 0.12;
+        this.axeChopPhase += 0.24;
         const cycle = this.axeChopPhase % 4;
 
         let angle;
@@ -1138,6 +1138,11 @@ class GameScene extends Phaser.Scene {
 
         // Update castle upgrade hover spinner
         this.updateCastleUpgrade(delta);
+
+        // Update castle (shoots arrows at enemies)
+        if (this.playerCastle && !this.playerCastle.isDead) {
+            this.playerCastle.update(time, delta);
+        }
 
         // Update all units
         this.units.getChildren().forEach(unit => {
@@ -1377,11 +1382,19 @@ class GameScene extends Phaser.Scene {
             this.pauseText.setText('▶');
             // Pause wave system timers
             this.waveSystem.pause();
+            // Pause music
+            if (typeof audioManager !== 'undefined') {
+                audioManager.pauseMusic();
+            }
             this.showPauseMenu();
         } else {
             this.pauseText.setText('II');
             // Resume wave system timers
             this.waveSystem.resume();
+            // Resume music
+            if (typeof audioManager !== 'undefined') {
+                audioManager.resumeMusic();
+            }
             this.hidePauseMenu();
         }
     }
