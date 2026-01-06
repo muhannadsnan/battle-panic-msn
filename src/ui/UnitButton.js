@@ -9,6 +9,8 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.isUnlocked = isUnlocked;
         this.isEnabled = true;
         this.isHovering = false;
+        this.hoverStartTime = 0;
+        this.hoverDelay = 250; // 250ms delay before progress starts
         this.spawnProgress = 0;
         this.spawnTarget = 100;
         this.spawnSpeed = 100; // Progress per second
@@ -123,6 +125,7 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.background.on('pointerover', () => {
             if (this.isEnabled && this.isUnlocked) {
                 this.isHovering = true;
+                this.hoverStartTime = Date.now(); // Record when hover started
                 this.innerBg.setFillStyle(0x4a6a8a, 0.85);
                 this.percentText.setVisible(true);
                 this.showTooltip();
@@ -131,6 +134,7 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         this.background.on('pointerout', () => {
             this.isHovering = false;
+            this.hoverStartTime = 0;
             this.innerBg.setFillStyle(0x3a4a5a, 0.7);
             this.percentText.setVisible(false);
             this.hideTooltip();
@@ -159,10 +163,14 @@ class UnitButton extends Phaser.GameObjects.Container {
         const progressPerFrame = (this.spawnSpeed * delta) / 1000;
 
         if (this.isHovering) {
-            this.spawnProgress += progressPerFrame;
-            if (this.spawnProgress >= this.spawnTarget) {
-                this.spawnProgress = 0;
-                this.onClick(); // Spawn the unit
+            // Only start progressing after hover delay has passed
+            const hoverDuration = Date.now() - this.hoverStartTime;
+            if (hoverDuration >= this.hoverDelay) {
+                this.spawnProgress += progressPerFrame;
+                if (this.spawnProgress >= this.spawnTarget) {
+                    this.spawnProgress = 0;
+                    this.onClick(); // Spawn the unit
+                }
             }
         }
         // Progress persists when not hovering (no decay)

@@ -120,6 +120,68 @@ class SaveSystem {
         this.save(data);
         return data.gold;
     }
+
+    // Calculate total XP spent on upgrades
+    calculateSpentXP(data) {
+        let spent = 0;
+        const defaults = this.getDefaultData();
+
+        // Unit upgrades: each level costs (level-1) XP, so total for level N is sum(1 to N-1)
+        for (const key in data.upgrades) {
+            const level = data.upgrades[key].level;
+            // Sum of 1+2+...+(level-1) = (level-1)*level/2
+            if (level > 1) {
+                spent += (level - 1) * level / 2;
+            }
+            // Unlock costs
+            if (data.upgrades[key].unlocked && !defaults.upgrades[key].unlocked) {
+                const unlockCosts = { knight: 2, wizard: 3, giant: 5 };
+                spent += unlockCosts[key] || 0;
+            }
+        }
+
+        // Castle upgrades: each level costs (level-1) XP
+        for (const key in data.castleUpgrades) {
+            const level = data.castleUpgrades[key];
+            if (level > 1) {
+                spent += (level - 1) * level / 2;
+            }
+        }
+
+        return spent;
+    }
+
+    // Reset upgrades only (refund XP minus 2 XP fee)
+    resetUpgrades() {
+        const data = this.load();
+        const spentXP = this.calculateSpentXP(data);
+        const fee = 2;
+
+        // Check if player has at least 2 XP (either in balance or spent)
+        if ((data.xp || 0) + spentXP < fee) {
+            return { success: false, message: 'Need at least 2 XP total' };
+        }
+
+        // Refund spent XP minus fee
+        const refund = spentXP - fee;
+        data.xp = (data.xp || 0) + refund;
+
+        // Reset upgrades to defaults
+        const defaults = this.getDefaultData();
+        data.upgrades = { ...defaults.upgrades };
+        data.castleUpgrades = { ...defaults.castleUpgrades };
+
+        this.save(data);
+        return { success: true, refunded: spentXP, fee: fee, newXP: data.xp };
+    }
+
+    // Add XP (for purchases)
+    addXP(amount) {
+        const data = this.load();
+        data.xp = (data.xp || 0) + amount;
+        this.save(data);
+        return data.xp;
+    }
 }
 
 // Global instance

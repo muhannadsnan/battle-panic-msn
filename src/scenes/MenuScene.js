@@ -73,10 +73,16 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('UpgradeScene');
         });
 
-        // Reset button (smaller)
-        this.createSmallButton(width / 2, 480, 'Reset Progress', () => {
-            this.confirmReset();
+        // Reset upgrades button (smaller)
+        this.createSmallButton(width / 2, 480, 'Reset Upgrades (2 XP)', () => {
+            this.confirmResetUpgrades();
         });
+
+        // Buy XP button (bottom left)
+        this.createBuyXPButton(100, height - 60);
+
+        // Buy me a coffee button (bottom right)
+        this.createCoffeeButton(width - 100, height - 60);
 
         // Instructions
         this.add.text(width / 2, 550, 'Press 1-5 to spawn units  |  Defend your castle from waves of enemies!', {
@@ -165,53 +171,279 @@ class MenuScene extends Phaser.Scene {
         return label;
     }
 
-    confirmReset() {
-        // Create confirmation dialog - minimal, no boxes
+    createCoffeeButton(x, y) {
+        const container = this.add.container(x, y);
+
+        // Background with warm coffee color
+        const bg = this.add.rectangle(0, 0, 180, 70, 0x8B4513);
+        bg.setStrokeStyle(3, 0xFFD700);
+        container.add(bg);
+
+        // Coffee cup icon (made of shapes)
+        const cupBody = this.add.rectangle(-55, 5, 30, 35, 0xFFFFFF);
+        container.add(cupBody);
+        const cupHandle = this.add.rectangle(-35, 5, 10, 15, 0x8B4513);
+        cupHandle.setStrokeStyle(3, 0xFFFFFF);
+        container.add(cupHandle);
+        // Coffee inside
+        const coffee = this.add.rectangle(-55, 10, 24, 20, 0x4A2C2A);
+        container.add(coffee);
+        // Steam (three wavy lines represented as small rectangles)
+        const steam1 = this.add.rectangle(-60, -18, 3, 8, 0xFFFFFF, 0.6);
+        const steam2 = this.add.rectangle(-55, -20, 3, 10, 0xFFFFFF, 0.6);
+        const steam3 = this.add.rectangle(-50, -18, 3, 8, 0xFFFFFF, 0.6);
+        container.add(steam1);
+        container.add(steam2);
+        container.add(steam3);
+
+        // Animate steam
+        this.tweens.add({
+            targets: [steam1, steam2, steam3],
+            y: '-=5',
+            alpha: 0,
+            duration: 1500,
+            ease: 'Sine.easeOut',
+            yoyo: true,
+            repeat: -1
+        });
+
+        // Text
+        const text = this.add.text(15, -8, 'Buy me a', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#FFD700'
+        }).setOrigin(0.5);
+        container.add(text);
+
+        const text2 = this.add.text(15, 10, 'COFFEE', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#FFFFFF'
+        }).setOrigin(0.5);
+        container.add(text2);
+
+        // Make interactive
+        bg.setInteractive({ useHandCursor: true });
+
+        bg.on('pointerover', () => {
+            bg.setFillStyle(0xA0522D);
+            this.tweens.add({
+                targets: container,
+                scaleX: 1.05,
+                scaleY: 1.05,
+                duration: 100
+            });
+        });
+
+        bg.on('pointerout', () => {
+            bg.setFillStyle(0x8B4513);
+            this.tweens.add({
+                targets: container,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 100
+            });
+        });
+
+        bg.on('pointerdown', () => {
+            window.open('https://www.buymeacoffee.com/masterassassin', '_blank');
+        });
+
+        return container;
+    }
+
+    createBuyXPButton(x, y) {
+        const container = this.add.container(x, y);
+
+        // Background with gold/XP color
+        const bg = this.add.rectangle(0, 0, 160, 70, 0x2E4A8E);
+        bg.setStrokeStyle(3, 0x44DDFF);
+        container.add(bg);
+
+        // Star icon for XP
+        const star = this.add.text(-50, 0, '⭐', {
+            fontSize: '32px'
+        }).setOrigin(0.5);
+        container.add(star);
+
+        // Animate star
+        this.tweens.add({
+            targets: star,
+            angle: 360,
+            duration: 3000,
+            repeat: -1
+        });
+
+        // Text
+        const text = this.add.text(20, -10, '10 XP', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#44DDFF'
+        }).setOrigin(0.5);
+        container.add(text);
+
+        const text2 = this.add.text(20, 12, 'for $2', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#FFFFFF'
+        }).setOrigin(0.5);
+        container.add(text2);
+
+        // Make interactive
+        bg.setInteractive({ useHandCursor: true });
+
+        bg.on('pointerover', () => {
+            bg.setFillStyle(0x3E5A9E);
+            this.tweens.add({
+                targets: container,
+                scaleX: 1.05,
+                scaleY: 1.05,
+                duration: 100
+            });
+        });
+
+        bg.on('pointerout', () => {
+            bg.setFillStyle(0x2E4A8E);
+            this.tweens.add({
+                targets: container,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 100
+            });
+        });
+
+        bg.on('pointerdown', () => {
+            // Open Buy Me a Coffee with preset for $2 (10 XP)
+            // User will need to manually add XP after payment confirmation
+            // Or integrate with a payment webhook in the future
+            window.open('https://www.buymeacoffee.com/masterassassin', '_blank');
+            this.showXPPurchaseInfo();
+        });
+
+        return container;
+    }
+
+    showXPPurchaseInfo() {
         const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 
-        // Dark overlay
         const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.8);
         dialog.add(overlay);
 
-        const title = this.add.text(0, -40, 'Reset Progress?', {
-            fontSize: '28px',
+        const title = this.add.text(0, -50, 'Thanks for Supporting!', {
+            fontSize: '24px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ff4444',
+            color: '#44DDFF',
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5);
         dialog.add(title);
 
-        const message = this.add.text(0, 10, 'This will delete all save data!', {
+        const message = this.add.text(0, 0, 'After your $2 donation, click below\nto receive your 10 XP!', {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#ffffff',
+            align: 'center',
             stroke: '#000000',
             strokeThickness: 2
         }).setOrigin(0.5);
         dialog.add(message);
 
-        // Yes text button
-        const yesText = this.add.text(-60, 60, 'YES', {
+        // Claim XP button
+        const claimText = this.add.text(0, 60, 'CLAIM 10 XP', {
             fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ff4444',
+            color: '#44FF44',
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5);
-        yesText.setInteractive({ useHandCursor: true });
-        dialog.add(yesText);
+        claimText.setInteractive({ useHandCursor: true });
+        dialog.add(claimText);
 
-        yesText.on('pointerdown', () => {
-            saveSystem.reset();
+        claimText.on('pointerdown', () => {
+            saveSystem.addXP(10);
+            dialog.destroy();
             this.scene.restart();
         });
 
-        // No text button
-        const noText = this.add.text(60, 60, 'NO', {
-            fontSize: '22px',
+        // Cancel button
+        const cancelText = this.add.text(0, 100, 'Cancel', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#888888',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        cancelText.setInteractive({ useHandCursor: true });
+        dialog.add(cancelText);
+
+        cancelText.on('pointerdown', () => {
+            dialog.destroy();
+        });
+
+        dialog.setDepth(1000);
+    }
+
+    confirmResetUpgrades() {
+        const saveData = saveSystem.load();
+        const spentXP = saveSystem.calculateSpentXP(saveData);
+        const currentXP = saveData.xp || 0;
+        const totalXP = currentXP + spentXP;
+
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.8);
+        dialog.add(overlay);
+
+        const title = this.add.text(0, -60, 'Reset Upgrades?', {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffaa00',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        const info = this.add.text(0, -10, `This will reset all upgrades to default.\nYou have ${spentXP} XP in upgrades.\nCost: 2 XP fee\nYou'll get back: ${Math.max(0, spentXP - 2)} XP`, {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        dialog.add(info);
+
+        const canReset = totalXP >= 2;
+
+        // Yes button
+        const yesText = this.add.text(-60, 70, 'RESET', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: canReset ? '#ffaa00' : '#666666',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        if (canReset) {
+            yesText.setInteractive({ useHandCursor: true });
+            yesText.on('pointerdown', () => {
+                const result = saveSystem.resetUpgrades();
+                if (result.success) {
+                    dialog.destroy();
+                    this.scene.restart();
+                }
+            });
+        }
+        dialog.add(yesText);
+
+        // No button
+        const noText = this.add.text(60, 70, 'CANCEL', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#44ff44',
@@ -224,6 +456,15 @@ class MenuScene extends Phaser.Scene {
         noText.on('pointerdown', () => {
             dialog.destroy();
         });
+
+        if (!canReset) {
+            const warning = this.add.text(0, 110, 'Need at least 2 XP total to reset!', {
+                fontSize: '12px',
+                fontFamily: 'Arial',
+                color: '#ff4444'
+            }).setOrigin(0.5);
+            dialog.add(warning);
+        }
 
         dialog.setDepth(1000);
     }

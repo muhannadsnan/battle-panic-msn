@@ -191,20 +191,22 @@ class WaveDisplay extends Phaser.GameObjects.Container {
     }
 
     showWaveComplete(goldReward, woodReward) {
-        const announcement = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, `WAVE COMPLETE!\n+${goldReward} gold  +${woodReward} wood`, {
-            fontSize: '48px',
+        // Show at top of screen, smaller font, stays for 5 seconds
+        const announcement = this.scene.add.text(GAME_WIDTH / 2, 50, `WAVE COMPLETE!  +${goldReward} gold  +${woodReward} wood`, {
+            fontSize: '24px',
             fontFamily: 'Arial',
             color: '#00ff00',
             stroke: '#000000',
-            strokeThickness: 4,
+            strokeThickness: 3,
             align: 'center'
         }).setOrigin(0.5).setDepth(1000);
 
+        // Stay visible for 5 seconds, then fade out
         this.scene.tweens.add({
             targets: announcement,
-            scale: 1.3,
             alpha: 0,
-            duration: 2000,
+            delay: 5000,        // Wait 5 seconds before fading
+            duration: 500,      // Quick fade out
             ease: 'Power2',
             onComplete: () => announcement.destroy()
         });

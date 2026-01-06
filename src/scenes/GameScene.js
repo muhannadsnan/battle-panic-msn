@@ -252,6 +252,36 @@ class GameScene extends Phaser.Scene {
         this.goldMineProgress = 0;
         this.woodMineProgress = 0;
         this.miningTarget = 100; // Progress needed to collect
+
+        // Create custom axe cursor
+        this.createAxeCursor();
+    }
+
+    createAxeCursor() {
+        // Custom axe cursor container - BIGGER axe
+        this.axeCursor = this.add.container(0, 0);
+        this.axeCursor.setDepth(2000); // Always on top
+        this.axeCursor.setVisible(false);
+
+        // Axe handle (bigger)
+        this.axeCursor.add(this.add.rectangle(0, 20, 10, 50, 0xC4956A));
+        this.axeCursor.add(this.add.rectangle(2, 20, 6, 46, 0xD4A57A));
+
+        // Axe head (bigger)
+        this.axeCursor.add(this.add.rectangle(-18, -4, 32, 22, 0x8899AA));
+        this.axeCursor.add(this.add.rectangle(-26, -4, 14, 18, 0x7789AA));
+        this.axeCursor.add(this.add.rectangle(-10, -10, 18, 8, 0xBBCCDD)); // shine
+
+        // Track if we're over a mine
+        this.isOverMine = false;
+        this.axeChopPhase = 0;
+
+        // Follow mouse
+        this.input.on('pointermove', (pointer) => {
+            if (this.isOverMine) {
+                this.axeCursor.setPosition(pointer.x, pointer.y);
+            }
+        });
     }
 
     createInteractiveMine(x, y, type) {
@@ -356,35 +386,7 @@ class GameScene extends Phaser.Scene {
             container.add(this.add.rectangle(27, -15, 10, 5, 0xAABBCC)); // shine
         }
 
-        // Spinner background (cute rounded look)
-        const spinnerRadius = 28;
-        container.add(this.add.rectangle(0, -52, 64, 64, 0x2A3A4A, 0.85));
-        container.add(this.add.rectangle(0, -52, 58, 58, 0x3A4A5A, 0.9));
-
-        // Circular progress arc
-        const spinnerGraphics = this.add.graphics();
-        container.add(spinnerGraphics);
-        container.spinnerGraphics = spinnerGraphics;
-        container.spinnerRadius = spinnerRadius;
-        container.spinnerY = -52;
-
-        // Center icon
-        const centerIcon = this.add.text(0, -52, isGold ? '⛏️' : '🪓', {
-            fontSize: '22px'
-        }).setOrigin(0.5);
-        container.add(centerIcon);
-
-        // Percentage text
-        const percentText = this.add.text(0, -22, '0%', {
-            fontSize: '13px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: isGold ? '#ffd700' : '#D4A574',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        container.add(percentText);
-        container.percentText = percentText;
+        // No spinner - just axe cursor and glow
 
         // Label with instruction
         const label = this.add.text(0, 52, `HOVER TO MINE`, {
@@ -398,7 +400,7 @@ class GameScene extends Phaser.Scene {
         container.add(label);
 
         // Hover events
-        hitArea.on('pointerover', () => {
+        hitArea.on('pointerover', (pointer) => {
             container.isHovering = true;
             glowRing.setAlpha(0.3);
             this.tweens.add({
@@ -408,6 +410,11 @@ class GameScene extends Phaser.Scene {
                 scaleY: 1.08,
                 duration: 200
             });
+            // Show axe cursor, hide default
+            this.isOverMine = true;
+            this.axeCursor.setVisible(true);
+            this.axeCursor.setPosition(pointer.x, pointer.y);
+            this.input.setDefaultCursor('none');
         });
 
         hitArea.on('pointerout', () => {
@@ -419,6 +426,12 @@ class GameScene extends Phaser.Scene {
                 scaleY: 1,
                 duration: 200
             });
+            // Hide axe cursor, restore default
+            this.isOverMine = false;
+            this.axeCursor.setVisible(false);
+            this.axeChopPhase = 0;
+            this.axeCursor.setAngle(0);
+            this.input.setDefaultCursor('default');
         });
 
         container.isHovering = false;
@@ -453,6 +466,8 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeProgress = 0;
         this.castleUpgradeTarget = 100;
         this.castleUpgradeHovering = false;
+        this.castleHoverStartTime = 0;
+        this.castleHoverDelay = 250; // 250ms delay before progress starts
 
         // Create hover zone over castle
         this.castleUpgradeZone = this.add.container(CASTLE_CONFIG.playerX, 280);
@@ -510,11 +525,13 @@ class GameScene extends Phaser.Scene {
         // Hover events
         hitArea.on('pointerover', () => {
             this.castleUpgradeHovering = true;
+            this.castleHoverStartTime = Date.now(); // Record when hover started
             this.castleSpinnerContainer.setVisible(true);
         });
 
         hitArea.on('pointerout', () => {
             this.castleUpgradeHovering = false;
+            this.castleHoverStartTime = 0;
             // Keep visible if there's progress, otherwise hide
             if (this.castleUpgradeProgress <= 0) {
                 this.castleSpinnerContainer.setVisible(false);
@@ -548,14 +565,17 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeCostText.setText(`${cost}g Lv.${currentLevel + 1}`);
         this.castleUpgradeCostText.setStyle({ color: canAfford ? '#4ade80' : '#888888' });
 
-        // Only progress if hovering AND can afford
+        // Only progress if hovering AND can afford AND hover delay has passed
         if (this.castleUpgradeHovering && canAfford) {
-            const progressPerFrame = (this.miningSpeed * delta) / 1000;
-            this.castleUpgradeProgress += progressPerFrame;
+            const hoverDuration = Date.now() - this.castleHoverStartTime;
+            if (hoverDuration >= this.castleHoverDelay) {
+                const progressPerFrame = (this.miningSpeed * delta) / 1000;
+                this.castleUpgradeProgress += progressPerFrame;
 
-            if (this.castleUpgradeProgress >= this.castleUpgradeTarget) {
-                this.castleUpgradeProgress = 0;
-                this.performCastleUpgrade();
+                if (this.castleUpgradeProgress >= this.castleUpgradeTarget) {
+                    this.castleUpgradeProgress = 0;
+                    this.performCastleUpgrade();
+                }
             }
         }
         // Progress persists when not hovering (no decay)
@@ -1004,46 +1024,46 @@ class GameScene extends Phaser.Scene {
             this.woodMineProgress = Math.max(0, this.woodMineProgress - progressPerFrame * 0.3);
         }
 
-        // Update circular spinner visuals
-        this.drawMineSpinner(this.goldMine, this.goldMineProgress, 0xFFD700);
-        this.drawMineSpinner(this.woodMine, this.woodMineProgress, 0x8B4513);
+        // Update spinner visuals
+        this.drawMineSpinner(this.goldMine, this.goldMineProgress);
+        this.drawMineSpinner(this.woodMine, this.woodMineProgress);
+
+        // Animate axe cursor
+        this.updateAxeCursor();
     }
 
-    drawMineSpinner(mine, progress, color) {
-        const graphics = mine.spinnerGraphics;
-        const percent = Math.floor((progress / this.miningTarget) * 100);
-
-        // Clear previous drawing
-        graphics.clear();
-
-        if (progress > 0) {
-            // Draw circular progress arc
-            const startAngle = -Math.PI / 2; // Start from top
-            const endAngle = startAngle + (progress / this.miningTarget) * Math.PI * 2;
-
-            graphics.lineStyle(6, color, 1);
-            graphics.beginPath();
-            graphics.arc(0, mine.spinnerY, mine.spinnerRadius - 2, startAngle, endAngle, false);
-            graphics.strokePath();
-
-            // Add glow effect when near completion
-            if (percent >= 80) {
-                graphics.lineStyle(10, color, 0.3);
-                graphics.beginPath();
-                graphics.arc(0, mine.spinnerY, mine.spinnerRadius + 3, startAngle, endAngle, false);
-                graphics.strokePath();
-            }
+    drawMineSpinner(mine, progress) {
+        // No spinner - just glow effect on the resource when hovering
+        if (mine.isHovering) {
+            mine.glowRing.setAlpha(0.3 + Math.sin(Date.now() / 200) * 0.2);
         }
+    }
 
-        // Update percentage text
-        mine.percentText.setText(`${percent}%`);
+    updateAxeCursor() {
+        // Animate axe cursor with chopping motion when over mines
+        if (!this.isOverMine || !this.axeCursor) return;
 
-        // Pulse effect when hovering
-        if (mine.isHovering && percent > 0) {
-            mine.percentText.setScale(1 + Math.sin(Date.now() / 100) * 0.1);
+        this.axeChopPhase += 0.12;
+        const cycle = this.axeChopPhase % 4;
+
+        let angle;
+        if (cycle < 1) {
+            // Raised position
+            angle = -30;
+        } else if (cycle < 1.5) {
+            // Quick swing down
+            const swingProgress = (cycle - 1) * 2;
+            angle = -30 + (swingProgress * 50);
+        } else if (cycle < 2.5) {
+            // Hold at chopped position
+            angle = 20;
         } else {
-            mine.percentText.setScale(1);
+            // Raise back up
+            const raiseProgress = (cycle - 2.5) / 1.5;
+            angle = 20 - (raiseProgress * 50);
         }
+
+        this.axeCursor.setAngle(angle);
     }
 
     collectResource(type) {

@@ -138,14 +138,18 @@ class CombatSystem {
     }
 
     getStatsWithUpgrades(baseStats, upgradeLevel) {
-        const multiplier = 1 + ((upgradeLevel - 1) * UPGRADE_CONFIG.statBoostPercent / 100);
+        // Exponential upgrade bonuses:
+        // HP bonus: +1, +2, +4, +8, +16... (cumulative: 2^(level-1) - 1)
+        // DMG bonus: +2, +4, +8, +16, +32... (cumulative: 2^level - 2)
+        const hpBonus = Math.pow(2, upgradeLevel - 1) - 1;
+        const dmgBonus = Math.pow(2, upgradeLevel) - 2;
 
         return {
             ...baseStats,
-            health: Math.floor(baseStats.health * multiplier),
-            damage: Math.floor(baseStats.damage * multiplier),
+            health: baseStats.health + hpBonus,
+            damage: baseStats.damage + dmgBonus,
             speed: baseStats.speed,
-            attackSpeed: Math.max(300, baseStats.attackSpeed - (upgradeLevel - 1) * 50)
+            attackSpeed: Math.max(300, baseStats.attackSpeed - (upgradeLevel - 1) * 30)
         };
     }
 

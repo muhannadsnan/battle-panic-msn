@@ -494,9 +494,11 @@ class UpgradeScene extends Phaser.Scene {
     createCardButton(x, y, text, callback, enabled, width = 100, height = 35) {
         const container = this.add.container(x, y);
 
-        const bgColor = enabled ? 0x4169E1 : 0x444444;
+        // Enabled buttons are much brighter (green/gold) to show they're affordable
+        const bgColor = enabled ? 0x44AA44 : 0x444444;
+        const strokeColor = enabled ? 0x88FF88 : 0x555555;
         const bg = this.add.rectangle(0, 0, width, height, bgColor);
-        bg.setStrokeStyle(2, enabled ? 0x6495ED : 0x555555);
+        bg.setStrokeStyle(enabled ? 3 : 2, strokeColor);
         container.add(bg);
 
         const label = this.add.text(0, 0, text, {
@@ -508,14 +510,25 @@ class UpgradeScene extends Phaser.Scene {
         container.add(label);
 
         if (enabled) {
+            // Add a pulsing glow effect to show it's clickable
+            this.tweens.add({
+                targets: bg,
+                alpha: 0.7,
+                duration: 800,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1
+            });
+
             bg.setInteractive({ useHandCursor: true });
 
             bg.on('pointerover', () => {
-                bg.setFillStyle(0x5179F1);
+                bg.setFillStyle(0x66CC66);
+                bg.setAlpha(1);
             });
 
             bg.on('pointerout', () => {
-                bg.setFillStyle(0x4169E1);
+                bg.setFillStyle(0x44AA44);
             });
 
             bg.on('pointerdown', () => {
@@ -561,10 +574,14 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     getUpgradedStats(baseStats, level) {
-        const multiplier = 1 + ((level - 1) * UPGRADE_CONFIG.statBoostPercent / 100);
+        // Exponential upgrade bonuses:
+        // HP bonus: +1, +2, +4, +8, +16... (cumulative: 2^(level-1) - 1)
+        // DMG bonus: +2, +4, +8, +16, +32... (cumulative: 2^level - 2)
+        const hpBonus = Math.pow(2, level - 1) - 1;
+        const dmgBonus = Math.pow(2, level) - 2;
         return {
-            health: Math.floor(baseStats.health * multiplier),
-            damage: Math.floor(baseStats.damage * multiplier)
+            health: baseStats.health + hpBonus,
+            damage: baseStats.damage + dmgBonus
         };
     }
 

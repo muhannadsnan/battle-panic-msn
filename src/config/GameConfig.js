@@ -77,13 +77,13 @@ const UNIT_TYPES = {
 };
 
 // Enemy Types Configuration
-// BALANCE: Early enemies are weaker to give player time to build up
+// BALANCE: Enemies 25% weaker for easier gameplay
 const ENEMY_TYPES = {
     GOBLIN: {
         key: 'goblin',
         name: 'Goblin',
-        health: 15,
-        damage: 3,
+        health: 11,          // Was 15, now 25% less
+        damage: 2,           // Was 3, now 25% less
         speed: 85,
         attackSpeed: 900,
         range: 25,
@@ -94,8 +94,8 @@ const ENEMY_TYPES = {
     ORC: {
         key: 'orc',
         name: 'Orc',
-        health: 40,
-        damage: 6,
+        health: 30,          // Was 40, now 25% less
+        damage: 4,           // Was 6, now 25% less
         speed: 55,
         attackSpeed: 1100,
         range: 30,
@@ -106,8 +106,8 @@ const ENEMY_TYPES = {
     SKELETON: {
         key: 'skeleton',
         name: 'Skeleton',
-        health: 28,
-        damage: 5,
+        health: 21,          // Was 28, now 25% less
+        damage: 4,           // Was 5, now 25% less
         speed: 65,
         attackSpeed: 1000,
         range: 28,
@@ -118,8 +118,8 @@ const ENEMY_TYPES = {
     SKELETON_ARCHER: {
         key: 'skeleton_archer',
         name: 'Skeleton Archer',
-        health: 25,
-        damage: 10,
+        health: 19,          // Was 25, now 25% less
+        damage: 7,           // Was 10, now 25% less
         speed: 50,
         attackSpeed: 1400,
         range: 180,
@@ -131,8 +131,8 @@ const ENEMY_TYPES = {
     TROLL: {
         key: 'troll',
         name: 'Troll',
-        health: 150,
-        damage: 20,
+        health: 112,         // Was 150, now 25% less
+        damage: 15,          // Was 20, now 25% less
         speed: 35,
         attackSpeed: 1800,
         range: 40,
@@ -143,8 +143,8 @@ const ENEMY_TYPES = {
     DARK_KNIGHT: {
         key: 'dark_knight',
         name: 'Dark Knight',
-        health: 100,
-        damage: 15,
+        health: 75,          // Was 100, now 25% less
+        damage: 11,          // Was 15, now 25% less
         speed: 55,
         attackSpeed: 1100,
         range: 35,
@@ -155,8 +155,8 @@ const ENEMY_TYPES = {
     DEMON: {
         key: 'demon',
         name: 'Demon',
-        health: 200,
-        damage: 25,
+        health: 150,         // Was 200, now 25% less
+        damage: 19,          // Was 25, now 25% less
         speed: 45,
         attackSpeed: 1500,
         range: 35,
@@ -167,8 +167,8 @@ const ENEMY_TYPES = {
     DRAGON: {
         key: 'dragon',
         name: 'Dragon',
-        health: 500,
-        damage: 40,
+        health: 375,         // Was 500, now 25% less
+        damage: 30,          // Was 40, now 25% less
         speed: 40,
         attackSpeed: 2000,
         range: 150,
@@ -182,22 +182,25 @@ const ENEMY_TYPES = {
 
 // Wave Configuration
 const WAVE_CONFIG = {
-    baseGoldReward: 30,       // Reduced from 40
-    baseWoodReward: 20,       // Reduced from 30
-    goldPerWave: 10,          // Reduced from 20
-    woodPerWave: 8,           // Reduced from 15
-    timeBetweenWaves: 8000,   // Faster waves
-    spawnInterval: 1000,      // Faster enemy spawn
-    // Enemy scaling per wave (makes late game harder)
-    enemyHealthScaling: 0.12,  // +12% HP per wave
-    enemyDamageScaling: 0.10   // +10% damage per wave
+    baseGoldReward: 30,
+    baseWoodReward: 20,
+    goldPerWave: 10,
+    woodPerWave: 8,
+    timeBetweenWaves: 8000,
+    spawnInterval: 1000,
+    // Enemy scaling per wave (reduced for easier gameplay)
+    enemyHealthScaling: 0.08,  // Was 0.12, now +8% HP per wave
+    enemyDamageScaling: 0.06   // Was 0.10, now +6% damage per wave
 };
 
 // Upgrade Configuration
+// Exponential upgrades: HP +1,+2,+4,+8... DMG +2,+4,+8,+16...
 const UPGRADE_CONFIG = {
-    maxLevel: 5,
-    costMultiplier: 1.8,
-    statBoostPercent: 15
+    maxLevel: 10,
+    costMultiplier: 1.5,  // XP cost scaling
+    // Exponential bonus formula (used in CombatSystem and UpgradeScene):
+    // HP bonus = 2^(level-1) - 1
+    // DMG bonus = 2^level - 2
 };
 
 // Castle Configuration
@@ -237,9 +240,9 @@ const SPAWN_CONFIG = {
 // Boss Configuration
 const BOSS_CONFIG = {
     spawnEveryWaves: 10,
-    healthMultiplier: 10,
-    damageMultiplier: 10,
-    sizeMultiplier: 1.5  // Reduced from 2.5
+    healthMultiplier: 5,   // Reduced from 10 - bosses are now half as strong
+    damageMultiplier: 5,   // Reduced from 10 - bosses are now half as strong
+    sizeMultiplier: 0.75   // Half size (reduced from 1.5)
 };
 
 // Audio Configuration
