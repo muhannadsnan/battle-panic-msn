@@ -1327,9 +1327,10 @@ class GameScene extends Phaser.Scene {
     }
 
     gameOver(isVictory) {
-        // Stop music
+        // Stop music and play defeat sound
         if (typeof audioManager !== 'undefined') {
             audioManager.stopMusic();
+            audioManager.playDefeat();
         }
 
         // Stop all timers

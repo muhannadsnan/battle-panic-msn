@@ -125,15 +125,15 @@ Located in `BOSS_CONFIG`:
 ```javascript
 const BOSS_CONFIG = {
     spawnEveryWaves: 10,      // Boss appears wave 10, 20, 30...
-    healthMultiplier: 5,      // 5x base HP (was 10x)
-    damageMultiplier: 5,      // 5x base damage (was 10x)
+    healthMultiplier: 2.5,    // 2.5x base HP (1/4 original)
+    damageMultiplier: 1.25,   // 1.25x base damage (reduced for balance)
     sizeMultiplier: 0.75      // 0.75x visual size (was 1.5x)
 };
 ```
 
 ### Dragon Boss Stats (with multipliers)
-- HP: 500 * 5 = **2500 HP**
-- Damage: 40 * 5 = **200 damage**
+- Base HP: 375 × 2.5 = **~937 HP**
+- Base Damage: 30 × 1.25 = **~37 damage**
 - Ranged attack with fireballs
 
 ---

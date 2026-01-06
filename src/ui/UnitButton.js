@@ -62,17 +62,8 @@ class UnitButton extends Phaser.GameObjects.Container {
         }).setOrigin(0.5).setVisible(false);
         this.add(this.percentText);
 
-        // Affordable count indicator - top left corner (shows how many can be produced)
+        // Affordable count (hidden but tracked for logic)
         this.affordableCount = 0;
-        this.hotkeyText = scene.add.text(-38, -40, '0', {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ffff00',
-            stroke: '#000000',
-            strokeThickness: 3
-        });
-        this.add(this.hotkeyText);
 
         // Cost display (gold and wood) - at bottom
         this.goldCostText = scene.add.text(-18, 38, `${this.goldCost}g`, {
@@ -496,20 +487,6 @@ class UnitButton extends Phaser.GameObjects.Container {
         const byGold = Math.floor(gold / this.goldCost);
         const byWood = Math.floor(wood / this.woodCost);
         this.affordableCount = Math.min(byGold, byWood);
-
-        // Update display
-        this.hotkeyText.setText(`${this.affordableCount}`);
-
-        // Color based on affordability
-        if (this.affordableCount >= 5) {
-            this.hotkeyText.setColor('#00ff00'); // Green - plenty
-        } else if (this.affordableCount >= 2) {
-            this.hotkeyText.setColor('#ffff00'); // Yellow - some
-        } else if (this.affordableCount >= 1) {
-            this.hotkeyText.setColor('#ffaa00'); // Orange - low
-        } else {
-            this.hotkeyText.setColor('#ff4444'); // Red - none
-        }
     }
 
     getUnlockWave(unitType) {

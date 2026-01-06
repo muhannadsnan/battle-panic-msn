@@ -175,15 +175,15 @@ new Castle(scene, x, y)
 The castle automatically shoots arrows at nearby enemies:
 - **Range**: 300 pixels
 - **Base Damage**: 5 (scales with level)
-- **Base Attack Speed**: 2000ms (scales with level)
+- **Base Attack Speed**: 1000ms (scales with level)
 - Arrows shoot from random tower (left, right, or center)
 
 #### Stats by Level
 | Level | Arrow Damage | Attack Speed | HP Bonus |
 |-------|--------------|--------------|----------|
-| 1 | 5 | 2.0s | +0 |
-| 5 | 13 | 1.6s | +100 |
-| 10 | 23 | 1.0s | +225 |
+| 1 | 5 | 1.0s | +0 |
+| 5 | 13 | 0.8s | +100 |
+| 10 | 23 | 0.4s | +225 |
 
 #### Key Methods
 

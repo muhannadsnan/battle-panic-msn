@@ -146,7 +146,6 @@ new UnitButton(scene, x, y, unitType, hotkey, isUnlocked = true)
 #### Visual Layout
 ```
 ┌──────────────────┐
-│ [5]              │  <- Affordable count (color-coded)
 │   ┌──────────┐   │
 │   │  [Icon]  │   │  <- Unit icon (2x scale)
 │   │   ____   │   │  <- Progress spinner
@@ -155,12 +154,6 @@ new UnitButton(scene, x, y, unitType, hotkey, isUnlocked = true)
 │   10g    10w     │  <- Costs
 └──────────────────┘
 ```
-
-**Affordable Count Colors:**
-- Green (5+): Plenty of resources
-- Yellow (2-4): Some available
-- Orange (1): Low resources
-- Red (0): Cannot afford
 
 #### Properties
 | Property | Type | Description |

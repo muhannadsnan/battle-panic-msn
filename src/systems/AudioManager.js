@@ -111,6 +111,77 @@ class AudioManager {
         osc.stop(this.audioContext.currentTime + 0.08);
     }
 
+    // Play orc hit sound - heavy brutal impact
+    playOrcHit() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Deep heavy thud
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.frequency.setValueAtTime(80, this.audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.audioContext.currentTime + 0.15);
+        osc.type = 'sine';
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 200;
+
+        gain.gain.setValueAtTime(0.35, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
+
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.2);
+
+        // Add grunt noise
+        const bufferSize = this.audioContext.sampleRate * 0.1;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+        }
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        noise.buffer = buffer;
+        noise.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseGain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        noise.start();
+    }
+
+    // Play defeat/game over sound
+    playDefeat() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        // Sad descending notes
+        const notes = [400, 350, 300, 200];
+        notes.forEach((freq, i) => {
+            setTimeout(() => {
+                if (!this.audioContext) return;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.sfxGain);
+
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+
+                gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.3);
+            }, i * 200);
+        });
+    }
+
     // Play arrow/projectile sound
     playArrow() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;

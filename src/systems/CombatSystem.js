@@ -47,6 +47,9 @@ class CombatSystem {
         if (typeof audioManager !== 'undefined') {
             if (attacker.isRanged) {
                 audioManager.playArrow();
+            } else if (attacker.enemyType === 'ORC' || attacker.enemyType === 'TROLL') {
+                // Heavy hit for orcs and trolls
+                audioManager.playOrcHit();
             } else {
                 audioManager.playSwordHit();
             }

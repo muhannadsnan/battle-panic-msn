@@ -240,8 +240,8 @@ const SPAWN_CONFIG = {
 // Boss Configuration
 const BOSS_CONFIG = {
     spawnEveryWaves: 10,
-    healthMultiplier: 5,   // Reduced from 10 - bosses are now half as strong
-    damageMultiplier: 5,   // Reduced from 10 - bosses are now half as strong
+    healthMultiplier: 2.5, // Reduced again - bosses now 1/4 original strength
+    damageMultiplier: 1.25, // Halved again - dragon hits castle less hard
     sizeMultiplier: 0.75   // Half size (reduced from 1.5)
 };
 

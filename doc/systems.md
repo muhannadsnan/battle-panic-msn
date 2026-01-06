@@ -247,13 +247,15 @@ Manages sound effects and music playback.
 | `playWarning()` | Not enough resources (two low beeps) |
 | `playSpawn()` | Unit spawned |
 | `playSwordHit()` | Melee attack |
+| `playOrcHit()` | Heavy orc/troll attack |
 | `playArrow()` | Arrow shot |
 | `playMagic()` | Magic attack |
 | `playHit()` | Generic hit |
 | `playDeath()` | Entity death |
+| `playGold()` | Gold mining complete |
+| `playWood()` | Wood chopping complete |
 | `playWaveStart()` | Wave begins |
-| `playVictory()` | Game won |
-| `playDefeat()` | Game lost |
+| `playDefeat()` | Game over (sad descending notes) |
 
 #### Music Methods
 

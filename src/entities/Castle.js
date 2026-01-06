@@ -12,7 +12,7 @@ class Castle extends Phaser.GameObjects.Container {
 
         // Castle arrow attack properties
         this.attackRange = 300;      // How far castle can shoot
-        this.attackSpeed = 2000;     // Attack every 2 seconds
+        this.attackSpeed = 1000;     // Attack every 1 second (2x faster)
         this.arrowDamage = 5;        // Base arrow damage
         this.lastAttackTime = 0;
         this.target = null;
@@ -319,7 +319,7 @@ class Castle extends Phaser.GameObjects.Container {
 
         // Scale attack stats with level
         this.arrowDamage = 5 + (this.level - 1) * 2;        // +2 damage per level
-        this.attackSpeed = Math.max(800, 2000 - (this.level - 1) * 100);  // Faster attacks
+        this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
 
         // Castle grows bigger with each level!
         // Level 1 = 0.6 scale (small castle), Level 10 = 1.4 scale (grand palace)
