@@ -14,11 +14,13 @@ class Enemy extends Phaser.GameObjects.Container {
             return;
         }
 
-        // Scale stats with wave number - enemies get MUCH stronger over time
-        // 15% increase per wave for health, 10% for damage
-        const waveHealthMultiplier = 1 + (waveNumber - 1) * 0.15;
-        const waveDamageMultiplier = 1 + (waveNumber - 1) * 0.10;
-        const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.02; // Slight speed increase
+        // Scale stats with wave number - enemies get stronger over time
+        // Use config values for scaling
+        const healthScale = WAVE_CONFIG.enemyHealthScaling || 0.12;
+        const damageScale = WAVE_CONFIG.enemyDamageScaling || 0.10;
+        const waveHealthMultiplier = 1 + (waveNumber - 1) * healthScale;
+        const waveDamageMultiplier = 1 + (waveNumber - 1) * damageScale;
+        const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.015; // Slight speed increase
 
         this.isBoss = baseStats.isBoss || false;
 

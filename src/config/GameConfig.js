@@ -3,13 +3,13 @@ const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
 // Unit Types Configuration (cost now includes gold and wood)
-// BALANCE: Affordable early game, scales up for late game
+// BALANCE: More expensive units, harder to snowball
 const UNIT_TYPES = {
     PEASANT: {
         key: 'peasant',
         name: 'Peasant',
-        goldCost: 5,
-        woodCost: 5,
+        goldCost: 10,
+        woodCost: 10,
         health: 25,
         damage: 5,
         speed: 80,
@@ -21,8 +21,8 @@ const UNIT_TYPES = {
     ARCHER: {
         key: 'archer',
         name: 'Archer',
-        goldCost: 15,
-        woodCost: 15,
+        goldCost: 25,
+        woodCost: 20,
         health: 20,
         damage: 7,
         speed: 60,
@@ -35,8 +35,8 @@ const UNIT_TYPES = {
     KNIGHT: {
         key: 'knight',
         name: 'Knight',
-        goldCost: 40,
-        woodCost: 25,
+        goldCost: 60,
+        woodCost: 40,
         health: 60,
         damage: 12,
         speed: 50,
@@ -48,8 +48,8 @@ const UNIT_TYPES = {
     WIZARD: {
         key: 'wizard',
         name: 'Wizard',
-        goldCost: 55,
-        woodCost: 35,
+        goldCost: 80,
+        woodCost: 50,
         health: 30,
         damage: 16,
         speed: 40,
@@ -64,8 +64,8 @@ const UNIT_TYPES = {
     GIANT: {
         key: 'giant',
         name: 'Giant',
-        goldCost: 80,
-        woodCost: 60,
+        goldCost: 120,
+        woodCost: 80,
         health: 120,
         damage: 22,
         speed: 30,
@@ -182,12 +182,15 @@ const ENEMY_TYPES = {
 
 // Wave Configuration
 const WAVE_CONFIG = {
-    baseGoldReward: 40,
-    baseWoodReward: 30,
-    goldPerWave: 20,
-    woodPerWave: 15,
-    timeBetweenWaves: 10000,  // More time between waves
-    spawnInterval: 1200      // Slower enemy spawn rate
+    baseGoldReward: 30,       // Reduced from 40
+    baseWoodReward: 20,       // Reduced from 30
+    goldPerWave: 10,          // Reduced from 20
+    woodPerWave: 8,           // Reduced from 15
+    timeBetweenWaves: 8000,   // Faster waves
+    spawnInterval: 1000,      // Faster enemy spawn
+    // Enemy scaling per wave (makes late game harder)
+    enemyHealthScaling: 0.12,  // +12% HP per wave
+    enemyDamageScaling: 0.10   // +10% damage per wave
 };
 
 // Upgrade Configuration
@@ -211,10 +214,10 @@ const CASTLE_CONFIG = {
 
 // Resource Configuration
 const RESOURCE_CONFIG = {
-    startingGold: 40,   // Enough to start building
-    startingWood: 40,
-    mineGoldAmount: 7,  // Decent resource gain
-    mineWoodAmount: 7,
+    startingGold: 50,   // Starting resources
+    startingWood: 50,
+    mineGoldAmount: 5,  // Less per mine (was 8)
+    mineWoodAmount: 5,
     mineInterval: 2000,
     goldMineX: 140,     // Moved right for space from unit bar
     goldMineY: 100,

@@ -9,23 +9,17 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.displayedGold = 0;
         this.displayedWood = 0;
 
-        // No background - clean look
+        // No background - clean look with big icons
         // Horizontal layout for top bar
 
-        // Gold label
-        this.goldLabel = scene.add.text(-80, 0, 'Gold', {
-            fontSize: '14px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ffd700',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(1, 0.5);
-        this.add(this.goldLabel);
+        // Gold icon (coin made of rectangles)
+        this.goldIconContainer = scene.add.container(-70, 0);
+        this.createGoldIcon(scene, this.goldIconContainer);
+        this.add(this.goldIconContainer);
 
         // Gold text
-        this.goldText = scene.add.text(-75, 0, '0', {
-            fontSize: '20px',
+        this.goldText = scene.add.text(-50, 0, '0', {
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700',
@@ -34,20 +28,14 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         }).setOrigin(0, 0.5);
         this.add(this.goldText);
 
-        // Wood label (offset to the right)
-        this.woodLabel = scene.add.text(30, 0, 'Wood', {
-            fontSize: '14px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#cd853f',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(1, 0.5);
-        this.add(this.woodLabel);
+        // Wood icon (logs made of rectangles)
+        this.woodIconContainer = scene.add.container(30, 0);
+        this.createWoodIcon(scene, this.woodIconContainer);
+        this.add(this.woodIconContainer);
 
         // Wood text
-        this.woodText = scene.add.text(35, 0, '0', {
-            fontSize: '20px',
+        this.woodText = scene.add.text(50, 0, '0', {
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#cd853f',
@@ -60,60 +48,40 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.setDepth(900);
     }
 
+    createGoldIcon(scene, container) {
+        // Gold coin icon - single big coin (no background)
+        const coin = scene.add.rectangle(0, 0, 20, 20, 0xFFD700);
+        coin.setStrokeStyle(2, 0xDAA520);
+        container.add(coin);
+        // Inner detail
+        container.add(scene.add.rectangle(0, 0, 12, 12, 0xFFE55C));
+        // $ symbol approximation with rectangles
+        container.add(scene.add.rectangle(0, -3, 2, 8, 0xDAA520));
+        container.add(scene.add.rectangle(0, 3, 6, 2, 0xDAA520));
+    }
+
+    createWoodIcon(scene, container) {
+        // Wood log icon - crossed logs (no background)
+        // Log 1 (diagonal)
+        container.add(scene.add.rectangle(-2, 2, 20, 7, 0x8B4513).setAngle(-20));
+        container.add(scene.add.rectangle(-10, 4, 6, 5, 0xDEB887)); // End grain 1
+        // Log 2 (diagonal other way)
+        container.add(scene.add.rectangle(2, -2, 20, 7, 0xA0522D).setAngle(20));
+        container.add(scene.add.rectangle(10, -4, 6, 5, 0xD2B48C)); // End grain 2
+    }
+
     setGold(amount) {
         this.currentGold = amount;
-
-        if (this.goldTween) {
-            this.goldTween.stop();
-        }
-
-        this.goldTween = this.scene.tweens.addCounter({
-            from: this.displayedGold,
-            to: amount,
-            duration: 300,
-            ease: 'Power2',
-            onUpdate: (tween) => {
-                this.displayedGold = Math.floor(tween.getValue());
-                this.goldText.setText(this.displayedGold.toString());
-            }
-        });
-
-        if (amount > this.displayedGold) {
-            this.scene.tweens.add({
-                targets: this.goldText,
-                scale: 1.2,
-                duration: 100,
-                yoyo: true
-            });
-        }
+        // Direct update for smooth continuous mining
+        this.displayedGold = amount;
+        this.goldText.setText(amount.toString());
     }
 
     setWood(amount) {
         this.currentWood = amount;
-
-        if (this.woodTween) {
-            this.woodTween.stop();
-        }
-
-        this.woodTween = this.scene.tweens.addCounter({
-            from: this.displayedWood,
-            to: amount,
-            duration: 300,
-            ease: 'Power2',
-            onUpdate: (tween) => {
-                this.displayedWood = Math.floor(tween.getValue());
-                this.woodText.setText(this.displayedWood.toString());
-            }
-        });
-
-        if (amount > this.displayedWood) {
-            this.scene.tweens.add({
-                targets: this.woodText,
-                scale: 1.2,
-                duration: 100,
-                yoyo: true
-            });
-        }
+        // Direct update for smooth continuous mining
+        this.displayedWood = amount;
+        this.woodText.setText(amount.toString());
     }
 
     addGold(amount) {
@@ -186,7 +154,7 @@ class WaveDisplay extends Phaser.GameObjects.Container {
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4
-        }).setOrigin(1, 1).setAlpha(0.4);  // Right-aligned, bottom-aligned, semi-transparent
+        }).setOrigin(1, 1).setAlpha(0.7);  // Right-aligned, bottom-aligned, semi-transparent
         this.add(this.waveText);
 
         scene.add.existing(this);

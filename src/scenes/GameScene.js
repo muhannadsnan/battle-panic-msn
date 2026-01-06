@@ -429,10 +429,9 @@ class GameScene extends Phaser.Scene {
 
 
     createCastle() {
-        // Calculate castle health with upgrades
-        const castleLevel = this.saveData.castleUpgrades.health || 1;
-        const playerHealthBonus = (castleLevel - 1) * 25;
-        const playerHealth = CASTLE_CONFIG.playerHealth + playerHealthBonus;
+        // Castle always starts at level 1 each battle (upgrades are in-game only)
+        this.castleLevel = 1;
+        const playerHealth = CASTLE_CONFIG.playerHealth;
 
         this.playerCastle = new Castle(
             this,
@@ -443,7 +442,7 @@ class GameScene extends Phaser.Scene {
         );
 
         // Set castle level for display
-        this.playerCastle.setLevel(castleLevel);
+        this.playerCastle.setLevel(this.castleLevel);
 
         // Create castle upgrade hover zone with spinner
         this.createCastleUpgradeZone();
@@ -533,7 +532,7 @@ class GameScene extends Phaser.Scene {
     updateCastleUpgrade(delta) {
         if (this.isPaused) return;
 
-        const currentLevel = this.saveData.castleUpgrades.health || 1;
+        const currentLevel = this.castleLevel || 1;
 
         // Check if at max level
         if (currentLevel >= CASTLE_CONFIG.maxLevel) {
@@ -606,20 +605,23 @@ class GameScene extends Phaser.Scene {
     }
 
     performCastleUpgrade() {
-        const currentLevel = this.saveData.castleUpgrades.health || 1;
+        const currentLevel = this.castleLevel || 1;
         const cost = this.getCastleUpgradeCost(currentLevel);
 
         // Spend gold
         this.gold -= cost;
         this.resourceDisplay.subtractGold(cost);
 
-        // Increase level
-        const newLevel = currentLevel + 1;
-        this.saveData.castleUpgrades.health = newLevel;
-        saveSystem.save(this.saveData);
+        // Increase level (in-game only, resets each battle)
+        this.castleLevel = currentLevel + 1;
 
-        // Update castle
-        this.playerCastle.setLevel(newLevel);
+        // Update castle display and health
+        this.playerCastle.setLevel(this.castleLevel);
+        // Add health bonus for upgrade
+        const healthBonus = 25;
+        this.playerCastle.maxHealth += healthBonus;
+        this.playerCastle.currentHealth += healthBonus;
+        this.playerCastle.updateHealthBar();
 
         // Update mining speed
         this.updateMiningSpeed();
@@ -630,14 +632,14 @@ class GameScene extends Phaser.Scene {
         }
 
         // Visual feedback
-        if (newLevel >= CASTLE_CONFIG.maxLevel) {
+        if (this.castleLevel >= CASTLE_CONFIG.maxLevel) {
             this.showMessage(`Castle MAX LEVEL!`, '#ffd700');
         } else {
-            this.showMessage(`Castle Lv.${newLevel}!`, '#4ade80');
+            this.showMessage(`Castle Lv.${this.castleLevel}!`, '#4ade80');
         }
 
         // Glow effect
-        const glowColor = newLevel >= CASTLE_CONFIG.maxLevel ? 0xffd700 : 0x4ade80;
+        const glowColor = this.castleLevel >= CASTLE_CONFIG.maxLevel ? 0xffd700 : 0x4ade80;
         const glow = this.add.rectangle(this.playerCastle.x, this.playerCastle.y, 180, 220, glowColor, 0.3);
         this.tweens.add({
             targets: glow,
@@ -650,7 +652,7 @@ class GameScene extends Phaser.Scene {
     }
 
     updateCastleUpgradeDisplay() {
-        const level = this.saveData.castleUpgrades.health || 1;
+        const level = this.castleLevel || 1;
         if (level >= CASTLE_CONFIG.maxLevel) {
             this.castleUpgradePercentText.setText('MAX');
             this.castleUpgradeCostText.setText('');
@@ -659,8 +661,9 @@ class GameScene extends Phaser.Scene {
 
     updateMiningSpeed() {
         // Mining speed increases 15% per castle level
-        const level = this.saveData.castleUpgrades.health || 1;
-        this.miningSpeed = 80 * (1 + (level - 1) * 0.15);
+        // Base speed is slower (50 instead of 80)
+        const level = this.castleLevel || 1;
+        this.miningSpeed = 50 * (1 + (level - 1) * 0.15);
     }
 
     createUI() {
@@ -689,20 +692,13 @@ class GameScene extends Phaser.Scene {
     }
 
     createUnitCountDisplay() {
-        // Container for unit counts - horizontal layout in top bar (right side)
-        this.unitCountContainer = this.add.container(GAME_WIDTH - 180, 30);
+        // Container for unit counts - horizontal layout in top bar (shifted left for space)
+        this.unitCountContainer = this.add.container(GAME_WIDTH - 380, 30);
         this.unitCountContainer.setDepth(900);
 
-        // Unit count texts for each type - horizontal
+        // Unit count texts for each type - horizontal with mini icons
         this.unitCountTexts = {};
         const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
-        const colors = {
-            PEASANT: 0xE8C87A,
-            ARCHER: 0x4CC053,
-            KNIGHT: 0x55AAEE,
-            WIZARD: 0xBB66FF,
-            GIANT: 0xEE9955
-        };
         const colorHex = {
             PEASANT: '#E8C87A',
             ARCHER: '#4CC053',
@@ -712,16 +708,16 @@ class GameScene extends Phaser.Scene {
         };
 
         unitTypes.forEach((type, index) => {
-            const x = index * 38; // Spread horizontally
+            const x = index * 48; // More spacing for bigger icons
 
-            // Small colored square as icon
-            const iconBg = this.add.rectangle(x, 0, 14, 14, colors[type]);
-            iconBg.setStrokeStyle(1, 0x000000);
-            this.unitCountContainer.add(iconBg);
+            // Mini unit icon (offset down a bit since icons extend upward)
+            const iconContainer = this.add.container(x, 5);
+            this.createMiniUnitIcon(iconContainer, type);
+            this.unitCountContainer.add(iconContainer);
 
             // Count text next to icon
-            const countText = this.add.text(x + 12, 0, '0', {
-                fontSize: '14px',
+            const countText = this.add.text(x + 16, 0, '0', {
+                fontSize: '16px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: colorHex[type],
@@ -731,6 +727,84 @@ class GameScene extends Phaser.Scene {
             this.unitCountContainer.add(countText);
             this.unitCountTexts[type] = countText;
         });
+    }
+
+    createMiniUnitIcon(container, unitType) {
+        // Bigger, more expressive mini icons
+        switch (unitType) {
+            case 'PEASANT':
+                // Tan tunic body
+                container.add(this.add.rectangle(0, 3, 8, 10, 0xE8C87A));
+                // Head with skin tone
+                container.add(this.add.rectangle(0, -6, 7, 7, 0xFFDBB4));
+                // Brown hair
+                container.add(this.add.rectangle(0, -10, 7, 3, 0x5D4037));
+                // Eyes
+                container.add(this.add.rectangle(-2, -6, 2, 2, 0x000000));
+                container.add(this.add.rectangle(2, -6, 2, 2, 0x000000));
+                // Pitchfork
+                container.add(this.add.rectangle(6, -2, 2, 12, 0x8B7355));
+                break;
+            case 'ARCHER':
+                // Green tunic
+                container.add(this.add.rectangle(0, 3, 8, 10, 0x4CC053));
+                // Hood
+                container.add(this.add.rectangle(0, -5, 9, 8, 0x2E7D32));
+                container.add(this.add.rectangle(0, -10, 5, 4, 0x1B5E20));
+                // Face peek
+                container.add(this.add.rectangle(0, -4, 5, 4, 0xFFDBB4));
+                // Bow
+                container.add(this.add.rectangle(7, 0, 2, 14, 0x8B4513));
+                break;
+            case 'KNIGHT':
+                // Blue armor
+                container.add(this.add.rectangle(0, 3, 10, 12, 0x55AAEE));
+                // Steel helmet
+                container.add(this.add.rectangle(0, -6, 9, 9, 0x708090));
+                // Visor slit
+                container.add(this.add.rectangle(0, -5, 6, 2, 0x333333));
+                // Red plume
+                container.add(this.add.rectangle(0, -12, 3, 5, 0xFF4444));
+                // Shield
+                container.add(this.add.rectangle(-6, 2, 4, 6, 0x4169E1));
+                break;
+            case 'WIZARD':
+                // Purple robe
+                container.add(this.add.rectangle(0, 4, 10, 12, 0xBB66FF));
+                // Face
+                container.add(this.add.rectangle(0, -4, 6, 6, 0xFFDBB4));
+                // Pointy hat
+                container.add(this.add.rectangle(0, -10, 10, 4, 0x9932CC));
+                container.add(this.add.rectangle(0, -14, 6, 5, 0x9932CC));
+                container.add(this.add.rectangle(0, -18, 3, 4, 0x9932CC));
+                // Star on hat
+                container.add(this.add.rectangle(0, -12, 4, 2, 0xFFD700));
+                // Staff
+                container.add(this.add.rectangle(7, 0, 2, 16, 0x8B4513));
+                container.add(this.add.rectangle(7, -9, 5, 5, 0x00FFFF)); // Orb
+                break;
+            case 'GIANT':
+                // Big orange body
+                container.add(this.add.rectangle(0, 4, 12, 14, 0xEE9955));
+                // Big head
+                container.add(this.add.rectangle(0, -8, 11, 10, 0xCD853F));
+                // Angry brow
+                container.add(this.add.rectangle(0, -12, 10, 3, 0x664422));
+                // Red eyes
+                container.add(this.add.rectangle(-3, -7, 3, 2, 0xFF0000));
+                container.add(this.add.rectangle(3, -7, 3, 2, 0xFF0000));
+                // Club
+                container.add(this.add.rectangle(8, -2, 4, 14, 0x654321));
+                break;
+        }
+    }
+
+    getAliveUnitCount() {
+        let count = 0;
+        this.units.getChildren().forEach(unit => {
+            if (!unit.isDead) count++;
+        });
+        return count;
     }
 
     updateUnitCounts() {
@@ -873,24 +947,58 @@ class GameScene extends Phaser.Scene {
 
         const progressPerFrame = (this.miningSpeed * delta) / 1000;
 
-        // Gold mining
+        // Initialize partial resource trackers
+        if (this.goldPartial === undefined) this.goldPartial = 0;
+        if (this.woodPartial === undefined) this.woodPartial = 0;
+
+        // Gold mining - add resources gradually as progress fills
         if (this.goldMine.isHovering) {
+            const oldProgress = this.goldMineProgress;
             this.goldMineProgress += progressPerFrame;
+
+            // Add partial gold based on progress increment
+            const resourcePerProgress = RESOURCE_CONFIG.mineGoldAmount / this.miningTarget;
+            this.goldPartial += progressPerFrame * resourcePerProgress;
+
+            // Add whole gold units as they accumulate
+            while (this.goldPartial >= 1) {
+                this.goldPartial -= 1;
+                this.gold += 1;
+                this.resourceDisplay.setGold(this.gold);
+            }
+
             if (this.goldMineProgress >= this.miningTarget) {
                 this.goldMineProgress = 0;
-                this.collectResource('gold');
+                // Play sound and sparkle on complete
+                if (typeof audioManager !== 'undefined') audioManager.playGold();
+                this.showMineEffect(this.goldMine, 0xFFD700);
             }
         } else {
             // Slowly decay progress when not hovering
             this.goldMineProgress = Math.max(0, this.goldMineProgress - progressPerFrame * 0.3);
         }
 
-        // Wood mining
+        // Wood mining - add resources gradually as progress fills
         if (this.woodMine.isHovering) {
+            const oldProgress = this.woodMineProgress;
             this.woodMineProgress += progressPerFrame;
+
+            // Add partial wood based on progress increment
+            const resourcePerProgress = RESOURCE_CONFIG.mineWoodAmount / this.miningTarget;
+            this.woodPartial += progressPerFrame * resourcePerProgress;
+
+            // Add whole wood units as they accumulate
+            while (this.woodPartial >= 1) {
+                this.woodPartial -= 1;
+                this.wood += 1;
+                this.resourceDisplay.setWood(this.wood);
+            }
+
             if (this.woodMineProgress >= this.miningTarget) {
                 this.woodMineProgress = 0;
-                this.collectResource('wood');
+                // Play sound and sparkle on complete
+                if (typeof audioManager !== 'undefined') audioManager.playWood();
+                this.showMineEffect(this.woodMine, 0x8B4513);
             }
         } else {
             this.woodMineProgress = Math.max(0, this.woodMineProgress - progressPerFrame * 0.3);
@@ -939,37 +1047,24 @@ class GameScene extends Phaser.Scene {
     }
 
     collectResource(type) {
+        // Resources are now added gradually during mining
+        // This function is kept for any other code that might call it
         if (type === 'gold') {
             this.addGold(RESOURCE_CONFIG.mineGoldAmount);
-            this.showMineEffect(this.goldMine, '#ffd700', `+${RESOURCE_CONFIG.mineGoldAmount}`);
-            if (typeof audioManager !== 'undefined') {
-                audioManager.playGold();
-            }
         } else {
             this.addWood(RESOURCE_CONFIG.mineWoodAmount);
-            this.showMineEffect(this.woodMine, '#D2691E', `+${RESOURCE_CONFIG.mineWoodAmount}`);
-            if (typeof audioManager !== 'undefined') {
-                audioManager.playWood();
-            }
         }
     }
 
-    showMineEffect(mine, color, text = '+') {
-        const floatText = this.add.text(mine.x, mine.y - 30, text, {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: color,
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(1000);
-
-        // Sparkle effect (rectangles instead of stars)
+    showMineEffect(mine, color) {
+        // Just sparkle effect, no floating text - counter animates smoothly
         for (let i = 0; i < 6; i++) {
             const angle = (i / 6) * Math.PI * 2;
             const sparkle = this.add.rectangle(
                 mine.x + Math.cos(angle) * 20,
                 mine.y + Math.sin(angle) * 20,
                 6, 6,
-                color === '#ffd700' ? 0xFFD700 : 0x8B4513
+                color
             ).setDepth(1000);
 
             this.tweens.add({
@@ -983,16 +1078,6 @@ class GameScene extends Phaser.Scene {
                 onComplete: () => sparkle.destroy()
             });
         }
-
-        this.tweens.add({
-            targets: floatText,
-            y: mine.y - 70,
-            alpha: 0,
-            scaleX: 1.5,
-            scaleY: 1.5,
-            duration: 800,
-            onComplete: () => floatText.destroy()
-        });
     }
 
     showSurvivalIntro() {
@@ -1082,6 +1167,12 @@ class GameScene extends Phaser.Scene {
     spawnUnit(unitType) {
         if (this.isPaused) return;
 
+        // Production throttle - 250ms between spawns
+        const now = Date.now();
+        if (this.lastSpawnTime && now - this.lastSpawnTime < 250) {
+            return; // Too soon, skip spawn
+        }
+
         const typeKey = unitType.toLowerCase();
         const upgradeData = this.saveData.upgrades[typeKey];
 
@@ -1126,6 +1217,7 @@ class GameScene extends Phaser.Scene {
         );
 
         this.units.add(unit);
+        this.lastSpawnTime = Date.now(); // Record spawn time for throttle
     }
 
     spawnEnemy(enemyType, direction = 'right') {

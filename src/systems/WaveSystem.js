@@ -14,18 +14,30 @@ class WaveSystem {
 
     generateWave(waveNumber) {
         const enemies = [];
-        const difficulty = waveNumber;
 
-        // More enemies each wave! Numbers scale faster
-        const waveMultiplier = 1 + (waveNumber - 1) * 0.15;  // +15% more enemies per wave
+        // Enemy count scaling - gentle early, ramps up later
+        // Early waves (1-3): very few enemies to let player build up
+        // Mid waves (4-10): moderate scaling
+        // Late waves (10+): aggressive scaling
+        let waveMultiplier;
+        if (waveNumber <= 3) {
+            waveMultiplier = 0.6 + waveNumber * 0.1;  // 0.7, 0.8, 0.9
+        } else if (waveNumber <= 10) {
+            waveMultiplier = 1 + (waveNumber - 3) * 0.12;  // Moderate growth
+        } else {
+            waveMultiplier = 1.84 + (waveNumber - 10) * 0.18;  // Aggressive growth
+        }
 
-        const goblinCount = Math.floor((4 + waveNumber * 0.8) * waveMultiplier);
-        const orcCount = waveNumber >= 2 ? Math.floor((2 + waveNumber * 0.6) * waveMultiplier) : 0;
-        const skeletonCount = waveNumber >= 3 ? Math.floor((1 + waveNumber * 0.5) * waveMultiplier) : 0;
-        const skeletonArcherCount = waveNumber >= 5 ? Math.floor((waveNumber - 3) * 0.5 * waveMultiplier) : 0;
-        const trollCount = waveNumber >= 7 ? Math.floor((waveNumber - 5) * 0.3 * waveMultiplier) : 0;
-        const darkKnightCount = waveNumber >= 10 ? Math.floor((waveNumber - 8) * 0.3 * waveMultiplier) : 0;
-        const demonCount = waveNumber >= 15 ? Math.floor((waveNumber - 13) * 0.25 * waveMultiplier) : 0;
+        // Wave 1: just 3 goblins
+        // Wave 2: 4 goblins + 1 orc
+        // Wave 3+: scales up
+        const goblinCount = Math.floor((2 + waveNumber * 0.5) * waveMultiplier);
+        const orcCount = waveNumber >= 2 ? Math.floor((1 + waveNumber * 0.4) * waveMultiplier) : 0;
+        const skeletonCount = waveNumber >= 4 ? Math.floor((waveNumber - 2) * 0.4 * waveMultiplier) : 0;
+        const skeletonArcherCount = waveNumber >= 6 ? Math.floor((waveNumber - 4) * 0.35 * waveMultiplier) : 0;
+        const trollCount = waveNumber >= 8 ? Math.floor((waveNumber - 6) * 0.25 * waveMultiplier) : 0;
+        const darkKnightCount = waveNumber >= 12 ? Math.floor((waveNumber - 10) * 0.25 * waveMultiplier) : 0;
+        const demonCount = waveNumber >= 18 ? Math.floor((waveNumber - 16) * 0.2 * waveMultiplier) : 0;
 
         // Add enemies to the wave with spawn directions
         for (let i = 0; i < goblinCount; i++) {
