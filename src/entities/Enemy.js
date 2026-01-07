@@ -1015,19 +1015,27 @@ class Enemy extends Phaser.GameObjects.Container {
             audioManager.playDeath();
         }
 
+        // Calculate rewards - bosses get multiplied by wave number
+        let goldReward = this.goldReward;
+        let woodReward = this.woodReward;
+        if (this.isBoss && this.scene.currentWave) {
+            goldReward = this.goldReward * this.scene.currentWave;
+            woodReward = this.woodReward * this.scene.currentWave;
+        }
+
         // Give gold/wood rewards based on enemy type
-        if (this.scene.gold !== undefined && this.goldReward > 0) {
-            this.scene.gold += this.goldReward;
-            this.scene.goldCollectedThisRun += this.goldReward;
+        if (this.scene.gold !== undefined && goldReward > 0) {
+            this.scene.gold += goldReward;
+            this.scene.goldCollectedThisRun += goldReward;
             if (this.scene.resourceDisplay) {
-                this.scene.resourceDisplay.addGold(this.goldReward);
+                this.scene.resourceDisplay.addGold(goldReward);
             }
         }
-        if (this.scene.wood !== undefined && this.woodReward > 0) {
-            this.scene.wood += this.woodReward;
-            this.scene.woodCollectedThisRun += this.woodReward;
+        if (this.scene.wood !== undefined && woodReward > 0) {
+            this.scene.wood += woodReward;
+            this.scene.woodCollectedThisRun += woodReward;
             if (this.scene.resourceDisplay) {
-                this.scene.resourceDisplay.addWood(this.woodReward);
+                this.scene.resourceDisplay.addWood(woodReward);
             }
         }
 

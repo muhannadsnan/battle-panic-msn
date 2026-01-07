@@ -174,7 +174,9 @@ Returns spawn coordinates based on direction:
 | Troll | 3 | 2 |
 | Dark Knight | 3 | 2 |
 | Demon | 5 | 3 |
-| Dragon (Boss) | 15 | 10 |
+| Dragon (Boss) | 15 × wave | 10 × wave |
+
+*Boss rewards are multiplied by the current wave number (e.g., wave 10 = 150g, 100w)*
 
 #### Enemy Sprites
 Each enemy type has unique visuals:
