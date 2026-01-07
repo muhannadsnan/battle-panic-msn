@@ -232,27 +232,24 @@ The castle automatically shoots arrows at nearby enemies:
 #### Mining Speed Bonus
 Castle level also increases mining rate by 10% per level.
 
-#### Fence System (Unlocked at Level 3)
-At castle level 3, a defensive wooden fence appears in front of the castle.
+#### Fence System (Unlocked at Level 6)
+At castle level 6, a defensive wooden fence appears in front of the castle.
 
 **Fence Stats:**
-| Level | Fence HP | Formula |
-|-------|----------|---------|
-| 3 | 25 | Base HP |
-| 4 | 37 | 25 × 1.5 |
-| 5 | 56 | × 1.5 |
-| 6 | 84 | × 1.5 |
-| 7 | 126 | × 1.5 |
-| 8 | 189 | × 1.5 |
-| 9 | 284 | × 1.5 |
-| 10 | 426 | × 1.5 |
+| Level | Fence HP |
+|-------|----------|
+| 6 | 50 |
+| 7 | 80 |
+| 8 | 120 |
+| 9 | 160 |
+| 10 | 200 |
 
 **Fence Behavior:**
 - Enemies physically stop at the fence and attack it
 - Enemies must destroy the fence before they can reach the castle
 - Fence has its own health bar with "FENCE" label
 - When destroyed, fence explodes into wooden debris
-- On game reset, fence is recreated if castle level >= 3
+- On game reset, fence is recreated if castle level >= 6
 
 **Visual:**
 - Wooden palisade with vertical planks
@@ -263,7 +260,7 @@ At castle level 3, a defensive wooden fence appears in front of the castle.
 #### Upgrade Benefits
 - Upgrading castle restores HP to full
 - Level badge displayed in center of castle
-- At level 3+: Fence is created/upgraded (1.5x HP) and repaired to full
+- At level 6+: Fence is created/upgraded and repaired to full
 - Upgrade cost increases by 1.5x per level (base: 40 gold)
 
 #### Key Methods

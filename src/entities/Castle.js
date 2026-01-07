@@ -330,17 +330,21 @@ class Castle extends Phaser.GameObjects.Container {
         this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
-        // Fence system - unlocks at level 3
-        if (this.level >= 3) {
+        // Fence system - unlocks at level 6
+        // HP progression: 50, 80, 120, 160, 200 for levels 6-10
+        if (this.level >= 6) {
+            const fenceHPTable = { 6: 50, 7: 80, 8: 120, 9: 160, 10: 200 };
+            const newFenceHP = fenceHPTable[this.level] || 200;
+
             if (!this.hasFence) {
-                // First time getting fence - starts with 25 HP
+                // First time getting fence
                 this.hasFence = true;
-                this.fenceMaxHealth = 25;
+                this.fenceMaxHealth = newFenceHP;
                 this.fenceCurrentHealth = this.fenceMaxHealth;
                 this.createFence();
             } else {
-                // Upgrade fence - 1.5x HP and repair to full
-                this.fenceMaxHealth = Math.floor(this.fenceMaxHealth * 1.5);
+                // Upgrade fence and repair to full
+                this.fenceMaxHealth = newFenceHP;
                 this.fenceCurrentHealth = this.fenceMaxHealth;
                 this.updateFenceHealthBar();
                 // Flash fence to show upgrade
@@ -744,19 +748,20 @@ class Castle extends Phaser.GameObjects.Container {
         this.spriteContainer.setScale(1);
         this.spriteContainer.y = 0;
 
-        // Reset fence if castle level >= 3
-        if (this.level >= 3) {
+        // Reset fence if castle level >= 6
+        if (this.level >= 6) {
             if (this.fenceContainer) {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
             }
-            // Calculate fence HP based on level: 25 base, 1.5x per level after 3
+            // Fence HP: 50, 80, 120, 160, 200 for levels 6-10
+            const fenceHPTable = { 6: 50, 7: 80, 8: 120, 9: 160, 10: 200 };
             this.hasFence = true;
-            this.fenceMaxHealth = Math.floor(25 * Math.pow(1.5, this.level - 3));
+            this.fenceMaxHealth = fenceHPTable[this.level] || 200;
             this.fenceCurrentHealth = this.fenceMaxHealth;
             this.createFence();
         } else {
-            // Destroy fence if level below 3
+            // Destroy fence if level below 6
             if (this.fenceContainer) {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
