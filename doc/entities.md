@@ -262,6 +262,7 @@ At castle level 6, a defensive wooden fence appears in front of the castle.
 - Level badge displayed in center of castle
 - At level 6+: Fence is created/upgraded and repaired to full
 - Upgrade cost increases by 1.5x per level (base: 40 gold)
+- At level 10: Can REPAIR castle and fence for same cost as level 10 upgrade
 
 #### Key Methods
 

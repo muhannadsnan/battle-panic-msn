@@ -638,19 +638,20 @@ class GameScene extends Phaser.Scene {
         if (this.isPaused) return;
 
         const currentLevel = this.castleLevel || 1;
+        const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
 
-        // Check if at max level
-        if (currentLevel >= CASTLE_CONFIG.maxLevel) {
-            this.castleUpgradePercentText.setText('MAX');
-            this.castleUpgradeCostText.setText('');
-            return;
-        }
-
-        const cost = this.getCastleUpgradeCost(currentLevel);
+        // At max level, allow repair instead of upgrade
+        const cost = isMaxLevel
+            ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)  // Same cost as level 10 upgrade
+            : this.getCastleUpgradeCost(currentLevel);
         const canAfford = this.gold >= cost;
 
         // Update cost display
-        this.castleUpgradeCostText.setText(`${cost}g Lv.${currentLevel + 1}`);
+        if (isMaxLevel) {
+            this.castleUpgradeCostText.setText(`${cost}g REPAIR`);
+        } else {
+            this.castleUpgradeCostText.setText(`${cost}g Lv.${currentLevel + 1}`);
+        }
         this.castleUpgradeCostText.setStyle({ color: canAfford ? '#4ade80' : '#888888' });
 
         // Only progress if hovering AND can afford AND hover delay has passed
@@ -714,52 +715,89 @@ class GameScene extends Phaser.Scene {
 
     performCastleUpgrade() {
         const currentLevel = this.castleLevel || 1;
-        const cost = this.getCastleUpgradeCost(currentLevel);
+        const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
+
+        // Cost depends on whether upgrading or repairing
+        const cost = isMaxLevel
+            ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)
+            : this.getCastleUpgradeCost(currentLevel);
 
         // Spend gold
         this.gold -= cost;
         this.goldSpentThisRun += cost;
         this.resourceDisplay.subtractGold(cost);
 
-        // Increase level (in-game only, resets each battle)
-        this.castleLevel = currentLevel + 1;
+        if (isMaxLevel) {
+            // REPAIR: Restore castle and fence HP to full (no level increase)
+            this.playerCastle.currentHealth = this.playerCastle.maxHealth;
+            this.playerCastle.updateHealthBar();
 
-        // Update castle display and stats (setLevel handles health bonus)
-        this.playerCastle.setLevel(this.castleLevel);
+            // Also repair fence if it exists
+            if (this.playerCastle.hasFence) {
+                this.playerCastle.fenceCurrentHealth = this.playerCastle.fenceMaxHealth;
+                this.playerCastle.updateFenceHealthBar();
+            }
 
-        // Update mining speed
-        this.updateMiningSpeed();
+            // Play sound
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playGold();
+            }
 
-        // Play sound
-        if (typeof audioManager !== 'undefined') {
-            audioManager.playGold();
-        }
+            // Visual feedback
+            this.showMessage(`Castle REPAIRED!`, '#4ade80');
 
-        // Visual feedback
-        if (this.castleLevel >= CASTLE_CONFIG.maxLevel) {
-            this.showMessage(`Castle MAX LEVEL!`, '#ffd700');
+            // Green glow effect
+            const glow = this.add.rectangle(this.playerCastle.x, this.playerCastle.y, 180, 220, 0x4ade80, 0.3);
+            this.tweens.add({
+                targets: glow,
+                scaleX: 1.5,
+                scaleY: 1.5,
+                alpha: 0,
+                duration: 600,
+                onComplete: () => glow.destroy()
+            });
         } else {
-            this.showMessage(`Castle Lv.${this.castleLevel}!`, '#4ade80');
-        }
+            // UPGRADE: Increase level
+            this.castleLevel = currentLevel + 1;
 
-        // Glow effect
-        const glowColor = this.castleLevel >= CASTLE_CONFIG.maxLevel ? 0xffd700 : 0x4ade80;
-        const glow = this.add.rectangle(this.playerCastle.x, this.playerCastle.y, 180, 220, glowColor, 0.3);
-        this.tweens.add({
-            targets: glow,
-            scaleX: 1.5,
-            scaleY: 1.5,
-            alpha: 0,
-            duration: 600,
-            onComplete: () => glow.destroy()
-        });
+            // Update castle display and stats (setLevel handles health bonus)
+            this.playerCastle.setLevel(this.castleLevel);
+
+            // Update mining speed
+            this.updateMiningSpeed();
+
+            // Play sound
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playGold();
+            }
+
+            // Visual feedback
+            if (this.castleLevel >= CASTLE_CONFIG.maxLevel) {
+                this.showMessage(`Castle MAX LEVEL!`, '#ffd700');
+            } else {
+                this.showMessage(`Castle Lv.${this.castleLevel}!`, '#4ade80');
+            }
+
+            // Glow effect
+            const glowColor = this.castleLevel >= CASTLE_CONFIG.maxLevel ? 0xffd700 : 0x4ade80;
+            const glow = this.add.rectangle(this.playerCastle.x, this.playerCastle.y, 180, 220, glowColor, 0.3);
+            this.tweens.add({
+                targets: glow,
+                scaleX: 1.5,
+                scaleY: 1.5,
+                alpha: 0,
+                duration: 600,
+                onComplete: () => glow.destroy()
+            });
+        }
     }
 
     updateCastleUpgradeDisplay() {
         const level = this.castleLevel || 1;
         if (level >= CASTLE_CONFIG.maxLevel) {
-            this.castleUpgradePercentText.setText('MAX');
-            this.castleUpgradeCostText.setText('');
+            // Show repair option at max level
+            const cost = this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1);
+            this.castleUpgradeCostText.setText(`${cost}g REPAIR`);
         }
     }
 
