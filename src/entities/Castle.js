@@ -308,13 +308,18 @@ class Castle extends Phaser.GameObjects.Container {
 
     setLevel(level) {
         // Clamp level to max 10
+        const oldLevel = this.level;
         this.level = Math.min(level, CASTLE_CONFIG.maxLevel);
         this.levelText.setText(`${this.level}`);
 
         // Update health based on level
-        const healthBonus = (this.level - 1) * 25;
-        this.maxHealth = 100 + healthBonus;
-        this.currentHealth = Math.min(this.currentHealth, this.maxHealth);
+        const oldHealthBonus = (oldLevel - 1) * 25;
+        const newHealthBonus = (this.level - 1) * 25;
+        const healthGain = newHealthBonus - oldHealthBonus;
+
+        this.maxHealth = 100 + newHealthBonus;
+        // Add the HP bonus to current health (not just max)
+        this.currentHealth = Math.min(this.currentHealth + healthGain, this.maxHealth);
         this.updateHealthBar();
 
         // Scale attack stats with level

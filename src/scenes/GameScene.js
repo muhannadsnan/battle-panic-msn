@@ -1533,6 +1533,16 @@ class GameScene extends Phaser.Scene {
     showPauseMenu() {
         this.pauseOverlay = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 
+        // Full screen clickable area for right-click to resume
+        const fullScreenHit = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.01);
+        fullScreenHit.setInteractive();
+        fullScreenHit.on('pointerdown', (pointer) => {
+            if (pointer.rightButtonDown()) {
+                this.togglePause();
+            }
+        });
+        this.pauseOverlay.add(fullScreenHit);
+
         // Modern panel - no border
         const bg = this.add.rectangle(0, 0, 300, 280, 0x0a1520, 0.95);
         this.pauseOverlay.add(bg);
