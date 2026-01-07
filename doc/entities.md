@@ -82,6 +82,32 @@ Units have animated body parts stored in `this.bodyParts`:
 - `leftArm`, `rightArm` - Arm swing
 - `weapon` - Attack swing
 
+#### Unit Promotion System
+Units get promoted based on how many of that type have been spawned in the current game.
+
+**Promotion Levels:**
+| Level | Spawns | Badge | Total Bonus |
+|-------|--------|-------|-------------|
+| 0 | 0-9 | None | +0% |
+| 1 | 10-19 | ★ Silver | +10% |
+| 2 | 20-29 | ★★ Silver | +30% |
+| 3 | 30-39 | ★★★ Silver | +60% |
+| 4 | 40-49 | ★ Gold | +100% |
+| 5 | 50-59 | ★★ Gold | +150% |
+| 6 | 60+ | ★★★ Gold | +200% |
+
+**Bonuses apply to:**
+- HP (multiplied by bonus)
+- Damage (multiplied by bonus)
+- Attack Speed (faster by bonus)
+
+At max promotion (level 6), units have **3x stats**!
+
+**Visual Indicators:**
+- Badge appears on unit spawn button (top-right corner)
+- Promotion notification shows in center of screen
+- Silver badges for levels 1-3, Gold badges for levels 4-6
+
 ---
 
 ## Enemy
@@ -174,17 +200,20 @@ new Castle(scene, x, y)
 
 #### Arrow Attack System
 The castle automatically shoots arrows at nearby enemies:
-- **Range**: 300 pixels
-- **Base Damage**: 5 (scales with level)
-- **Base Attack Speed**: 1000ms (scales with level)
+- **Range**: 300 pixels base (+10% per level)
+- **Base Damage**: 5 (+2 per level)
+- **Base Attack Speed**: 1000ms (-50ms per level, min 400ms)
 - Arrows shoot from random tower (left, right, or center)
 
 #### Stats by Level
-| Level | Arrow Damage | Attack Speed | HP Bonus |
-|-------|--------------|--------------|----------|
-| 1 | 5 | 1.0s | +0 |
-| 5 | 13 | 0.8s | +100 |
-| 10 | 23 | 0.4s | +225 |
+| Level | Arrow Damage | Attack Speed | Range | HP Bonus |
+|-------|--------------|--------------|-------|----------|
+| 1 | 5 | 1.0s | 300px | +0 |
+| 5 | 13 | 0.8s | 420px | +100 |
+| 10 | 23 | 0.4s | 570px | +225 |
+
+#### Mining Speed Bonus
+Castle level also increases mining rate by 10% per level.
 
 #### Key Methods
 

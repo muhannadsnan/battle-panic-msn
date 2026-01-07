@@ -107,6 +107,17 @@ class UnitButton extends Phaser.GameObjects.Container {
         }).setOrigin(0.5);
         this.add(this.unlockInfoText);
 
+        // Promotion badge (hidden by default, shows after 10 spawns)
+        this.promotionLevel = 0;
+        this.promotionBadge = scene.add.text(buttonWidth / 2 - 8, -buttonHeight / 2 + 8, '', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setVisible(false);
+        this.add(this.promotionBadge);
+
         if (isUnlocked) {
             this.unlock();
         }
@@ -501,5 +512,41 @@ class UnitButton extends Phaser.GameObjects.Container {
         const xpNeeded = xpCosts[unitType.toUpperCase()] || 1;
         // 1 XP per 10 waves, so wave needed = XP * 10
         return xpNeeded * 10;
+    }
+
+    setPromotionLevel(level) {
+        this.promotionLevel = level;
+
+        if (level <= 0) {
+            this.promotionBadge.setVisible(false);
+            return;
+        }
+
+        // Determine badge appearance
+        // Level 1-3: Silver (★, ★★, ★★★)
+        // Level 4-6: Gold (★, ★★, ★★★)
+        let color, signs;
+        if (level <= 3) {
+            color = '#c0c0c0'; // Silver
+            signs = level;
+        } else {
+            color = '#ffd700'; // Gold
+            signs = level - 3;
+        }
+
+        const badgeText = '★'.repeat(signs);
+        this.promotionBadge.setText(badgeText);
+        this.promotionBadge.setColor(color);
+        this.promotionBadge.setVisible(true);
+
+        // Animate the badge on promotion
+        this.scene.tweens.add({
+            targets: this.promotionBadge,
+            scaleX: 1.5,
+            scaleY: 1.5,
+            duration: 200,
+            yoyo: true,
+            ease: 'Bounce.easeOut'
+        });
     }
 }

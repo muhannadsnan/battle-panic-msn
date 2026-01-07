@@ -320,6 +320,7 @@ class Castle extends Phaser.GameObjects.Container {
         // Scale attack stats with level
         this.arrowDamage = 5 + (this.level - 1) * 2;        // +2 damage per level
         this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
+        this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
         // Castle grows bigger with each level!
         // Level 1 = 0.6 scale (small castle), Level 10 = 1.4 scale (grand palace)

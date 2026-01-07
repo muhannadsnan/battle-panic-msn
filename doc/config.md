@@ -228,6 +228,11 @@ const RESOURCE_CONFIG = {
 };
 ```
 
+### Mining Speed
+- Base mining speed: 50
+- Castle level bonus: +10% per level
+- Mining rate displayed every 3 seconds while hovering over mines
+
 ---
 
 ## Spawn Configuration

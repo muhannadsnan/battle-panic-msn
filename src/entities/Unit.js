@@ -1,11 +1,12 @@
 // Unit Class - Player's combat units with detailed sprites
 class Unit extends Phaser.GameObjects.Container {
-    constructor(scene, x, y, unitType, upgradeLevel = 1) {
+    constructor(scene, x, y, unitType, upgradeLevel = 1, promotionBonus = 1.0) {
         super(scene, x, y);
 
         this.scene = scene;
         this.unitType = unitType;
         this.upgradeLevel = upgradeLevel;
+        this.promotionBonus = promotionBonus;
 
         // Get base stats
         const baseStats = UNIT_TYPES[unitType.toUpperCase()];
@@ -17,12 +18,17 @@ class Unit extends Phaser.GameObjects.Container {
         // Apply upgrade bonuses
         const stats = scene.combatSystem.getStatsWithUpgrades(baseStats, upgradeLevel);
 
+        // Apply promotion bonus to HP, damage, and attack speed
+        const promotedHealth = Math.floor(stats.health * promotionBonus);
+        const promotedDamage = Math.floor(stats.damage * promotionBonus);
+        const promotedAttackSpeed = Math.max(200, Math.floor(stats.attackSpeed / promotionBonus)); // Faster = lower ms
+
         this.stats = { ...stats };
-        this.maxHealth = stats.health;
-        this.currentHealth = stats.health;
-        this.damage = stats.damage;
+        this.maxHealth = promotedHealth;
+        this.currentHealth = promotedHealth;
+        this.damage = promotedDamage;
         this.speed = stats.speed;
-        this.attackSpeed = stats.attackSpeed;
+        this.attackSpeed = promotedAttackSpeed;
         this.range = stats.range;
         this.isRanged = stats.isRanged || false;
         this.splashDamage = stats.splashDamage || false;

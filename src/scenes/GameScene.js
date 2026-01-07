@@ -49,6 +49,16 @@ class GameScene extends Phaser.Scene {
             giant: 0
         };
 
+        // Unit promotion levels (calculated from spawn counts)
+        // Level 0: 0-9 spawns, Level 1: 10-19, Level 2: 20-29, etc up to Level 6
+        this.unitPromotionLevels = {
+            peasant: 0,
+            archer: 0,
+            knight: 0,
+            wizard: 0,
+            giant: 0
+        };
+
         // Resource tracking
         this.goldCollectedThisRun = 0;
         this.woodCollectedThisRun = 0;
@@ -556,7 +566,8 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeZone.add(hitArea);
 
         // Spinner container (hidden by default, shown on hover)
-        this.castleSpinnerContainer = this.add.container(0, -20);
+        // Positioned below castle health bar (health bar is at y ~250)
+        this.castleSpinnerContainer = this.add.container(0, 80);
         this.castleUpgradeZone.add(this.castleSpinnerContainer);
         this.castleSpinnerContainer.setVisible(false);
 
@@ -713,13 +724,8 @@ class GameScene extends Phaser.Scene {
         // Increase level (in-game only, resets each battle)
         this.castleLevel = currentLevel + 1;
 
-        // Update castle display and health
+        // Update castle display and stats (setLevel handles health bonus)
         this.playerCastle.setLevel(this.castleLevel);
-        // Add health bonus for upgrade
-        const healthBonus = 25;
-        this.playerCastle.maxHealth += healthBonus;
-        this.playerCastle.currentHealth += healthBonus;
-        this.playerCastle.updateHealthBar();
 
         // Update mining speed
         this.updateMiningSpeed();
@@ -758,10 +764,9 @@ class GameScene extends Phaser.Scene {
     }
 
     updateMiningSpeed() {
-        // Mining speed increases 15% per castle level
-        // Base speed is slower (50 instead of 80)
+        // Mining speed increases 10% per castle level
         const level = this.castleLevel || 1;
-        this.miningSpeed = 50 * (1 + (level - 1) * 0.15);
+        this.miningSpeed = 50 * (1 + (level - 1) * 0.1);
     }
 
     createUI() {
@@ -1051,8 +1056,11 @@ class GameScene extends Phaser.Scene {
         if (this.woodPartial === undefined) this.woodPartial = 0;
         if (this.lastGoldSoundTime === undefined) this.lastGoldSoundTime = 0;
         if (this.lastWoodSoundTime === undefined) this.lastWoodSoundTime = 0;
+        if (this.lastGoldRateDisplayTime === undefined) this.lastGoldRateDisplayTime = 0;
+        if (this.lastWoodRateDisplayTime === undefined) this.lastWoodRateDisplayTime = 0;
 
         const now = Date.now();
+        const rateDisplayInterval = 3000; // Show rate every 3 seconds
 
         // Gold mining
         if (this.goldMine.isHovering) {
@@ -1072,6 +1080,12 @@ class GameScene extends Phaser.Scene {
                 this.gold += 1;
                 this.goldCollectedThisRun += 1;
                 this.resourceDisplay.setGold(this.gold);
+            }
+
+            // Show mining rate every 3 seconds
+            if (now - this.lastGoldRateDisplayTime >= rateDisplayInterval) {
+                this.lastGoldRateDisplayTime = now;
+                this.showMiningRate(this.goldMine.x, this.goldMine.y - 40, resourcePerSecond, '#ffd700');
             }
         }
 
@@ -1093,6 +1107,12 @@ class GameScene extends Phaser.Scene {
                 this.wood += 1;
                 this.woodCollectedThisRun += 1;
                 this.resourceDisplay.setWood(this.wood);
+            }
+
+            // Show mining rate every 3 seconds
+            if (now - this.lastWoodRateDisplayTime >= rateDisplayInterval) {
+                this.lastWoodRateDisplayTime = now;
+                this.showMiningRate(this.woodMine.x, this.woodMine.y - 40, resourcePerSecond, '#cd853f');
             }
         }
 
@@ -1305,6 +1325,10 @@ class GameScene extends Phaser.Scene {
             audioManager.playSpawn();
         }
 
+        // Get promotion bonus for this unit type
+        const promotionLevel = this.getPromotionLevel(unitType);
+        const promotionBonus = this.getPromotionBonus(promotionLevel);
+
         // Spawn unit near castle
         const spawnY = Phaser.Math.Between(300, 460);
         const unit = new Unit(
@@ -1312,17 +1336,20 @@ class GameScene extends Phaser.Scene {
             CASTLE_CONFIG.playerX + 80,
             spawnY,
             unitType,
-            upgradeData.level
+            upgradeData.level,
+            promotionBonus
         );
 
         this.units.add(unit);
         this.lastSpawnTime = Date.now(); // Record spawn time for throttle
         this.unitsSpawnedThisRun++;
 
-        // Track unit type count
+        // Track unit type count and check for promotion
         const unitKey = unitType.toLowerCase();
         if (this.unitCounts[unitKey] !== undefined) {
             this.unitCounts[unitKey]++;
+            // Check if this spawn triggered a promotion
+            this.checkPromotion(unitType);
         }
     }
 
@@ -1623,5 +1650,130 @@ class GameScene extends Phaser.Scene {
             duration: 1500,
             onComplete: () => message.destroy()
         });
+    }
+
+    showMiningRate(x, y, rate, color) {
+        const rateText = this.add.text(x, y, `${rate.toFixed(1)}/s`, {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: color,
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setDepth(1000);
+
+        this.tweens.add({
+            targets: rateText,
+            y: y - 20,
+            alpha: 0,
+            duration: 2000,
+            onComplete: () => rateText.destroy()
+        });
+    }
+
+    // Unit Promotion System
+    // Every 10 units spawned = 1 promotion level (max level 6)
+    // Bonuses: Lv1=+10%, Lv2=+20%, Lv3=+30%, Lv4=+40%, Lv5=+50%, Lv6=+50% (total 200%)
+    getPromotionLevel(unitType) {
+        const typeKey = unitType.toLowerCase();
+        const spawnCount = this.unitCounts[typeKey] || 0;
+        return Math.min(6, Math.floor(spawnCount / 10));
+    }
+
+    getPromotionBonus(promotionLevel) {
+        // Returns multiplier: 1.0, 1.1, 1.3, 1.6, 2.0, 2.5, 3.0
+        const bonuses = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5];
+        let totalBonus = 0;
+        for (let i = 1; i <= promotionLevel; i++) {
+            totalBonus += bonuses[i];
+        }
+        return 1 + totalBonus;
+    }
+
+    getPromotionBadgeInfo(promotionLevel) {
+        // Returns {color: 'silver'|'gold', signs: 1-3}
+        if (promotionLevel <= 0) return null;
+        if (promotionLevel <= 3) {
+            return { color: 'silver', signs: promotionLevel };
+        } else {
+            return { color: 'gold', signs: promotionLevel - 3 };
+        }
+    }
+
+    checkPromotion(unitType) {
+        const typeKey = unitType.toLowerCase();
+        const oldLevel = this.unitPromotionLevels[typeKey];
+        const newLevel = this.getPromotionLevel(unitType);
+
+        if (newLevel > oldLevel) {
+            this.unitPromotionLevels[typeKey] = newLevel;
+            this.showPromotionNotification(unitType, newLevel);
+            // Update the unit button badge
+            this.updateUnitButtonBadge(unitType, newLevel);
+            return true;
+        }
+        return false;
+    }
+
+    showPromotionNotification(unitType, level) {
+        const badgeInfo = this.getPromotionBadgeInfo(level);
+        const unitName = UNIT_TYPES[unitType].name;
+        const color = badgeInfo.color === 'gold' ? '#ffd700' : '#c0c0c0';
+        const signs = '★'.repeat(badgeInfo.signs);
+
+        const message = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50,
+            `${unitName} PROMOTED!`, {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: color,
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5).setDepth(1100);
+
+        const badge = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, signs, {
+            fontSize: '36px',
+            color: color,
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5).setDepth(1100);
+
+        const bonus = Math.round((this.getPromotionBonus(level) - 1) * 100);
+        const bonusText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 40,
+            `+${bonus}% Stats!`, {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#4ade80',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5).setDepth(1100);
+
+        // Play sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playGold();
+        }
+
+        // Animate out
+        this.tweens.add({
+            targets: [message, badge, bonusText],
+            y: '-=30',
+            alpha: 0,
+            duration: 2000,
+            delay: 1000,
+            onComplete: () => {
+                message.destroy();
+                badge.destroy();
+                bonusText.destroy();
+            }
+        });
+    }
+
+    updateUnitButtonBadge(unitType, level) {
+        // Find the unit button and update its badge
+        const typeKey = unitType.toLowerCase();
+        const buttonIndex = ['peasant', 'archer', 'knight', 'wizard', 'giant'].indexOf(typeKey);
+        if (buttonIndex >= 0 && this.unitButtons && this.unitButtons[buttonIndex]) {
+            this.unitButtons[buttonIndex].setPromotionLevel(level);
+        }
     }
 }
