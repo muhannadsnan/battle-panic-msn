@@ -35,6 +35,7 @@ class WaveSystem {
         const orcCount = waveNumber >= 2 ? Math.floor((1 + waveNumber * 0.4) * waveMultiplier) : 0;
         const skeletonCount = waveNumber >= 4 ? Math.floor((waveNumber - 2) * 0.4 * waveMultiplier) : 0;
         const skeletonArcherCount = waveNumber >= 6 ? Math.floor((waveNumber - 4) * 0.35 * waveMultiplier) : 0;
+        const spearMonsterCount = waveNumber >= 7 ? Math.floor((waveNumber - 5) * 0.3 * waveMultiplier) : 0;
         const trollCount = waveNumber >= 8 ? Math.floor((waveNumber - 6) * 0.25 * waveMultiplier) : 0;
         const darkKnightCount = waveNumber >= 12 ? Math.floor((waveNumber - 10) * 0.25 * waveMultiplier) : 0;
         const demonCount = waveNumber >= 18 ? Math.floor((waveNumber - 16) * 0.2 * waveMultiplier) : 0;
@@ -51,6 +52,9 @@ class WaveSystem {
         }
         for (let i = 0; i < skeletonArcherCount; i++) {
             enemies.push({ type: 'SKELETON_ARCHER', direction: this.getRandomSpawnDirection(waveNumber) });
+        }
+        for (let i = 0; i < spearMonsterCount; i++) {
+            enemies.push({ type: 'SPEAR_MONSTER', direction: this.getRandomSpawnDirection(waveNumber) });
         }
         for (let i = 0; i < trollCount; i++) {
             enemies.push({ type: 'TROLL', direction: this.getRandomSpawnDirection(waveNumber) });

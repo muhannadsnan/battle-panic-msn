@@ -24,6 +24,36 @@ class GameScene extends Phaser.Scene {
         this.goldEarnedThisRun = 0;
         this.woodEarnedThisRun = 0;
         this.enemiesKilledThisRun = 0;
+        this.unitsSpawnedThisRun = 0;
+        this.gameStartTime = Date.now();
+
+        // Kill stats per enemy type
+        this.killStats = {
+            goblin: 0,
+            orc: 0,
+            skeleton: 0,
+            skeleton_archer: 0,
+            troll: 0,
+            dark_knight: 0,
+            demon: 0,
+            dragon: 0,
+            spear_monster: 0
+        };
+
+        // Unit spawn counts per type
+        this.unitCounts = {
+            peasant: 0,
+            archer: 0,
+            knight: 0,
+            wizard: 0,
+            giant: 0
+        };
+
+        // Resource tracking
+        this.goldCollectedThisRun = 0;
+        this.woodCollectedThisRun = 0;
+        this.goldSpentThisRun = 0;
+        this.woodSpentThisRun = 0;
 
         // Create groups
         this.units = this.add.group();
@@ -69,25 +99,29 @@ class GameScene extends Phaser.Scene {
         this.add.rectangle(GAME_WIDTH / 2, 0, GAME_WIDTH, 120, 0x87CEEB).setOrigin(0.5, 0);
         this.add.rectangle(GAME_WIDTH / 2, 60, GAME_WIDTH, 60, 0x98D8EF, 0.5);
 
-        // Base grass floor - BRIGHT green
-        this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30, GAME_WIDTH, GAME_HEIGHT - 60, 0x7EC850);
+        // Base ground floor - Yellow/tan field (not green - orcs are green!)
+        this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30, GAME_WIDTH, GAME_HEIGHT - 60, 0xC4A860);
 
-        // Grass texture - lighter patches for depth
+        // Ground texture - varied patches for depth (yellows, tans, light browns)
+        const groundColors = [0xD4B870, 0xBFA058, 0xCCB068, 0xB89848, 0xDDC080];
         for (let i = 0; i < 50; i++) {
             const x = Phaser.Math.Between(0, GAME_WIDTH);
             const y = Phaser.Math.Between(100, GAME_HEIGHT);
             const w = Phaser.Math.Between(60, 140);
             const h = Phaser.Math.Between(40, 80);
-            this.add.rectangle(x, y, w, h, 0x8BD860, 0.5);
+            const color = Phaser.Math.RND.pick(groundColors);
+            this.add.rectangle(x, y, w, h, color, 0.5);
         }
 
-        // Darker grass patches for variety
+        // Darker patches for variety (warm browns)
+        const darkGroundColors = [0xA08040, 0x907838, 0xB09050, 0x9A8545];
         for (let i = 0; i < 40; i++) {
             const x = Phaser.Math.Between(0, GAME_WIDTH);
             const y = Phaser.Math.Between(100, GAME_HEIGHT);
             const w = Phaser.Math.Between(40, 90);
             const h = Phaser.Math.Between(25, 50);
-            this.add.rectangle(x, y, w, h, 0x6AB840, 0.4);
+            const color = Phaser.Math.RND.pick(darkGroundColors);
+            this.add.rectangle(x, y, w, h, color, 0.4);
         }
 
         // Cute path/dirt trail to castle
@@ -248,13 +282,51 @@ class GameScene extends Phaser.Scene {
             'wood'
         );
 
-        // Mining state
-        this.goldMineProgress = 0;
-        this.woodMineProgress = 0;
-        this.miningTarget = 100; // Progress needed to collect
+        // Mining config
+        this.miningTarget = 100; // Used for resource rate calculation
 
-        // Create custom axe cursor
+        // Hide default cursor and create custom cursors
+        this.input.setDefaultCursor('none');
+        this.createSwordCursor();
         this.createAxeCursor();
+    }
+
+    createSwordCursor() {
+        this.swordCursor = this.add.container(0, 0);
+        this.swordCursor.setDepth(2000);
+
+        // Sword blade (silver/steel)
+        const blade = this.add.rectangle(0, -20, 8, 40, 0xC0C0C0);
+        blade.setStrokeStyle(1, 0x888888);
+        this.swordCursor.add(blade);
+
+        // Blade highlight
+        this.swordCursor.add(this.add.rectangle(-1, -20, 3, 36, 0xE8E8E8));
+
+        // Blade tip
+        this.swordCursor.add(this.add.rectangle(0, -42, 6, 8, 0xD0D0D0));
+        this.swordCursor.add(this.add.rectangle(0, -48, 4, 6, 0xE0E0E0));
+
+        // Cross guard (gold)
+        const guard = this.add.rectangle(0, 2, 24, 6, 0xFFD700);
+        guard.setStrokeStyle(1, 0xDAA520);
+        this.swordCursor.add(guard);
+        this.swordCursor.add(this.add.rectangle(-14, 4, 6, 4, 0xFFD700));
+        this.swordCursor.add(this.add.rectangle(14, 4, 6, 4, 0xFFD700));
+
+        // Handle (brown leather)
+        this.swordCursor.add(this.add.rectangle(0, 16, 6, 20, 0x8B4513));
+        for (let i = 0; i < 4; i++) {
+            this.swordCursor.add(this.add.rectangle(0, 8 + i * 5, 7, 2, 0x654321));
+        }
+
+        // Pommel (gold)
+        const pommel = this.add.rectangle(0, 28, 10, 8, 0xFFD700);
+        pommel.setStrokeStyle(1, 0xDAA520);
+        this.swordCursor.add(pommel);
+
+        this.swordCursor.setAngle(-30);
+        this.swordCursor.setScale(0.7);
     }
 
     createAxeCursor() {
@@ -278,7 +350,12 @@ class GameScene extends Phaser.Scene {
 
         // Follow mouse
         this.input.on('pointermove', (pointer) => {
-            if (this.isOverMine) {
+            // Update sword cursor position
+            if (this.swordCursor) {
+                this.swordCursor.setPosition(pointer.x + 10, pointer.y + 15);
+            }
+            // Update axe cursor position when over mine
+            if (this.isOverMine && this.axeCursor) {
                 this.axeCursor.setPosition(pointer.x, pointer.y);
             }
         });
@@ -410,11 +487,11 @@ class GameScene extends Phaser.Scene {
                 scaleY: 1.08,
                 duration: 200
             });
-            // Show axe cursor, hide default
+            // Show axe cursor, hide sword cursor
             this.isOverMine = true;
             this.axeCursor.setVisible(true);
             this.axeCursor.setPosition(pointer.x, pointer.y);
-            this.input.setDefaultCursor('none');
+            this.swordCursor.setVisible(false);
         });
 
         hitArea.on('pointerout', () => {
@@ -426,12 +503,12 @@ class GameScene extends Phaser.Scene {
                 scaleY: 1,
                 duration: 200
             });
-            // Hide axe cursor, restore default
+            // Hide axe cursor, show sword cursor
             this.isOverMine = false;
             this.axeCursor.setVisible(false);
             this.axeChopPhase = 0;
             this.axeCursor.setAngle(0);
-            this.input.setDefaultCursor('default');
+            this.swordCursor.setVisible(true);
         });
 
         container.isHovering = false;
@@ -630,6 +707,7 @@ class GameScene extends Phaser.Scene {
 
         // Spend gold
         this.gold -= cost;
+        this.goldSpentThisRun += cost;
         this.resourceDisplay.subtractGold(cost);
 
         // Increase level (in-game only, resets each battle)
@@ -966,77 +1044,68 @@ class GameScene extends Phaser.Scene {
         if (this.isPaused) return;
 
         const progressPerFrame = (this.miningSpeed * delta) / 1000;
+        const soundTickInterval = 200; // Play sound every 200ms while hovering
 
-        // Initialize partial resource trackers
+        // Initialize trackers
         if (this.goldPartial === undefined) this.goldPartial = 0;
         if (this.woodPartial === undefined) this.woodPartial = 0;
+        if (this.lastGoldSoundTime === undefined) this.lastGoldSoundTime = 0;
+        if (this.lastWoodSoundTime === undefined) this.lastWoodSoundTime = 0;
 
-        // Gold mining - add resources gradually as progress fills
+        const now = Date.now();
+
+        // Gold mining
         if (this.goldMine.isHovering) {
-            const oldProgress = this.goldMineProgress;
-            this.goldMineProgress += progressPerFrame;
+            // Play tick sound at fixed interval
+            if (now - this.lastGoldSoundTime >= soundTickInterval) {
+                this.lastGoldSoundTime = now;
+                if (typeof audioManager !== 'undefined') audioManager.playGold();
+            }
 
-            // Add partial gold based on progress increment
-            const resourcePerProgress = RESOURCE_CONFIG.mineGoldAmount / this.miningTarget;
-            this.goldPartial += progressPerFrame * resourcePerProgress;
+            // Add partial gold based on mining speed
+            const resourcePerSecond = RESOURCE_CONFIG.mineGoldAmount / (this.miningTarget / this.miningSpeed);
+            this.goldPartial += (resourcePerSecond * delta) / 1000;
 
             // Add whole gold units as they accumulate
             while (this.goldPartial >= 1) {
                 this.goldPartial -= 1;
                 this.gold += 1;
+                this.goldCollectedThisRun += 1;
                 this.resourceDisplay.setGold(this.gold);
             }
-
-            if (this.goldMineProgress >= this.miningTarget) {
-                this.goldMineProgress = 0;
-                // Play sound and sparkle on complete
-                if (typeof audioManager !== 'undefined') audioManager.playGold();
-                this.showMineEffect(this.goldMine, 0xFFD700);
-            }
-        } else {
-            // Slowly decay progress when not hovering
-            this.goldMineProgress = Math.max(0, this.goldMineProgress - progressPerFrame * 0.3);
         }
 
-        // Wood mining - add resources gradually as progress fills
+        // Wood mining
         if (this.woodMine.isHovering) {
-            const oldProgress = this.woodMineProgress;
-            this.woodMineProgress += progressPerFrame;
+            // Play tick sound at fixed interval
+            if (now - this.lastWoodSoundTime >= soundTickInterval) {
+                this.lastWoodSoundTime = now;
+                if (typeof audioManager !== 'undefined') audioManager.playWood();
+            }
 
-            // Add partial wood based on progress increment
-            const resourcePerProgress = RESOURCE_CONFIG.mineWoodAmount / this.miningTarget;
-            this.woodPartial += progressPerFrame * resourcePerProgress;
+            // Add partial wood based on mining speed
+            const resourcePerSecond = RESOURCE_CONFIG.mineWoodAmount / (this.miningTarget / this.miningSpeed);
+            this.woodPartial += (resourcePerSecond * delta) / 1000;
 
             // Add whole wood units as they accumulate
             while (this.woodPartial >= 1) {
                 this.woodPartial -= 1;
                 this.wood += 1;
+                this.woodCollectedThisRun += 1;
                 this.resourceDisplay.setWood(this.wood);
             }
-
-            if (this.woodMineProgress >= this.miningTarget) {
-                this.woodMineProgress = 0;
-                // Play sound and sparkle on complete
-                if (typeof audioManager !== 'undefined') audioManager.playWood();
-                this.showMineEffect(this.woodMine, 0x8B4513);
-            }
-        } else {
-            this.woodMineProgress = Math.max(0, this.woodMineProgress - progressPerFrame * 0.3);
         }
 
-        // Update spinner visuals
-        this.drawMineSpinner(this.goldMine, this.goldMineProgress);
-        this.drawMineSpinner(this.woodMine, this.woodMineProgress);
+        // Update glow effect on mines
+        if (this.goldMine.isHovering) {
+            this.goldMine.glowRing.setAlpha(0.3 + Math.sin(Date.now() / 200) * 0.2);
+        }
+        if (this.woodMine.isHovering) {
+            this.woodMine.glowRing.setAlpha(0.3 + Math.sin(Date.now() / 200) * 0.2);
+        }
 
         // Animate axe cursor
         this.updateAxeCursor();
-    }
-
-    drawMineSpinner(mine, progress) {
-        // No spinner - just glow effect on the resource when hovering
-        if (mine.isHovering) {
-            mine.glowRing.setAlpha(0.3 + Math.sin(Date.now() / 200) * 0.2);
-        }
     }
 
     updateAxeCursor() {
@@ -1226,6 +1295,8 @@ class GameScene extends Phaser.Scene {
         // Spend resources
         this.gold -= stats.goldCost;
         this.wood -= stats.woodCost;
+        this.goldSpentThisRun += stats.goldCost;
+        this.woodSpentThisRun += stats.woodCost;
         this.resourceDisplay.subtractGold(stats.goldCost);
         this.resourceDisplay.subtractWood(stats.woodCost);
 
@@ -1246,6 +1317,13 @@ class GameScene extends Phaser.Scene {
 
         this.units.add(unit);
         this.lastSpawnTime = Date.now(); // Record spawn time for throttle
+        this.unitsSpawnedThisRun++;
+
+        // Track unit type count
+        const unitKey = unitType.toLowerCase();
+        if (this.unitCounts[unitKey] !== undefined) {
+            this.unitCounts[unitKey]++;
+        }
     }
 
     spawnEnemy(enemyType, direction = 'right') {
@@ -1297,6 +1375,13 @@ class GameScene extends Phaser.Scene {
 
     onEnemyKilled(enemy) {
         this.enemiesKilledThisRun++;
+
+        // Track kill by enemy type
+        const enemyType = enemy.enemyType ? enemy.enemyType.toLowerCase() : 'goblin';
+        if (this.killStats[enemyType] !== undefined) {
+            this.killStats[enemyType]++;
+        }
+
         this.enemies.remove(enemy, true);
         this.waveSystem.onEnemyKilled();
     }
@@ -1342,9 +1427,24 @@ class GameScene extends Phaser.Scene {
             this.woodMineTimer.remove();
         }
 
-        // Update save data
+        // Update save data with detailed stats
         const finalWave = this.waveSystem.currentWave;
-        saveSystem.updateHighScore(finalWave, this.goldEarnedThisRun, this.enemiesKilledThisRun);
+        const survivalTime = Math.floor((Date.now() - this.gameStartTime) / 1000);
+        saveSystem.updateHighScore(
+            finalWave,
+            this.goldEarnedThisRun,
+            this.enemiesKilledThisRun,
+            this.killStats,
+            {
+                survivalTime,
+                unitsSpawned: this.unitsSpawnedThisRun,
+                unitCounts: this.unitCounts,
+                goldCollected: this.goldCollectedThisRun,
+                woodCollected: this.woodCollectedThisRun,
+                goldSpent: this.goldSpentThisRun,
+                woodSpent: this.woodSpentThisRun
+            }
+        );
 
         // Show game over text
         const gameOverText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50, 'CASTLE DESTROYED!', {

@@ -121,6 +121,9 @@ class Enemy extends Phaser.GameObjects.Container {
             case 'DRAGON':
                 this.createDragon(scene);
                 break;
+            case 'SPEAR_MONSTER':
+                this.createSpearMonster(scene);
+                break;
             default:
                 this.createGoblin(scene);
         }
@@ -753,6 +756,93 @@ class Enemy extends Phaser.GameObjects.Container {
         this.mainSprite = body;
     }
 
+    createSpearMonster(scene) {
+        // CARTOONY SPEAR MONSTER - tribal brute that throws big spears!
+        // Shadow
+        this.spriteContainer.add(scene.add.rectangle(0, 38, 28, 6, 0x000000, 0.2));
+
+        // Animated legs
+        this.bodyParts.leftLeg = scene.add.container(-7, 26);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 10, 16, 0x8B6B4A));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 8, 12, 6, 0x7A5A3A)); // foot
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(7, 26);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 10, 16, 0x8B6B4A));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 8, 12, 6, 0x7A5A3A)); // foot
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container
+        this.bodyParts.torso = scene.add.container(0, 0);
+
+        // Muscular brown body
+        const body = scene.add.rectangle(0, 6, 26, 28, 0x9B7B5A);
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 8, 22, 22, 0xAB8B6A)); // highlight
+        this.bodyParts.torso.add(scene.add.rectangle(-10, 6, 5, 24, 0x7A5A3A)); // shade
+
+        // Tribal markings on chest
+        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 4, 18, 0xFF4444)); // red stripe
+        this.bodyParts.torso.add(scene.add.rectangle(-6, 6, 3, 8, 0xFF4444)); // left mark
+        this.bodyParts.torso.add(scene.add.rectangle(6, 6, 3, 8, 0xFF4444)); // right mark
+
+        // Animated arms
+        this.bodyParts.leftArm = scene.add.container(-16, 4);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 10, 20, 0x9B7B5A));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 12, 12, 8, 0xAB8B6A)); // fist
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
+
+        this.bodyParts.rightArm = scene.add.container(16, 4);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 10, 20, 0x9B7B5A));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 12, 12, 8, 0xAB8B6A)); // fist
+        this.bodyParts.torso.add(this.bodyParts.rightArm);
+
+        // Fierce head
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16, 24, 22, 0x9B7B5A));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 20, 16, 0xAB8B6A)); // highlight
+        this.bodyParts.torso.add(scene.add.rectangle(-8, -16, 5, 18, 0x7A5A3A)); // shade
+
+        // War paint on face
+        this.bodyParts.torso.add(scene.add.rectangle(-8, -14, 6, 3, 0xFF4444)); // left war paint
+        this.bodyParts.torso.add(scene.add.rectangle(8, -14, 6, 3, 0xFF4444)); // right war paint
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 8, 3, 0xFF4444)); // chin paint
+
+        // Angry eyes
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -18, 8, 8, 0xFFFFFF)); // left eye
+        this.bodyParts.torso.add(scene.add.rectangle(6, -18, 8, 8, 0xFFFFFF)); // right eye
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -17, 4, 5, 0x000000)); // left pupil
+        this.bodyParts.torso.add(scene.add.rectangle(7, -17, 4, 5, 0x000000)); // right pupil
+        // Angry brow
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -24, 10, 4, 0x5A4A3A));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -24, 10, 4, 0x5A4A3A));
+
+        // Feather headdress
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -30, 4, 12, 0xFF6644));
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -38, 3, 10, 0xFF8866));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -32, 4, 14, 0xFFAA44));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -42, 3, 12, 0xFFCC66));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -30, 4, 12, 0xFF6644));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -38, 3, 10, 0xFF8866));
+
+        // BIG SPEAR (the main weapon!)
+        this.bodyParts.weapon = scene.add.container(-24, -8);
+        // Long wooden shaft
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 16, 6, 56, 0x8B5A33));
+        this.bodyParts.weapon.add(scene.add.rectangle(1, 18, 4, 52, 0x9B6A43)); // highlight
+        // Big stone spearhead
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -18, 12, 24, 0x666666));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -16, 8, 20, 0x888888)); // highlight
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -26, 6, 12, 0x999999)); // tip
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -30, 4, 6, 0xAAAAAA)); // sharp point
+        // Feather decoration on spear
+        this.bodyParts.weapon.add(scene.add.rectangle(-4, -4, 6, 8, 0xFF4444));
+        this.bodyParts.weapon.add(scene.add.rectangle(4, -4, 6, 8, 0xFFAA44));
+        this.bodyParts.torso.add(this.bodyParts.weapon);
+
+        this.spriteContainer.add(this.bodyParts.torso);
+        this.mainSprite = body;
+    }
+
     update(time, delta) {
         if (this.isDead) return;
 
@@ -843,8 +933,13 @@ class Enemy extends Phaser.GameObjects.Container {
         });
 
         if (this.isRanged) {
-            // Create projectile
-            const projectileType = this.isBoss ? 'fireball' : 'arrow';
+            // Create projectile based on enemy type
+            let projectileType = 'arrow';
+            if (this.isBoss) {
+                projectileType = 'fireball';
+            } else if (this.enemyType.toUpperCase() === 'SPEAR_MONSTER') {
+                projectileType = 'spear';
+            }
             const projectile = new Projectile(
                 this.scene,
                 this.x,

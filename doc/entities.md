@@ -136,13 +136,14 @@ Returns spawn coordinates based on direction:
 
 #### Enemy Sprites
 Each enemy type has unique visuals:
-- `createGoblin()` - Small green creature
-- `createOrc()` - Large green warrior
-- `createSkeleton()` - Bone warrior
-- `createSkeletonArcher()` - Skeleton with bow
-- `createTroll()` - Massive beast
-- `createDarkKnight()` - Evil knight
-- `createDemon()` - Winged demon
+- `createGoblin()` - Small green creature with dagger
+- `createOrc()` - Large green warrior with battle axe
+- `createSkeleton()` - Bone warrior with rusty sword
+- `createSkeletonArcher()` - Hooded skeleton with bow
+- `createSpearMonster()` - Tribal warrior with big spear, feather headdress, war paint
+- `createTroll()` - Massive beast with wooden club
+- `createDarkKnight()` - Evil armored knight with dark sword
+- `createDemon()` - Winged demon with horns and claws
 - `createDragon()` - Boss with crown, breathes fire
 
 ---
@@ -239,12 +240,12 @@ new Projectile(scene, x, y, target, options)
 | `isPlayerProjectile` | boolean | From unit or enemy |
 | `splashDamage` | boolean | Deals AoE |
 | `splashRadius` | number | AoE radius |
-| `projectileType` | string | 'arrow', 'magic', 'fireball' |
+| `projectileType` | string | 'arrow', 'magic', 'fireball', 'spear' |
 
 #### Projectile Types
 
-**Arrow** (Archer)
-- Simple pointed shaft
+**Arrow** (Archer, Castle)
+- Simple pointed shaft with feathers
 - Fast, single target
 
 **Magic** (Wizard)
@@ -254,6 +255,11 @@ new Projectile(scene, x, y, target, options)
 **Fireball** (Dragon Boss)
 - Large flaming sphere
 - Animated glow effect
+
+**Spear** (Spear Monster)
+- Big wooden shaft with stone spearhead
+- Feather decorations
+- Slight wobble while flying
 
 #### Key Methods
 

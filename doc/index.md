@@ -57,6 +57,7 @@ battle-panic-msn/
 | [systems.md](systems.md) | Combat, waves, saving, audio - core game systems |
 | [scenes.md](scenes.md) | Menu, gameplay, upgrades, game over - scene flow |
 | [ui.md](ui.md) | UI components - displays, buttons, health bars |
+| [auth.md](auth.md) | Authentication system (planned) - magic link email, cloud saves |
 
 ---
 
@@ -97,6 +98,7 @@ BootScene → PreloadScene → MenuScene
 - **Orc** (Wave 2+) - Stronger melee
 - **Skeleton** (Wave 4+) - Medium threat
 - **Skeleton Archer** (Wave 6+) - Ranged enemy
+- **Spear Monster** (Wave 7+) - Throws big spears, tribal warrior
 - **Troll** (Wave 8+) - High HP tank
 - **Dark Knight** (Wave 12+) - Strong melee
 - **Demon** (Wave 18+) - Very strong

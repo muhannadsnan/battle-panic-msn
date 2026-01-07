@@ -11,6 +11,39 @@ class SaveSystem {
             highestWave: 0,
             totalGoldEarned: 0,
             totalEnemiesKilled: 0,
+            // Detailed kill stats per enemy type
+            killStats: {
+                goblin: 0,
+                orc: 0,
+                skeleton: 0,
+                skeleton_archer: 0,
+                troll: 0,
+                dark_knight: 0,
+                demon: 0,
+                dragon: 0,  // Bosses
+                spear_monster: 0
+            },
+            // Lifetime stats for achievements
+            stats: {
+                totalBossesKilled: 0,
+                totalGamesPlayed: 0,
+                totalWavesCompleted: 0,
+                longestSurvivalTime: 0,  // in seconds
+                totalUnitsSpawned: 0,
+                // Unit spawn counts
+                unitsSpawned: {
+                    peasant: 0,
+                    archer: 0,
+                    knight: 0,
+                    wizard: 0,
+                    giant: 0
+                },
+                // Resource totals
+                totalGoldCollected: 0,
+                totalWoodCollected: 0,
+                totalGoldSpent: 0,
+                totalWoodSpent: 0
+            },
             upgrades: {
                 peasant: { level: 1, unlocked: true },
                 archer: { level: 1, unlocked: true },
@@ -58,9 +91,16 @@ class SaveSystem {
 
     mergeWithDefaults(saved) {
         const defaults = this.getDefaultData();
+        const savedStats = saved.stats || {};
         return {
             ...defaults,
             ...saved,
+            killStats: { ...defaults.killStats, ...(saved.killStats || {}) },
+            stats: {
+                ...defaults.stats,
+                ...savedStats,
+                unitsSpawned: { ...defaults.stats.unitsSpawned, ...(savedStats.unitsSpawned || {}) }
+            },
             upgrades: { ...defaults.upgrades, ...saved.upgrades },
             castleUpgrades: { ...defaults.castleUpgrades, ...saved.castleUpgrades },
             settings: { ...defaults.settings, ...saved.settings }
@@ -76,13 +116,44 @@ class SaveSystem {
         return localStorage.getItem(this.saveKey) !== null;
     }
 
-    updateHighScore(wave, goldEarned, enemiesKilled) {
+    updateHighScore(wave, goldEarned, enemiesKilled, killStats = {}, gameStats = {}) {
         const data = this.load();
         if (wave > data.highestWave) {
             data.highestWave = wave;
         }
         data.totalGoldEarned += goldEarned;
         data.totalEnemiesKilled += enemiesKilled;
+
+        // Update detailed kill stats per enemy type
+        for (const enemyType in killStats) {
+            if (data.killStats[enemyType] !== undefined) {
+                data.killStats[enemyType] += killStats[enemyType];
+            }
+        }
+
+        // Update lifetime stats
+        data.stats.totalGamesPlayed += 1;
+        data.stats.totalWavesCompleted += wave;
+        data.stats.totalBossesKilled += (killStats.dragon || 0);
+        if (gameStats.survivalTime && gameStats.survivalTime > data.stats.longestSurvivalTime) {
+            data.stats.longestSurvivalTime = gameStats.survivalTime;
+        }
+        data.stats.totalUnitsSpawned += (gameStats.unitsSpawned || 0);
+
+        // Update unit spawn counts per type
+        if (gameStats.unitCounts) {
+            for (const unitType in gameStats.unitCounts) {
+                if (data.stats.unitsSpawned[unitType] !== undefined) {
+                    data.stats.unitsSpawned[unitType] += gameStats.unitCounts[unitType];
+                }
+            }
+        }
+
+        // Update resource stats
+        data.stats.totalGoldCollected += (gameStats.goldCollected || 0);
+        data.stats.totalWoodCollected += (gameStats.woodCollected || 0);
+        data.stats.totalGoldSpent += (gameStats.goldSpent || 0);
+        data.stats.totalWoodSpent += (gameStats.woodSpent || 0);
 
         // Award XP: 1 point per 10 waves completed
         const xpEarned = Math.floor(wave / 10);

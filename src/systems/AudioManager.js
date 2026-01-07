@@ -300,12 +300,12 @@ class AudioManager {
         }, 100);
     }
 
-    // Play gold mining sound - quiet pickaxe hit
+    // Play gold mining sound - pickaxe tap
     playGold() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
         this.resume();
 
-        // Quiet metallic tap
+        // Metallic tap
         const osc = this.audioContext.createOscillator();
         const gain = this.audioContext.createGain();
 
@@ -316,7 +316,7 @@ class AudioManager {
         osc.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.05);
         osc.type = 'sine';
 
-        gain.gain.setValueAtTime(0.04, this.audioContext.currentTime);  // Very quiet
+        gain.gain.setValueAtTime(0.04, this.audioContext.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
 
         osc.start();

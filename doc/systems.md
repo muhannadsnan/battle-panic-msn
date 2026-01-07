@@ -92,6 +92,7 @@ Creates enemy list for a wave:
 | Orc | Wave 2+ | `(1 + wave * 0.4) * mult` |
 | Skeleton | Wave 4+ | `(wave - 2) * 0.4 * mult` |
 | Skeleton Archer | Wave 6+ | `(wave - 4) * 0.35 * mult` |
+| Spear Monster | Wave 7+ | `(wave - 5) * 0.3 * mult` |
 | Troll | Wave 8+ | `(wave - 6) * 0.25 * mult` |
 | Dark Knight | Wave 12+ | `(wave - 10) * 0.25 * mult` |
 | Demon | Wave 18+ | `(wave - 16) * 0.2 * mult` |
@@ -167,6 +168,35 @@ Handles localStorage persistence for game progress.
     highestWave: 0,              // Best wave reached
     totalGoldEarned: 0,          // Lifetime gold
     totalEnemiesKilled: 0,       // Lifetime kills
+    killStats: {                 // Detailed kills per enemy type
+        goblin: 0,
+        orc: 0,
+        skeleton: 0,
+        skeleton_archer: 0,
+        spear_monster: 0,
+        troll: 0,
+        dark_knight: 0,
+        demon: 0,
+        dragon: 0
+    },
+    stats: {                     // Lifetime stats for achievements
+        totalBossesKilled: 0,
+        totalGamesPlayed: 0,
+        totalWavesCompleted: 0,
+        longestSurvivalTime: 0,  // in seconds
+        totalUnitsSpawned: 0,
+        unitsSpawned: {          // Per-unit-type counts
+            peasant: 0,
+            archer: 0,
+            knight: 0,
+            wizard: 0,
+            giant: 0
+        },
+        totalGoldCollected: 0,   // Total gold mined
+        totalWoodCollected: 0,   // Total wood collected
+        totalGoldSpent: 0,       // Total gold spent on units/upgrades
+        totalWoodSpent: 0        // Total wood spent on units
+    },
     upgrades: {
         peasant: { level: 1, unlocked: true },
         archer: { level: 1, unlocked: true },
@@ -197,11 +227,13 @@ Loads data from localStorage, merges with defaults for new fields.
 **`reset()`**
 Deletes all save data, returns defaults.
 
-**`updateHighScore(wave, goldEarned, enemiesKilled)`**
+**`updateHighScore(wave, goldEarned, enemiesKilled, killStats, gameStats)`**
 Called after game over:
 1. Updates `highestWave` if new record
 2. Adds to `totalGoldEarned` and `totalEnemiesKilled`
-3. Awards XP: `floor(wave / 10)` per game
+3. Updates detailed `killStats` per enemy type
+4. Updates lifetime `stats` (games played, waves completed, bosses killed, etc.)
+5. Awards XP: `floor(wave / 10)` per game
 
 **`calculateSpentXP(data)`**
 Calculates total XP invested in upgrades:

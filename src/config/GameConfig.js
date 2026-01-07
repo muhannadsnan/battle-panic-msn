@@ -77,13 +77,13 @@ const UNIT_TYPES = {
 };
 
 // Enemy Types Configuration
-// BALANCE: Enemies 25% weaker for easier gameplay
+// BALANCE: Enemies 40% weaker than original for easier gameplay
 const ENEMY_TYPES = {
     GOBLIN: {
         key: 'goblin',
         name: 'Goblin',
-        health: 11,          // Was 15, now 25% less
-        damage: 2,           // Was 3, now 25% less
+        health: 9,
+        damage: 2,
         speed: 85,
         attackSpeed: 900,
         range: 25,
@@ -94,8 +94,8 @@ const ENEMY_TYPES = {
     ORC: {
         key: 'orc',
         name: 'Orc',
-        health: 30,          // Was 40, now 25% less
-        damage: 4,           // Was 6, now 25% less
+        health: 24,
+        damage: 3,
         speed: 55,
         attackSpeed: 1100,
         range: 30,
@@ -106,8 +106,8 @@ const ENEMY_TYPES = {
     SKELETON: {
         key: 'skeleton',
         name: 'Skeleton',
-        health: 21,          // Was 28, now 25% less
-        damage: 4,           // Was 5, now 25% less
+        health: 17,
+        damage: 3,
         speed: 65,
         attackSpeed: 1000,
         range: 28,
@@ -118,8 +118,8 @@ const ENEMY_TYPES = {
     SKELETON_ARCHER: {
         key: 'skeleton_archer',
         name: 'Skeleton Archer',
-        health: 19,          // Was 25, now 25% less
-        damage: 7,           // Was 10, now 25% less
+        health: 15,
+        damage: 6,
         speed: 50,
         attackSpeed: 1400,
         range: 180,
@@ -131,8 +131,8 @@ const ENEMY_TYPES = {
     TROLL: {
         key: 'troll',
         name: 'Troll',
-        health: 112,         // Was 150, now 25% less
-        damage: 15,          // Was 20, now 25% less
+        health: 90,
+        damage: 12,
         speed: 35,
         attackSpeed: 1800,
         range: 40,
@@ -143,8 +143,8 @@ const ENEMY_TYPES = {
     DARK_KNIGHT: {
         key: 'dark_knight',
         name: 'Dark Knight',
-        health: 75,          // Was 100, now 25% less
-        damage: 11,          // Was 15, now 25% less
+        health: 60,
+        damage: 9,
         speed: 55,
         attackSpeed: 1100,
         range: 35,
@@ -155,8 +155,8 @@ const ENEMY_TYPES = {
     DEMON: {
         key: 'demon',
         name: 'Demon',
-        health: 150,         // Was 200, now 25% less
-        damage: 19,          // Was 25, now 25% less
+        health: 120,
+        damage: 15,
         speed: 45,
         attackSpeed: 1500,
         range: 35,
@@ -167,8 +167,8 @@ const ENEMY_TYPES = {
     DRAGON: {
         key: 'dragon',
         name: 'Dragon',
-        health: 375,         // Was 500, now 25% less
-        damage: 30,          // Was 40, now 25% less
+        health: 300,
+        damage: 24,
         speed: 40,
         attackSpeed: 2000,
         range: 150,
@@ -177,6 +177,19 @@ const ENEMY_TYPES = {
         woodReward: 100,
         color: 0xFF4500,
         isBoss: true
+    },
+    SPEAR_MONSTER: {
+        key: 'spear_monster',
+        name: 'Spear Monster',
+        health: 18,
+        damage: 8,
+        speed: 75,
+        attackSpeed: 1800,
+        range: 200,
+        isRanged: true,
+        goldReward: 15,
+        woodReward: 8,
+        color: 0x8B4513
     }
 };
 
@@ -228,13 +241,13 @@ const RESOURCE_CONFIG = {
     woodMineY: 530      // Bottom area
 };
 
-// Spawn Configuration - enemies spread across all edges
+// Spawn Configuration - enemies spawn from edges, pushed to the sides (not center)
 const SPAWN_CONFIG = {
     rightSpawn: { x: GAME_WIDTH + 30, minY: 80, maxY: 520 },
-    topRightSpawn: { minX: 600, maxX: GAME_WIDTH - 50, y: -30 },
-    topSpawn: { minX: 300, maxX: 700, y: -30 },
-    bottomRightSpawn: { minX: 600, maxX: GAME_WIDTH - 50, y: GAME_HEIGHT + 30 },
-    bottomSpawn: { minX: 300, maxX: 700, y: GAME_HEIGHT + 30 }
+    topRightSpawn: { minX: 650, maxX: GAME_WIDTH - 30, y: -30 },
+    topSpawn: { minX: 550, maxX: GAME_WIDTH - 50, y: -30 },  // Right side of top
+    bottomRightSpawn: { minX: 650, maxX: GAME_WIDTH - 30, y: GAME_HEIGHT + 30 },
+    bottomSpawn: { minX: 550, maxX: GAME_WIDTH - 50, y: GAME_HEIGHT + 30 }  // Right side of bottom
 };
 
 // Boss Configuration

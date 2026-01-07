@@ -17,6 +17,10 @@ class GameOverScene extends Phaser.Scene {
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
 
+        // Hide default cursor and create sword cursor
+        this.input.setDefaultCursor('none');
+        this.createSwordCursor();
+
         // Background
         this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
 
@@ -242,5 +246,51 @@ class GameOverScene extends Phaser.Scene {
         });
 
         return button;
+    }
+
+    createSwordCursor() {
+        this.swordCursor = this.add.container(0, 0);
+        this.swordCursor.setDepth(2000);
+
+        // Sword blade
+        const blade = this.add.rectangle(0, -20, 8, 40, 0xC0C0C0);
+        blade.setStrokeStyle(1, 0x888888);
+        this.swordCursor.add(blade);
+        this.swordCursor.add(this.add.rectangle(-1, -20, 3, 36, 0xE8E8E8));
+        this.swordCursor.add(this.add.rectangle(0, -42, 6, 8, 0xD0D0D0));
+        this.swordCursor.add(this.add.rectangle(0, -48, 4, 6, 0xE0E0E0));
+
+        // Cross guard
+        const guard = this.add.rectangle(0, 2, 24, 6, 0xFFD700);
+        guard.setStrokeStyle(1, 0xDAA520);
+        this.swordCursor.add(guard);
+        this.swordCursor.add(this.add.rectangle(-14, 4, 6, 4, 0xFFD700));
+        this.swordCursor.add(this.add.rectangle(14, 4, 6, 4, 0xFFD700));
+
+        // Handle
+        this.swordCursor.add(this.add.rectangle(0, 16, 6, 20, 0x8B4513));
+        for (let i = 0; i < 4; i++) {
+            this.swordCursor.add(this.add.rectangle(0, 8 + i * 5, 7, 2, 0x654321));
+        }
+
+        // Pommel
+        const pommel = this.add.rectangle(0, 28, 10, 8, 0xFFD700);
+        pommel.setStrokeStyle(1, 0xDAA520);
+        this.swordCursor.add(pommel);
+
+        this.swordCursor.setAngle(-30);
+        this.swordCursor.setScale(0.8);
+
+        // Follow mouse
+        this.input.on('pointermove', (pointer) => {
+            this.swordCursor.setPosition(pointer.x + 10, pointer.y + 15);
+        });
+    }
+
+    update() {
+        if (this.swordCursor) {
+            const pointer = this.input.activePointer;
+            this.swordCursor.setPosition(pointer.x + 10, pointer.y + 15);
+        }
     }
 }

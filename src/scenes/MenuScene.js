@@ -8,6 +8,12 @@ class MenuScene extends Phaser.Scene {
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
 
+        // Hide default cursor
+        this.input.setDefaultCursor('none');
+
+        // Create sword cursor
+        this.createSwordCursor();
+
         // Background gradient effect
         this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
 
@@ -432,5 +438,74 @@ class MenuScene extends Phaser.Scene {
         }
 
         dialog.setDepth(1000);
+    }
+
+    createSwordCursor() {
+        this.swordCursor = this.add.container(0, 0);
+
+        // Sword blade (silver/steel)
+        const blade = this.add.rectangle(0, -20, 8, 40, 0xC0C0C0);
+        blade.setStrokeStyle(1, 0x888888);
+        this.swordCursor.add(blade);
+
+        // Blade highlight
+        const highlight = this.add.rectangle(-1, -20, 3, 36, 0xE8E8E8);
+        this.swordCursor.add(highlight);
+
+        // Blade tip
+        const tip = this.add.rectangle(0, -42, 6, 8, 0xD0D0D0);
+        this.swordCursor.add(tip);
+        const tipPoint = this.add.rectangle(0, -48, 4, 6, 0xE0E0E0);
+        this.swordCursor.add(tipPoint);
+
+        // Cross guard (gold)
+        const guard = this.add.rectangle(0, 2, 24, 6, 0xFFD700);
+        guard.setStrokeStyle(1, 0xDAA520);
+        this.swordCursor.add(guard);
+
+        // Guard ends (curved look with rectangles)
+        const guardLeft = this.add.rectangle(-14, 4, 6, 4, 0xFFD700);
+        const guardRight = this.add.rectangle(14, 4, 6, 4, 0xFFD700);
+        this.swordCursor.add(guardLeft);
+        this.swordCursor.add(guardRight);
+
+        // Handle (brown leather wrap)
+        const handle = this.add.rectangle(0, 16, 6, 20, 0x8B4513);
+        this.swordCursor.add(handle);
+
+        // Handle wrap lines
+        for (let i = 0; i < 4; i++) {
+            const wrap = this.add.rectangle(0, 8 + i * 5, 7, 2, 0x654321);
+            this.swordCursor.add(wrap);
+        }
+
+        // Pommel (gold ball at bottom)
+        const pommel = this.add.rectangle(0, 28, 10, 8, 0xFFD700);
+        pommel.setStrokeStyle(1, 0xDAA520);
+        this.swordCursor.add(pommel);
+
+        // Slight tilt for style
+        this.swordCursor.setAngle(-30);
+        this.swordCursor.setDepth(2000);
+        this.swordCursor.setScale(0.8);
+
+        // Subtle idle animation
+        this.tweens.add({
+            targets: this.swordCursor,
+            angle: -25,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+    }
+
+    update() {
+        // Update sword cursor position
+        if (this.swordCursor) {
+            const pointer = this.input.activePointer;
+            this.swordCursor.x = pointer.x + 10;
+            this.swordCursor.y = pointer.y + 15;
+        }
     }
 }

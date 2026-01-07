@@ -63,20 +63,21 @@ Located in `ENEMY_TYPES` object. Similar stats to units plus:
 | `woodReward` | Wood dropped on death |
 | `isBoss` | If true, applies boss multipliers |
 
-### Enemy Stats Table (25% easier)
+### Enemy Stats Table (40% easier than original)
 
 | Enemy | HP | DMG | Speed | Range | Gold | Wood | Appears |
 |-------|-----|-----|-------|-------|------|------|---------|
-| Goblin | 11 | 2 | 85 | 25 | 6 | 4 | Wave 1+ |
-| Orc | 30 | 4 | 55 | 30 | 14 | 10 | Wave 2+ |
-| Skeleton | 21 | 4 | 65 | 28 | 10 | 6 | Wave 4+ |
-| Skeleton Archer | 19 | 7 | 50 | 180 | 15 | 10 | Wave 6+ |
-| Troll | 112 | 15 | 35 | 40 | 30 | 20 | Wave 8+ |
-| Dark Knight | 75 | 11 | 55 | 35 | 25 | 15 | Wave 12+ |
-| Demon | 150 | 19 | 45 | 35 | 50 | 30 | Wave 18+ |
-| Dragon (Boss) | 375 | 30 | 40 | 150 | 150 | 100 | Every 10 waves |
+| Goblin | 9 | 2 | 85 | 25 | 6 | 4 | Wave 1+ |
+| Orc | 24 | 3 | 55 | 30 | 14 | 10 | Wave 2+ |
+| Skeleton | 17 | 3 | 65 | 28 | 10 | 6 | Wave 4+ |
+| Skeleton Archer | 15 | 6 | 50 | 180 | 15 | 10 | Wave 6+ |
+| Spear Monster | 18 | 8 | 75 | 200 | 15 | 8 | Wave 7+ |
+| Troll | 90 | 12 | 35 | 40 | 30 | 20 | Wave 8+ |
+| Dark Knight | 60 | 9 | 55 | 35 | 25 | 15 | Wave 12+ |
+| Demon | 120 | 15 | 45 | 35 | 50 | 30 | Wave 18+ |
+| Dragon (Boss) | 300 | 24 | 40 | 150 | 150 | 100 | Every 10 waves |
 
-*Note: All enemy HP and damage reduced by 25% for easier early game.*
+*Note: All enemy HP and damage reduced by 40% from original values for easier gameplay.*
 
 ---
 

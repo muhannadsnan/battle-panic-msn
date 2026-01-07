@@ -53,6 +53,9 @@ class Projectile extends Phaser.GameObjects.Container {
             case 'fireball':
                 this.createFireball();
                 break;
+            case 'spear':
+                this.createSpear();
+                break;
             default:
                 this.createArrow();
         }
@@ -184,6 +187,42 @@ class Projectile extends Phaser.GameObjects.Container {
         });
 
         this.mainSprite = core;
+    }
+
+    createSpear() {
+        // BIG thrown spear - larger and more menacing than arrow
+        // Long wooden shaft
+        const shaft = this.scene.add.rectangle(0, 0, 40, 5, 0x8B5A33);
+        this.add(shaft);
+        const shaftHighlight = this.scene.add.rectangle(0, -1, 38, 2, 0x9B6A43);
+        this.add(shaftHighlight);
+
+        // Big stone spearhead
+        const head1 = this.scene.add.rectangle(24, 0, 16, 8, 0x666666);
+        this.add(head1);
+        const head2 = this.scene.add.rectangle(28, 0, 10, 6, 0x888888);
+        this.add(head2);
+        const tip = this.scene.add.rectangle(34, 0, 8, 4, 0xAAAAAA);
+        this.add(tip);
+
+        // Feather decorations at back
+        const feather1 = this.scene.add.rectangle(-18, -4, 8, 5, 0xFF4444);
+        const feather2 = this.scene.add.rectangle(-18, 4, 8, 5, 0xFFAA44);
+        const feather3 = this.scene.add.rectangle(-22, 0, 6, 4, 0xFF6644);
+        this.add(feather1);
+        this.add(feather2);
+        this.add(feather3);
+
+        // Spinning rotation effect while flying
+        this.scene.tweens.add({
+            targets: this,
+            angle: '+=5',
+            duration: 100,
+            repeat: -1,
+            ease: 'Linear'
+        });
+
+        this.mainSprite = shaft;
     }
 
     update(time, delta) {
