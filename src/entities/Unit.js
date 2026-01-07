@@ -839,27 +839,32 @@ class Unit extends Phaser.GameObjects.Container {
 
     createPromotionBadge() {
         // Badge appears next to health bar
-        // Level 1-3: Silver triangles, Level 4-6: Gold triangles
-        const badgeContainer = this.scene.add.container(18, -45);
+        // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
+        // Military style: V-shaped chevrons stacked vertically
+        const badgeContainer = this.scene.add.container(16, -42);
         this.add(badgeContainer);
 
         const isGold = this.promotionLevel > 3;
-        const numTriangles = isGold ? this.promotionLevel - 3 : this.promotionLevel;
+        const numChevrons = isGold ? this.promotionLevel - 3 : this.promotionLevel;
         const color = isGold ? 0xffd700 : 0xc0c0c0;
         const strokeColor = isGold ? 0xb8860b : 0x808080;
 
-        // Draw triangle chevrons (like military rank)
-        for (let i = 0; i < numTriangles; i++) {
-            const graphics = this.scene.add.graphics();
-            const offsetX = i * 5;
+        // Draw stacked chevrons (V shapes pointing down, like military rank)
+        const chevronWidth = 8;
+        const chevronHeight = 3;
+        const spacing = 3;
 
-            // Draw a small chevron/triangle pointing up
+        for (let i = 0; i < numChevrons; i++) {
+            const graphics = this.scene.add.graphics();
+            const offsetY = -i * spacing; // Stack upward
+
+            // Draw V-shaped chevron pointing down
             graphics.lineStyle(1.5, strokeColor, 1);
             graphics.fillStyle(color, 1);
             graphics.beginPath();
-            graphics.moveTo(offsetX, 3);        // Bottom left
-            graphics.lineTo(offsetX + 3, -2);   // Top center
-            graphics.lineTo(offsetX + 6, 3);    // Bottom right
+            graphics.moveTo(0, offsetY);                           // Top left
+            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight); // Bottom center (tip)
+            graphics.lineTo(chevronWidth, offsetY);                // Top right
             graphics.closePath();
             graphics.fillPath();
             graphics.strokePath();
@@ -868,3 +873,4 @@ class Unit extends Phaser.GameObjects.Container {
         }
     }
 }
+

@@ -521,23 +521,29 @@ class UnitButton extends Phaser.GameObjects.Container {
         }
 
         // Determine badge appearance
-        // Level 1-3: Silver triangles, Level 4-6: Gold triangles
+        // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
+        // Military style: V-shaped chevrons stacked vertically
         const isGold = level > 3;
-        const numTriangles = isGold ? level - 3 : level;
+        const numChevrons = isGold ? level - 3 : level;
         const color = isGold ? 0xffd700 : 0xc0c0c0;
         const strokeColor = isGold ? 0xb8860b : 0x808080;
 
-        // Draw triangle chevrons
-        for (let i = 0; i < numTriangles; i++) {
-            const graphics = this.scene.add.graphics();
-            const offsetX = i * 7;
+        // Draw stacked chevrons (V shapes pointing down, like military rank)
+        const chevronWidth = 10;
+        const chevronHeight = 4;
+        const spacing = 4;
 
+        for (let i = 0; i < numChevrons; i++) {
+            const graphics = this.scene.add.graphics();
+            const offsetY = -i * spacing; // Stack upward
+
+            // Draw V-shaped chevron pointing down
             graphics.lineStyle(2, strokeColor, 1);
             graphics.fillStyle(color, 1);
             graphics.beginPath();
-            graphics.moveTo(offsetX, 5);        // Bottom left
-            graphics.lineTo(offsetX + 4, -3);   // Top center
-            graphics.lineTo(offsetX + 8, 5);    // Bottom right
+            graphics.moveTo(0, offsetY);                           // Top left
+            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight); // Bottom center (tip)
+            graphics.lineTo(chevronWidth, offsetY);                // Top right
             graphics.closePath();
             graphics.fillPath();
             graphics.strokePath();

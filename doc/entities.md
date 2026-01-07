@@ -104,7 +104,8 @@ Units get promoted based on how many of that type have been spawned in the curre
 At max promotion (level 6), units have **3x stats** and **spawn 2 at a time**!
 
 **Visual Indicators:**
-- Triangle chevron badge appears next to each unit's HP bar
+- Military-style chevron badge (V pointing down) next to each unit's HP bar
+- Chevrons stack vertically: 1, 2, or 3 chevrons
 - Badge also shown on unit spawn button (top-right corner)
 - Promotion notification shows in center of screen
 - Silver chevrons for levels 1-3, Gold chevrons for levels 4-6
