@@ -101,7 +101,7 @@ Units get promoted based on how many of that type have been spawned in the curre
 - Damage (multiplied by bonus)
 - Attack Speed (faster by bonus)
 
-At max promotion (level 6), units have **3x stats**!
+At max promotion (level 6), units have **3x stats** and **spawn 2 at a time**!
 
 **Visual Indicators:**
 - Triangle chevron badge appears next to each unit's HP bar

@@ -1367,29 +1367,35 @@ class GameScene extends Phaser.Scene {
         const promotionLevel = this.getPromotionLevel(unitType);
         const promotionBonus = this.getPromotionBonus(promotionLevel);
 
-        // Spawn unit near castle
-        const spawnY = Phaser.Math.Between(300, 460);
-        const unit = new Unit(
-            this,
-            CASTLE_CONFIG.playerX + 80,
-            spawnY,
-            unitType,
-            upgradeData.level,
-            promotionBonus,
-            promotionLevel
-        );
+        // At max promotion (level 6), spawn 2 units at once
+        const unitsToSpawn = promotionLevel >= 6 ? 2 : 1;
 
-        this.units.add(unit);
-        this.lastSpawnTime = Date.now(); // Record spawn time for throttle
-        this.unitsSpawnedThisRun++;
+        for (let i = 0; i < unitsToSpawn; i++) {
+            // Spawn unit near castle (slightly offset Y for multiple units)
+            const spawnY = Phaser.Math.Between(300, 460) + (i * 30);
+            const unit = new Unit(
+                this,
+                CASTLE_CONFIG.playerX + 80 + (i * 20),
+                spawnY,
+                unitType,
+                upgradeData.level,
+                promotionBonus,
+                promotionLevel
+            );
 
-        // Track unit type count and check for promotion
-        const unitKey = unitType.toLowerCase();
-        if (this.unitCounts[unitKey] !== undefined) {
-            this.unitCounts[unitKey]++;
-            // Check if this spawn triggered a promotion
-            this.checkPromotion(unitType);
+            this.units.add(unit);
+            this.unitsSpawnedThisRun++;
+
+            // Track unit type count and check for promotion
+            const unitKey = unitType.toLowerCase();
+            if (this.unitCounts[unitKey] !== undefined) {
+                this.unitCounts[unitKey]++;
+                // Check if this spawn triggered a promotion
+                this.checkPromotion(unitType);
+            }
         }
+
+        this.lastSpawnTime = Date.now(); // Record spawn time for throttle
     }
 
     spawnEnemy(enemyType, direction = 'right') {
