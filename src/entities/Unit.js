@@ -1,12 +1,13 @@
 // Unit Class - Player's combat units with detailed sprites
 class Unit extends Phaser.GameObjects.Container {
-    constructor(scene, x, y, unitType, upgradeLevel = 1, promotionBonus = 1.0) {
+    constructor(scene, x, y, unitType, upgradeLevel = 1, promotionBonus = 1.0, promotionLevel = 0) {
         super(scene, x, y);
 
         this.scene = scene;
         this.unitType = unitType;
         this.upgradeLevel = upgradeLevel;
         this.promotionBonus = promotionBonus;
+        this.promotionLevel = promotionLevel;
 
         // Get base stats
         const baseStats = UNIT_TYPES[unitType.toUpperCase()];
@@ -57,9 +58,14 @@ class Unit extends Phaser.GameObjects.Container {
         this.createUnitSprite(unitType);
         this.add(this.spriteContainer);
 
-        // Create health bar
-        this.healthBar = new HealthBar(scene, 0, -45, 40, 6, 0x00ff00);
+        // Create health bar (50% shorter and thinner)
+        this.healthBar = new HealthBar(scene, 0, -45, 20, 3, 0x00ff00);
         this.add(this.healthBar);
+
+        // Create promotion badge if promoted
+        if (this.promotionLevel > 0) {
+            this.createPromotionBadge();
+        }
 
         // Add to scene
         scene.add.existing(this);
@@ -823,6 +829,37 @@ class Unit extends Phaser.GameObjects.Container {
                 yoyo: true,
                 ease: 'Power2'
             });
+        }
+    }
+
+    createPromotionBadge() {
+        // Badge appears next to health bar
+        // Level 1-3: Silver triangles, Level 4-6: Gold triangles
+        const badgeContainer = this.scene.add.container(18, -45);
+        this.add(badgeContainer);
+
+        const isGold = this.promotionLevel > 3;
+        const numTriangles = isGold ? this.promotionLevel - 3 : this.promotionLevel;
+        const color = isGold ? 0xffd700 : 0xc0c0c0;
+        const strokeColor = isGold ? 0xb8860b : 0x808080;
+
+        // Draw triangle chevrons (like military rank)
+        for (let i = 0; i < numTriangles; i++) {
+            const graphics = this.scene.add.graphics();
+            const offsetX = i * 5;
+
+            // Draw a small chevron/triangle pointing up
+            graphics.lineStyle(1.5, strokeColor, 1);
+            graphics.fillStyle(color, 1);
+            graphics.beginPath();
+            graphics.moveTo(offsetX, 3);        // Bottom left
+            graphics.lineTo(offsetX + 3, -2);   // Top center
+            graphics.lineTo(offsetX + 6, 3);    // Bottom right
+            graphics.closePath();
+            graphics.fillPath();
+            graphics.strokePath();
+
+            badgeContainer.add(graphics);
         }
     }
 }

@@ -89,12 +89,12 @@ Units get promoted based on how many of that type have been spawned in the curre
 | Level | Spawns | Badge | Total Bonus |
 |-------|--------|-------|-------------|
 | 0 | 0-9 | None | +0% |
-| 1 | 10-19 | ★ Silver | +10% |
-| 2 | 20-29 | ★★ Silver | +30% |
-| 3 | 30-39 | ★★★ Silver | +60% |
-| 4 | 40-49 | ★ Gold | +100% |
-| 5 | 50-59 | ★★ Gold | +150% |
-| 6 | 60+ | ★★★ Gold | +200% |
+| 1 | 10-19 | ▲ Silver | +10% |
+| 2 | 20-29 | ▲▲ Silver | +30% |
+| 3 | 30-39 | ▲▲▲ Silver | +60% |
+| 4 | 40-49 | ▲ Gold | +100% |
+| 5 | 50-59 | ▲▲ Gold | +150% |
+| 6 | 60+ | ▲▲▲ Gold | +200% |
 
 **Bonuses apply to:**
 - HP (multiplied by bonus)
@@ -104,9 +104,11 @@ Units get promoted based on how many of that type have been spawned in the curre
 At max promotion (level 6), units have **3x stats**!
 
 **Visual Indicators:**
-- Badge appears on unit spawn button (top-right corner)
+- Triangle chevron badge appears next to each unit's HP bar
+- Badge also shown on unit spawn button (top-right corner)
 - Promotion notification shows in center of screen
-- Silver badges for levels 1-3, Gold badges for levels 4-6
+- Silver chevrons for levels 1-3, Gold chevrons for levels 4-6
+- HP bar is compact (20x3 pixels) to make room for badge
 
 ---
 

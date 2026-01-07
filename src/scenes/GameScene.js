@@ -1337,7 +1337,8 @@ class GameScene extends Phaser.Scene {
             spawnY,
             unitType,
             upgradeData.level,
-            promotionBonus
+            promotionBonus,
+            promotionLevel
         );
 
         this.units.add(unit);
@@ -1729,7 +1730,7 @@ class GameScene extends Phaser.Scene {
         const badgeInfo = this.getPromotionBadgeInfo(level);
         const unitName = UNIT_TYPES[unitType].name;
         const color = badgeInfo.color === 'gold' ? '#ffd700' : '#c0c0c0';
-        const signs = '★'.repeat(badgeInfo.signs);
+        const signs = '▲'.repeat(badgeInfo.signs);  // Triangle chevrons
 
         const message = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50,
             `${unitName} PROMOTED!`, {
@@ -1742,7 +1743,7 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(1100);
 
         const badge = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, signs, {
-            fontSize: '36px',
+            fontSize: '28px',
             color: color,
             stroke: '#000000',
             strokeThickness: 3

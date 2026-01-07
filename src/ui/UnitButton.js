@@ -107,16 +107,11 @@ class UnitButton extends Phaser.GameObjects.Container {
         }).setOrigin(0.5);
         this.add(this.unlockInfoText);
 
-        // Promotion badge (hidden by default, shows after 10 spawns)
+        // Promotion badge container (hidden by default, shows after 10 spawns)
         this.promotionLevel = 0;
-        this.promotionBadge = scene.add.text(buttonWidth / 2 - 8, -buttonHeight / 2 + 8, '', {
-            fontSize: '14px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5).setVisible(false);
-        this.add(this.promotionBadge);
+        this.promotionBadgeContainer = scene.add.container(buttonWidth / 2 - 12, -buttonHeight / 2 + 10);
+        this.promotionBadgeContainer.setVisible(false);
+        this.add(this.promotionBadgeContainer);
 
         if (isUnlocked) {
             this.unlock();
@@ -517,31 +512,44 @@ class UnitButton extends Phaser.GameObjects.Container {
     setPromotionLevel(level) {
         this.promotionLevel = level;
 
+        // Clear existing badge graphics
+        this.promotionBadgeContainer.removeAll(true);
+
         if (level <= 0) {
-            this.promotionBadge.setVisible(false);
+            this.promotionBadgeContainer.setVisible(false);
             return;
         }
 
         // Determine badge appearance
-        // Level 1-3: Silver (★, ★★, ★★★)
-        // Level 4-6: Gold (★, ★★, ★★★)
-        let color, signs;
-        if (level <= 3) {
-            color = '#c0c0c0'; // Silver
-            signs = level;
-        } else {
-            color = '#ffd700'; // Gold
-            signs = level - 3;
+        // Level 1-3: Silver triangles, Level 4-6: Gold triangles
+        const isGold = level > 3;
+        const numTriangles = isGold ? level - 3 : level;
+        const color = isGold ? 0xffd700 : 0xc0c0c0;
+        const strokeColor = isGold ? 0xb8860b : 0x808080;
+
+        // Draw triangle chevrons
+        for (let i = 0; i < numTriangles; i++) {
+            const graphics = this.scene.add.graphics();
+            const offsetX = i * 7;
+
+            graphics.lineStyle(2, strokeColor, 1);
+            graphics.fillStyle(color, 1);
+            graphics.beginPath();
+            graphics.moveTo(offsetX, 5);        // Bottom left
+            graphics.lineTo(offsetX + 4, -3);   // Top center
+            graphics.lineTo(offsetX + 8, 5);    // Bottom right
+            graphics.closePath();
+            graphics.fillPath();
+            graphics.strokePath();
+
+            this.promotionBadgeContainer.add(graphics);
         }
 
-        const badgeText = '★'.repeat(signs);
-        this.promotionBadge.setText(badgeText);
-        this.promotionBadge.setColor(color);
-        this.promotionBadge.setVisible(true);
+        this.promotionBadgeContainer.setVisible(true);
 
         // Animate the badge on promotion
         this.scene.tweens.add({
-            targets: this.promotionBadge,
+            targets: this.promotionBadgeContainer,
             scaleX: 1.5,
             scaleY: 1.5,
             duration: 200,
