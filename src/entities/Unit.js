@@ -684,7 +684,7 @@ class Unit extends Phaser.GameObjects.Container {
         });
 
         if (this.isRanged) {
-            // Create projectile
+            // Create projectile with max distance based on unit range (+ 100 buffer)
             const projectile = new Projectile(
                 this.scene,
                 this.x,
@@ -697,7 +697,8 @@ class Unit extends Phaser.GameObjects.Container {
                     isPlayerProjectile: true,
                     splashDamage: this.splashDamage,
                     splashRadius: this.splashRadius,
-                    projectileType: this.unitType.toUpperCase() === 'WIZARD' ? 'magic' : 'arrow'
+                    projectileType: this.unitType.toUpperCase() === 'WIZARD' ? 'magic' : 'arrow',
+                    maxDistance: this.range + 100 // Arrow travels slightly past attack range
                 }
             );
             this.scene.projectiles.add(projectile);

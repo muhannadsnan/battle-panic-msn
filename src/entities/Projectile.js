@@ -12,8 +12,12 @@ class Projectile extends Phaser.GameObjects.Container {
         this.splashDamage = config.splashDamage || false;
         this.splashRadius = config.splashRadius || 0;
         this.projectileType = config.projectileType || 'arrow';
+        this.maxDistance = config.maxDistance || 500; // Max travel distance (half screen)
 
         this.hasHit = false;
+        this.startX = x;
+        this.startY = y;
+        this.distanceTraveled = 0;
 
         // Calculate initial direction
         if (target && target.active) {
@@ -257,8 +261,12 @@ class Projectile extends Phaser.GameObjects.Container {
         // Check for collision
         this.checkCollision();
 
-        // Destroy if out of bounds
-        if (this.x < -50 || this.x > GAME_WIDTH + 50 || this.y < -50 || this.y > GAME_HEIGHT + 50) {
+        // Track distance traveled
+        this.distanceTraveled = Phaser.Math.Distance.Between(this.startX, this.startY, this.x, this.y);
+
+        // Destroy if exceeded max distance or out of bounds
+        if (this.distanceTraveled > this.maxDistance ||
+            this.x < -50 || this.x > GAME_WIDTH + 50 || this.y < -50 || this.y > GAME_HEIGHT + 50) {
             this.cleanup();
             this.destroy();
         }
