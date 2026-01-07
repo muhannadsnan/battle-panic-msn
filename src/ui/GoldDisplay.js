@@ -139,7 +139,7 @@ class GoldDisplay extends ResourceDisplay {
 }
 
 
-// Wave Display UI Component - big font, semi-transparent, bottom right
+// Wave Display UI Component - big font, semi-transparent, bottom right, always on top
 class WaveDisplay extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
         super(scene, x, y);
@@ -148,17 +148,17 @@ class WaveDisplay extends Phaser.GameObjects.Container {
 
         // Big wave number text with opacity
         this.waveText = scene.add.text(0, 0, 'Wave 0', {
-            fontSize: '48px',
+            fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 4
-        }).setOrigin(1, 1).setAlpha(0.7);  // Right-aligned, bottom-aligned, semi-transparent
+            strokeThickness: 3
+        }).setOrigin(1, 1).setAlpha(0.8);  // Right-aligned, bottom-aligned
         this.add(this.waveText);
 
         scene.add.existing(this);
-        this.setDepth(50);  // Behind gameplay elements
+        this.setDepth(900);  // Always on top of gameplay
     }
 
     setWave(waveNumber, enemiesRemaining = 0) {

@@ -100,8 +100,10 @@ Units get promoted based on how many of that type have been spawned in the curre
 - HP (multiplied by bonus)
 - Damage (multiplied by bonus)
 - Attack Speed (faster by bonus)
+- Range (Archers only: +10% per promotion level)
 
 At max promotion (level 6), units have **3x stats** and **spawn 2 at a time**!
+Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**
 - Military-style chevron badge (V pointing down) next to each unit's HP bar

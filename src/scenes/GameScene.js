@@ -808,8 +808,8 @@ class GameScene extends Phaser.Scene {
     }
 
     createUI() {
-        // Wave display (bottom right, big and semi-transparent)
-        this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 20, GAME_HEIGHT - 20);
+        // Wave display (bottom right corner, always on top)
+        this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
         this.resourceDisplay = new ResourceDisplay(this, GAME_WIDTH / 2, 30);
@@ -1628,21 +1628,25 @@ class GameScene extends Phaser.Scene {
 
         // Main Menu button
         const menuBtn = this.createPauseMenuButton(0, 60, 'Main Menu', () => {
-            if (typeof audioManager !== 'undefined') {
-                audioManager.stopMusic();
-            }
-            this.waveSystem.stopTimers();
-            this.scene.start('MenuScene');
+            this.showConfirmDialog('Return to Main Menu?', () => {
+                if (typeof audioManager !== 'undefined') {
+                    audioManager.stopMusic();
+                }
+                this.waveSystem.stopTimers();
+                this.scene.start('MenuScene');
+            });
         });
         this.pauseOverlay.add(menuBtn);
 
         // Restart button
         const restartBtn = this.createPauseMenuButton(0, 110, 'Restart', () => {
-            if (typeof audioManager !== 'undefined') {
-                audioManager.stopMusic();
-            }
-            this.waveSystem.stopTimers();
-            this.scene.restart();
+            this.showConfirmDialog('Restart the battle?', () => {
+                if (typeof audioManager !== 'undefined') {
+                    audioManager.stopMusic();
+                }
+                this.waveSystem.stopTimers();
+                this.scene.restart();
+            });
         });
         this.pauseOverlay.add(restartBtn);
 
@@ -1687,6 +1691,72 @@ class GameScene extends Phaser.Scene {
             this.pauseOverlay.destroy();
             this.pauseOverlay = null;
         }
+    }
+
+    showConfirmDialog(message, onConfirm) {
+        // Create confirmation overlay
+        const confirmOverlay = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        confirmOverlay.setDepth(1100);
+
+        // Background
+        const bg = this.add.rectangle(0, 0, 300, 150, 0x1a1a2e, 0.95);
+        confirmOverlay.add(bg);
+
+        // Border
+        const border = this.add.rectangle(0, 0, 304, 154, 0x4a7aba, 0.8);
+        border.setStrokeStyle(2, 0x4a7aba);
+        confirmOverlay.add(border);
+        confirmOverlay.sendToBack(border);
+
+        // Message
+        const msgText = this.add.text(0, -35, message, {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff',
+            align: 'center'
+        }).setOrigin(0.5);
+        confirmOverlay.add(msgText);
+
+        // Yes button
+        const yesBtn = this.add.rectangle(-60, 30, 90, 36, 0x4ade80, 0.9);
+        yesBtn.setInteractive({ useHandCursor: true });
+        confirmOverlay.add(yesBtn);
+        const yesText = this.add.text(-60, 30, 'Yes', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#000000'
+        }).setOrigin(0.5);
+        confirmOverlay.add(yesText);
+
+        // No button
+        const noBtn = this.add.rectangle(60, 30, 90, 36, 0xef4444, 0.9);
+        noBtn.setInteractive({ useHandCursor: true });
+        confirmOverlay.add(noBtn);
+        const noText = this.add.text(60, 30, 'No', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+        confirmOverlay.add(noText);
+
+        // Button hover effects
+        yesBtn.on('pointerover', () => yesBtn.setFillStyle(0x22c55e, 1));
+        yesBtn.on('pointerout', () => yesBtn.setFillStyle(0x4ade80, 0.9));
+        noBtn.on('pointerover', () => noBtn.setFillStyle(0xdc2626, 1));
+        noBtn.on('pointerout', () => noBtn.setFillStyle(0xef4444, 0.9));
+
+        // Button actions
+        yesBtn.on('pointerdown', () => {
+            confirmOverlay.destroy();
+            onConfirm();
+        });
+
+        noBtn.on('pointerdown', () => {
+            confirmOverlay.destroy();
+        });
     }
 
     showMessage(text, color = '#ffffff') {

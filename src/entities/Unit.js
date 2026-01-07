@@ -30,7 +30,13 @@ class Unit extends Phaser.GameObjects.Container {
         this.damage = promotedDamage;
         this.speed = stats.speed;
         this.attackSpeed = promotedAttackSpeed;
-        this.range = stats.range;
+
+        // Apply range bonus for archers: +10% per promotion level
+        let promotedRange = stats.range;
+        if (unitType.toUpperCase() === 'ARCHER' && promotionLevel > 0) {
+            promotedRange = Math.floor(stats.range * (1 + promotionLevel * 0.1));
+        }
+        this.range = promotedRange;
         this.isRanged = stats.isRanged || false;
         this.splashDamage = stats.splashDamage || false;
         this.splashRadius = stats.splashRadius || 0;
