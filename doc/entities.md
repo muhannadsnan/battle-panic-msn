@@ -158,9 +158,21 @@ Returns spawn coordinates based on direction:
 - `'bottom'` - Bottom edge
 
 **`die()`**
-- Awards gold/wood to player
+- Awards gold/wood to player based on enemy type
 - Plays death animation
 - Notifies WaveSystem via `onEnemyKilled()`
+
+#### Kill Rewards by Enemy Type
+| Enemy | Gold | Wood |
+|-------|------|------|
+| Goblin | 6 | 4 |
+| Orc | 14 | 10 |
+| Skeleton | 10 | 6 |
+| Skeleton Archer | 15 | 10 |
+| Troll | 30 | 20 |
+| Dark Knight | 25 | 15 |
+| Demon | 50 | 30 |
+| Dragon (Boss) | 150 | 100 |
 
 #### Enemy Sprites
 Each enemy type has unique visuals:
@@ -216,6 +228,10 @@ The castle automatically shoots arrows at nearby enemies:
 
 #### Mining Speed Bonus
 Castle level also increases mining rate by 10% per level.
+
+#### Upgrade Benefits
+- Upgrading castle restores HP to full
+- Level badge displayed in center of castle
 
 #### Key Methods
 

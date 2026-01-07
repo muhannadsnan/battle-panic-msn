@@ -1060,7 +1060,7 @@ class GameScene extends Phaser.Scene {
         if (this.lastWoodRateDisplayTime === undefined) this.lastWoodRateDisplayTime = 0;
 
         const now = Date.now();
-        const rateDisplayInterval = 3000; // Show rate every 3 seconds
+        const rateDisplayInterval = 2000; // Show rate every 2 seconds
 
         // Gold mining
         if (this.goldMine.isHovering) {
@@ -1421,7 +1421,7 @@ class GameScene extends Phaser.Scene {
     onWaveComplete(waveNumber, goldReward, woodReward) {
         this.addGold(goldReward);
         this.addWood(woodReward);
-        this.waveDisplay.showWaveComplete(goldReward, woodReward);
+        this.waveDisplay.showWaveComplete(waveNumber, goldReward, woodReward);
 
         // Bonus message for milestone waves
         if (waveNumber % 5 === 0) {

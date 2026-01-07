@@ -59,7 +59,7 @@ class Castle extends Phaser.GameObjects.Container {
     }
 
     createLevelBadge(scene) {
-        const badge = scene.add.container(55, -120);
+        const badge = scene.add.container(0, 0);  // Center of castle
 
         // Badge background
         const bg = scene.add.rectangle(0, 0, 28, 28, 0x2a2a4e);
@@ -308,18 +308,14 @@ class Castle extends Phaser.GameObjects.Container {
 
     setLevel(level) {
         // Clamp level to max 10
-        const oldLevel = this.level;
         this.level = Math.min(level, CASTLE_CONFIG.maxLevel);
         this.levelText.setText(`${this.level}`);
 
         // Update health based on level
-        const oldHealthBonus = (oldLevel - 1) * 25;
         const newHealthBonus = (this.level - 1) * 25;
-        const healthGain = newHealthBonus - oldHealthBonus;
-
         this.maxHealth = 100 + newHealthBonus;
-        // Add the HP bonus to current health (not just max)
-        this.currentHealth = Math.min(this.currentHealth + healthGain, this.maxHealth);
+        // Restore to full HP on upgrade
+        this.currentHealth = this.maxHealth;
         this.updateHealthBar();
 
         // Scale attack stats with level
@@ -350,8 +346,8 @@ class Castle extends Phaser.GameObjects.Container {
         this.healthBarShine.setY(barYOffset - 3);
         this.healthText.setY(barYOffset);
 
-        // Update level badge position
-        this.levelBadge.setPosition(55 * castleScale, -120 * castleScale);
+        // Update level badge position (center of castle)
+        this.levelBadge.setPosition(0, 0);
 
         // No glow effect - clean look
     }

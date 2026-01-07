@@ -994,7 +994,21 @@ class Enemy extends Phaser.GameObjects.Container {
             audioManager.playDeath();
         }
 
-        // NO gold/wood rewards from kills - must mine resources!
+        // Give gold/wood rewards based on enemy type
+        if (this.scene.gold !== undefined && this.goldReward > 0) {
+            this.scene.gold += this.goldReward;
+            this.scene.goldCollectedThisRun += this.goldReward;
+            if (this.scene.resourceDisplay) {
+                this.scene.resourceDisplay.addGold(this.goldReward);
+            }
+        }
+        if (this.scene.wood !== undefined && this.woodReward > 0) {
+            this.scene.wood += this.woodReward;
+            this.scene.woodCollectedThisRun += this.woodReward;
+            if (this.scene.resourceDisplay) {
+                this.scene.resourceDisplay.addWood(this.woodReward);
+            }
+        }
 
         // Death animation
         this.scene.tweens.add({
