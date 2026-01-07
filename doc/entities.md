@@ -165,14 +165,15 @@ Returns spawn coordinates based on direction:
 #### Kill Rewards by Enemy Type
 | Enemy | Gold | Wood |
 |-------|------|------|
-| Goblin | 6 | 4 |
-| Orc | 14 | 10 |
-| Skeleton | 10 | 6 |
-| Skeleton Archer | 15 | 10 |
-| Troll | 30 | 20 |
-| Dark Knight | 25 | 15 |
-| Demon | 50 | 30 |
-| Dragon (Boss) | 150 | 100 |
+| Goblin | 1 | 1 |
+| Orc | 1 | 1 |
+| Skeleton | 1 | 1 |
+| Skeleton Archer | 2 | 1 |
+| Spear Monster | 2 | 1 |
+| Troll | 3 | 2 |
+| Dark Knight | 3 | 2 |
+| Demon | 5 | 3 |
+| Dragon (Boss) | 15 | 10 |
 
 #### Enemy Sprites
 Each enemy type has unique visuals:

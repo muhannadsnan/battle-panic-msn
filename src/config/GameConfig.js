@@ -87,8 +87,8 @@ const ENEMY_TYPES = {
         speed: 85,
         attackSpeed: 900,
         range: 25,
-        goldReward: 6,
-        woodReward: 4,
+        goldReward: 1,
+        woodReward: 1,
         color: 0x32CD32
     },
     ORC: {
@@ -99,8 +99,8 @@ const ENEMY_TYPES = {
         speed: 55,
         attackSpeed: 1100,
         range: 30,
-        goldReward: 14,
-        woodReward: 10,
+        goldReward: 1,
+        woodReward: 1,
         color: 0x556B2F
     },
     SKELETON: {
@@ -111,8 +111,8 @@ const ENEMY_TYPES = {
         speed: 65,
         attackSpeed: 1000,
         range: 28,
-        goldReward: 10,
-        woodReward: 6,
+        goldReward: 1,
+        woodReward: 1,
         color: 0xD3D3D3
     },
     SKELETON_ARCHER: {
@@ -124,8 +124,8 @@ const ENEMY_TYPES = {
         attackSpeed: 1400,
         range: 180,
         isRanged: true,
-        goldReward: 15,
-        woodReward: 10,
+        goldReward: 2,
+        woodReward: 1,
         color: 0xA9A9A9
     },
     TROLL: {
@@ -136,8 +136,8 @@ const ENEMY_TYPES = {
         speed: 35,
         attackSpeed: 1800,
         range: 40,
-        goldReward: 30,
-        woodReward: 20,
+        goldReward: 3,
+        woodReward: 2,
         color: 0x2F4F4F
     },
     DARK_KNIGHT: {
@@ -148,8 +148,8 @@ const ENEMY_TYPES = {
         speed: 55,
         attackSpeed: 1100,
         range: 35,
-        goldReward: 25,
-        woodReward: 15,
+        goldReward: 3,
+        woodReward: 2,
         color: 0x1C1C1C
     },
     DEMON: {
@@ -160,8 +160,8 @@ const ENEMY_TYPES = {
         speed: 45,
         attackSpeed: 1500,
         range: 35,
-        goldReward: 50,
-        woodReward: 30,
+        goldReward: 5,
+        woodReward: 3,
         color: 0x8B0000
     },
     DRAGON: {
@@ -173,8 +173,8 @@ const ENEMY_TYPES = {
         attackSpeed: 2000,
         range: 150,
         isRanged: true,
-        goldReward: 150,
-        woodReward: 100,
+        goldReward: 15,
+        woodReward: 10,
         color: 0xFF4500,
         isBoss: true
     },
@@ -187,8 +187,8 @@ const ENEMY_TYPES = {
         attackSpeed: 1800,
         range: 200,
         isRanged: true,
-        goldReward: 15,
-        woodReward: 8,
+        goldReward: 2,
+        woodReward: 1,
         color: 0x8B4513
     }
 };
