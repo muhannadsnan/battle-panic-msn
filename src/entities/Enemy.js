@@ -848,30 +848,47 @@ class Enemy extends Phaser.GameObjects.Container {
 
         let isMoving = false;
 
-        // Find target - prioritize player units, then castle
+        // Check if castle has fence - fence blocks enemies
+        const castle = this.scene.playerCastle;
+        const hasFence = castle && castle.hasFence && castle.fenceCurrentHealth > 0;
+        const fenceX = castle ? castle.x + 120 : 300; // Fence position
+
+        // Find target - prioritize player units, then fence/castle
         if (!this.target || this.target.isDead || !this.target.active) {
             this.target = this.scene.combatSystem.findTarget(this, this.scene.units.getChildren());
 
-            // If no units, target the player castle
-            if (!this.target && this.scene.playerCastle && !this.scene.playerCastle.isDead) {
-                this.target = this.scene.playerCastle;
+            // If no units, target the fence (if exists) or castle
+            if (!this.target && castle && !castle.isDead) {
+                this.target = castle;
             }
         }
 
         if (this.target) {
-            const inRange = this.scene.combatSystem.isInRange(this, this.target, this.range);
+            // If targeting castle and fence exists, stop at fence
+            let targetX = this.target.x;
+            let targetY = this.target.y;
+
+            if (this.target === castle && hasFence) {
+                // Target the fence position instead
+                targetX = fenceX;
+            }
+
+            // Check if in range (use fence position if fence exists)
+            const distanceToTarget = Phaser.Math.Distance.Between(this.x, this.y, targetX, targetY);
+            const inRange = distanceToTarget <= this.range;
 
             if (inRange) {
                 // Stop and attack
                 this.attack(time);
             } else {
-                // Move toward target
-                this.moveToward(this.target, delta);
+                // Move toward target (fence or actual target)
+                this.moveTowardPosition(targetX, targetY, delta);
                 isMoving = true;
             }
         } else {
-            // No target, move toward player castle
-            if (this.x > CASTLE_CONFIG.playerX + 100) {
+            // No target, move toward fence/castle
+            const stopX = hasFence ? fenceX : CASTLE_CONFIG.playerX + 100;
+            if (this.x > stopX + this.range) {
                 this.x -= this.speed * (delta / 1000);
                 isMoving = true;
             }
@@ -885,8 +902,12 @@ class Enemy extends Phaser.GameObjects.Container {
     }
 
     moveToward(target, delta) {
-        const dx = target.x - this.x;
-        const dy = target.y - this.y;
+        this.moveTowardPosition(target.x, target.y, delta);
+    }
+
+    moveTowardPosition(targetX, targetY, delta) {
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance > 0) {

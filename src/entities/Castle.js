@@ -330,17 +330,17 @@ class Castle extends Phaser.GameObjects.Container {
         this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
-        // Fence system - unlocks at level 5
-        if (this.level >= 5) {
+        // Fence system - unlocks at level 3
+        if (this.level >= 3) {
             if (!this.hasFence) {
-                // First time getting fence - 100% of castle HP
+                // First time getting fence - starts with 25 HP
                 this.hasFence = true;
-                this.fenceMaxHealth = this.maxHealth;
+                this.fenceMaxHealth = 25;
                 this.fenceCurrentHealth = this.fenceMaxHealth;
                 this.createFence();
             } else {
-                // Upgrade fence - +25% HP and repair to full
-                this.fenceMaxHealth = Math.floor(this.fenceMaxHealth * 1.25);
+                // Upgrade fence - 1.5x HP and repair to full
+                this.fenceMaxHealth = Math.floor(this.fenceMaxHealth * 1.5);
                 this.fenceCurrentHealth = this.fenceMaxHealth;
                 this.updateFenceHealthBar();
                 // Flash fence to show upgrade
@@ -744,18 +744,19 @@ class Castle extends Phaser.GameObjects.Container {
         this.spriteContainer.setScale(1);
         this.spriteContainer.y = 0;
 
-        // Reset fence if castle level >= 5
-        if (this.level >= 5) {
+        // Reset fence if castle level >= 3
+        if (this.level >= 3) {
             if (this.fenceContainer) {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
             }
+            // Calculate fence HP based on level: 25 base, 1.5x per level after 3
             this.hasFence = true;
-            this.fenceMaxHealth = this.maxHealth;
+            this.fenceMaxHealth = Math.floor(25 * Math.pow(1.5, this.level - 3));
             this.fenceCurrentHealth = this.fenceMaxHealth;
             this.createFence();
         } else {
-            // Destroy fence if level dropped below 5 (shouldn't happen but safety)
+            // Destroy fence if level below 3
             if (this.fenceContainer) {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
