@@ -1727,12 +1727,23 @@ class GameScene extends Phaser.Scene {
     }
 
     // Unit Promotion System
-    // Every 10 units spawned = 1 promotion level (max level 6)
+    // Thresholds: 10, 20, 30, 50, 80, 120 spawns for levels 1-6
     // Bonuses: Lv1=+10%, Lv2=+20%, Lv3=+30%, Lv4=+40%, Lv5=+50%, Lv6=+50% (total 200%)
     getPromotionLevel(unitType) {
         const typeKey = unitType.toLowerCase();
         const spawnCount = this.unitCounts[typeKey] || 0;
-        return Math.min(6, Math.floor(spawnCount / 10));
+
+        // Promotion thresholds - harder after level 3
+        // Level 1-3: every 10 spawns (10, 20, 30)
+        // Level 4-6: 50, 80, 120 spawns
+        const thresholds = [0, 10, 20, 30, 50, 80, 120];
+
+        for (let level = 6; level >= 1; level--) {
+            if (spawnCount >= thresholds[level]) {
+                return level;
+            }
+        }
+        return 0;
     }
 
     getPromotionBonus(promotionLevel) {

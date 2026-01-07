@@ -91,10 +91,10 @@ Units get promoted based on how many of that type have been spawned in the curre
 | 0 | 0-9 | None | +0% |
 | 1 | 10-19 | ▲ Silver | +10% |
 | 2 | 20-29 | ▲▲ Silver | +30% |
-| 3 | 30-39 | ▲▲▲ Silver | +60% |
-| 4 | 40-49 | ▲ Gold | +100% |
-| 5 | 50-59 | ▲▲ Gold | +150% |
-| 6 | 60+ | ▲▲▲ Gold | +200% |
+| 3 | 30-49 | ▲▲▲ Silver | +60% |
+| 4 | 50-79 | ▲ Gold | +100% |
+| 5 | 80-119 | ▲▲ Gold | +150% |
+| 6 | 120+ | ▲▲▲ Gold | +200% |
 
 **Bonuses apply to:**
 - HP (multiplied by bonus)
