@@ -557,7 +557,9 @@ class Castle extends Phaser.GameObjects.Container {
                     yoyo: true,
                     repeat: 2,
                     onComplete: () => {
-                        this.fenceContainer.x = this.x + 120;
+                        if (this.fenceContainer) {
+                            this.fenceContainer.x = this.x + 120;
+                        }
                     }
                 });
 
