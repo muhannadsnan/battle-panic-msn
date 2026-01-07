@@ -60,7 +60,7 @@ Performs attack:
 - Ranged: Creates Projectile
 
 **`takeDamage(amount)`**
-Reduces health, updates health bar, triggers death if HP <= 0
+Reduces health, updates health bar, plays hit sound, triggers death if HP <= 0
 
 **`die()`**
 - Sets `isDead = true`
@@ -211,6 +211,9 @@ new Castle(scene, x, y)
 | `attackSpeed` | number | MS between shots |
 | `arrowDamage` | number | Damage per arrow |
 | `level` | number | Castle upgrade level (1-10) |
+| `hasFence` | boolean | Whether fence is active |
+| `fenceMaxHealth` | number | Fence maximum HP |
+| `fenceCurrentHealth` | number | Fence current HP |
 
 #### Arrow Attack System
 The castle automatically shoots arrows at nearby enemies:
@@ -229,9 +232,34 @@ The castle automatically shoots arrows at nearby enemies:
 #### Mining Speed Bonus
 Castle level also increases mining rate by 10% per level.
 
+#### Fence System (Unlocked at Level 5)
+At castle level 5, a defensive wooden fence appears in front of the castle.
+
+**Fence Stats:**
+| Level | Fence HP | Notes |
+|-------|----------|-------|
+| 5 | 100% of castle HP | First fence created |
+| 6 | +25% HP | Repaired to full |
+| 7 | +25% HP | Repaired to full |
+| ... | +25% HP each | Repaired to full |
+
+**Fence Behavior:**
+- Enemies must destroy the fence before damaging the castle
+- Fence absorbs all incoming damage while active
+- Fence has its own health bar with "FENCE" label
+- When destroyed, fence explodes into wooden debris
+- On game reset, fence is recreated if castle level >= 5
+
+**Visual:**
+- Wooden palisade with vertical planks
+- Horizontal crossbeams
+- Pointed tops on each plank
+- Metal reinforcements
+
 #### Upgrade Benefits
 - Upgrading castle restores HP to full
 - Level badge displayed in center of castle
+- At level 5+: Fence is created/upgraded and repaired to full
 
 #### Key Methods
 
@@ -244,10 +272,17 @@ Castle level also increases mining rate by 10% per level.
 - Plays arrow sound
 
 **`takeDamage(amount)`**
-- Applies armor reduction from upgrades
+- If fence exists: damages fence first, plays hit sound, shakes fence
+- If fence destroyed or no fence: damages castle
 - Updates health bar
 - Triggers screen shake
 - If HP <= 0: triggers `onCastleDestroyed()`
+
+**`createFence()`**
+Creates the wooden fence visual and health bar in front of castle
+
+**`destroyFence()`**
+Destroys fence with debris explosion effect
 
 **`heal(amount)`**
 Restores HP (not currently used but available)

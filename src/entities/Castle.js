@@ -17,6 +17,13 @@ class Castle extends Phaser.GameObjects.Container {
         this.lastAttackTime = 0;
         this.target = null;
 
+        // Fence properties (unlocked at level 5)
+        this.hasFence = false;
+        this.fenceMaxHealth = 0;
+        this.fenceCurrentHealth = 0;
+        this.fenceContainer = null;
+        this.fenceHealthBar = null;
+
         // Create the detailed castle
         this.spriteContainer = scene.add.container(0, 0);
         this.createCastleSprite(scene);
@@ -323,6 +330,32 @@ class Castle extends Phaser.GameObjects.Container {
         this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
+        // Fence system - unlocks at level 5
+        if (this.level >= 5) {
+            if (!this.hasFence) {
+                // First time getting fence - 100% of castle HP
+                this.hasFence = true;
+                this.fenceMaxHealth = this.maxHealth;
+                this.fenceCurrentHealth = this.fenceMaxHealth;
+                this.createFence();
+            } else {
+                // Upgrade fence - +25% HP and repair to full
+                this.fenceMaxHealth = Math.floor(this.fenceMaxHealth * 1.25);
+                this.fenceCurrentHealth = this.fenceMaxHealth;
+                this.updateFenceHealthBar();
+                // Flash fence to show upgrade
+                if (this.fenceContainer) {
+                    this.scene.tweens.add({
+                        targets: this.fenceContainer,
+                        alpha: 0.5,
+                        duration: 100,
+                        yoyo: true,
+                        repeat: 2
+                    });
+                }
+            }
+        }
+
         // Castle grows bigger with each level!
         // Level 1 = 0.6 scale (small castle), Level 10 = 1.4 scale (grand palace)
         const minScale = 0.6;
@@ -371,9 +404,182 @@ class Castle extends Phaser.GameObjects.Container {
         }
     }
 
+    createFence() {
+        // Create fence container positioned in front of castle
+        this.fenceContainer = this.scene.add.container(this.x + 120, this.y);
+
+        // Fence posts and planks - big wooden fence
+        const fenceWidth = 60;
+        const fenceHeight = 180;
+
+        // Main fence body (wooden planks)
+        for (let i = 0; i < 5; i++) {
+            const plankX = -20 + i * 10;
+            const plank = this.scene.add.rectangle(plankX, 0, 8, fenceHeight, 0x8B5A2B);
+            this.fenceContainer.add(plank);
+            // Plank highlight
+            const highlight = this.scene.add.rectangle(plankX - 1, 0, 3, fenceHeight - 10, 0x9B6A3B);
+            this.fenceContainer.add(highlight);
+        }
+
+        // Horizontal crossbeams
+        this.fenceContainer.add(this.scene.add.rectangle(0, -60, fenceWidth, 12, 0x6B4423));
+        this.fenceContainer.add(this.scene.add.rectangle(0, 0, fenceWidth, 12, 0x6B4423));
+        this.fenceContainer.add(this.scene.add.rectangle(0, 60, fenceWidth, 12, 0x6B4423));
+
+        // Pointed tops on each plank
+        for (let i = 0; i < 5; i++) {
+            const plankX = -20 + i * 10;
+            const point = this.scene.add.rectangle(plankX, -fenceHeight/2 - 8, 8, 16, 0x7B4A1B);
+            point.setAngle(0);
+            this.fenceContainer.add(point);
+        }
+
+        // Metal reinforcements
+        this.fenceContainer.add(this.scene.add.rectangle(-20, -30, 10, 6, 0x555555));
+        this.fenceContainer.add(this.scene.add.rectangle(20, -30, 10, 6, 0x555555));
+        this.fenceContainer.add(this.scene.add.rectangle(-20, 30, 10, 6, 0x555555));
+        this.fenceContainer.add(this.scene.add.rectangle(20, 30, 10, 6, 0x555555));
+
+        // Fence health bar (above fence)
+        this.fenceHealthBarBg = this.scene.add.rectangle(0, -120, 70, 10, 0x1a1a2e);
+        this.fenceContainer.add(this.fenceHealthBarBg);
+
+        this.fenceHealthBarFill = this.scene.add.rectangle(-30, -120, 60, 6, 0x8B4513);
+        this.fenceHealthBarFill.setOrigin(0, 0.5);
+        this.fenceContainer.add(this.fenceHealthBarFill);
+
+        this.fenceHealthText = this.scene.add.text(0, -120, `${this.fenceCurrentHealth}`, {
+            fontSize: '9px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+        this.fenceContainer.add(this.fenceHealthText);
+
+        // "FENCE" label
+        const fenceLabel = this.scene.add.text(0, -135, 'FENCE', {
+            fontSize: '8px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#8B4513'
+        }).setOrigin(0.5);
+        this.fenceContainer.add(fenceLabel);
+
+        this.fenceContainer.setDepth(45);
+
+        // Spawn animation
+        this.fenceContainer.setScale(0);
+        this.scene.tweens.add({
+            targets: this.fenceContainer,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 500,
+            ease: 'Back.easeOut'
+        });
+    }
+
+    updateFenceHealthBar() {
+        if (!this.fenceHealthBarFill || !this.fenceHealthText) return;
+
+        const percent = this.fenceCurrentHealth / this.fenceMaxHealth;
+        this.fenceHealthBarFill.setDisplaySize(60 * percent, 6);
+        this.fenceHealthText.setText(`${this.fenceCurrentHealth}`);
+
+        // Color based on health
+        if (percent > 0.6) {
+            this.fenceHealthBarFill.setFillStyle(0x8B4513);
+        } else if (percent > 0.3) {
+            this.fenceHealthBarFill.setFillStyle(0xCD853F);
+        } else {
+            this.fenceHealthBarFill.setFillStyle(0xD2691E);
+        }
+    }
+
+    destroyFence() {
+        if (!this.fenceContainer) return;
+
+        // Play destruction sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playCastleHit();
+        }
+
+        // Debris explosion
+        for (let i = 0; i < 10; i++) {
+            const debris = this.scene.add.rectangle(
+                this.fenceContainer.x + Phaser.Math.Between(-30, 30),
+                this.fenceContainer.y + Phaser.Math.Between(-60, 60),
+                Phaser.Math.Between(6, 14),
+                Phaser.Math.Between(6, 14),
+                Phaser.Math.RND.pick([0x8B5A2B, 0x6B4423, 0x5A3A20])
+            );
+
+            this.scene.tweens.add({
+                targets: debris,
+                x: debris.x + Phaser.Math.Between(-80, 80),
+                y: debris.y + Phaser.Math.Between(30, 100),
+                angle: Phaser.Math.Between(-180, 180),
+                alpha: 0,
+                duration: Phaser.Math.Between(600, 1000),
+                onComplete: () => debris.destroy()
+            });
+        }
+
+        // Destroy fence container
+        this.fenceContainer.destroy();
+        this.fenceContainer = null;
+        this.hasFence = false;
+        this.fenceCurrentHealth = 0;
+    }
+
     takeDamage(amount) {
         if (this.isDead) return;
 
+        // If fence exists, damage fence first
+        if (this.hasFence && this.fenceCurrentHealth > 0) {
+            this.fenceCurrentHealth -= amount;
+
+            // Play fence hit sound
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playSwordHit();
+            }
+
+            // Shake fence
+            if (this.fenceContainer) {
+                this.scene.tweens.add({
+                    targets: this.fenceContainer,
+                    x: this.fenceContainer.x + Phaser.Math.Between(-5, 5),
+                    duration: 50,
+                    yoyo: true,
+                    repeat: 2,
+                    onComplete: () => {
+                        this.fenceContainer.x = this.x + 120;
+                    }
+                });
+
+                // Flash fence red
+                this.fenceContainer.list.forEach(child => {
+                    if (child.setTint) child.setTint(0xff6666);
+                });
+                this.scene.time.delayedCall(100, () => {
+                    if (this.fenceContainer) {
+                        this.fenceContainer.list.forEach(child => {
+                            if (child.clearTint) child.clearTint();
+                        });
+                    }
+                });
+            }
+
+            if (this.fenceCurrentHealth <= 0) {
+                this.fenceCurrentHealth = 0;
+                this.destroyFence();
+            } else {
+                this.updateFenceHealthBar();
+            }
+            return; // Fence absorbed the damage
+        }
+
+        // No fence or fence destroyed - damage castle
         this.currentHealth -= amount;
         this.currentHealth = Math.max(0, this.currentHealth);
         this.updateHealthBar();
@@ -537,6 +743,27 @@ class Castle extends Phaser.GameObjects.Container {
         this.setAlpha(1);
         this.spriteContainer.setScale(1);
         this.spriteContainer.y = 0;
+
+        // Reset fence if castle level >= 5
+        if (this.level >= 5) {
+            if (this.fenceContainer) {
+                this.fenceContainer.destroy();
+                this.fenceContainer = null;
+            }
+            this.hasFence = true;
+            this.fenceMaxHealth = this.maxHealth;
+            this.fenceCurrentHealth = this.fenceMaxHealth;
+            this.createFence();
+        } else {
+            // Destroy fence if level dropped below 5 (shouldn't happen but safety)
+            if (this.fenceContainer) {
+                this.fenceContainer.destroy();
+                this.fenceContainer = null;
+            }
+            this.hasFence = false;
+            this.fenceCurrentHealth = 0;
+            this.fenceMaxHealth = 0;
+        }
     }
 
     update(time, delta) {

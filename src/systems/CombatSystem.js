@@ -55,9 +55,6 @@ class CombatSystem {
             }
         }
 
-        // Create damage number
-        this.showDamageNumber(target.x, target.y - 20, damage);
-
         return true;
     }
 
@@ -82,7 +79,6 @@ class CombatSystem {
                 const falloff = 1 - (distance / radius) * 0.5;
                 const finalDamage = Math.floor(damage * falloff);
                 target.takeDamage(finalDamage);
-                this.showDamageNumber(target.x, target.y - 20, finalDamage);
             }
         });
     }

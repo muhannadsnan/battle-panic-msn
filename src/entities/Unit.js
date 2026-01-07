@@ -713,6 +713,11 @@ class Unit extends Phaser.GameObjects.Container {
         this.currentHealth -= amount;
         this.healthBar.setPercent(this.currentHealth / this.maxHealth);
 
+        // Play hit sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playSwordHit();
+        }
+
         // Damage flash - tint all children white briefly
         this.spriteContainer.list.forEach(child => {
             if (child.setTint) child.setTint(0xffffff);
