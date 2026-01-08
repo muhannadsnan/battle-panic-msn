@@ -202,7 +202,7 @@ class GameOverScene extends Phaser.Scene {
     }
 
     createStarDisplay(panel, x, y, earnedCount) {
-        const starSpacing = 60;
+        const starSpacing = 70;
         const stars = [];
 
         for (let i = 0; i < 3; i++) {
@@ -218,23 +218,23 @@ class GameOverScene extends Phaser.Scene {
                 this.tweens.add({
                     targets: star,
                     scale: 1,
-                    duration: 400,
-                    delay: 300 + i * 300,
+                    duration: 500,
+                    delay: 400 + i * 350,
                     ease: 'Back.easeOut',
                     onStart: () => {
-                        // Play a sound effect if available
                         if (typeof audioManager !== 'undefined') {
-                            audioManager.playUpgrade();
+                            audioManager.playSpawn();
                         }
                     }
                 });
 
-                // Add glow pulse for earned stars
+                // Gentle glow pulse for earned stars
                 this.tweens.add({
                     targets: star,
-                    alpha: 0.8,
-                    duration: 800,
-                    delay: 700 + i * 300,
+                    scaleX: 1.1,
+                    scaleY: 1.1,
+                    duration: 1000,
+                    delay: 900 + i * 350,
                     yoyo: true,
                     repeat: -1,
                     ease: 'Sine.easeInOut'
@@ -247,9 +247,10 @@ class GameOverScene extends Phaser.Scene {
         for (let i = 0; i < 3; i++) {
             const labelX = x + (i - 1) * starSpacing;
             const isEarned = i < earnedCount;
-            const label = this.add.text(labelX, y + 28, milestones[i], {
-                fontSize: '10px',
+            const label = this.add.text(labelX, y + 32, milestones[i], {
+                fontSize: '11px',
                 fontFamily: 'Arial',
+                fontStyle: 'bold',
                 color: isEarned ? '#ffd700' : '#555555'
             }).setOrigin(0.5);
             panel.add(label);
@@ -258,54 +259,71 @@ class GameOverScene extends Phaser.Scene {
 
     createStar(x, y, isEarned) {
         const container = this.add.container(x, y);
+        const graphics = this.add.graphics();
 
-        // Star shape using triangles (5-pointed star made of rectangles)
-        const color = isEarned ? 0xffd700 : 0x444444;
-        const glowColor = isEarned ? 0xffee88 : 0x555555;
+        const size = 22; // Star radius
+        const innerSize = size * 0.4; // Inner radius for star points
 
-        // Outer glow for earned stars
-        if (isEarned) {
-            const glow = this.add.rectangle(0, 0, 50, 50, 0xffd700, 0.3);
-            container.add(glow);
+        // Colors
+        const fillColor = isEarned ? 0xffd700 : 0x3a3a3a;
+        const borderColor = isEarned ? 0xb8860b : 0x222222;
+        const highlightColor = isEarned ? 0xffec80 : 0x4a4a4a;
+
+        // Calculate star points (5-pointed star)
+        const points = [];
+        for (let i = 0; i < 10; i++) {
+            const radius = i % 2 === 0 ? size : innerSize;
+            const angle = (i * Math.PI / 5) - Math.PI / 2; // Start from top
+            points.push({
+                x: Math.cos(angle) * radius,
+                y: Math.sin(angle) * radius
+            });
         }
 
-        // Star body - simplified 5-pointed star using rectangles
-        // Center
-        const center = this.add.rectangle(0, 0, 20, 20, color);
-        container.add(center);
-
-        // Top point
-        const top = this.add.rectangle(0, -18, 10, 16, color);
-        container.add(top);
-        const topTip = this.add.rectangle(0, -28, 6, 8, color);
-        container.add(topTip);
-
-        // Bottom left point
-        const bottomLeft = this.add.rectangle(-14, 12, 10, 14, color);
-        bottomLeft.setAngle(-20);
-        container.add(bottomLeft);
-
-        // Bottom right point
-        const bottomRight = this.add.rectangle(14, 12, 10, 14, color);
-        bottomRight.setAngle(20);
-        container.add(bottomRight);
-
-        // Top left point
-        const topLeft = this.add.rectangle(-16, -6, 14, 10, color);
-        topLeft.setAngle(-50);
-        container.add(topLeft);
-
-        // Top right point
-        const topRight = this.add.rectangle(16, -6, 14, 10, color);
-        topRight.setAngle(50);
-        container.add(topRight);
-
-        // Inner highlight for earned stars
+        // Draw outer glow for earned stars
         if (isEarned) {
-            const highlight = this.add.rectangle(0, -2, 12, 12, glowColor);
-            container.add(highlight);
+            graphics.fillStyle(0xffd700, 0.2);
+            graphics.fillCircle(0, 0, size + 12);
+            graphics.fillStyle(0xffd700, 0.1);
+            graphics.fillCircle(0, 0, size + 20);
         }
 
+        // Draw border (slightly larger star behind)
+        graphics.fillStyle(borderColor, 1);
+        graphics.beginPath();
+        graphics.moveTo(points[0].x * 1.15, points[0].y * 1.15);
+        for (let i = 1; i < points.length; i++) {
+            graphics.lineTo(points[i].x * 1.15, points[i].y * 1.15);
+        }
+        graphics.closePath();
+        graphics.fillPath();
+
+        // Draw main star
+        graphics.fillStyle(fillColor, 1);
+        graphics.beginPath();
+        graphics.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            graphics.lineTo(points[i].x, points[i].y);
+        }
+        graphics.closePath();
+        graphics.fillPath();
+
+        // Draw inner highlight (smaller star offset up-left)
+        if (isEarned) {
+            graphics.fillStyle(highlightColor, 0.6);
+            graphics.beginPath();
+            const highlightScale = 0.5;
+            const offsetX = -3;
+            const offsetY = -3;
+            graphics.moveTo(points[0].x * highlightScale + offsetX, points[0].y * highlightScale + offsetY);
+            for (let i = 1; i < points.length; i++) {
+                graphics.lineTo(points[i].x * highlightScale + offsetX, points[i].y * highlightScale + offsetY);
+            }
+            graphics.closePath();
+            graphics.fillPath();
+        }
+
+        container.add(graphics);
         return container;
     }
 
