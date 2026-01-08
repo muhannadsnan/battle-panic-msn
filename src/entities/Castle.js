@@ -331,10 +331,10 @@ class Castle extends Phaser.GameObjects.Container {
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
         // Fence system - unlocks at level 3
-        // HP progression: 30, 50, 80, 120, 160, 200, 250, 300 for levels 3-10
+        // HP progression: 100 to 500 for levels 3-10
         if (this.level >= 3) {
-            const fenceHPTable = { 3: 30, 4: 50, 5: 80, 6: 120, 7: 160, 8: 200, 9: 250, 10: 300 };
-            const newFenceHP = fenceHPTable[this.level] || 300;
+            const fenceHPTable = { 3: 100, 4: 150, 5: 200, 6: 275, 7: 325, 8: 400, 9: 450, 10: 500 };
+            const newFenceHP = fenceHPTable[this.level] || 500;
 
             if (!this.hasFence) {
                 // First time getting fence
@@ -756,10 +756,10 @@ class Castle extends Phaser.GameObjects.Container {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
             }
-            // Fence HP: 30, 50, 80, 120, 160, 200, 250, 300 for levels 3-10
-            const fenceHPTable = { 3: 30, 4: 50, 5: 80, 6: 120, 7: 160, 8: 200, 9: 250, 10: 300 };
+            // Fence HP: 100 to 500 for levels 3-10
+            const fenceHPTable = { 3: 100, 4: 150, 5: 200, 6: 275, 7: 325, 8: 400, 9: 450, 10: 500 };
             this.hasFence = true;
-            this.fenceMaxHealth = fenceHPTable[this.level] || 300;
+            this.fenceMaxHealth = fenceHPTable[this.level] || 500;
             this.fenceCurrentHealth = this.fenceMaxHealth;
             this.createFence();
         } else {
