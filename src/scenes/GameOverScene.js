@@ -103,12 +103,12 @@ class GameOverScene extends Phaser.Scene {
         const panel = this.add.container(x, y);
 
         // Background
-        const bg = this.add.rectangle(0, 0, 400, 260, 0x000000, 0.8);
+        const bg = this.add.rectangle(0, 0, 400, 300, 0x000000, 0.8);
         bg.setStrokeStyle(3, 0x4169E1);
         panel.add(bg);
 
         // Title
-        const statsTitle = this.add.text(0, -105, 'BATTLE RESULTS', {
+        const statsTitle = this.add.text(0, -125, 'BATTLE RESULTS', {
             fontSize: '24px',
             fontFamily: 'Arial',
             color: '#ffffff'
@@ -116,17 +116,24 @@ class GameOverScene extends Phaser.Scene {
         panel.add(statsTitle);
 
         // Wave reached
-        const waveText = this.add.text(0, -60, `Wave Reached: ${this.resultData.wave}`, {
+        const waveText = this.add.text(0, -85, `Wave Reached: ${this.resultData.wave}`, {
             fontSize: '28px',
             fontFamily: 'Arial',
             color: '#4169E1'
         }).setOrigin(0.5);
         panel.add(waveText);
 
-        // XP earned (1 per 10 waves)
+        // XP Stars display
+        const starsEarned = this.resultData.wave >= 30 ? 3 :
+                           this.resultData.wave >= 20 ? 2 :
+                           this.resultData.wave >= 10 ? 1 : 0;
+
+        this.createStarDisplay(panel, 0, -40, starsEarned);
+
+        // XP earned text
         const xpEarned = Math.floor(this.resultData.wave / 10);
-        const xpText = this.add.text(0, -15, `⭐ XP Earned: +${xpEarned}`, {
-            fontSize: '22px',
+        const xpText = this.add.text(0, 5, `XP Earned: +${xpEarned}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#44ddff'
         }).setOrigin(0.5);
@@ -143,7 +150,7 @@ class GameOverScene extends Phaser.Scene {
         }
 
         // Enemies killed
-        const killsText = this.add.text(0, 25, `Enemies Killed: ${this.resultData.enemiesKilled}`, {
+        const killsText = this.add.text(0, 35, `Enemies Killed: ${this.resultData.enemiesKilled}`, {
             fontSize: '18px',
             fontFamily: 'Arial',
             color: '#ff6b6b'
@@ -151,7 +158,7 @@ class GameOverScene extends Phaser.Scene {
         panel.add(killsText);
 
         // Gold earned (in-game only, doesn't persist)
-        const goldText = this.add.text(0, 55, `Gold Earned: ${this.resultData.goldEarned}`, {
+        const goldText = this.add.text(0, 65, `Gold Earned: ${this.resultData.goldEarned}`, {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#ffd700'
@@ -161,7 +168,7 @@ class GameOverScene extends Phaser.Scene {
         // High score indicator
         const saveData = saveSystem.load();
         if (this.resultData.wave >= saveData.highestWave) {
-            const newRecord = this.add.text(0, 95, '★ NEW RECORD! ★', {
+            const newRecord = this.add.text(0, 100, '★ NEW RECORD! ★', {
                 fontSize: '20px',
                 fontFamily: 'Arial',
                 color: '#ffd700'
@@ -176,7 +183,7 @@ class GameOverScene extends Phaser.Scene {
                 repeat: -1
             });
         } else {
-            const bestText = this.add.text(0, 95, `Best: Wave ${saveData.highestWave}`, {
+            const bestText = this.add.text(0, 100, `Best: Wave ${saveData.highestWave}`, {
                 fontSize: '16px',
                 fontFamily: 'Arial',
                 color: '#888888'
@@ -186,12 +193,120 @@ class GameOverScene extends Phaser.Scene {
 
         // Show total XP
         const totalXp = saveData.xp || 0;
-        const totalXpText = this.add.text(0, 115, `Total XP: ${totalXp}`, {
+        const totalXpText = this.add.text(0, 125, `Total XP: ${totalXp}`, {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
         panel.add(totalXpText);
+    }
+
+    createStarDisplay(panel, x, y, earnedCount) {
+        const starSpacing = 60;
+        const stars = [];
+
+        for (let i = 0; i < 3; i++) {
+            const starX = x + (i - 1) * starSpacing;
+            const isEarned = i < earnedCount;
+            const star = this.createStar(starX, y, isEarned);
+            panel.add(star);
+            stars.push(star);
+
+            // Animate earned stars with delay
+            if (isEarned) {
+                star.setScale(0);
+                this.tweens.add({
+                    targets: star,
+                    scale: 1,
+                    duration: 400,
+                    delay: 300 + i * 300,
+                    ease: 'Back.easeOut',
+                    onStart: () => {
+                        // Play a sound effect if available
+                        if (typeof audioManager !== 'undefined') {
+                            audioManager.playUpgrade();
+                        }
+                    }
+                });
+
+                // Add glow pulse for earned stars
+                this.tweens.add({
+                    targets: star,
+                    alpha: 0.8,
+                    duration: 800,
+                    delay: 700 + i * 300,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut'
+                });
+            }
+        }
+
+        // Add milestone labels below stars
+        const milestones = ['Wave 10', 'Wave 20', 'Wave 30'];
+        for (let i = 0; i < 3; i++) {
+            const labelX = x + (i - 1) * starSpacing;
+            const isEarned = i < earnedCount;
+            const label = this.add.text(labelX, y + 28, milestones[i], {
+                fontSize: '10px',
+                fontFamily: 'Arial',
+                color: isEarned ? '#ffd700' : '#555555'
+            }).setOrigin(0.5);
+            panel.add(label);
+        }
+    }
+
+    createStar(x, y, isEarned) {
+        const container = this.add.container(x, y);
+
+        // Star shape using triangles (5-pointed star made of rectangles)
+        const color = isEarned ? 0xffd700 : 0x444444;
+        const glowColor = isEarned ? 0xffee88 : 0x555555;
+
+        // Outer glow for earned stars
+        if (isEarned) {
+            const glow = this.add.rectangle(0, 0, 50, 50, 0xffd700, 0.3);
+            container.add(glow);
+        }
+
+        // Star body - simplified 5-pointed star using rectangles
+        // Center
+        const center = this.add.rectangle(0, 0, 20, 20, color);
+        container.add(center);
+
+        // Top point
+        const top = this.add.rectangle(0, -18, 10, 16, color);
+        container.add(top);
+        const topTip = this.add.rectangle(0, -28, 6, 8, color);
+        container.add(topTip);
+
+        // Bottom left point
+        const bottomLeft = this.add.rectangle(-14, 12, 10, 14, color);
+        bottomLeft.setAngle(-20);
+        container.add(bottomLeft);
+
+        // Bottom right point
+        const bottomRight = this.add.rectangle(14, 12, 10, 14, color);
+        bottomRight.setAngle(20);
+        container.add(bottomRight);
+
+        // Top left point
+        const topLeft = this.add.rectangle(-16, -6, 14, 10, color);
+        topLeft.setAngle(-50);
+        container.add(topLeft);
+
+        // Top right point
+        const topRight = this.add.rectangle(16, -6, 14, 10, color);
+        topRight.setAngle(50);
+        container.add(topRight);
+
+        // Inner highlight for earned stars
+        if (isEarned) {
+            const highlight = this.add.rectangle(0, -2, 12, 12, glowColor);
+            container.add(highlight);
+        }
+
+        return container;
     }
 
     createButton(x, y, text, callback) {
