@@ -271,7 +271,7 @@ At castle level 6, a defensive wooden fence appears in front of the castle.
 - Upgrading castle restores HP to full
 - Level badge displayed in center of castle
 - At level 2+: Arrow defense enabled
-- At level 6+: Fence is created/upgraded and repaired to full
+- At level 3+: Fence is created/upgraded and repaired to full
 - Upgrade cost: 100 gold + 75 wood base, +15% per level
 - At level 10: Can REPAIR castle and fence for same cost as level 10 upgrade
 

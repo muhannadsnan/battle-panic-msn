@@ -17,7 +17,7 @@ class Castle extends Phaser.GameObjects.Container {
         this.lastAttackTime = 0;
         this.target = null;
 
-        // Fence properties (unlocked at level 5)
+        // Fence properties (unlocked at level 3)
         this.hasFence = false;
         this.fenceMaxHealth = 0;
         this.fenceCurrentHealth = 0;
@@ -330,11 +330,11 @@ class Castle extends Phaser.GameObjects.Container {
         this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
-        // Fence system - unlocks at level 6
-        // HP progression: 50, 80, 120, 160, 200 for levels 6-10
-        if (this.level >= 6) {
-            const fenceHPTable = { 6: 50, 7: 80, 8: 120, 9: 160, 10: 200 };
-            const newFenceHP = fenceHPTable[this.level] || 200;
+        // Fence system - unlocks at level 3
+        // HP progression: 30, 50, 80, 120, 160, 200, 250, 300 for levels 3-10
+        if (this.level >= 3) {
+            const fenceHPTable = { 3: 30, 4: 50, 5: 80, 6: 120, 7: 160, 8: 200, 9: 250, 10: 300 };
+            const newFenceHP = fenceHPTable[this.level] || 300;
 
             if (!this.hasFence) {
                 // First time getting fence
@@ -750,20 +750,20 @@ class Castle extends Phaser.GameObjects.Container {
         this.spriteContainer.setScale(1);
         this.spriteContainer.y = 0;
 
-        // Reset fence if castle level >= 6
-        if (this.level >= 6) {
+        // Reset fence if castle level >= 3
+        if (this.level >= 3) {
             if (this.fenceContainer) {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
             }
-            // Fence HP: 50, 80, 120, 160, 200 for levels 6-10
-            const fenceHPTable = { 6: 50, 7: 80, 8: 120, 9: 160, 10: 200 };
+            // Fence HP: 30, 50, 80, 120, 160, 200, 250, 300 for levels 3-10
+            const fenceHPTable = { 3: 30, 4: 50, 5: 80, 6: 120, 7: 160, 8: 200, 9: 250, 10: 300 };
             this.hasFence = true;
-            this.fenceMaxHealth = fenceHPTable[this.level] || 200;
+            this.fenceMaxHealth = fenceHPTable[this.level] || 300;
             this.fenceCurrentHealth = this.fenceMaxHealth;
             this.createFence();
         } else {
-            // Destroy fence if level below 6
+            // Destroy fence if level below 3
             if (this.fenceContainer) {
                 this.fenceContainer.destroy();
                 this.fenceContainer = null;
