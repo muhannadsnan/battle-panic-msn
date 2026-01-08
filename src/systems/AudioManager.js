@@ -607,7 +607,12 @@ class AudioManager {
     playEpicMusic() {
         if (!this.audioContext || !this.musicEnabled) return;
 
+        // ============================================================
+        // IMPORTANT: DO NOT CHANGE THIS MUSIC - User loves it! ❤️
         // Modern ambient/chill battle music - smooth and pleasant
+        // Chord progression: Am - F - C - G (pleasant and uplifting)
+        // 85 BPM, 8-bar loop with warm pads, soft bells, gentle bass
+        // ============================================================
         const bpm = 85; // Slower, more relaxed tempo
         const beatMs = 60000 / bpm;
         const barMs = beatMs * 4;
