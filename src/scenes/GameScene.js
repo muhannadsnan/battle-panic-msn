@@ -864,6 +864,9 @@ class GameScene extends Phaser.Scene {
         // Keep goldDisplay for backwards compatibility
         this.goldDisplay = this.resourceDisplay;
 
+        // Rank display (top left corner)
+        this.createRankBadge();
+
         // Unit buttons panel
         this.createUnitButtons();
 
@@ -875,6 +878,28 @@ class GameScene extends Phaser.Scene {
 
         // Unit count display (top right area)
         this.createUnitCountDisplay();
+    }
+
+    createRankBadge() {
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+
+        // Container for rank badge
+        this.rankBadge = this.add.container(55, 30);
+        this.rankBadge.setDepth(900);
+
+        // Background
+        const bg = this.add.rectangle(0, 0, 90, 32, 0x000000, 0.6);
+        bg.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color);
+        this.rankBadge.add(bg);
+
+        // Rank icon and name
+        this.rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.name}`, {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: rankInfo.rank.color
+        }).setOrigin(0.5);
+        this.rankBadge.add(this.rankText);
     }
 
     createUnitCountDisplay() {

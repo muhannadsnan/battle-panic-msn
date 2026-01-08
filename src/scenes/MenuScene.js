@@ -61,10 +61,14 @@ class MenuScene extends Phaser.Scene {
 
         // Load save data for stats display
         const saveData = saveSystem.load();
+        const rankInfo = saveSystem.getRankInfo(saveData);
+
+        // Rank display
+        this.createRankDisplay(width / 2, 220, rankInfo);
 
         // Stats display
-        this.add.text(width / 2, 220, `Highest Wave: ${saveData.highestWave}`, {
-            fontSize: '16px',
+        this.add.text(width / 2, 270, `Highest Wave: ${saveData.highestWave}`, {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -438,6 +442,60 @@ class MenuScene extends Phaser.Scene {
         }
 
         dialog.setDepth(1000);
+    }
+
+    createRankDisplay(x, y, rankInfo) {
+        const container = this.add.container(x, y);
+
+        // Rank icon and name
+        const rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.name}`, {
+            fontSize: '22px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: rankInfo.rank.color,
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        container.add(rankText);
+
+        // Progress bar background
+        const barWidth = 150;
+        const barHeight = 8;
+        const barBg = this.add.rectangle(0, 22, barWidth, barHeight, 0x333333);
+        barBg.setStrokeStyle(1, 0x555555);
+        container.add(barBg);
+
+        // Progress bar fill
+        const fillWidth = barWidth * rankInfo.progress;
+        if (fillWidth > 0) {
+            const barFill = this.add.rectangle(
+                -barWidth / 2 + fillWidth / 2,
+                22,
+                fillWidth,
+                barHeight - 2,
+                Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color
+            );
+            container.add(barFill);
+        }
+
+        // Progress text
+        if (rankInfo.nextRank) {
+            const progressText = this.add.text(0, 36, `${rankInfo.pointsToNext} pts to ${rankInfo.nextRank.name}`, {
+                fontSize: '10px',
+                fontFamily: 'Arial',
+                color: '#666666'
+            }).setOrigin(0.5);
+            container.add(progressText);
+        } else {
+            const maxText = this.add.text(0, 36, 'MAX RANK', {
+                fontSize: '10px',
+                fontFamily: 'Arial',
+                color: '#ffd700'
+            }).setOrigin(0.5);
+            container.add(maxText);
+        }
+
+        return container;
     }
 
     createSwordCursor() {

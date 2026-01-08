@@ -253,6 +253,82 @@ class SaveSystem {
         this.save(data);
         return data.xp;
     }
+
+    // Calculate total rank score based on all achievements
+    calculateRankScore(data) {
+        const spentXP = this.calculateSpentXP(data);
+        const totalXP = (data.xp || 0) + spentXP;
+
+        let score = 0;
+
+        // XP contribution (x10 weight)
+        score += totalXP * 10;
+
+        // Kills contribution
+        score += (data.totalEnemiesKilled || 0) * 0.5;
+
+        // Boss kills (x20 weight)
+        score += (data.stats?.totalBossesKilled || 0) * 20;
+
+        // Highest wave (x5 weight)
+        score += (data.highestWave || 0) * 5;
+
+        // Total waves completed
+        score += (data.stats?.totalWavesCompleted || 0) * 0.5;
+
+        // Games played (x2 weight)
+        score += (data.stats?.totalGamesPlayed || 0) * 2;
+
+        // Resources collected (x0.01 weight)
+        score += (data.stats?.totalGoldCollected || 0) * 0.01;
+        score += (data.stats?.totalWoodCollected || 0) * 0.01;
+
+        // Units spawned (x0.1 weight)
+        score += (data.stats?.totalUnitsSpawned || 0) * 0.1;
+
+        return Math.floor(score);
+    }
+
+    // Get rank info based on score
+    getRankInfo(data) {
+        const score = this.calculateRankScore(data);
+
+        const ranks = [
+            { name: 'Recruit', minScore: 0, color: '#888888', icon: '🔰' },
+            { name: 'Soldier', minScore: 100, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Warrior', minScore: 300, color: '#4169E1', icon: '🗡️' },
+            { name: 'Knight', minScore: 600, color: '#9932CC', icon: '🛡️' },
+            { name: 'Captain', minScore: 1000, color: '#ff6b6b', icon: '⭐' },
+            { name: 'Commander', minScore: 2000, color: '#ff4500', icon: '🌟' },
+            { name: 'General', minScore: 4000, color: '#ffd700', icon: '👑' },
+            { name: 'Champion', minScore: 8000, color: '#00ffff', icon: '💎' },
+            { name: 'Legend', minScore: 15000, color: '#ff00ff', icon: '🔥' },
+            { name: 'Immortal', minScore: 30000, color: '#ffffff', icon: '⚡' }
+        ];
+
+        let currentRank = ranks[0];
+        let nextRank = ranks[1];
+
+        for (let i = ranks.length - 1; i >= 0; i--) {
+            if (score >= ranks[i].minScore) {
+                currentRank = ranks[i];
+                nextRank = ranks[i + 1] || null;
+                break;
+            }
+        }
+
+        const progress = nextRank
+            ? (score - currentRank.minScore) / (nextRank.minScore - currentRank.minScore)
+            : 1;
+
+        return {
+            rank: currentRank,
+            nextRank: nextRank,
+            score: score,
+            progress: Math.min(1, Math.max(0, progress)),
+            pointsToNext: nextRank ? nextRank.minScore - score : 0
+        };
+    }
 }
 
 // Global instance
