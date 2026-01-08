@@ -255,78 +255,117 @@ class SaveSystem {
     }
 
     // Calculate total rank score based on all achievements
+    // Designed for LONG-TERM progression - takes many hours/days to rank up
     calculateRankScore(data) {
         const spentXP = this.calculateSpentXP(data);
         const totalXP = (data.xp || 0) + spentXP;
 
         let score = 0;
 
-        // XP contribution (x10 weight)
-        score += totalXP * 10;
+        // XP contribution (x5 weight) - main progression
+        score += totalXP * 5;
 
-        // Kills contribution
-        score += (data.totalEnemiesKilled || 0) * 0.5;
+        // Kills contribution (x0.1) - grinding matters
+        score += (data.totalEnemiesKilled || 0) * 0.1;
 
-        // Boss kills (x20 weight)
-        score += (data.stats?.totalBossesKilled || 0) * 20;
+        // Boss kills (x5 weight) - meaningful milestone
+        score += (data.stats?.totalBossesKilled || 0) * 5;
 
-        // Highest wave (x5 weight)
-        score += (data.highestWave || 0) * 5;
+        // Highest wave (x3 weight) - skill matters
+        score += (data.highestWave || 0) * 3;
 
-        // Total waves completed
-        score += (data.stats?.totalWavesCompleted || 0) * 0.5;
+        // Total waves completed (x0.1)
+        score += (data.stats?.totalWavesCompleted || 0) * 0.1;
 
-        // Games played (x2 weight)
-        score += (data.stats?.totalGamesPlayed || 0) * 2;
+        // Games played (x0.5 weight) - consistency
+        score += (data.stats?.totalGamesPlayed || 0) * 0.5;
 
-        // Resources collected (x0.01 weight)
-        score += (data.stats?.totalGoldCollected || 0) * 0.01;
-        score += (data.stats?.totalWoodCollected || 0) * 0.01;
+        // Resources collected (x0.001 weight)
+        score += (data.stats?.totalGoldCollected || 0) * 0.001;
+        score += (data.stats?.totalWoodCollected || 0) * 0.001;
 
-        // Units spawned (x0.1 weight)
-        score += (data.stats?.totalUnitsSpawned || 0) * 0.1;
+        // Units spawned (x0.02 weight)
+        score += (data.stats?.totalUnitsSpawned || 0) * 0.02;
 
         return Math.floor(score);
     }
 
-    // Get rank info based on score
+    // Get rank info based on score - each rank has 3 grades (I, II, III)
     getRankInfo(data) {
         const score = this.calculateRankScore(data);
 
-        const ranks = [
-            { name: 'Recruit', minScore: 0, color: '#888888', icon: '🔰' },
-            { name: 'Soldier', minScore: 100, color: '#4a9c4a', icon: '⚔️' },
-            { name: 'Warrior', minScore: 300, color: '#4169E1', icon: '🗡️' },
-            { name: 'Knight', minScore: 600, color: '#9932CC', icon: '🛡️' },
-            { name: 'Captain', minScore: 1000, color: '#ff6b6b', icon: '⭐' },
-            { name: 'Commander', minScore: 2000, color: '#ff4500', icon: '🌟' },
-            { name: 'General', minScore: 4000, color: '#ffd700', icon: '👑' },
-            { name: 'Champion', minScore: 8000, color: '#00ffff', icon: '💎' },
-            { name: 'Legend', minScore: 15000, color: '#ff00ff', icon: '🔥' },
-            { name: 'Immortal', minScore: 30000, color: '#ffffff', icon: '⚡' }
+        // Ranks with 3 grades each - designed for long-term progression
+        // Each rank tier has a base score, and grades divide it into thirds
+        const rankTiers = [
+            { name: 'Recruit', baseScore: 0, color: '#888888', icon: '🔰' },
+            { name: 'Soldier', baseScore: 50, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Warrior', baseScore: 150, color: '#4169E1', icon: '🗡️' },
+            { name: 'Knight', baseScore: 400, color: '#9932CC', icon: '🛡️' },
+            { name: 'Captain', baseScore: 800, color: '#ff6b6b', icon: '⭐' },
+            { name: 'Commander', baseScore: 1500, color: '#ff4500', icon: '🌟' },
+            { name: 'General', baseScore: 3000, color: '#ffd700', icon: '👑' },
+            { name: 'Champion', baseScore: 6000, color: '#00ffff', icon: '💎' },
+            { name: 'Legend', baseScore: 12000, color: '#ff00ff', icon: '🔥' },
+            { name: 'Immortal', baseScore: 25000, color: '#ffffff', icon: '⚡' }
         ];
 
-        let currentRank = ranks[0];
-        let nextRank = ranks[1];
-
-        for (let i = ranks.length - 1; i >= 0; i--) {
-            if (score >= ranks[i].minScore) {
-                currentRank = ranks[i];
-                nextRank = ranks[i + 1] || null;
+        // Find current rank tier
+        let tierIndex = 0;
+        for (let i = rankTiers.length - 1; i >= 0; i--) {
+            if (score >= rankTiers[i].baseScore) {
+                tierIndex = i;
                 break;
             }
         }
 
-        const progress = nextRank
-            ? (score - currentRank.minScore) / (nextRank.minScore - currentRank.minScore)
-            : 1;
+        const currentTier = rankTiers[tierIndex];
+        const nextTier = rankTiers[tierIndex + 1] || null;
+
+        // Calculate grade within tier (I, II, III)
+        let grade = 1;
+        let gradeProgress = 0;
+        let pointsToNextGrade = 0;
+
+        if (nextTier) {
+            const tierRange = nextTier.baseScore - currentTier.baseScore;
+            const gradeSize = tierRange / 3;
+            const scoreInTier = score - currentTier.baseScore;
+
+            grade = Math.min(3, Math.floor(scoreInTier / gradeSize) + 1);
+            const gradeStart = (grade - 1) * gradeSize;
+            const gradeEnd = grade * gradeSize;
+
+            gradeProgress = (scoreInTier - gradeStart) / gradeSize;
+            pointsToNextGrade = Math.ceil(currentTier.baseScore + gradeEnd - score);
+
+            // If at grade 3, points to next is to next tier
+            if (grade === 3) {
+                pointsToNextGrade = nextTier.baseScore - score;
+            }
+        } else {
+            // Max rank (Immortal) - still has grades based on score beyond baseScore
+            const beyondBase = score - currentTier.baseScore;
+            const gradeSize = 10000; // 10k per grade at max rank
+            grade = Math.min(3, Math.floor(beyondBase / gradeSize) + 1);
+            gradeProgress = grade === 3 ? 1 : (beyondBase % gradeSize) / gradeSize;
+            pointsToNextGrade = grade === 3 ? 0 : gradeSize - (beyondBase % gradeSize);
+        }
+
+        const gradeNumerals = ['I', 'II', 'III'];
+        const fullRankName = `${currentTier.name} ${gradeNumerals[grade - 1]}`;
 
         return {
-            rank: currentRank,
-            nextRank: nextRank,
+            rank: {
+                ...currentTier,
+                fullName: fullRankName,
+                grade: grade,
+                gradeNumeral: gradeNumerals[grade - 1]
+            },
+            nextRank: nextTier,
             score: score,
-            progress: Math.min(1, Math.max(0, progress)),
-            pointsToNext: nextRank ? nextRank.minScore - score : 0
+            progress: Math.min(1, Math.max(0, gradeProgress)),
+            pointsToNext: pointsToNextGrade,
+            isMaxGrade: !nextTier && grade === 3
         };
     }
 }

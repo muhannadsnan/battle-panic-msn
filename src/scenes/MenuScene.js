@@ -95,7 +95,7 @@ class MenuScene extends Phaser.Scene {
         this.createCoffeeButton(width - 100, height - 60);
 
         // Version (more visible)
-        this.add.text(width / 2, height - 12, 'v1.1.0', {
+        this.add.text(width / 2, height - 12, 'v1.2.0', {
             fontSize: '14px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -450,8 +450,8 @@ class MenuScene extends Phaser.Scene {
     createRankDisplay(x, y, rankInfo) {
         const container = this.add.container(x, y);
 
-        // Rank icon and name
-        const rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.name}`, {
+        // Rank icon and full name with grade (e.g., "⚔️ Soldier II")
+        const rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
             fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -461,10 +461,18 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(rankText);
 
+        // Score display
+        const scoreText = this.add.text(0, 20, `Score: ${rankInfo.score}`, {
+            fontSize: '11px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        container.add(scoreText);
+
         // Progress bar background
-        const barWidth = 150;
-        const barHeight = 8;
-        const barBg = this.add.rectangle(0, 22, barWidth, barHeight, 0x333333);
+        const barWidth = 160;
+        const barHeight = 10;
+        const barBg = this.add.rectangle(0, 38, barWidth, barHeight, 0x333333);
         barBg.setStrokeStyle(1, 0x555555);
         container.add(barBg);
 
@@ -473,7 +481,7 @@ class MenuScene extends Phaser.Scene {
         if (fillWidth > 0) {
             const barFill = this.add.rectangle(
                 -barWidth / 2 + fillWidth / 2,
-                22,
+                38,
                 fillWidth,
                 barHeight - 2,
                 Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color
@@ -481,21 +489,26 @@ class MenuScene extends Phaser.Scene {
             container.add(barFill);
         }
 
-        // Progress text
-        if (rankInfo.nextRank) {
-            const progressText = this.add.text(0, 36, `${rankInfo.pointsToNext} pts to ${rankInfo.nextRank.name}`, {
+        // Progress text - shows next grade or next rank
+        if (rankInfo.isMaxGrade) {
+            const maxText = this.add.text(0, 54, '⚡ MAX RANK ⚡', {
+                fontSize: '10px',
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                color: '#ffd700'
+            }).setOrigin(0.5);
+            container.add(maxText);
+        } else {
+            // Determine what's next (next grade or next rank tier)
+            const nextLabel = rankInfo.rank.grade < 3
+                ? `${rankInfo.rank.name} ${['II', 'III'][rankInfo.rank.grade - 1]}`
+                : rankInfo.nextRank.name + ' I';
+            const progressText = this.add.text(0, 54, `${rankInfo.pointsToNext} pts to ${nextLabel}`, {
                 fontSize: '10px',
                 fontFamily: 'Arial',
                 color: '#666666'
             }).setOrigin(0.5);
             container.add(progressText);
-        } else {
-            const maxText = this.add.text(0, 36, 'MAX RANK', {
-                fontSize: '10px',
-                fontFamily: 'Arial',
-                color: '#ffd700'
-            }).setOrigin(0.5);
-            container.add(maxText);
         }
 
         return container;
