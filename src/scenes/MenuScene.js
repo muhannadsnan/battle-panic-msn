@@ -94,12 +94,15 @@ class MenuScene extends Phaser.Scene {
         // Buy me a coffee button (bottom right)
         this.createCoffeeButton(width - 100, height - 60);
 
-        // Version
-        this.add.text(10, height - 20, 'v1.0.0', {
-            fontSize: '12px',
+        // Version (more visible)
+        this.add.text(width / 2, height - 12, 'v1.1.0', {
+            fontSize: '14px',
             fontFamily: 'Arial',
-            color: '#444444'
-        });
+            fontStyle: 'bold',
+            color: '#666666',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
     }
 
     createButton(x, y, text, callback) {
@@ -257,10 +260,18 @@ class MenuScene extends Phaser.Scene {
     }
 
     createBuyXPButton(x, y) {
+        // "Coming Soon" label above button
+        this.add.text(x, y - 52, 'Coming Soon', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            fontStyle: 'italic',
+            color: '#ffaa00'
+        }).setOrigin(0.5);
+
         const container = this.add.container(x, y);
 
         // Background - greyed out (disabled)
-        const bg = this.add.rectangle(0, 0, 160, 70, 0x333333);
+        const bg = this.add.rectangle(0, 0, 160, 60, 0x333333);
         bg.setStrokeStyle(3, 0x555555);
         container.add(bg);
 
@@ -272,7 +283,7 @@ class MenuScene extends Phaser.Scene {
         container.add(star);
 
         // Text (dimmed)
-        const text = this.add.text(20, -10, '10 XP', {
+        const text = this.add.text(20, -8, '10 XP', {
             fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -280,20 +291,12 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(text);
 
-        const text2 = this.add.text(20, 12, 'for $2', {
+        const text2 = this.add.text(20, 14, 'for $2', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#555555'
         }).setOrigin(0.5);
         container.add(text2);
-
-        // "Coming Soon" label
-        const comingSoon = this.add.text(0, 28, 'Coming Soon', {
-            fontSize: '10px',
-            fontFamily: 'Arial',
-            color: '#888888'
-        }).setOrigin(0.5);
-        container.add(comingSoon);
 
         // No interactivity - button is disabled
 
@@ -559,11 +562,13 @@ class MenuScene extends Phaser.Scene {
     }
 
     update() {
-        // Update sword cursor position
+        // Update sword cursor position - tip points at cursor
         if (this.swordCursor) {
             const pointer = this.input.activePointer;
-            this.swordCursor.x = pointer.x + 10;
-            this.swordCursor.y = pointer.y + 15;
+            // Offset to align sword tip with actual cursor position
+            // Sword tip is at y=-48 (scaled 0.8 = -38.4), rotated -30 degrees
+            this.swordCursor.x = pointer.x + 20;
+            this.swordCursor.y = pointer.y + 35;
         }
     }
 }

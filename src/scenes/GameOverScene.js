@@ -77,12 +77,15 @@ class GameOverScene extends Phaser.Scene {
             color: '#888888'
         }).setOrigin(0.5);
 
-        // Version
-        this.add.text(10, height - 20, 'v1.0.0', {
-            fontSize: '12px',
+        // Version (more visible)
+        this.add.text(width / 2, height - 12, 'v1.1.0', {
+            fontSize: '14px',
             fontFamily: 'Arial',
-            color: '#444444'
-        });
+            fontStyle: 'bold',
+            color: '#666666',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
     }
 
     createParticles() {
@@ -421,16 +424,16 @@ class GameOverScene extends Phaser.Scene {
         this.swordCursor.setAngle(-30);
         this.swordCursor.setScale(0.8);
 
-        // Follow mouse
+        // Follow mouse - offset to align sword tip with cursor
         this.input.on('pointermove', (pointer) => {
-            this.swordCursor.setPosition(pointer.x + 10, pointer.y + 15);
+            this.swordCursor.setPosition(pointer.x + 20, pointer.y + 35);
         });
     }
 
     update() {
         if (this.swordCursor) {
             const pointer = this.input.activePointer;
-            this.swordCursor.setPosition(pointer.x + 10, pointer.y + 15);
+            this.swordCursor.setPosition(pointer.x + 20, pointer.y + 35);
         }
     }
 }
