@@ -201,13 +201,11 @@ const WAVE_CONFIG = {
     woodPerWave: 8,
     timeBetweenWaves: 3000,
     spawnInterval: 1000,
-    // Enemy scaling per wave
-    enemyHealthScaling: 0.10,  // +10% HP per wave (was 8%)
-    enemyDamageScaling: 0.08,  // +8% damage per wave (was 6%)
-    // Late game scaling (after wave 20)
-    lateGameWave: 20,
-    lateGameHealthScaling: 0.15,  // +15% HP per wave after wave 20
-    lateGameDamageScaling: 0.12,  // +12% damage per wave after wave 20
+    // Enemy scaling per wave (tiered system, increases every 20 waves)
+    // Waves 1-20: +3%, 21-40: +6%, 41-60: +9%, 61-80: +12%, etc.
+    scalingTierSize: 20,        // Waves per tier
+    baseScalingPercent: 0.03,   // Starting at 3% per wave
+    scalingIncrement: 0.03,     // +3% more per tier
     // Diminishing wave rewards after wave 25
     diminishingRewardsWave: 25,
     rewardDiminishRate: 0.9  // 10% less reward per wave after threshold
@@ -231,9 +229,9 @@ const CASTLE_CONFIG = {
     defenseMinY: 80,    // Full battlefield range
     defenseMaxY: 520,
     maxLevel: 10,       // Max castle upgrade level
-    upgradeGoldBase: 150,   // Starting gold cost
-    upgradeWoodBase: 100,   // Starting wood cost
-    upgradeCostMultiplier: 1.25 // 25% more per level
+    upgradeGoldBase: 100,   // Starting gold cost
+    upgradeWoodBase: 75,    // Starting wood cost
+    upgradeCostMultiplier: 1.15 // 15% more per level
 };
 
 // Resource Configuration
@@ -262,8 +260,8 @@ const SPAWN_CONFIG = {
 // Boss Configuration
 const BOSS_CONFIG = {
     spawnEveryWaves: 10,
-    healthMultiplier: 2.5, // Reduced again - bosses now 1/4 original strength
-    damageMultiplier: 1.25, // Halved again - dragon hits castle less hard
+    healthMultiplier: 1.25, // Halved - bosses much easier now
+    damageMultiplier: 1.25, // Dragon hits castle less hard
     sizeMultiplier: 0.75   // Half size (reduced from 1.5)
 };
 

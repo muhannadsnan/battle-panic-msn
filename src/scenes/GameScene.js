@@ -599,16 +599,29 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.castleSpinnerContainer.add(this.castleUpgradePercentText);
 
-        // Cost/info text
-        this.castleUpgradeCostText = this.add.text(0, 52, '', {
-            fontSize: '11px',
+        // Cost/info text (always visible, outside spinner container)
+        this.castleUpgradeCostText = this.add.text(0, 160, '', {
+            fontSize: '12px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#aaaaaa',
+            color: '#888888',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 3
         }).setOrigin(0.5);
-        this.castleSpinnerContainer.add(this.castleUpgradeCostText);
+        this.castleUpgradeZone.add(this.castleUpgradeCostText);
+
+        // Glow effect for cost text (shown when affordable)
+        this.castleCostGlow = this.add.text(0, 160, '', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4ade80',
+            stroke: '#4ade80',
+            strokeThickness: 6
+        }).setOrigin(0.5).setAlpha(0);
+        this.castleUpgradeZone.add(this.castleCostGlow);
+        // Bring cost text in front of glow
+        this.castleUpgradeZone.bringToTop(this.castleUpgradeCostText);
 
         // Hover events
         hitArea.on('pointerover', () => {
@@ -651,12 +664,21 @@ class GameScene extends Phaser.Scene {
         const canAfford = this.gold >= cost.gold && this.wood >= cost.wood;
 
         // Update cost display
-        if (isMaxLevel) {
-            this.castleUpgradeCostText.setText(`${cost.gold}g ${cost.wood}w REPAIR`);
+        const costText = isMaxLevel
+            ? `${cost.gold}g ${cost.wood}w REPAIR`
+            : `${cost.gold}g ${cost.wood}w Lv.${currentLevel + 1}`;
+
+        this.castleUpgradeCostText.setText(costText);
+        this.castleCostGlow.setText(costText);
+
+        // Update colors and glow based on affordability
+        if (canAfford) {
+            this.castleUpgradeCostText.setStyle({ color: '#4ade80' });
+            this.castleCostGlow.setAlpha(0.4);
         } else {
-            this.castleUpgradeCostText.setText(`${cost.gold}g ${cost.wood}w Lv.${currentLevel + 1}`);
+            this.castleUpgradeCostText.setStyle({ color: '#888888' });
+            this.castleCostGlow.setAlpha(0);
         }
-        this.castleUpgradeCostText.setStyle({ color: canAfford ? '#4ade80' : '#888888' });
 
         // Only progress if hovering AND can afford AND hover delay has passed
         if (this.castleUpgradeHovering && canAfford) {
@@ -801,10 +823,26 @@ class GameScene extends Phaser.Scene {
 
     updateCastleUpgradeDisplay() {
         const level = this.castleLevel || 1;
-        if (level >= CASTLE_CONFIG.maxLevel) {
-            // Show repair option at max level
-            const cost = this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1);
-            this.castleUpgradeCostText.setText(`${cost.gold}g ${cost.wood}w REPAIR`);
+        const isMaxLevel = level >= CASTLE_CONFIG.maxLevel;
+        const cost = isMaxLevel
+            ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)
+            : this.getCastleUpgradeCost(level);
+
+        const costText = isMaxLevel
+            ? `${cost.gold}g ${cost.wood}w REPAIR`
+            : `${cost.gold}g ${cost.wood}w Lv.${level + 1}`;
+
+        this.castleUpgradeCostText.setText(costText);
+        this.castleCostGlow.setText(costText);
+
+        // Check affordability
+        const canAfford = this.gold >= cost.gold && this.wood >= cost.wood;
+        if (canAfford) {
+            this.castleUpgradeCostText.setStyle({ color: '#4ade80' });
+            this.castleCostGlow.setAlpha(0.4);
+        } else {
+            this.castleUpgradeCostText.setStyle({ color: '#888888' });
+            this.castleCostGlow.setAlpha(0);
         }
     }
 

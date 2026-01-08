@@ -856,24 +856,21 @@ class Unit extends Phaser.GameObjects.Container {
         const color = isGold ? 0xffd700 : 0xc0c0c0;
         const strokeColor = isGold ? 0xb8860b : 0x808080;
 
-        // Draw stacked chevrons (V shapes pointing down, like military rank)
+        // Draw stacked chevrons (open V shapes pointing down, like military rank)
         const chevronWidth = 8;
-        const chevronHeight = 3;
-        const spacing = 3;
+        const chevronHeight = 4;
+        const spacing = 4;
 
         for (let i = 0; i < numChevrons; i++) {
             const graphics = this.scene.add.graphics();
             const offsetY = -i * spacing; // Stack upward
 
-            // Draw V-shaped chevron pointing down
-            graphics.lineStyle(1.5, strokeColor, 1);
-            graphics.fillStyle(color, 1);
+            // Draw open V-shaped chevron (two lines, open at top)
+            graphics.lineStyle(2, color, 1);
             graphics.beginPath();
             graphics.moveTo(0, offsetY);                           // Top left
             graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight); // Bottom center (tip)
             graphics.lineTo(chevronWidth, offsetY);                // Top right
-            graphics.closePath();
-            graphics.fillPath();
             graphics.strokePath();
 
             badgeContainer.add(graphics);

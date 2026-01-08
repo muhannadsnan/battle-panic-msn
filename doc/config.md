@@ -67,17 +67,17 @@ Located in `ENEMY_TYPES` object. Similar stats to units plus:
 
 | Enemy | HP | DMG | Speed | Range | Gold | Wood | Appears |
 |-------|-----|-----|-------|-------|------|------|---------|
-| Goblin | 9 | 2 | 85 | 25 | 6 | 4 | Wave 1+ |
-| Orc | 24 | 3 | 55 | 30 | 14 | 10 | Wave 2+ |
-| Skeleton | 17 | 3 | 65 | 28 | 10 | 6 | Wave 4+ |
-| Skeleton Archer | 15 | 6 | 50 | 180 | 15 | 10 | Wave 6+ |
-| Spear Monster | 18 | 8 | 75 | 200 | 15 | 8 | Wave 7+ |
-| Troll | 90 | 12 | 35 | 40 | 30 | 20 | Wave 8+ |
-| Dark Knight | 60 | 9 | 55 | 35 | 25 | 15 | Wave 12+ |
-| Demon | 120 | 15 | 45 | 35 | 50 | 30 | Wave 18+ |
-| Dragon (Boss) | 300 | 24 | 40 | 150 | 150 | 100 | Every 10 waves |
+| Goblin | 9 | 2 | 85 | 25 | 1 | 1 | Wave 1+ |
+| Orc | 24 | 3 | 55 | 30 | 1 | 1 | Wave 1+ |
+| Skeleton | 17 | 3 | 65 | 28 | 1 | 1 | Wave 4+ |
+| Skeleton Archer | 15 | 6 | 50 | 180 | 2 | 1 | Wave 6+ |
+| Spear Monster | 18 | 8 | 75 | 200 | 2 | 1 | Wave 7+ |
+| Troll | 90 | 12 | 35 | 40 | 3 | 2 | Wave 8+ |
+| Dark Knight | 60 | 9 | 55 | 35 | 3 | 2 | Wave 12+ |
+| Demon | 120 | 15 | 45 | 35 | 5 | 3 | Wave 18+ |
+| Dragon (Boss) | 300 | 24 | 40 | 150 | 15 | 10 | Every 10 waves |
 
-*Note: All enemy HP and damage reduced by 40% from original values for easier gameplay.*
+*Note: All enemy HP and damage reduced by 40% from original values for easier gameplay. Wave 1 now includes both Goblins and Orcs for a harder start.*
 
 ---
 
@@ -93,11 +93,10 @@ const WAVE_CONFIG = {
     woodPerWave: 8,           // Additional wood per wave number
     timeBetweenWaves: 3000,   // 3 seconds between waves
     spawnInterval: 1000,      // Base spawn interval (decreases at higher waves)
-    enemyHealthScaling: 0.10, // +10% HP per wave
-    enemyDamageScaling: 0.08, // +8% damage per wave
-    lateGameWave: 20,         // Accelerated scaling starts here
-    lateGameHealthScaling: 0.15, // +15% HP per wave after wave 20
-    lateGameDamageScaling: 0.12, // +12% damage per wave after wave 20
+    // Tiered scaling system (increases every 20 waves)
+    scalingTierSize: 20,        // Waves per tier
+    baseScalingPercent: 0.03,   // Starting at 3% per wave
+    scalingIncrement: 0.03,     // +3% more per tier
     diminishingRewardsWave: 25,  // Rewards diminish after this wave
     rewardDiminishRate: 0.9      // 10% less reward per wave after threshold
 };
@@ -108,11 +107,18 @@ const WAVE_CONFIG = {
 - Wood reward = `20 + (waveNumber * 8)`
 - After wave 25: rewards diminish by 10% per wave
 
-### Enemy Scaling
-Enemies get stronger each wave:
-- Waves 1-20: Health +10%, Damage +8% per wave
-- Waves 21+: Health +15%, Damage +12% per wave (accelerated)
-- Enemy size capped at 500%
+### Enemy Scaling (Tiered System)
+Enemies get stronger each wave using a tiered scaling system that increases every 20 waves:
+
+| Wave Range | Scaling Per Wave | Example: Wave 40 Enemy |
+|------------|------------------|------------------------|
+| 1-20 | +3% HP/DMG | Base × 1.57 |
+| 21-40 | +6% HP/DMG | Base × 2.77 |
+| 41-60 | +9% HP/DMG | (continues) |
+| 61-80 | +12% HP/DMG | (continues) |
+| 81+ | +15% HP/DMG | (continues) |
+
+The scaling compounds - later waves use higher percentages for ALL waves in that tier.
 
 ### Spawn Speed Scaling
 Higher waves spawn enemies faster to keep action intense:
@@ -133,15 +139,15 @@ Located in `BOSS_CONFIG`:
 ```javascript
 const BOSS_CONFIG = {
     spawnEveryWaves: 10,      // Boss appears wave 10, 20, 30...
-    healthMultiplier: 2.5,    // 2.5x base HP (1/4 original)
+    healthMultiplier: 1.25,   // 1.25x base HP (much easier now)
     damageMultiplier: 1.25,   // 1.25x base damage (reduced for balance)
     sizeMultiplier: 0.75      // 0.75x visual size (was 1.5x)
 };
 ```
 
 ### Dragon Boss Stats (with multipliers)
-- Base HP: 375 × 2.5 = **~937 HP**
-- Base Damage: 30 × 1.25 = **~37 damage**
+- Base HP: 300 × 1.25 = **~375 HP**
+- Base Damage: 24 × 1.25 = **~30 damage**
 - Ranged attack with fireballs
 
 ---
@@ -210,11 +216,13 @@ const CASTLE_CONFIG = {
     defenseMinY: 80,          // Top boundary
     defenseMaxY: 520,         // Bottom boundary
     maxLevel: 10,             // Max castle upgrade level
-    upgradeGoldBase: 150,     // Base gold cost
-    upgradeWoodBase: 100,     // Base wood cost
-    upgradeCostMultiplier: 1.25 // 25% more per level
+    upgradeGoldBase: 100,     // Base gold cost
+    upgradeWoodBase: 75,      // Base wood cost
+    upgradeCostMultiplier: 1.15 // 15% more per level
 };
 ```
+
+**Note:** Castle does NOT shoot arrows at level 1. Arrow defense begins at level 2.
 
 ---
 

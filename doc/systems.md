@@ -84,24 +84,24 @@ new WaveSystem(scene)
 #### Methods
 
 **`generateWave(waveNumber)`**
-Creates enemy list for a wave:
+Creates enemy list for a wave. Uses `effectiveWave = waveNumber + 1` for wave offset (so wave 1 starts stronger):
 
 | Enemy | Appears | Count Formula |
 |-------|---------|---------------|
-| Goblin | Wave 1+ | `(2 + wave * 0.5) * mult` |
-| Orc | Wave 2+ | `(1 + wave * 0.4) * mult` |
-| Skeleton | Wave 4+ | `(wave - 2) * 0.4 * mult` |
-| Skeleton Archer | Wave 6+ | `(wave - 4) * 0.35 * mult` |
-| Spear Monster | Wave 7+ | `(wave - 5) * 0.3 * mult` |
-| Troll | Wave 8+ | `(wave - 6) * 0.25 * mult` |
-| Dark Knight | Wave 12+ | `(wave - 10) * 0.25 * mult` |
-| Demon | Wave 18+ | `(wave - 16) * 0.2 * mult` |
+| Goblin | Wave 1+ | min 3, `(2 + effectiveWave * 0.6) * mult` |
+| Orc | Wave 1+ | `(1 + effectiveWave * 0.5) * mult` |
+| Skeleton | Wave 4+ | `(effectiveWave - 2) * 0.4 * mult` |
+| Skeleton Archer | Wave 6+ | `(effectiveWave - 4) * 0.35 * mult` |
+| Spear Monster | Wave 7+ | `(effectiveWave - 5) * 0.3 * mult` |
+| Troll | Wave 8+ | `(effectiveWave - 6) * 0.25 * mult` |
+| Dark Knight | Wave 12+ | `(effectiveWave - 10) * 0.25 * mult` |
+| Demon | Wave 18+ | `(effectiveWave - 16) * 0.2 * mult` |
 | Dragon | Every 10 | 1 per 10 waves |
 
 **Wave multiplier scaling:**
-- Wave 1-3: Gentle (0.7 - 0.9)
-- Wave 4-10: Moderate (1.0 - 1.84)
-- Wave 11+: Aggressive (1.84+)
+- Wave 1-3: Gentle (0.8 - 1.1)
+- Wave 4-10: Moderate (1.1 - 1.94)
+- Wave 11+: Aggressive (1.94+)
 
 **`getRandomSpawnDirection(waveNumber)`**
 Returns spawn direction:

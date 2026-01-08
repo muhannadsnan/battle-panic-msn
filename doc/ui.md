@@ -19,15 +19,19 @@ new ResourceDisplay(scene, x, y)
 
 #### Visual Layout
 ```
-[Gold Coin Icon] 50   [Wood Logs Icon] 50
+GOLD 50   WOOD 50
 ```
+
+Text labels ("GOLD" and "WOOD") are used instead of icons for cleaner display.
 
 #### Properties
 | Property | Type | Description |
 |----------|------|-------------|
 | `currentGold` | number | Current gold amount |
 | `currentWood` | number | Current wood amount |
+| `goldLabel` | Text | "GOLD" label |
 | `goldText` | Text | Gold display text |
+| `woodLabel` | Text | "WOOD" label |
 | `woodText` | Text | Wood display text |
 
 #### Methods
@@ -43,11 +47,6 @@ Subtracts from resource, shows floating "-X" text (red).
 
 **`showFloatingText(offsetX, offsetY, text, color)`**
 Creates animated text that floats up and fades.
-
-#### Icons
-Icons are built from rectangles:
-- **Gold coin**: Yellow circle with $ symbol
-- **Wood logs**: Brown crossed logs
 
 ---
 

@@ -1,4 +1,4 @@
-// ResourceDisplay UI Component - Shows current gold and wood (no boxes)
+// ResourceDisplay UI Component - Shows current gold and wood with text labels
 class ResourceDisplay extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
         super(scene, x, y);
@@ -9,16 +9,21 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.displayedGold = 0;
         this.displayedWood = 0;
 
-        // No background - clean look with big icons
-        // Horizontal layout for top bar
+        // Clean text-based layout for top bar
 
-        // Gold icon (coin made of rectangles)
-        this.goldIconContainer = scene.add.container(-70, 0);
-        this.createGoldIcon(scene, this.goldIconContainer);
-        this.add(this.goldIconContainer);
+        // Gold label
+        this.goldLabel = scene.add.text(-90, 0, 'GOLD', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffd700',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0, 0.5);
+        this.add(this.goldLabel);
 
-        // Gold text
-        this.goldText = scene.add.text(-50, 0, '0', {
+        // Gold value
+        this.goldText = scene.add.text(-45, 0, '0', {
             fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -28,13 +33,19 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         }).setOrigin(0, 0.5);
         this.add(this.goldText);
 
-        // Wood icon (logs made of rectangles)
-        this.woodIconContainer = scene.add.container(30, 0);
-        this.createWoodIcon(scene, this.woodIconContainer);
-        this.add(this.woodIconContainer);
+        // Wood label
+        this.woodLabel = scene.add.text(20, 0, 'WOOD', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#cd853f',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0, 0.5);
+        this.add(this.woodLabel);
 
-        // Wood text
-        this.woodText = scene.add.text(50, 0, '0', {
+        // Wood value
+        this.woodText = scene.add.text(70, 0, '0', {
             fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -46,28 +57,6 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
 
         scene.add.existing(this);
         this.setDepth(900);
-    }
-
-    createGoldIcon(scene, container) {
-        // Gold coin icon - single big coin (no background)
-        const coin = scene.add.rectangle(0, 0, 20, 20, 0xFFD700);
-        coin.setStrokeStyle(2, 0xDAA520);
-        container.add(coin);
-        // Inner detail
-        container.add(scene.add.rectangle(0, 0, 12, 12, 0xFFE55C));
-        // $ symbol approximation with rectangles
-        container.add(scene.add.rectangle(0, -3, 2, 8, 0xDAA520));
-        container.add(scene.add.rectangle(0, 3, 6, 2, 0xDAA520));
-    }
-
-    createWoodIcon(scene, container) {
-        // Wood log icon - crossed logs (no background)
-        // Log 1 (diagonal)
-        container.add(scene.add.rectangle(-2, 2, 20, 7, 0x8B4513).setAngle(-20));
-        container.add(scene.add.rectangle(-10, 4, 6, 5, 0xDEB887)); // End grain 1
-        // Log 2 (diagonal other way)
-        container.add(scene.add.rectangle(2, -2, 20, 7, 0xA0522D).setAngle(20));
-        container.add(scene.add.rectangle(10, -4, 6, 5, 0xD2B48C)); // End grain 2
     }
 
     setGold(amount) {

@@ -106,7 +106,8 @@ At max promotion (level 6), units have **3x stats** and **spawn 2 at a time** (c
 Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**
-- Military-style chevron badge (V pointing down) next to each unit's HP bar
+- Military-style open V-shaped chevron badge next to each unit's HP bar
+- Open V shape (two lines forming a V, open at the top)
 - Chevrons stack vertically: 1, 2, or 3 chevrons
 - Badge also shown on unit spawn button (top-right corner)
 - Promotion notification shows in center of screen
@@ -222,7 +223,9 @@ new Castle(scene, x, y)
 | `fenceCurrentHealth` | number | Fence current HP |
 
 #### Arrow Attack System
-The castle automatically shoots arrows at nearby enemies:
+The castle automatically shoots arrows at nearby enemies **starting from level 2**:
+- **Level 1**: No arrow defense (castle cannot attack)
+- **Level 2+**: Arrow defense enabled
 - **Range**: 300 pixels base (+10% per level)
 - **Base Damage**: 5 (+2 per level)
 - **Base Attack Speed**: 1000ms (-50ms per level, min 400ms)
@@ -231,7 +234,8 @@ The castle automatically shoots arrows at nearby enemies:
 #### Stats by Level
 | Level | Arrow Damage | Attack Speed | Range | HP Bonus |
 |-------|--------------|--------------|-------|----------|
-| 1 | 5 | 1.0s | 300px | +0 |
+| 1 | - | - | - | +0 (no arrows) |
+| 2 | 7 | 0.95s | 330px | +25 |
 | 5 | 13 | 0.8s | 420px | +100 |
 | 10 | 23 | 0.4s | 570px | +225 |
 
@@ -266,8 +270,9 @@ At castle level 6, a defensive wooden fence appears in front of the castle.
 #### Upgrade Benefits
 - Upgrading castle restores HP to full
 - Level badge displayed in center of castle
+- At level 2+: Arrow defense enabled
 - At level 6+: Fence is created/upgraded and repaired to full
-- Upgrade cost: 150 gold + 100 wood base, +25% per level
+- Upgrade cost: 100 gold + 75 wood base, +15% per level
 - At level 10: Can REPAIR castle and fence for same cost as level 10 upgrade
 
 #### Key Methods

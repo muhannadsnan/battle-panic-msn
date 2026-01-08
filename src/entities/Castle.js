@@ -786,6 +786,8 @@ class Castle extends Phaser.GameObjects.Container {
     }
 
     findTarget() {
+        // Castle only shoots arrows from level 2+
+        if (this.level < 2) return null;
         if (!this.scene.enemies) return null;
 
         let closestEnemy = null;

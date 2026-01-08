@@ -14,32 +14,22 @@ class Enemy extends Phaser.GameObjects.Container {
             return;
         }
 
-        // Scale stats with wave number - enemies get stronger over time
-        // Use config values for scaling, with accelerated scaling after wave 20
-        const lateGameWave = WAVE_CONFIG.lateGameWave || 20;
-        let waveHealthMultiplier, waveDamageMultiplier;
+        // Scale stats with wave number - tiered scaling system
+        // Waves 1-20: +3%, 21-40: +6%, 41-60: +9%, 61-80: +12%, etc.
+        const tierSize = WAVE_CONFIG.scalingTierSize || 20;
+        const baseScale = WAVE_CONFIG.baseScalingPercent || 0.03;
+        const scaleIncrement = WAVE_CONFIG.scalingIncrement || 0.03;
 
-        if (waveNumber <= lateGameWave) {
-            // Normal scaling
-            const healthScale = WAVE_CONFIG.enemyHealthScaling || 0.10;
-            const damageScale = WAVE_CONFIG.enemyDamageScaling || 0.08;
-            waveHealthMultiplier = 1 + (waveNumber - 1) * healthScale;
-            waveDamageMultiplier = 1 + (waveNumber - 1) * damageScale;
-        } else {
-            // Late game: accelerated scaling
-            const normalHealthScale = WAVE_CONFIG.enemyHealthScaling || 0.10;
-            const normalDamageScale = WAVE_CONFIG.enemyDamageScaling || 0.08;
-            const lateHealthScale = WAVE_CONFIG.lateGameHealthScaling || 0.15;
-            const lateDamageScale = WAVE_CONFIG.lateGameDamageScaling || 0.12;
+        let waveHealthMultiplier = 1;
+        let waveDamageMultiplier = 1;
 
-            // Calculate base from wave 20, then add accelerated scaling
-            const baseHealthMult = 1 + (lateGameWave - 1) * normalHealthScale;
-            const baseDamageMult = 1 + (lateGameWave - 1) * normalDamageScale;
-            const wavesAfter = waveNumber - lateGameWave;
-
-            waveHealthMultiplier = baseHealthMult + wavesAfter * lateHealthScale;
-            waveDamageMultiplier = baseDamageMult + wavesAfter * lateDamageScale;
+        for (let w = 1; w < waveNumber; w++) {
+            const tier = Math.floor((w - 1) / tierSize); // Tier 0 for waves 1-20, tier 1 for 21-40, etc.
+            const tierScale = baseScale + (tier * scaleIncrement);
+            waveHealthMultiplier += tierScale;
+            waveDamageMultiplier += tierScale;
         }
+
         const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.015; // Slight speed increase
 
         this.isBoss = baseStats.isBoss || false;
