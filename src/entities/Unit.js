@@ -48,6 +48,8 @@ class Unit extends Phaser.GameObjects.Container {
         this.lastAttackTime = 0;
         this.direction = 1; // 1 = right (toward enemy)
         this.isReturningToBase = false;
+        this.targetAcquiredTime = 0; // Track when we acquired current target
+        this.lastTargetSwitchTime = 0; // Prevent rapid target switching
 
         // Animation state
         this.walkTime = 0;
@@ -538,7 +540,25 @@ class Unit extends Phaser.GameObjects.Container {
 
         // Find target if we don't have one
         if (!this.target || this.target.isDead || !this.target.active) {
-            this.target = this.scene.combatSystem.findTarget(this, this.scene.enemies.getChildren());
+            this.target = this.findBestTarget(time);
+            if (this.target) {
+                this.targetAcquiredTime = time;
+            }
+        }
+
+        // Re-evaluate target if stuck for too long (2 seconds without attacking)
+        // This prevents units from getting stuck chasing unreachable enemies
+        if (this.target && time - this.lastAttackTime > 2000 && time - this.targetAcquiredTime > 2000) {
+            // Check if we've been chasing without success
+            const distanceToTarget = Phaser.Math.Distance.Between(this.x, this.y, this.target.x, this.target.y);
+            if (distanceToTarget > this.range * 1.5) {
+                // Try to find a closer/more accessible target
+                const newTarget = this.findBestTarget(time, this.target);
+                if (newTarget && newTarget !== this.target) {
+                    this.target = newTarget;
+                    this.targetAcquiredTime = time;
+                }
+            }
         }
 
         if (this.target) {
@@ -842,6 +862,47 @@ class Unit extends Phaser.GameObjects.Container {
                 ease: 'Power2'
             });
         }
+    }
+
+    findBestTarget(time, excludeTarget = null) {
+        const enemies = this.scene.enemies.getChildren();
+        if (!enemies || enemies.length === 0) return null;
+
+        let bestTarget = null;
+        let bestScore = Infinity;
+
+        // Unit's reachable Y range (with some margin)
+        const minY = 60;
+        const maxY = GAME_HEIGHT - 60;
+
+        enemies.forEach(enemy => {
+            if (!enemy.active || enemy.isDead) return;
+            if (excludeTarget && enemy === excludeTarget) return;
+
+            const dx = enemy.x - this.x;
+            const dy = enemy.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // Calculate accessibility score (lower is better)
+            // Penalize enemies at Y extremes that we can't easily reach
+            let yPenalty = 0;
+            if (enemy.y < minY || enemy.y > maxY) {
+                yPenalty = 200; // Heavy penalty for unreachable Y
+            } else {
+                // Small penalty for Y distance to prefer enemies at similar Y level
+                yPenalty = Math.abs(dy) * 0.3;
+            }
+
+            // Score combines distance and accessibility
+            const score = distance + yPenalty;
+
+            if (score < bestScore) {
+                bestScore = score;
+                bestTarget = enemy;
+            }
+        });
+
+        return bestTarget;
     }
 
     createPromotionBadge() {

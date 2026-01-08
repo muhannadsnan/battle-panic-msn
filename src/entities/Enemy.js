@@ -30,6 +30,14 @@ class Enemy extends Phaser.GameObjects.Container {
             waveDamageMultiplier += tierScale;
         }
 
+        // Early game reduction: waves 1-10 are 50% easier for fresh players
+        // Gradually scales from 50% reduction at wave 1 to full strength at wave 11
+        if (waveNumber <= 10) {
+            const earlyGameReduction = 0.5 + (waveNumber - 1) * 0.05; // 0.5 at wave 1, 0.95 at wave 10
+            waveHealthMultiplier *= earlyGameReduction;
+            waveDamageMultiplier *= earlyGameReduction;
+        }
+
         const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.015; // Slight speed increase
 
         this.isBoss = baseStats.isBoss || false;
