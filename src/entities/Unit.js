@@ -848,7 +848,7 @@ class Unit extends Phaser.GameObjects.Container {
         // Badge appears next to health bar
         // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
         // Military style: V-shaped chevrons stacked vertically
-        const badgeContainer = this.scene.add.container(16, -29);
+        const badgeContainer = this.scene.add.container(18, -28);
         this.add(badgeContainer);
 
         const isGold = this.promotionLevel > 3;
@@ -857,16 +857,17 @@ class Unit extends Phaser.GameObjects.Container {
         const strokeColor = isGold ? 0xb8860b : 0x808080;
 
         // Draw stacked chevrons (open V shapes pointing down, like military rank)
-        const chevronWidth = 8;
-        const chevronHeight = 4;
-        const spacing = 4;
+        // 2x bigger size
+        const chevronWidth = 16;
+        const chevronHeight = 8;
+        const spacing = 8;
 
         for (let i = 0; i < numChevrons; i++) {
             const graphics = this.scene.add.graphics();
             const offsetY = -i * spacing; // Stack upward
 
             // Draw open V-shaped chevron (two lines, open at top)
-            graphics.lineStyle(2, color, 1);
+            graphics.lineStyle(4, color, 1);
             graphics.beginPath();
             graphics.moveTo(0, offsetY);                           // Top left
             graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight); // Bottom center (tip)
