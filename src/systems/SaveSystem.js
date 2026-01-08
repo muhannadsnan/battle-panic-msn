@@ -222,28 +222,34 @@ class SaveSystem {
         return spent;
     }
 
-    // Reset upgrades only (refund XP minus 2 XP fee)
+    // Reset upgrades only (costs 2 XP + 25% of current XP balance)
     resetUpgrades() {
         const data = this.load();
         const spentXP = this.calculateSpentXP(data);
-        const fee = 2;
+        const currentXP = data.xp || 0;
+        const totalXP = currentXP + spentXP;
 
-        // Check if player has at least 2 XP (either in balance or spent)
-        if ((data.xp || 0) + spentXP < fee) {
-            return { success: false, message: 'Need at least 2 XP total' };
+        // Fee: 2 XP flat + 25% of current XP balance
+        const flatFee = 2;
+        const percentFee = Math.floor(currentXP * 0.25);
+        const totalFee = flatFee + percentFee;
+
+        // Check if player has enough total XP to cover the fee
+        if (totalXP < totalFee) {
+            return { success: false, message: `Need at least ${totalFee} XP total (2 + 25% of ${currentXP})` };
         }
 
-        // Refund spent XP minus fee
-        const refund = spentXP - fee;
-        data.xp = (data.xp || 0) + refund;
+        // After reset: get back spent XP, minus the fee
+        const newXP = totalXP - totalFee;
 
         // Reset upgrades to defaults
         const defaults = this.getDefaultData();
         data.upgrades = { ...defaults.upgrades };
         data.castleUpgrades = { ...defaults.castleUpgrades };
+        data.xp = newXP;
 
         this.save(data);
-        return { success: true, refunded: spentXP, fee: fee, newXP: data.xp };
+        return { success: true, refunded: spentXP, fee: totalFee, flatFee: flatFee, percentFee: percentFee, newXP: newXP };
     }
 
     // Add XP (for purchases)
@@ -291,81 +297,105 @@ class SaveSystem {
     }
 
     // Get rank info based on score - each rank has 3 grades (I, II, III)
+    // Thresholds increase progressively for long-term progression
     getRankInfo(data) {
         const score = this.calculateRankScore(data);
 
-        // Ranks with 3 grades each - designed for long-term progression
-        // Each rank tier has a base score, and grades divide it into thirds
-        const rankTiers = [
-            { name: 'Recruit', baseScore: 0, color: '#888888', icon: '🔰' },
-            { name: 'Soldier', baseScore: 50, color: '#4a9c4a', icon: '⚔️' },
-            { name: 'Warrior', baseScore: 150, color: '#4169E1', icon: '🗡️' },
-            { name: 'Knight', baseScore: 400, color: '#9932CC', icon: '🛡️' },
-            { name: 'Captain', baseScore: 800, color: '#ff6b6b', icon: '⭐' },
-            { name: 'Commander', baseScore: 1500, color: '#ff4500', icon: '🌟' },
-            { name: 'General', baseScore: 3000, color: '#ffd700', icon: '👑' },
-            { name: 'Champion', baseScore: 6000, color: '#00ffff', icon: '💎' },
-            { name: 'Legend', baseScore: 12000, color: '#ff00ff', icon: '🔥' },
-            { name: 'Immortal', baseScore: 25000, color: '#ffffff', icon: '⚡' }
+        // All 30 ranks with explicit thresholds (increasing gaps as rank goes up)
+        // Pattern: each tier's grades have progressively larger gaps
+        const allRanks = [
+            // Recruit: 0, 10, 20 (gap: 10)
+            { name: 'Recruit', grade: 1, minScore: 0, color: '#888888', icon: '🔰' },
+            { name: 'Recruit', grade: 2, minScore: 10, color: '#888888', icon: '🔰' },
+            { name: 'Recruit', grade: 3, minScore: 20, color: '#888888', icon: '🔰' },
+            // Soldier: 30, 45, 60 (gap: 15)
+            { name: 'Soldier', grade: 1, minScore: 30, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Soldier', grade: 2, minScore: 45, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Soldier', grade: 3, minScore: 60, color: '#4a9c4a', icon: '⚔️' },
+            // Warrior: 80, 105, 135 (gap: 25-30)
+            { name: 'Warrior', grade: 1, minScore: 80, color: '#4169E1', icon: '🗡️' },
+            { name: 'Warrior', grade: 2, minScore: 105, color: '#4169E1', icon: '🗡️' },
+            { name: 'Warrior', grade: 3, minScore: 135, color: '#4169E1', icon: '🗡️' },
+            // Knight: 170, 215, 270 (gap: 45-55)
+            { name: 'Knight', grade: 1, minScore: 170, color: '#9932CC', icon: '🛡️' },
+            { name: 'Knight', grade: 2, minScore: 215, color: '#9932CC', icon: '🛡️' },
+            { name: 'Knight', grade: 3, minScore: 270, color: '#9932CC', icon: '🛡️' },
+            // Captain: 340, 430, 540 (gap: 90-110)
+            { name: 'Captain', grade: 1, minScore: 340, color: '#ff6b6b', icon: '⭐' },
+            { name: 'Captain', grade: 2, minScore: 430, color: '#ff6b6b', icon: '⭐' },
+            { name: 'Captain', grade: 3, minScore: 540, color: '#ff6b6b', icon: '⭐' },
+            // Commander: 680, 860, 1080 (gap: 180-220)
+            { name: 'Commander', grade: 1, minScore: 680, color: '#ff4500', icon: '🌟' },
+            { name: 'Commander', grade: 2, minScore: 860, color: '#ff4500', icon: '🌟' },
+            { name: 'Commander', grade: 3, minScore: 1080, color: '#ff4500', icon: '🌟' },
+            // General: 1350, 1700, 2150 (gap: 350-450)
+            { name: 'General', grade: 1, minScore: 1350, color: '#ffd700', icon: '👑' },
+            { name: 'General', grade: 2, minScore: 1700, color: '#ffd700', icon: '👑' },
+            { name: 'General', grade: 3, minScore: 2150, color: '#ffd700', icon: '👑' },
+            // Champion: 2700, 3400, 4300 (gap: 700-900)
+            { name: 'Champion', grade: 1, minScore: 2700, color: '#00ffff', icon: '💎' },
+            { name: 'Champion', grade: 2, minScore: 3400, color: '#00ffff', icon: '💎' },
+            { name: 'Champion', grade: 3, minScore: 4300, color: '#00ffff', icon: '💎' },
+            // Legend: 5400, 6800, 8600 (gap: 1400-1800)
+            { name: 'Legend', grade: 1, minScore: 5400, color: '#ff00ff', icon: '🔥' },
+            { name: 'Legend', grade: 2, minScore: 6800, color: '#ff00ff', icon: '🔥' },
+            { name: 'Legend', grade: 3, minScore: 8600, color: '#ff00ff', icon: '🔥' },
+            // Immortal: 10800, 13600, 17200 (gap: 2800-3600)
+            { name: 'Immortal', grade: 1, minScore: 10800, color: '#ffffff', icon: '⚡' },
+            { name: 'Immortal', grade: 2, minScore: 13600, color: '#ffffff', icon: '⚡' },
+            { name: 'Immortal', grade: 3, minScore: 17200, color: '#ffffff', icon: '⚡' }
         ];
 
-        // Find current rank tier
-        let tierIndex = 0;
-        for (let i = rankTiers.length - 1; i >= 0; i--) {
-            if (score >= rankTiers[i].baseScore) {
-                tierIndex = i;
+        // Find current rank
+        let currentRankIndex = 0;
+        for (let i = allRanks.length - 1; i >= 0; i--) {
+            if (score >= allRanks[i].minScore) {
+                currentRankIndex = i;
                 break;
             }
         }
 
-        const currentTier = rankTiers[tierIndex];
-        const nextTier = rankTiers[tierIndex + 1] || null;
+        const currentRank = allRanks[currentRankIndex];
+        const nextRank = allRanks[currentRankIndex + 1] || null;
 
-        // Calculate grade within tier (I, II, III)
-        let grade = 1;
-        let gradeProgress = 0;
-        let pointsToNextGrade = 0;
+        // Calculate progress to next rank
+        let progress = 0;
+        let pointsToNext = 0;
 
-        if (nextTier) {
-            const tierRange = nextTier.baseScore - currentTier.baseScore;
-            const gradeSize = tierRange / 3;
-            const scoreInTier = score - currentTier.baseScore;
-
-            grade = Math.min(3, Math.floor(scoreInTier / gradeSize) + 1);
-            const gradeStart = (grade - 1) * gradeSize;
-            const gradeEnd = grade * gradeSize;
-
-            gradeProgress = (scoreInTier - gradeStart) / gradeSize;
-            pointsToNextGrade = Math.ceil(currentTier.baseScore + gradeEnd - score);
-
-            // If at grade 3, points to next is to next tier
-            if (grade === 3) {
-                pointsToNextGrade = nextTier.baseScore - score;
-            }
+        if (nextRank) {
+            const currentMin = currentRank.minScore;
+            const nextMin = nextRank.minScore;
+            progress = (score - currentMin) / (nextMin - currentMin);
+            pointsToNext = nextMin - score;
         } else {
-            // Max rank (Immortal) - still has grades based on score beyond baseScore
-            const beyondBase = score - currentTier.baseScore;
-            const gradeSize = 10000; // 10k per grade at max rank
-            grade = Math.min(3, Math.floor(beyondBase / gradeSize) + 1);
-            gradeProgress = grade === 3 ? 1 : (beyondBase % gradeSize) / gradeSize;
-            pointsToNextGrade = grade === 3 ? 0 : gradeSize - (beyondBase % gradeSize);
+            progress = 1;
+            pointsToNext = 0;
         }
 
         const gradeNumerals = ['I', 'II', 'III'];
-        const fullRankName = `${currentTier.name} ${gradeNumerals[grade - 1]}`;
+        const fullRankName = `${currentRank.name} ${gradeNumerals[currentRank.grade - 1]}`;
+
+        // Find next tier (different name) for display
+        let nextTierName = null;
+        if (nextRank && nextRank.name !== currentRank.name) {
+            nextTierName = nextRank.name;
+        } else if (nextRank) {
+            // Same tier, next grade
+            nextTierName = null;
+        }
 
         return {
             rank: {
-                ...currentTier,
+                ...currentRank,
                 fullName: fullRankName,
-                grade: grade,
-                gradeNumeral: gradeNumerals[grade - 1]
+                gradeNumeral: gradeNumerals[currentRank.grade - 1]
             },
-            nextRank: nextTier,
+            nextRank: nextRank,
+            nextTierName: nextTierName,
             score: score,
-            progress: Math.min(1, Math.max(0, gradeProgress)),
-            pointsToNext: pointsToNextGrade,
-            isMaxGrade: !nextTier && grade === 3
+            progress: Math.min(1, Math.max(0, progress)),
+            pointsToNext: pointsToNext,
+            isMaxGrade: !nextRank
         };
     }
 }

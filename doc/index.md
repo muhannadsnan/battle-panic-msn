@@ -108,7 +108,7 @@ BootScene → PreloadScene → MenuScene
 - Unit upgrades: Increase HP and damage per level
 - Castle upgrades: Health, Armor, Gold Income
 - Unlock new units: Knight (2 XP), Wizard (3 XP), Giant (5 XP)
-- Reset upgrades costs 2 XP (refunds spent XP minus fee)
+- Reset upgrades costs 2 XP + 25% of current XP (refunds spent XP minus fee)
 
 ---
 

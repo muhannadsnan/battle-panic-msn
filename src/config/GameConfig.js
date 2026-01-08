@@ -247,14 +247,13 @@ const RESOURCE_CONFIG = {
     woodMineY: 530      // Bottom area
 };
 
-// Spawn Configuration - enemies spawn from edges, pushed to the sides (not center)
-// Adjusted: narrower spawn zones to keep enemies more centered on screen
+// Spawn Configuration - enemies spawn from edges, closer to center for visibility
 const SPAWN_CONFIG = {
-    rightSpawn: { x: GAME_WIDTH + 30, minY: 120, maxY: 480 },  // Narrower Y range
-    topRightSpawn: { minX: 600, maxX: GAME_WIDTH - 80, y: -30 },  // Not too far right
-    topSpawn: { minX: 500, maxX: GAME_WIDTH - 100, y: -30 },  // Shifted left
-    bottomRightSpawn: { minX: 600, maxX: GAME_WIDTH - 80, y: GAME_HEIGHT + 30 },  // Not too far right
-    bottomSpawn: { minX: 500, maxX: GAME_WIDTH - 100, y: GAME_HEIGHT + 30 }  // Shifted left
+    rightSpawn: { x: GAME_WIDTH - 20, minY: 180, maxY: 450 },  // Closer, narrower Y range
+    topRightSpawn: { minX: 400, maxX: GAME_WIDTH - 150, y: 100 },  // On-screen, more left
+    topSpawn: { minX: 350, maxX: GAME_WIDTH - 200, y: 120 },  // On-screen, centered
+    bottomRightSpawn: { minX: 400, maxX: GAME_WIDTH - 150, y: 500 },  // On-screen, more left
+    bottomSpawn: { minX: 350, maxX: GAME_WIDTH - 200, y: 480 }  // On-screen, centered
 };
 
 // Boss Configuration

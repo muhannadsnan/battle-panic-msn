@@ -935,7 +935,7 @@ class Enemy extends Phaser.GameObjects.Container {
             const moveY = (dy / distance) * this.speed * (delta / 1000);
 
             this.x += moveX;
-            this.y = Phaser.Math.Clamp(this.y + moveY, 200, 520);
+            this.y = Phaser.Math.Clamp(this.y + moveY, 120, 550);
 
             // Face direction of movement
             if (dx > 0 && this.direction !== 1) {

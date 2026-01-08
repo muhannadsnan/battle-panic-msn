@@ -196,8 +196,76 @@ class WaveSystem {
     }
 
     scheduleNextWave() {
-        this.waveTimer = this.scene.time.delayedCall(WAVE_CONFIG.timeBetweenWaves, () => {
+        // Show countdown before next wave
+        this.startCountdown(5);
+    }
+
+    startCountdown(seconds) {
+        if (seconds <= 0) {
+            // Countdown finished, start the wave
+            if (this.countdownText) {
+                this.countdownText.destroy();
+                this.countdownText = null;
+            }
+            if (this.countdownLabel) {
+                this.countdownLabel.destroy();
+                this.countdownLabel = null;
+            }
             this.startWave();
+            return;
+        }
+
+        // Create or update countdown text
+        if (!this.countdownText) {
+            this.countdownText = this.scene.add.text(
+                GAME_WIDTH / 2,
+                GAME_HEIGHT / 2 - 20,
+                seconds.toString(),
+                {
+                    fontSize: '72px',
+                    fontFamily: 'Arial',
+                    fontStyle: 'bold',
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 6
+                }
+            ).setOrigin(0.5).setDepth(1000);
+
+            // Add "Next Wave" label above
+            this.countdownLabel = this.scene.add.text(
+                GAME_WIDTH / 2,
+                GAME_HEIGHT / 2 - 80,
+                `Wave ${this.currentWave + 1}`,
+                {
+                    fontSize: '24px',
+                    fontFamily: 'Arial',
+                    fontStyle: 'bold',
+                    color: '#4169E1',
+                    stroke: '#000000',
+                    strokeThickness: 3
+                }
+            ).setOrigin(0.5).setDepth(1000);
+        } else {
+            this.countdownText.setText(seconds.toString());
+        }
+
+        // Animate the number (pulse effect)
+        this.countdownText.setScale(1.3);
+        this.scene.tweens.add({
+            targets: this.countdownText,
+            scale: 1,
+            duration: 200,
+            ease: 'Back.easeOut'
+        });
+
+        // Play tick sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playClick();
+        }
+
+        // Schedule next countdown tick
+        this.waveTimer = this.scene.time.delayedCall(1000, () => {
+            this.startCountdown(seconds - 1);
         });
     }
 
@@ -209,6 +277,15 @@ class WaveSystem {
         if (this.waveTimer) {
             this.waveTimer.remove();
             this.waveTimer = null;
+        }
+        // Clean up countdown display
+        if (this.countdownText) {
+            this.countdownText.destroy();
+            this.countdownText = null;
+        }
+        if (this.countdownLabel) {
+            this.countdownLabel.destroy();
+            this.countdownLabel = null;
         }
     }
 
@@ -250,5 +327,6 @@ class WaveSystem {
         this.enemiesToSpawn = [];
         this.isSpawning = false;
         this.waveInProgress = false;
+        // Countdown text is already cleaned up in stopTimers()
     }
 }

@@ -95,7 +95,7 @@ class MenuScene extends Phaser.Scene {
         this.createCoffeeButton(width - 100, height - 60);
 
         // Version (more visible)
-        this.add.text(width / 2, height - 12, 'v1.2.0', {
+        this.add.text(width / 2, height - 12, 'v1.3.0', {
             fontSize: '14px',
             fontFamily: 'Arial',
             fontStyle: 'bold',

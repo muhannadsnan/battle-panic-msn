@@ -142,7 +142,10 @@ Wave finished:
 2. Notifies scene via `onWaveComplete(wave, gold, wood)`
 
 **`scheduleNextWave()`**
-Schedules next wave after `timeBetweenWaves` (3 seconds).
+Shows a 5-second countdown (5, 4, 3, 2, 1) before starting the next wave.
+
+**`startCountdown(seconds)`**
+Displays countdown UI with pulse animation and plays click sound on each tick.
 
 **`pause()` / `resume()`**
 Pauses/resumes spawn and wave timers.
@@ -244,7 +247,7 @@ Calculates total XP invested in upgrades:
 **`resetUpgrades()`**
 Resets upgrades and refunds XP:
 1. Calculates spent XP
-2. Subtracts 2 XP fee
+2. Subtracts fee: **2 XP + 25% of current XP balance**
 3. Refunds remaining to player
 4. Resets all upgrades to defaults
 5. Keeps stats (highestWave, etc.)
