@@ -76,6 +76,13 @@ class GameOverScene extends Phaser.Scene {
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
+
+        // Version
+        this.add.text(10, height - 20, 'v1.0.0', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#444444'
+        });
     }
 
     createParticles() {
