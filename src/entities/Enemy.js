@@ -85,9 +85,9 @@ class Enemy extends Phaser.GameObjects.Container {
         this.setDepth(y);
 
         // Enemies start small but grow 5% bigger each wave, capped at 500%
-        const baseScale = 0.8;  // Start small
+        const sizeBaseScale = 0.8;  // Start small
         const waveGrowth = 1 + (waveNumber - 1) * 0.05;  // +5% per wave
-        const uncappedScale = baseScale * waveGrowth * this.bossScale;
+        const uncappedScale = sizeBaseScale * waveGrowth * this.bossScale;
         const finalScale = Math.min(uncappedScale, 5.0);  // Cap at 500%
         this.currentScale = finalScale;
 
