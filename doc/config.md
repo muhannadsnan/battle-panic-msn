@@ -93,19 +93,26 @@ const WAVE_CONFIG = {
     woodPerWave: 8,           // Additional wood per wave number
     timeBetweenWaves: 3000,   // 3 seconds between waves
     spawnInterval: 1000,      // Base spawn interval (decreases at higher waves)
-    enemyHealthScaling: 0.08, // +8% HP per wave (reduced for easier gameplay)
-    enemyDamageScaling: 0.06  // +6% damage per wave (reduced for easier gameplay)
+    enemyHealthScaling: 0.10, // +10% HP per wave
+    enemyDamageScaling: 0.08, // +8% damage per wave
+    lateGameWave: 20,         // Accelerated scaling starts here
+    lateGameHealthScaling: 0.15, // +15% HP per wave after wave 20
+    lateGameDamageScaling: 0.12, // +12% damage per wave after wave 20
+    diminishingRewardsWave: 25,  // Rewards diminish after this wave
+    rewardDiminishRate: 0.9      // 10% less reward per wave after threshold
 };
 ```
 
 ### Wave Rewards Formula
 - Gold reward = `30 + (waveNumber * 10)`
 - Wood reward = `20 + (waveNumber * 8)`
+- After wave 25: rewards diminish by 10% per wave
 
 ### Enemy Scaling
 Enemies get stronger each wave:
-- Health: `baseHP * (1 + wave * 0.08)`
-- Damage: `baseDMG * (1 + wave * 0.06)`
+- Waves 1-20: Health +10%, Damage +8% per wave
+- Waves 21+: Health +15%, Damage +12% per wave (accelerated)
+- Enemy size capped at 500%
 
 ### Spawn Speed Scaling
 Higher waves spawn enemies faster to keep action intense:
@@ -203,8 +210,9 @@ const CASTLE_CONFIG = {
     defenseMinY: 80,          // Top boundary
     defenseMaxY: 520,         // Bottom boundary
     maxLevel: 10,             // Max castle upgrade level
-    upgradeCostBase: 40,      // Base upgrade cost
-    upgradeCostMultiplier: 1.5 // Cost multiplier per level
+    upgradeGoldBase: 150,     // Base gold cost
+    upgradeWoodBase: 100,     // Base wood cost
+    upgradeCostMultiplier: 1.25 // 25% more per level
 };
 ```
 

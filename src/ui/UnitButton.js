@@ -488,10 +488,13 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.woodCostText.setText(`${woodCost}`);
     }
 
-    updateAffordableCount(gold, wood) {
+    updateAffordableCount(gold, wood, costMultiplier = 1) {
         // Calculate how many units can be produced with current resources
-        const byGold = Math.floor(gold / this.goldCost);
-        const byWood = Math.floor(wood / this.woodCost);
+        // costMultiplier is 2 for max promotion (double spawn costs double)
+        const effectiveGoldCost = this.goldCost * costMultiplier;
+        const effectiveWoodCost = this.woodCost * costMultiplier;
+        const byGold = Math.floor(gold / effectiveGoldCost);
+        const byWood = Math.floor(wood / effectiveWoodCost);
         this.affordableCount = Math.min(byGold, byWood);
     }
 

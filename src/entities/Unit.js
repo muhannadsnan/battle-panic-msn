@@ -64,8 +64,8 @@ class Unit extends Phaser.GameObjects.Container {
         this.createUnitSprite(unitType);
         this.add(this.spriteContainer);
 
-        // Create health bar (50% shorter and thinner)
-        this.healthBar = new HealthBar(scene, 0, -45, 20, 3, 0x00ff00);
+        // Create health bar (compact, right above head, thin border)
+        this.healthBar = new HealthBar(scene, 0, -32, 20, 3, 0x00ff00, true);
         this.add(this.healthBar);
 
         // Create promotion badge if promoted
@@ -848,7 +848,7 @@ class Unit extends Phaser.GameObjects.Container {
         // Badge appears next to health bar
         // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
         // Military style: V-shaped chevrons stacked vertically
-        const badgeContainer = this.scene.add.container(16, -42);
+        const badgeContainer = this.scene.add.container(16, -29);
         this.add(badgeContainer);
 
         const isGold = this.promotionLevel > 3;

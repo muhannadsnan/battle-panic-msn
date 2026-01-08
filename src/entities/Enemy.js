@@ -15,11 +15,31 @@ class Enemy extends Phaser.GameObjects.Container {
         }
 
         // Scale stats with wave number - enemies get stronger over time
-        // Use config values for scaling
-        const healthScale = WAVE_CONFIG.enemyHealthScaling || 0.12;
-        const damageScale = WAVE_CONFIG.enemyDamageScaling || 0.10;
-        const waveHealthMultiplier = 1 + (waveNumber - 1) * healthScale;
-        const waveDamageMultiplier = 1 + (waveNumber - 1) * damageScale;
+        // Use config values for scaling, with accelerated scaling after wave 20
+        const lateGameWave = WAVE_CONFIG.lateGameWave || 20;
+        let waveHealthMultiplier, waveDamageMultiplier;
+
+        if (waveNumber <= lateGameWave) {
+            // Normal scaling
+            const healthScale = WAVE_CONFIG.enemyHealthScaling || 0.10;
+            const damageScale = WAVE_CONFIG.enemyDamageScaling || 0.08;
+            waveHealthMultiplier = 1 + (waveNumber - 1) * healthScale;
+            waveDamageMultiplier = 1 + (waveNumber - 1) * damageScale;
+        } else {
+            // Late game: accelerated scaling
+            const normalHealthScale = WAVE_CONFIG.enemyHealthScaling || 0.10;
+            const normalDamageScale = WAVE_CONFIG.enemyDamageScaling || 0.08;
+            const lateHealthScale = WAVE_CONFIG.lateGameHealthScaling || 0.15;
+            const lateDamageScale = WAVE_CONFIG.lateGameDamageScaling || 0.12;
+
+            // Calculate base from wave 20, then add accelerated scaling
+            const baseHealthMult = 1 + (lateGameWave - 1) * normalHealthScale;
+            const baseDamageMult = 1 + (lateGameWave - 1) * normalDamageScale;
+            const wavesAfter = waveNumber - lateGameWave;
+
+            waveHealthMultiplier = baseHealthMult + wavesAfter * lateHealthScale;
+            waveDamageMultiplier = baseDamageMult + wavesAfter * lateDamageScale;
+        }
         const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.015; // Slight speed increase
 
         this.isBoss = baseStats.isBoss || false;
@@ -74,10 +94,11 @@ class Enemy extends Phaser.GameObjects.Container {
         // Set depth based on y position
         this.setDepth(y);
 
-        // Enemies start small but grow 5% bigger each wave
+        // Enemies start small but grow 5% bigger each wave, capped at 500%
         const baseScale = 0.8;  // Start small
         const waveGrowth = 1 + (waveNumber - 1) * 0.05;  // +5% per wave
-        const finalScale = baseScale * waveGrowth * this.bossScale;
+        const uncappedScale = baseScale * waveGrowth * this.bossScale;
+        const finalScale = Math.min(uncappedScale, 5.0);  // Cap at 500%
         this.currentScale = finalScale;
 
         // Spawn effect

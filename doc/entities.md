@@ -102,7 +102,7 @@ Units get promoted based on how many of that type have been spawned in the curre
 - Attack Speed (faster by bonus)
 - Range (Archers only: +10% per promotion level)
 
-At max promotion (level 6), units have **3x stats** and **spawn 2 at a time**!
+At max promotion (level 6), units have **3x stats** and **spawn 2 at a time** (costs double)!
 Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**
@@ -267,7 +267,7 @@ At castle level 6, a defensive wooden fence appears in front of the castle.
 - Upgrading castle restores HP to full
 - Level badge displayed in center of castle
 - At level 6+: Fence is created/upgraded and repaired to full
-- Upgrade cost increases by 1.5x per level (base: 40 gold)
+- Upgrade cost: 150 gold + 100 wood base, +25% per level
 - At level 10: Can REPAIR castle and fence for same cost as level 10 upgrade
 
 #### Key Methods

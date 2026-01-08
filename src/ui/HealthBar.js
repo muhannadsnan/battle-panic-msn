@@ -1,6 +1,6 @@
 // HealthBar UI Component
 class HealthBar extends Phaser.GameObjects.Container {
-    constructor(scene, x, y, width, height, color = 0x00ff00) {
+    constructor(scene, x, y, width, height, color = 0x00ff00, thinBorder = false) {
         super(scene, x, y);
 
         this.barWidth = width;
@@ -8,9 +8,9 @@ class HealthBar extends Phaser.GameObjects.Container {
         this.barColor = color;
         this.percent = 1;
 
-        // Background (dark)
+        // Background (dark) - thinner border for small bars
         this.background = scene.add.rectangle(0, 0, width, height, 0x333333);
-        this.background.setStrokeStyle(1, 0x000000);
+        this.background.setStrokeStyle(thinBorder ? 0.5 : 1, 0x000000);
         this.add(this.background);
 
         // Health fill

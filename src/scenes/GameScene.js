@@ -631,7 +631,11 @@ class GameScene extends Phaser.Scene {
     }
 
     getCastleUpgradeCost(level) {
-        return Math.floor(CASTLE_CONFIG.upgradeCostBase * Math.pow(CASTLE_CONFIG.upgradeCostMultiplier, level - 1));
+        const multiplier = Math.pow(CASTLE_CONFIG.upgradeCostMultiplier, level - 1);
+        return {
+            gold: Math.floor(CASTLE_CONFIG.upgradeGoldBase * multiplier),
+            wood: Math.floor(CASTLE_CONFIG.upgradeWoodBase * multiplier)
+        };
     }
 
     updateCastleUpgrade(delta) {
@@ -644,13 +648,13 @@ class GameScene extends Phaser.Scene {
         const cost = isMaxLevel
             ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)  // Same cost as level 10 upgrade
             : this.getCastleUpgradeCost(currentLevel);
-        const canAfford = this.gold >= cost;
+        const canAfford = this.gold >= cost.gold && this.wood >= cost.wood;
 
         // Update cost display
         if (isMaxLevel) {
-            this.castleUpgradeCostText.setText(`${cost}g REPAIR`);
+            this.castleUpgradeCostText.setText(`${cost.gold}g ${cost.wood}w REPAIR`);
         } else {
-            this.castleUpgradeCostText.setText(`${cost}g Lv.${currentLevel + 1}`);
+            this.castleUpgradeCostText.setText(`${cost.gold}g ${cost.wood}w Lv.${currentLevel + 1}`);
         }
         this.castleUpgradeCostText.setStyle({ color: canAfford ? '#4ade80' : '#888888' });
 
@@ -722,10 +726,13 @@ class GameScene extends Phaser.Scene {
             ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)
             : this.getCastleUpgradeCost(currentLevel);
 
-        // Spend gold
-        this.gold -= cost;
-        this.goldSpentThisRun += cost;
-        this.resourceDisplay.subtractGold(cost);
+        // Spend gold and wood
+        this.gold -= cost.gold;
+        this.wood -= cost.wood;
+        this.goldSpentThisRun += cost.gold;
+        this.woodSpentThisRun += cost.wood;
+        this.resourceDisplay.subtractGold(cost.gold);
+        this.resourceDisplay.subtractWood(cost.wood);
 
         if (isMaxLevel) {
             // REPAIR: Restore castle and fence HP to full (no level increase)
@@ -797,7 +804,7 @@ class GameScene extends Phaser.Scene {
         if (level >= CASTLE_CONFIG.maxLevel) {
             // Show repair option at max level
             const cost = this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1);
-            this.castleUpgradeCostText.setText(`${cost}g REPAIR`);
+            this.castleUpgradeCostText.setText(`${cost.gold}g ${cost.wood}w REPAIR`);
         }
     }
 
@@ -1303,11 +1310,18 @@ class GameScene extends Phaser.Scene {
         this.unitButtons.forEach((button, index) => {
             const type = unitTypes[index];
             const stats = UNIT_TYPES[type];
-            const canAfford = this.gold >= stats.goldCost && this.wood >= stats.woodCost;
+
+            // At max promotion (level 6), double spawn costs double
+            const promotionLevel = this.getPromotionLevel(type);
+            const costMultiplier = promotionLevel >= 6 ? 2 : 1;
+            const totalGoldCost = stats.goldCost * costMultiplier;
+            const totalWoodCost = stats.woodCost * costMultiplier;
+
+            const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
 
-            // Update affordable count display
-            button.updateAffordableCount(this.gold, this.wood);
+            // Update affordable count display (pass multiplier for accurate count)
+            button.updateAffordableCount(this.gold, this.wood, costMultiplier);
 
             // Update hover-to-spawn progress
             button.updateSpawnProgress(delta);
@@ -1340,35 +1354,37 @@ class GameScene extends Phaser.Scene {
         const stats = UNIT_TYPES[unitType];
         if (!stats) return;
 
-        // Check costs
-        if (this.gold < stats.goldCost) {
+        // Get promotion bonus for this unit type
+        const promotionLevel = this.getPromotionLevel(unitType);
+        const promotionBonus = this.getPromotionBonus(promotionLevel);
+
+        // At max promotion (level 6), spawn 2 units at once - costs double!
+        const unitsToSpawn = promotionLevel >= 6 ? 2 : 1;
+        const totalGoldCost = stats.goldCost * unitsToSpawn;
+        const totalWoodCost = stats.woodCost * unitsToSpawn;
+
+        // Check costs (including double cost for max promotion)
+        if (this.gold < totalGoldCost) {
             this.showMessage('Not enough gold!', '#ff4444');
             return;
         }
-        if (this.wood < stats.woodCost) {
+        if (this.wood < totalWoodCost) {
             this.showMessage('Not enough wood!', '#ff4444');
             return;
         }
 
         // Spend resources
-        this.gold -= stats.goldCost;
-        this.wood -= stats.woodCost;
-        this.goldSpentThisRun += stats.goldCost;
-        this.woodSpentThisRun += stats.woodCost;
-        this.resourceDisplay.subtractGold(stats.goldCost);
-        this.resourceDisplay.subtractWood(stats.woodCost);
+        this.gold -= totalGoldCost;
+        this.wood -= totalWoodCost;
+        this.goldSpentThisRun += totalGoldCost;
+        this.woodSpentThisRun += totalWoodCost;
+        this.resourceDisplay.subtractGold(totalGoldCost);
+        this.resourceDisplay.subtractWood(totalWoodCost);
 
         // Play spawn sound
         if (typeof audioManager !== 'undefined') {
             audioManager.playSpawn();
         }
-
-        // Get promotion bonus for this unit type
-        const promotionLevel = this.getPromotionLevel(unitType);
-        const promotionBonus = this.getPromotionBonus(promotionLevel);
-
-        // At max promotion (level 6), spawn 2 units at once
-        const unitsToSpawn = promotionLevel >= 6 ? 2 : 1;
 
         for (let i = 0; i < unitsToSpawn; i++) {
             // Spawn unit near castle (slightly offset Y for multiple units)

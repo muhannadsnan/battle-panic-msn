@@ -176,8 +176,16 @@ class WaveSystem {
         this.waveInProgress = false;
 
         // Calculate wave rewards (gold and wood)
-        const goldReward = WAVE_CONFIG.baseGoldReward + (this.currentWave * WAVE_CONFIG.goldPerWave);
-        const woodReward = WAVE_CONFIG.baseWoodReward + (this.currentWave * WAVE_CONFIG.woodPerWave);
+        let goldReward = WAVE_CONFIG.baseGoldReward + (this.currentWave * WAVE_CONFIG.goldPerWave);
+        let woodReward = WAVE_CONFIG.baseWoodReward + (this.currentWave * WAVE_CONFIG.woodPerWave);
+
+        // Apply diminishing returns after wave 25
+        if (this.currentWave > WAVE_CONFIG.diminishingRewardsWave) {
+            const wavesOver = this.currentWave - WAVE_CONFIG.diminishingRewardsWave;
+            const diminishFactor = Math.pow(WAVE_CONFIG.rewardDiminishRate, wavesOver);
+            goldReward = Math.floor(goldReward * diminishFactor);
+            woodReward = Math.floor(woodReward * diminishFactor);
+        }
 
         // Notify scene
         if (this.scene.onWaveComplete) {

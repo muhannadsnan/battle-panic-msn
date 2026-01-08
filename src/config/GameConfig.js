@@ -201,9 +201,16 @@ const WAVE_CONFIG = {
     woodPerWave: 8,
     timeBetweenWaves: 3000,
     spawnInterval: 1000,
-    // Enemy scaling per wave (reduced for easier gameplay)
-    enemyHealthScaling: 0.08,  // Was 0.12, now +8% HP per wave
-    enemyDamageScaling: 0.06   // Was 0.10, now +6% damage per wave
+    // Enemy scaling per wave
+    enemyHealthScaling: 0.10,  // +10% HP per wave (was 8%)
+    enemyDamageScaling: 0.08,  // +8% damage per wave (was 6%)
+    // Late game scaling (after wave 20)
+    lateGameWave: 20,
+    lateGameHealthScaling: 0.15,  // +15% HP per wave after wave 20
+    lateGameDamageScaling: 0.12,  // +12% damage per wave after wave 20
+    // Diminishing wave rewards after wave 25
+    diminishingRewardsWave: 25,
+    rewardDiminishRate: 0.9  // 10% less reward per wave after threshold
 };
 
 // Upgrade Configuration
@@ -224,8 +231,9 @@ const CASTLE_CONFIG = {
     defenseMinY: 80,    // Full battlefield range
     defenseMaxY: 520,
     maxLevel: 10,       // Max castle upgrade level
-    upgradeCostBase: 40, // Reasonable base cost
-    upgradeCostMultiplier: 1.5 // Gentler scaling
+    upgradeGoldBase: 150,   // Starting gold cost
+    upgradeWoodBase: 100,   // Starting wood cost
+    upgradeCostMultiplier: 1.25 // 25% more per level
 };
 
 // Resource Configuration
@@ -242,12 +250,13 @@ const RESOURCE_CONFIG = {
 };
 
 // Spawn Configuration - enemies spawn from edges, pushed to the sides (not center)
+// Adjusted: narrower spawn zones to keep enemies more centered on screen
 const SPAWN_CONFIG = {
-    rightSpawn: { x: GAME_WIDTH + 30, minY: 80, maxY: 520 },
-    topRightSpawn: { minX: 650, maxX: GAME_WIDTH - 30, y: -30 },
-    topSpawn: { minX: 550, maxX: GAME_WIDTH - 50, y: -30 },  // Right side of top
-    bottomRightSpawn: { minX: 650, maxX: GAME_WIDTH - 30, y: GAME_HEIGHT + 30 },
-    bottomSpawn: { minX: 550, maxX: GAME_WIDTH - 50, y: GAME_HEIGHT + 30 }  // Right side of bottom
+    rightSpawn: { x: GAME_WIDTH + 30, minY: 120, maxY: 480 },  // Narrower Y range
+    topRightSpawn: { minX: 600, maxX: GAME_WIDTH - 80, y: -30 },  // Not too far right
+    topSpawn: { minX: 500, maxX: GAME_WIDTH - 100, y: -30 },  // Shifted left
+    bottomRightSpawn: { minX: 600, maxX: GAME_WIDTH - 80, y: GAME_HEIGHT + 30 },  // Not too far right
+    bottomSpawn: { minX: 500, maxX: GAME_WIDTH - 100, y: GAME_HEIGHT + 30 }  // Shifted left
 };
 
 // Boss Configuration
