@@ -906,16 +906,16 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createPromotionBadge() {
-        // Badge appears next to health bar
+        // Badge appears to the LEFT of the unit
         // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
         // Military style: V-shaped chevrons stacked vertically
-        const badgeContainer = this.scene.add.container(18, -28);
+        const badgeContainer = this.scene.add.container(-22, -28);
         this.add(badgeContainer);
 
         const isGold = this.promotionLevel > 3;
         const numChevrons = isGold ? this.promotionLevel - 3 : this.promotionLevel;
         const color = isGold ? 0xffd700 : 0xc0c0c0;
-        const strokeColor = isGold ? 0xb8860b : 0x808080;
+        const borderColor = isGold ? 0x8b6914 : 0x606060;
 
         // Draw stacked chevrons (open V shapes pointing down, like military rank)
         // 2x size
@@ -927,12 +927,20 @@ class Unit extends Phaser.GameObjects.Container {
             const graphics = this.scene.add.graphics();
             const offsetY = -i * spacing; // Stack upward
 
-            // Draw open V-shaped chevron (two lines, open at top)
-            graphics.lineStyle(4, color, 1);
+            // Draw border first (thicker, darker)
+            graphics.lineStyle(6, borderColor, 1);
             graphics.beginPath();
-            graphics.moveTo(0, offsetY);                           // Top left
-            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight); // Bottom center (tip)
-            graphics.lineTo(chevronWidth, offsetY);                // Top right
+            graphics.moveTo(0, offsetY);
+            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+            graphics.lineTo(chevronWidth, offsetY);
+            graphics.strokePath();
+
+            // Draw main chevron on top
+            graphics.lineStyle(3, color, 1);
+            graphics.beginPath();
+            graphics.moveTo(0, offsetY);
+            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+            graphics.lineTo(chevronWidth, offsetY);
             graphics.strokePath();
 
             badgeContainer.add(graphics);
