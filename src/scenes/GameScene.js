@@ -883,12 +883,12 @@ class GameScene extends Phaser.Scene {
     createRankBadge() {
         const rankInfo = saveSystem.getRankInfo(this.saveData);
 
-        // Container for rank badge
-        this.rankBadge = this.add.container(60, 30);
+        // Container for rank badge - bottom left corner (below unit buttons)
+        this.rankBadge = this.add.container(60, GAME_HEIGHT - 25);
         this.rankBadge.setDepth(900);
 
         // Background
-        const bg = this.add.rectangle(0, 0, 105, 32, 0x000000, 0.6);
+        const bg = this.add.rectangle(0, 0, 105, 28, 0x000000, 0.7);
         bg.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color);
         this.rankBadge.add(bg);
 
