@@ -862,7 +862,7 @@ Lv.${level + 1}`;
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
-        this.resourceDisplay = new ResourceDisplay(this, 150, 30);  // More left
+        this.resourceDisplay = new ResourceDisplay(this, 120, 30);  // Further left
         this.resourceDisplay.setGold(this.gold);
         this.resourceDisplay.setWood(this.wood);
 
@@ -904,7 +904,7 @@ Lv.${level + 1}`;
 
     createUnitCountDisplay() {
         // Container for unit counts - horizontal layout in top bar (shifted left for space)
-        this.unitCountContainer = this.add.container(GAME_WIDTH - 400, 35);  // More space from resources
+        this.unitCountContainer = this.add.container(GAME_WIDTH - 500, 35);  // More space between elements
         this.unitCountContainer.setDepth(900);
 
         // Unit count texts for each type - horizontal with mini icons

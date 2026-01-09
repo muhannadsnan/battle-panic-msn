@@ -547,9 +547,9 @@ class Castle extends Phaser.GameObjects.Container {
         if (this.hasFence && this.fenceCurrentHealth > 0) {
             this.fenceCurrentHealth -= amount;
 
-            // Play fence hit sound
+            // Play orc hit sound (same for all orc attacks)
             if (typeof audioManager !== 'undefined') {
-                audioManager.playSwordHit();
+                audioManager.playOrcHit();
             }
 
             // Shake fence
@@ -594,9 +594,9 @@ class Castle extends Phaser.GameObjects.Container {
         this.currentHealth = Math.max(0, this.currentHealth);
         this.updateHealthBar();
 
-        // Play castle hit sound
+        // Play orc hit sound (same for all orc attacks)
         if (typeof audioManager !== 'undefined') {
-            audioManager.playCastleHit();
+            audioManager.playOrcHit();
         }
 
         // Shake effect

@@ -78,7 +78,7 @@ class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Version (more visible)
-        this.add.text(width / 2, height - 12, 'v1.3.0', {
+        this.add.text(width / 2, height - 12, GAME_VERSION, {
             fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
