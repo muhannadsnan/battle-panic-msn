@@ -310,10 +310,11 @@ All UI elements optimized for iPad and touch screens:
 | Pause button | 30px + 50x50 touch target |
 | Music/Volume icons | 28px + 50x50 touch targets |
 | Unit buttons | 110x120px, icons 4x scale |
-| Unit count display | 32px text, 2x scale icons |
+| Unit count display | 26px text, 2x scale icons |
 | Resource text | 26px values, 16px labels |
 | Castle HP text | 33px (outside bar) |
 | Castle level | 28px (in badge) |
+| Player rank | 20px, 0.7 opacity, above wave count |
 
 **HTML Meta Tags:**
 - viewport-fit=cover for notch safety

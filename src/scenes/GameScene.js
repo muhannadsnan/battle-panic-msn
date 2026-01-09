@@ -862,7 +862,7 @@ Lv.${level + 1}`;
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
-        this.resourceDisplay = new ResourceDisplay(this, 200, 30);  // Moved left
+        this.resourceDisplay = new ResourceDisplay(this, 150, 30);  // More left
         this.resourceDisplay.setGold(this.gold);
         this.resourceDisplay.setWood(this.wood);
 
@@ -888,28 +888,23 @@ Lv.${level + 1}`;
     createRankBadge() {
         const rankInfo = saveSystem.getRankInfo(this.saveData);
 
-        // Container for rank badge - bottom left corner (below unit buttons)
-        this.rankBadge = this.add.container(GAME_WIDTH - 260, GAME_HEIGHT - 28);  // More room from wave
+        // Container for rank badge - above wave count, no background
+        this.rankBadge = this.add.container(GAME_WIDTH - 10, GAME_HEIGHT - 45);  // Above wave
         this.rankBadge.setDepth(900);
 
-        // Background
-        const bg = this.add.rectangle(0, 0, 140, 36, 0x000000, 0.7);
-        // No border - cleaner look
-        this.rankBadge.add(bg);
-
-        // Rank icon and full name with grade
+        // Rank icon and full name with grade - no background, with opacity
         this.rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
             fontSize: '20px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: rankInfo.rank.color
-        }).setOrigin(0.5);
+        }).setOrigin(1, 0.5).setAlpha(0.7);  // Right-aligned, above wave
         this.rankBadge.add(this.rankText);
     }
 
     createUnitCountDisplay() {
         // Container for unit counts - horizontal layout in top bar (shifted left for space)
-        this.unitCountContainer = this.add.container(GAME_WIDTH - 480, 35);  // More space from sound buttons
+        this.unitCountContainer = this.add.container(GAME_WIDTH - 400, 35);  // More space from resources
         this.unitCountContainer.setDepth(900);
 
         // Unit count texts for each type - horizontal with mini icons
