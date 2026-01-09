@@ -146,13 +146,21 @@ new UnitButton(scene, x, y, unitType, hotkey, isUnlocked = true)
 ```
 ┌──────────────────┐
 │   ┌──────────┐   │
-│   │  [Icon]  │   │  <- Unit icon (2x scale)
+│   │  [Icon]  │   │  <- Unit icon (4x scale for iPad)
 │   │   ____   │   │  <- Progress spinner
 │   └──────────┘   │
-│      42%         │  <- Progress percent
-│   10g    10w     │  <- Costs
+│      42%         │  <- Progress (28px font)
+│   10g    10w     │  <- Costs (30px font)
 └──────────────────┘
 ```
+
+**iPad-Friendly Features:**
+- Unit icons: 4x scale (enlarged for touch)
+- Cost text: 30px font
+- Lock icon: 48px emoji
+- Progress text: 28px font
+- Button size: 110x120px (full height bar, no margins)
+- 50x50px touch targets for all controls
 
 #### Properties
 | Property | Type | Description |
@@ -292,3 +300,22 @@ this.bg.on('pointerdown', () => {
 ---
 
 *Files: `src/ui/*.js`*
+
+## iPad/Touch Optimization (v1.5.0)
+
+All UI elements optimized for iPad and touch screens:
+
+| Element | Size/Feature |
+|---------|-------------|
+| Pause button | 30px + 50x50 touch target |
+| Music/Volume icons | 28px + 50x50 touch targets |
+| Unit buttons | 110x120px, icons 4x scale |
+| Unit count display | 32px text, 2x scale icons |
+| Resource text | 26px values, 16px labels |
+| Castle HP text | 33px (outside bar) |
+| Castle level | 28px (in badge) |
+
+**HTML Meta Tags:**
+- viewport-fit=cover for notch safety
+- user-scalable=no prevents accidental zoom
+- touch-action: none prevents browser gestures

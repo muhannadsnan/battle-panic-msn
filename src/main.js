@@ -24,6 +24,12 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
+    input: {
+        activePointers: 3,  // Support multi-touch
+        touch: {
+            capture: true   // Capture touch events
+        }
+    },
     render: {
         pixelArt: false,
         antialias: true

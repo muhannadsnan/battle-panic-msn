@@ -72,14 +72,14 @@ class GameOverScene extends Phaser.Scene {
         const randomTip = tips[Math.floor(Math.random() * tips.length)];
 
         this.add.text(width / 2, height - 30, randomTip, {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
 
         // Version (more visible)
         this.add.text(width / 2, height - 12, 'v1.3.0', {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#666666',
@@ -204,7 +204,7 @@ class GameOverScene extends Phaser.Scene {
         // Show total XP
         const totalXp = saveData.xp || 0;
         const totalXpText = this.add.text(0, 125, `Total XP: ${totalXp}`, {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
@@ -258,7 +258,7 @@ class GameOverScene extends Phaser.Scene {
             const labelX = x + (i - 1) * starSpacing;
             const isEarned = i < earnedCount;
             const label = this.add.text(labelX, y + 32, milestones[i], {
-                fontSize: '11px',
+                fontSize: '13px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: isEarned ? '#ffd700' : '#555555'

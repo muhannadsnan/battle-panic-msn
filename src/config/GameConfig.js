@@ -169,9 +169,9 @@ const ENEMY_TYPES = {
         name: 'Dragon',
         oneHitKill: true,
         health: 300,
-        damage: 9999,
+        damage: 200,
         speed: 40,
-        attackSpeed: 2000,
+        attackSpeed: 4000,  // Attacks half as often
         range: 150,
         isRanged: true,
         goldReward: 15,

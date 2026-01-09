@@ -33,7 +33,7 @@ class UpgradeScene extends Phaser.Scene {
 
         // Info text
         this.add.text(GAME_WIDTH / 2, 110, 'Earn 1 XP per 10 waves completed in battle', {
-            fontSize: '12px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
@@ -95,7 +95,7 @@ class UpgradeScene extends Phaser.Scene {
 
         // Level
         const levelText = this.add.text(0, 8, `Level ${upgradeData.level}`, {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -104,7 +104,7 @@ class UpgradeScene extends Phaser.Scene {
         // Stats preview
         const currentStats = this.getUpgradedStats(stats, upgradeData.level);
         const statsText = this.add.text(0, 35, `HP: ${currentStats.health}\nDMG: ${currentStats.damage}`, {
-            fontSize: '12px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#88ff88',
             align: 'center'
@@ -123,7 +123,7 @@ class UpgradeScene extends Phaser.Scene {
                 card.add(upgradeBtn);
             } else {
                 const maxText = this.add.text(0, 75, 'MAX LEVEL', {
-                    fontSize: '14px',
+                    fontSize: '16px',
                     fontFamily: 'Arial',
                     color: '#ffd700'
                 }).setOrigin(0.5);
@@ -455,7 +455,7 @@ class UpgradeScene extends Phaser.Scene {
 
         // Icon and name
         const header = this.add.text(0, -30, `${upgrade.icon} ${upgrade.name}`, {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#ffffff'
         }).setOrigin(0.5);
@@ -463,7 +463,7 @@ class UpgradeScene extends Phaser.Scene {
 
         // Level
         const levelText = this.add.text(0, -8, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
-            fontSize: '12px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -471,7 +471,7 @@ class UpgradeScene extends Phaser.Scene {
 
         // Description
         const desc = this.add.text(0, 10, upgrade.desc, {
-            fontSize: '11px',
+            fontSize: '13px',
             fontFamily: 'Arial',
             color: '#88ff88'
         }).setOrigin(0.5);
@@ -487,7 +487,7 @@ class UpgradeScene extends Phaser.Scene {
             card.add(btn);
         } else {
             const maxText = this.add.text(0, 38, 'MAX', {
-                fontSize: '12px',
+                fontSize: '16px',
                 fontFamily: 'Arial',
                 color: '#ffd700'
             }).setOrigin(0.5);
@@ -506,7 +506,7 @@ class UpgradeScene extends Phaser.Scene {
         container.add(bg);
 
         const label = this.add.text(0, 0, text, {
-            fontSize: '12px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: enabled ? '#ffffff' : '#666666',
             align: 'center'

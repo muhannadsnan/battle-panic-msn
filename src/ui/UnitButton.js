@@ -26,18 +26,18 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.color = stats.color;
         this.name = stats.name;
 
-        const buttonWidth = 90;
-        const buttonHeight = 95;
+        const buttonWidth = 110;
+        const buttonHeight = 120;
 
         // Light background for visibility
         this.background = scene.add.rectangle(0, 0, buttonWidth, buttonHeight, 0x2a3a4a, 0.85);
         this.add(this.background);
 
         // Inner lighter area
-        this.innerBg = scene.add.rectangle(0, -5, buttonWidth - 8, buttonHeight - 20, 0x3a4a5a, 0.7);
+        this.innerBg = scene.add.rectangle(0, -8, buttonWidth - 10, buttonHeight - 28, 0x3a4a5a, 0.7);
         this.add(this.innerBg);
 
-        const spinnerRadius = 32;  // Bigger spinner
+        const spinnerRadius = 38;  // Bigger spinner
 
         // Spinner graphics for progress arc
         this.spinnerGraphics = scene.add.graphics();
@@ -47,13 +47,13 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         // Unit icon container - 2x BIGGER
         this.iconContainer = scene.add.container(0, -5);
-        this.iconContainer.setScale(2);  // Double the size!
+        this.iconContainer.setScale(4);  // x2 larger icons
         this.createUnitIcon(unitType);
         this.add(this.iconContainer);
 
         // Percentage text (hidden by default, shows when hovering)
-        this.percentText = scene.add.text(0, 28, '0%', {
-            fontSize: '12px',
+        this.percentText = scene.add.text(0, 35, '0%', {
+            fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
@@ -66,8 +66,8 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.affordableCount = 0;
 
         // Cost display (gold and wood) - at bottom
-        this.goldCostText = scene.add.text(-18, 38, `${this.goldCost}g`, {
-            fontSize: '12px',
+        this.goldCostText = scene.add.text(-28, 48, `${this.goldCost}g`, {
+            fontSize: '30px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700',
@@ -76,8 +76,8 @@ class UnitButton extends Phaser.GameObjects.Container {
         }).setOrigin(0.5);
         this.add(this.goldCostText);
 
-        this.woodCostText = scene.add.text(20, 38, `${this.woodCost}w`, {
-            fontSize: '12px',
+        this.woodCostText = scene.add.text(28, 48, `${this.woodCost}w`, {
+            fontSize: '30px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#cd853f',
@@ -91,14 +91,14 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.add(this.lockedOverlay);
 
         this.lockIcon = scene.add.text(0, -10, '🔒', {
-            fontSize: '24px'
+            fontSize: '48px'
         }).setOrigin(0.5);
         this.add(this.lockIcon);
 
         // Unlock info text (shows wave needed)
         const unlockWave = this.getUnlockWave(unitType);
-        this.unlockInfoText = scene.add.text(0, 18, `Wave ${unlockWave}`, {
-            fontSize: '11px',
+        this.unlockInfoText = scene.add.text(0, 30, `Wave ${unlockWave}`, {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffaa00',
@@ -465,7 +465,7 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         // Text only tooltip - no boxes
         this.tooltip = this.scene.add.text(this.x + 50, this.y, text, {
-            fontSize: '10px',
+            fontSize: '13px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',

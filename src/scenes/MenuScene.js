@@ -64,27 +64,27 @@ class MenuScene extends Phaser.Scene {
         const rankInfo = saveSystem.getRankInfo(saveData);
 
         // Rank display
-        this.createRankDisplay(width / 2, 220, rankInfo);
+        this.createRankDisplay(width / 2, 250, rankInfo);
 
-        // Stats display
-        this.add.text(width / 2, 290, `Highest Wave: ${saveData.highestWave}`, {
+        // Stats display - under subtitle in white
+        this.add.text(width / 2, 200, `Highest Wave: ${saveData.highestWave}`, {
             fontSize: '21px',
             fontFamily: 'Arial',
-            color: '#aaaaaa'
+            color: '#ffffff'
         }).setOrigin(0.5);
 
         // Play button
-        this.createButton(width / 2, 340, 'PLAY', () => {
+        this.createButton(width / 2, 320, 'PLAY', () => {
             this.scene.start('GameScene');
         });
 
         // Upgrades button
-        this.createButton(width / 2, 410, 'UPGRADES', () => {
+        this.createButton(width / 2, 390, 'UPGRADES', () => {
             this.scene.start('UpgradeScene');
         });
 
-        // Reset upgrades button (smaller)
-        this.createSmallButton(width / 2, 480, 'Reset Upgrades (2 XP)', () => {
+        // Reset upgrades button (at bottom)
+        this.createSmallButton(width / 2, height - 15, 'Reset Upgrades (2 XP)', () => {
             this.confirmResetUpgrades();
         });
 
@@ -94,15 +94,15 @@ class MenuScene extends Phaser.Scene {
         // Buy me a coffee button (bottom right)
         this.createCoffeeButton(width - 100, height - 60);
 
-        // Version (more visible)
-        this.add.text(width / 2, height - 12, 'v1.4.0', {
-            fontSize: '21px',
+        // Version (top right corner)
+        this.add.text(width - 10, 15, 'v1.5.0', {
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#666666',
             stroke: '#000000',
             strokeThickness: 2
-        }).setOrigin(0.5);
+        }).setOrigin(1, 0);
     }
 
     createButton(x, y, text, callback) {
@@ -215,7 +215,7 @@ class MenuScene extends Phaser.Scene {
 
         // Text
         const text = this.add.text(15, -8, 'Buy me a', {
-            fontSize: '12px',
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#FFD700'
         }).setOrigin(0.5);
@@ -262,7 +262,7 @@ class MenuScene extends Phaser.Scene {
     createBuyXPButton(x, y) {
         // "Coming Soon" label above button
         this.add.text(x, y - 52, 'Coming Soon', {
-            fontSize: '12px',
+            fontSize: '14px',
             fontFamily: 'Arial',
             fontStyle: 'italic',
             color: '#ffaa00'
@@ -437,7 +437,7 @@ class MenuScene extends Phaser.Scene {
 
         if (!canReset) {
             const warning = this.add.text(0, 110, 'Need at least 2 XP total to reset!', {
-                fontSize: '12px',
+                fontSize: '14px',
                 fontFamily: 'Arial',
                 color: '#ff4444'
             }).setOrigin(0.5);
@@ -463,7 +463,7 @@ class MenuScene extends Phaser.Scene {
 
         // Score display
         const scoreText = this.add.text(0, 20, `Score: ${rankInfo.score}`, {
-            fontSize: '11px',
+            fontSize: '13px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
@@ -492,7 +492,7 @@ class MenuScene extends Phaser.Scene {
         // Progress text - shows next grade or next rank
         if (rankInfo.isMaxGrade) {
             const maxText = this.add.text(0, 54, '⚡ MAX RANK ⚡', {
-                fontSize: '10px',
+                fontSize: '13px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: '#ffd700'
@@ -504,7 +504,7 @@ class MenuScene extends Phaser.Scene {
                 ? `${rankInfo.rank.name} ${['II', 'III'][rankInfo.rank.grade - 1]}`
                 : rankInfo.nextRank.name + ' I';
             const progressText = this.add.text(0, 54, `${rankInfo.pointsToNext} pts to ${nextLabel}`, {
-                fontSize: '10px',
+                fontSize: '13px',
                 fontFamily: 'Arial',
                 color: '#666666'
             }).setOrigin(0.5);

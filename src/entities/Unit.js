@@ -718,7 +718,7 @@ class Unit extends Phaser.GameObjects.Container {
                 this.target,
                 {
                     damage: this.damage,
-                    speed: 400,
+                    speed: 800,  // 2x faster arrows
                     color: this.color,
                     isPlayerProjectile: true,
                     splashDamage: this.splashDamage,

@@ -477,7 +477,7 @@ class GameScene extends Phaser.Scene {
 
         // Label with instruction
         const label = this.add.text(0, 52, `HOVER TO MINE`, {
-            fontSize: '11px',
+            fontSize: '15px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: isGold ? '#ffd700' : '#D4A574',
@@ -485,10 +485,12 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 2
         }).setOrigin(0.5);
         container.add(label);
+        container.mineLabel = label;  // Store reference to hide when mining
 
         // Hover events
         hitArea.on('pointerover', (pointer) => {
             container.isHovering = true;
+            container.mineLabel.setVisible(false);  // Hide label when mining
             glowRing.setAlpha(0.3);
             this.tweens.add({
                 targets: glowRing,
@@ -506,6 +508,7 @@ class GameScene extends Phaser.Scene {
 
         hitArea.on('pointerout', () => {
             container.isHovering = false;
+            container.mineLabel.setVisible(true);  // Show label when not mining
             this.tweens.add({
                 targets: glowRing,
                 alpha: 0,
@@ -590,7 +593,7 @@ class GameScene extends Phaser.Scene {
 
         // Percentage text
         this.castleUpgradePercentText = this.add.text(0, 32, '0%', {
-            fontSize: '13px',
+            fontSize: '15px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#4ade80',
@@ -600,8 +603,8 @@ class GameScene extends Phaser.Scene {
         this.castleSpinnerContainer.add(this.castleUpgradePercentText);
 
         // Cost/info text (always visible, outside spinner container)
-        this.castleUpgradeCostText = this.add.text(0, 160, '', {
-            fontSize: '12px',
+        this.castleUpgradeCostText = this.add.text(0, 170, '', {
+            fontSize: '32px',  // x2 larger
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#888888',
@@ -611,8 +614,8 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeZone.add(this.castleUpgradeCostText);
 
         // Glow effect for cost text (shown when affordable)
-        this.castleCostGlow = this.add.text(0, 160, '', {
-            fontSize: '12px',
+        this.castleCostGlow = this.add.text(0, 170, '', {
+            fontSize: '32px',  // x2 larger
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#4ade80',
@@ -884,7 +887,7 @@ class GameScene extends Phaser.Scene {
         const rankInfo = saveSystem.getRankInfo(this.saveData);
 
         // Container for rank badge - bottom left corner (below unit buttons)
-        this.rankBadge = this.add.container(60, GAME_HEIGHT - 25);
+        this.rankBadge = this.add.container(GAME_WIDTH - 180, GAME_HEIGHT - 25);  // Next to wave count
         this.rankBadge.setDepth(900);
 
         // Background
@@ -894,7 +897,7 @@ class GameScene extends Phaser.Scene {
 
         // Rank icon and full name with grade
         this.rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
-            fontSize: '11px',
+            fontSize: '15px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: rankInfo.rank.color
@@ -904,7 +907,7 @@ class GameScene extends Phaser.Scene {
 
     createUnitCountDisplay() {
         // Container for unit counts - horizontal layout in top bar (shifted left for space)
-        this.unitCountContainer = this.add.container(GAME_WIDTH - 380, 30);
+        this.unitCountContainer = this.add.container(GAME_WIDTH - 480, 35);  // More space from sound buttons
         this.unitCountContainer.setDepth(900);
 
         // Unit count texts for each type - horizontal with mini icons
@@ -919,16 +922,17 @@ class GameScene extends Phaser.Scene {
         };
 
         unitTypes.forEach((type, index) => {
-            const x = index * 48; // More spacing for bigger icons
+            const x = index * 60; // x2 larger with more spacing
 
-            // Mini unit icon (offset down a bit since icons extend upward)
-            const iconContainer = this.add.container(x, 5);
+            // Mini unit icon (offset down a bit since icons extend upward) - x2 scale
+            const iconContainer = this.add.container(x, 8);
+            iconContainer.setScale(2);  // x2 larger icons
             this.createMiniUnitIcon(iconContainer, type);
             this.unitCountContainer.add(iconContainer);
 
             // Count text next to icon
-            const countText = this.add.text(x + 16, 0, '0', {
-                fontSize: '16px',
+            const countText = this.add.text(x + 22, 0, '0', {
+                fontSize: '32px',  // x2 larger
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: colorHex[type],
@@ -1052,8 +1056,8 @@ class GameScene extends Phaser.Scene {
         const panelX = 50;
 
         // Unit buttons - vertical layout, no panel boxes
-        const startY = 70;
-        const spacing = 95;
+        const startY = 60;  // Full height bar
+        const spacing = 120;  // No margins between buttons
         const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
         const hotkeys = ['1', '2', '3', '4', '5'];
 
@@ -1076,28 +1080,43 @@ class GameScene extends Phaser.Scene {
     }
 
     createPauseButton() {
-        // Pause button - text only, no boxes
-        this.pauseText = this.add.text(GAME_WIDTH - 30, 25, 'II', {
-            fontSize: '22px',
+        // Pause button - larger touch target for iPad
+        const pauseX = GAME_WIDTH - 35;
+        const pauseY = 30;
+
+        // Invisible touch target (50x50 for iPad)
+        this.pauseHitArea = this.add.rectangle(pauseX, pauseY, 50, 50, 0x000000, 0)
+            .setInteractive({ useHandCursor: true })
+            .setDepth(950);
+
+        this.pauseText = this.add.text(pauseX, pauseY, 'II', {
+            fontSize: '30px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 3
-        }).setOrigin(0.5).setDepth(950);
+        }).setOrigin(0.5).setDepth(951);
 
-        this.pauseText.setInteractive({ useHandCursor: true });
-        this.pauseText.on('pointerdown', () => this.togglePause());
+        this.pauseHitArea.on('pointerdown', () => this.togglePause());
     }
 
     createMusicToggle() {
-        // Music toggle - text only, no boxes
-        this.musicIcon = this.add.text(GAME_WIDTH - 70, 25, '🎵', {
-            fontSize: '20px'
-        }).setOrigin(0.5).setDepth(950);
+        // Music toggle - larger touch targets for iPad
+        const musicX = GAME_WIDTH - 90;
+        const volumeX = GAME_WIDTH - 145;
+        const iconY = 30;
 
-        this.musicIcon.setInteractive({ useHandCursor: true });
-        this.musicIcon.on('pointerdown', () => {
+        // Music icon with 50x50 touch target
+        this.musicHitArea = this.add.rectangle(musicX, iconY, 50, 50, 0x000000, 0)
+            .setInteractive({ useHandCursor: true })
+            .setDepth(950);
+
+        this.musicIcon = this.add.text(musicX, iconY, '🎵', {
+            fontSize: '28px'
+        }).setOrigin(0.5).setDepth(951);
+
+        this.musicHitArea.on('pointerdown', () => {
             if (typeof audioManager !== 'undefined') {
                 const enabled = audioManager.toggleMusic();
                 this.musicIcon.setAlpha(enabled ? 1 : 0.4);
@@ -1106,12 +1125,16 @@ class GameScene extends Phaser.Scene {
 
         // Sound volume toggle: 100% -> 25% -> mute -> 100%
         this.volumeState = 0; // 0=100%, 1=25%, 2=mute
-        this.muteIcon = this.add.text(GAME_WIDTH - 110, 25, '🔊', {
-            fontSize: '18px'
-        }).setOrigin(0.5).setDepth(950);
 
-        this.muteIcon.setInteractive({ useHandCursor: true });
-        this.muteIcon.on('pointerdown', () => {
+        this.volumeHitArea = this.add.rectangle(volumeX, iconY, 50, 50, 0x000000, 0)
+            .setInteractive({ useHandCursor: true })
+            .setDepth(950);
+
+        this.muteIcon = this.add.text(volumeX, iconY, '🔊', {
+            fontSize: '28px'
+        }).setOrigin(0.5).setDepth(951);
+
+        this.volumeHitArea.on('pointerdown', () => {
             if (typeof audioManager !== 'undefined') {
                 this.volumeState = (this.volumeState + 1) % 3;
                 const volumes = [1.0, 0.25, 0];
@@ -1702,7 +1725,7 @@ class GameScene extends Phaser.Scene {
 
         // Resource info
         const resourceInfo = this.add.text(0, -40, `Gold: ${this.gold} | Wood: ${this.wood}`, {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#ffd700'
         }).setOrigin(0.5);
@@ -1867,7 +1890,7 @@ class GameScene extends Phaser.Scene {
 
     showMiningRate(x, y, rate, color) {
         const rateText = this.add.text(x, y, `${rate.toFixed(1)}/s`, {
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: color,

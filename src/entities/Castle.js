@@ -12,8 +12,8 @@ class Castle extends Phaser.GameObjects.Container {
 
         // Castle arrow attack properties
         this.attackRange = 300;      // How far castle can shoot
-        this.attackSpeed = 1000;     // Attack every 1 second (2x faster)
-        this.arrowDamage = 5;        // Base arrow damage
+        this.attackSpeed = 700;      // Attack every 0.7 seconds
+        this.arrowDamage = 8;        // Base arrow damage
         this.lastAttackTime = 0;
         this.target = null;
 
@@ -55,13 +55,15 @@ class Castle extends Phaser.GameObjects.Container {
         this.healthBarShine.setOrigin(0, 0.5);
         this.add(this.healthBarShine);
 
-        // Health text (modern font style)
-        this.healthText = scene.add.text(0, -130, `${this.currentHealth}`, {
-            fontSize: '11px',
+        // Health text (x3 bigger, outside bar to right)
+        this.healthText = scene.add.text(75, -130, `${this.currentHealth}`, {
+            fontSize: '33px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0, 0.5);  // Left-aligned at right of bar
         this.add(this.healthText);
     }
 
@@ -76,9 +78,9 @@ class Castle extends Phaser.GameObjects.Container {
         const inner = scene.add.rectangle(0, 0, 24, 24, 0x4a4a8e);
         badge.add(inner);
 
-        // Level text
+        // Level text (x2 bigger)
         this.levelText = scene.add.text(0, 0, `${this.level}`, {
-            fontSize: '14px',
+            fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700'
@@ -326,8 +328,8 @@ class Castle extends Phaser.GameObjects.Container {
         this.updateHealthBar();
 
         // Scale attack stats with level
-        this.arrowDamage = 5 + (this.level - 1) * 2;        // +2 damage per level
-        this.attackSpeed = Math.max(400, 1000 - (this.level - 1) * 50);   // Faster attacks (base 1s)
+        this.arrowDamage = 8 + (this.level - 1) * 3;        // +3 damage per level
+        this.attackSpeed = Math.max(300, 700 - (this.level - 1) * 40);    // Faster attacks (base 0.7s)
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
         // Fence system - unlocks at level 3
@@ -410,7 +412,7 @@ class Castle extends Phaser.GameObjects.Container {
 
     createFence() {
         // Create fence container positioned in front of castle
-        this.fenceContainer = this.scene.add.container(this.x + 120, this.y);
+        this.fenceContainer = this.scene.add.container(this.x + 150, this.y);
 
         // Fence posts and planks - big wooden fence
         const fenceWidth = 60;
@@ -558,7 +560,7 @@ class Castle extends Phaser.GameObjects.Container {
                     repeat: 2,
                     onComplete: () => {
                         if (this.fenceContainer) {
-                            this.fenceContainer.x = this.x + 120;
+                            this.fenceContainer.x = this.x + 150;
                         }
                     }
                 });
@@ -835,7 +837,7 @@ class Castle extends Phaser.GameObjects.Container {
             this.target,
             {
                 damage: this.arrowDamage,
-                speed: 350,
+                speed: 1000,  // 2x faster arrows
                 color: 0xFFAA00,
                 isPlayerProjectile: true,
                 projectileType: 'arrow'
