@@ -316,6 +316,9 @@ All UI elements optimized for iPad and touch screens:
 | Castle level | 28px (in badge) |
 | Player rank | 20px, 0.7 opacity, above wave count |
 
+**Version Constant:**
+- `GAME_VERSION` in GameConfig.js used across all scenes
+
 **HTML Meta Tags:**
 - viewport-fit=cover for notch safety
 - user-scalable=no prevents accidental zoom
