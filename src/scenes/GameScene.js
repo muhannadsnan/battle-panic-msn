@@ -862,7 +862,7 @@ Lv.${level + 1}`;
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
-        this.resourceDisplay = new ResourceDisplay(this, 120, 30);  // Further left
+        this.resourceDisplay = new ResourceDisplay(this, 150, 30);  // Adjusted right
         this.resourceDisplay.setGold(this.gold);
         this.resourceDisplay.setWood(this.wood);
 
@@ -889,7 +889,7 @@ Lv.${level + 1}`;
         const rankInfo = saveSystem.getRankInfo(this.saveData);
 
         // Container for rank badge - above wave count, no background
-        this.rankBadge = this.add.container(GAME_WIDTH - 10, GAME_HEIGHT - 45);  // Above wave
+        this.rankBadge = this.add.container(GAME_WIDTH - 10, GAME_HEIGHT - 60);  // Higher above wave
         this.rankBadge.setDepth(900);
 
         // Rank icon and full name with grade - no background, with opacity
@@ -897,8 +897,10 @@ Lv.${level + 1}`;
             fontSize: '20px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: rankInfo.rank.color
-        }).setOrigin(1, 0.5).setAlpha(0.7);  // Right-aligned, above wave
+            color: rankInfo.rank.color,
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(1, 0.5).setAlpha(0.6);  // Right-aligned, less opacity
         this.rankBadge.add(this.rankText);
     }
 
@@ -919,7 +921,7 @@ Lv.${level + 1}`;
         };
 
         unitTypes.forEach((type, index) => {
-            const x = index * 60; // x2 larger with more spacing
+            const x = index * 70; // More space between counts
 
             // Mini unit icon (offset down a bit since icons extend upward) - x2 scale
             const iconContainer = this.add.container(x, 8);

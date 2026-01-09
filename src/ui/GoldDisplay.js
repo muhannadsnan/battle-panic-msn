@@ -34,7 +34,7 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.add(this.goldText);
 
         // Wood label
-        this.woodLabel = scene.add.text(55, 0, 'WOOD', {
+        this.woodLabel = scene.add.text(75, 0, 'WOOD', {
             fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -45,7 +45,7 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.add(this.woodLabel);
 
         // Wood value
-        this.woodText = scene.add.text(110, 0, '0', {
+        this.woodText = scene.add.text(130, 0, '0', {
             fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',

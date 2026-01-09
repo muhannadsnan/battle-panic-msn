@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.5.4';
+const GAME_VERSION = 'v1.5.5';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -11,7 +11,7 @@ const UNIT_TYPES = {
         name: 'Peasant',
         goldCost: 10,
         woodCost: 10,
-        health: 22,
+        health: 14,
         damage: 4,
         speed: 80,
         attackSpeed: 1000,
@@ -38,7 +38,7 @@ const UNIT_TYPES = {
         name: 'Knight',
         goldCost: 60,
         woodCost: 40,
-        health: 54,
+        health: 43,
         damage: 11,
         speed: 50,
         attackSpeed: 1200,
@@ -51,7 +51,7 @@ const UNIT_TYPES = {
         name: 'Wizard',
         goldCost: 80,
         woodCost: 50,
-        health: 27,
+        health: 22,
         damage: 14,
         speed: 40,
         attackSpeed: 2000,
@@ -67,7 +67,7 @@ const UNIT_TYPES = {
         name: 'Giant',
         goldCost: 120,
         woodCost: 80,
-        health: 108,
+        health: 86,
         damage: 20,
         speed: 30,
         attackSpeed: 2000,
