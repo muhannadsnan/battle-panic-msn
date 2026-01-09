@@ -314,7 +314,7 @@ All UI elements optimized for iPad and touch screens:
 | Resource text | 26px values, 16px labels |
 | Castle HP text | 33px (outside bar) |
 | Castle level | 28px (in badge) |
-| Player rank | 20px, 0.7 opacity, above wave count |
+| Player rank | 24px, 0.8 opacity, above wave count |
 
 **Version Constant:**
 - `GAME_VERSION` in GameConfig.js used across all scenes

@@ -678,7 +678,7 @@ Lv.${currentLevel + 1}`;
         // Update colors and glow based on affordability
         if (canAfford) {
             this.castleUpgradeCostText.setStyle({ color: '#4ade80' });
-            this.castleCostGlow.setAlpha(0.4);
+            this.castleCostGlow.setAlpha(0.8);
         } else {
             this.castleUpgradeCostText.setStyle({ color: '#888888' });
             this.castleCostGlow.setAlpha(0);
@@ -844,7 +844,7 @@ Lv.${level + 1}`;
         const canAfford = this.gold >= cost.gold && this.wood >= cost.wood;
         if (canAfford) {
             this.castleUpgradeCostText.setStyle({ color: '#4ade80' });
-            this.castleCostGlow.setAlpha(0.4);
+            this.castleCostGlow.setAlpha(0.8);
         } else {
             this.castleUpgradeCostText.setStyle({ color: '#888888' });
             this.castleCostGlow.setAlpha(0);
@@ -894,13 +894,13 @@ Lv.${level + 1}`;
 
         // Rank icon and full name with grade - no background, with opacity
         this.rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
-            fontSize: '20px',
+            fontSize: '24px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: rankInfo.rank.color,
             stroke: '#000000',
             strokeThickness: 2
-        }).setOrigin(1, 0.5).setAlpha(0.6);  // Right-aligned, less opacity
+        }).setOrigin(1, 0.5).setAlpha(0.8);  // Right-aligned, less opacity
         this.rankBadge.add(this.rankText);
     }
 
