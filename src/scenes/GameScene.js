@@ -1104,7 +1104,8 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        // Mute ALL toggle
+        // Sound volume toggle: 100% -> 25% -> mute -> 100%
+        this.volumeState = 0; // 0=100%, 1=25%, 2=mute
         this.muteIcon = this.add.text(GAME_WIDTH - 110, 25, '🔊', {
             fontSize: '18px'
         }).setOrigin(0.5).setDepth(950);
@@ -1112,9 +1113,13 @@ class GameScene extends Phaser.Scene {
         this.muteIcon.setInteractive({ useHandCursor: true });
         this.muteIcon.on('pointerdown', () => {
             if (typeof audioManager !== 'undefined') {
-                const muted = audioManager.toggleMuteAll();
-                this.muteIcon.setText(muted ? '🔇' : '🔊');
-                this.musicIcon.setAlpha(muted ? 0.3 : 1);
+                this.volumeState = (this.volumeState + 1) % 3;
+                const volumes = [1.0, 0.25, 0];
+                const icons = ['🔊', '🔉', '🔇'];
+                const volume = volumes[this.volumeState];
+                audioManager.setMasterVolume(volume);
+                this.muteIcon.setText(icons[this.volumeState]);
+                this.musicIcon.setAlpha(volume > 0 ? 1 : 0.3);
             }
         });
     }
@@ -1168,7 +1173,7 @@ class GameScene extends Phaser.Scene {
         if (this.lastWoodRateDisplayTime === undefined) this.lastWoodRateDisplayTime = 0;
 
         const now = Date.now();
-        const rateDisplayInterval = 2000; // Show rate every 2 seconds
+        const rateDisplayInterval = 1500; // Show rate every 1.5 seconds
 
         // Gold mining
         if (this.goldMine.isHovering) {
@@ -1374,14 +1379,17 @@ class GameScene extends Phaser.Scene {
             const type = unitTypes[index];
             const stats = UNIT_TYPES[type];
 
-            // At max promotion (level 6), double spawn costs double
+            // Cost increases with promotion level to balance spam
             const promotionLevel = this.getPromotionLevel(type);
-            const costMultiplier = promotionLevel >= 6 ? 2 : 1;
-            const totalGoldCost = stats.goldCost * costMultiplier;
-            const totalWoodCost = stats.woodCost * costMultiplier;
+            const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
+            const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
+            const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
 
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
+
+            // Update displayed costs based on promotion
+            button.updateCosts(totalGoldCost, totalWoodCost);
 
             // Update affordable count display (pass multiplier for accurate count)
             button.updateAffordableCount(this.gold, this.wood, costMultiplier);
@@ -1421,10 +1429,11 @@ class GameScene extends Phaser.Scene {
         const promotionLevel = this.getPromotionLevel(unitType);
         const promotionBonus = this.getPromotionBonus(promotionLevel);
 
-        // At max promotion (level 6), spawn 2 units at once - costs double!
+        // Cost increases with promotion level, at max (level 6) spawn 2 units
+        const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
         const unitsToSpawn = promotionLevel >= 6 ? 2 : 1;
-        const totalGoldCost = stats.goldCost * unitsToSpawn;
-        const totalWoodCost = stats.woodCost * unitsToSpawn;
+        const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
+        const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
 
         // Check costs (including double cost for max promotion)
         if (this.gold < totalGoldCost) {
@@ -1903,6 +1912,19 @@ class GameScene extends Phaser.Scene {
             totalBonus += bonuses[i];
         }
         return 1 + totalBonus;
+    }
+
+    getPromotionCostMultiplier(promotionLevel) {
+        // Cost increases with promotion to balance peasant spam
+        // Silver (1-3): +33% per level -> 133%, 166%, 200%
+        // Gold (4-6): +66% per level -> 266%, 333%, 400%
+        if (promotionLevel <= 0) return 1;
+        if (promotionLevel <= 3) {
+            return 1 + (promotionLevel * 0.33);
+        } else {
+            // Gold levels: continue from 200% with +66% per level
+            return 2 + ((promotionLevel - 3) * 0.67);
+        }
     }
 
     getPromotionBadgeInfo(promotionLevel) {

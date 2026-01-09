@@ -86,15 +86,15 @@ Units have animated body parts stored in `this.bodyParts`:
 Units get promoted based on how many of that type have been spawned in the current game.
 
 **Promotion Levels:**
-| Level | Spawns | Badge | Total Bonus |
-|-------|--------|-------|-------------|
-| 0 | 0-9 | None | +0% |
-| 1 | 10-19 | ▲ Silver | +10% |
-| 2 | 20-29 | ▲▲ Silver | +30% |
-| 3 | 30-49 | ▲▲▲ Silver | +60% |
-| 4 | 50-79 | ▲ Gold | +100% |
-| 5 | 80-119 | ▲▲ Gold | +150% |
-| 6 | 120+ | ▲▲▲ Gold | +200% |
+| Level | Spawns | Badge | Stat Bonus | Cost |
+|-------|--------|-------|------------|------|
+| 0 | 0-9 | None | +0% | 100%
+| 1 | 10-19 | ▲ Silver | +10% | 133%
+| 2 | 20-29 | ▲▲ Silver | +30% | 166%
+| 3 | 30-49 | ▲▲▲ Silver | +60% | 200%
+| 4 | 50-79 | ▲ Gold | +100% | 266%
+| 5 | 80-119 | ▲▲ Gold | +150% | 333%
+| 6 | 120+ | ▲▲▲ Gold | +200% | 400%
 
 **Bonuses apply to:**
 - HP (multiplied by bonus)
@@ -102,7 +102,7 @@ Units get promoted based on how many of that type have been spawned in the curre
 - Attack Speed (faster by bonus)
 - Range (Archers only: +10% per promotion level)
 
-At max promotion (level 6), units have **3x stats** and **spawn 2 at a time** (costs double)!
+At max promotion (level 6), units have **3x stats** and **spawn 2 at a time** (cost 4x)!
 Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**

@@ -67,19 +67,19 @@ class MenuScene extends Phaser.Scene {
         this.createRankDisplay(width / 2, 220, rankInfo);
 
         // Stats display
-        this.add.text(width / 2, 270, `Highest Wave: ${saveData.highestWave}`, {
-            fontSize: '14px',
+        this.add.text(width / 2, 290, `Highest Wave: ${saveData.highestWave}`, {
+            fontSize: '21px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
 
         // Play button
-        this.createButton(width / 2, 320, 'PLAY', () => {
+        this.createButton(width / 2, 340, 'PLAY', () => {
             this.scene.start('GameScene');
         });
 
         // Upgrades button
-        this.createButton(width / 2, 400, 'UPGRADES', () => {
+        this.createButton(width / 2, 410, 'UPGRADES', () => {
             this.scene.start('UpgradeScene');
         });
 
@@ -95,8 +95,8 @@ class MenuScene extends Phaser.Scene {
         this.createCoffeeButton(width - 100, height - 60);
 
         // Version (more visible)
-        this.add.text(width / 2, height - 12, 'v1.3.0', {
-            fontSize: '14px',
+        this.add.text(width / 2, height - 12, 'v1.4.0', {
+            fontSize: '21px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#666666',
@@ -155,7 +155,7 @@ class MenuScene extends Phaser.Scene {
     createSmallButton(x, y, text, callback) {
         // Text-only small button, no boxes
         const label = this.add.text(x, y, text, {
-            fontSize: '14px',
+            fontSize: '21px',
             fontFamily: 'Arial',
             color: '#888888',
             stroke: '#000000',
@@ -292,7 +292,7 @@ class MenuScene extends Phaser.Scene {
         container.add(text);
 
         const text2 = this.add.text(20, 14, 'for $2', {
-            fontSize: '14px',
+            fontSize: '21px',
             fontFamily: 'Arial',
             color: '#555555'
         }).setOrigin(0.5);
@@ -349,7 +349,7 @@ class MenuScene extends Phaser.Scene {
 
         // Cancel button
         const cancelText = this.add.text(0, 100, 'Cancel', {
-            fontSize: '14px',
+            fontSize: '21px',
             fontFamily: 'Arial',
             color: '#888888',
             stroke: '#000000',
@@ -387,7 +387,7 @@ class MenuScene extends Phaser.Scene {
         dialog.add(title);
 
         const info = this.add.text(0, -10, `This will reset all upgrades to default.\nYou have ${spentXP} XP in upgrades.\nCost: 2 XP fee\nYou'll get back: ${Math.max(0, spentXP - 2)} XP`, {
-            fontSize: '14px',
+            fontSize: '21px',
             fontFamily: 'Arial',
             color: '#ffffff',
             align: 'center',

@@ -37,11 +37,11 @@ Located in `UNIT_TYPES` object. Each unit has:
 
 | Unit | Gold | Wood | HP | DMG | Speed | Atk Speed | Range | Type |
 |------|------|------|-----|-----|-------|-----------|-------|------|
-| Peasant | 10 | 10 | 25 | 5 | 80 | 1000ms | 30 | Melee |
-| Archer | 25 | 20 | 20 | 7 | 60 | 1500ms | 200 | Ranged |
-| Knight | 60 | 40 | 60 | 12 | 50 | 1200ms | 35 | Melee |
-| Wizard | 80 | 50 | 30 | 16 | 40 | 2000ms | 180 | Ranged+Splash |
-| Giant | 120 | 80 | 120 | 22 | 30 | 2000ms | 45 | Melee |
+| Peasant | 10 | 10 | 22 | 4 | 80 | 1000ms | 30 | Melee |
+| Archer | 25 | 20 | 18 | 6 | 60 | 1500ms | 200 | Ranged |
+| Knight | 60 | 40 | 54 | 11 | 50 | 1200ms | 35 | Melee |
+| Wizard | 80 | 50 | 27 | 14 | 40 | 2000ms | 180 | Ranged+Splash |
+| Giant | 120 | 80 | 108 | 20 | 30 | 2000ms | 45 | Melee |
 
 ### Unit Roles
 
@@ -75,7 +75,7 @@ Located in `ENEMY_TYPES` object. Similar stats to units plus:
 | Troll | 90 | 12 | 35 | 40 | 3 | 2 | Wave 8+ |
 | Dark Knight | 60 | 9 | 55 | 35 | 3 | 2 | Wave 12+ |
 | Demon | 120 | 15 | 45 | 35 | 5 | 3 | Wave 18+ |
-| Dragon (Boss) | 300 | 24 | 40 | 150 | 15 | 10 | Every 10 waves |
+| Dragon (Boss) | 300 | 9999 | 40 | 150 | 15 | 10 | Every 10 waves |
 
 *Note: All enemy HP and damage reduced by 40% from original values for easier gameplay. Wave 1 now includes both Goblins and Orcs for a harder start.*
 

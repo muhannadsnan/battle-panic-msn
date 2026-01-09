@@ -884,6 +884,25 @@ class AudioManager {
         return this.allMuted;
     }
 
+    // Set master volume (0, 0.25, or 1.0) - handles music restart
+    setMasterVolume(multiplier) {
+        if (multiplier === 0) {
+            this.allMuted = true;
+            this.stopMusic();
+            if (this.musicGain) this.musicGain.gain.value = 0;
+            if (this.sfxGain) this.sfxGain.gain.value = 0;
+        } else {
+            const wasMuted = this.allMuted;
+            this.allMuted = false;
+            if (this.musicGain) this.musicGain.gain.value = AUDIO_CONFIG.musicVolume * multiplier;
+            if (this.sfxGain) this.sfxGain.gain.value = AUDIO_CONFIG.sfxVolume * multiplier;
+            // Restart music if coming from muted state
+            if (wasMuted && this.musicEnabled) {
+                this.startMusic();
+            }
+        }
+    }
+
     isMuted() {
         return this.allMuted;
     }
