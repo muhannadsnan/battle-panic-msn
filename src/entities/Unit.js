@@ -67,7 +67,7 @@ class Unit extends Phaser.GameObjects.Container {
         this.add(this.spriteContainer);
 
         // Create health bar (compact, right above head, thin border)
-        this.healthBar = new HealthBar(scene, 0, -32, 20, 3, 0x00ff00, true);
+        this.healthBar = new HealthBar(scene, 0, -35, 30, 5, 0x00ff00, true);  // x1.5 larger
         this.add(this.healthBar);
 
         // Create promotion badge if promoted

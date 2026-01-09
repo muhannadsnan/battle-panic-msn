@@ -53,7 +53,7 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         // Percentage text (hidden by default, shows when hovering)
         this.percentText = scene.add.text(0, 35, '0%', {
-            fontSize: '28px',
+            fontSize: '25px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
@@ -67,7 +67,7 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         // Cost display (gold and wood) - at bottom
         this.goldCostText = scene.add.text(-28, 48, `${this.goldCost}g`, {
-            fontSize: '30px',
+            fontSize: '27px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700',
@@ -77,7 +77,7 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.add(this.goldCostText);
 
         this.woodCostText = scene.add.text(28, 48, `${this.woodCost}w`, {
-            fontSize: '30px',
+            fontSize: '27px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#cd853f',
@@ -91,14 +91,14 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.add(this.lockedOverlay);
 
         this.lockIcon = scene.add.text(0, -10, '🔒', {
-            fontSize: '48px'
+            fontSize: '43px'
         }).setOrigin(0.5);
         this.add(this.lockIcon);
 
         // Unlock info text (shows wave needed)
         const unlockWave = this.getUnlockWave(unitType);
         this.unlockInfoText = scene.add.text(0, 30, `Wave ${unlockWave}`, {
-            fontSize: '26px',
+            fontSize: '23px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffaa00',
@@ -125,7 +125,7 @@ class UnitButton extends Phaser.GameObjects.Container {
                 this.isHovering = true;
                 this.hoverStartTime = Date.now(); // Record when hover started
                 this.innerBg.setFillStyle(0x4a6a8a, 0.85);
-                this.percentText.setVisible(true);
+                // this.percentText.setVisible(true);  // Hidden - spinner is enough
                 this.showTooltip();
             }
         });
@@ -206,7 +206,7 @@ class UnitButton extends Phaser.GameObjects.Container {
             }
         }
 
-        this.percentText.setText(`${percent}%`);
+        // this.percentText.setText(`${percent}%`);  // Hidden
 
         // Pulse when hovering (base scale is 2)
         if (this.isHovering && percent > 0) {
@@ -463,15 +463,15 @@ class UnitButton extends Phaser.GameObjects.Container {
         const stats = UNIT_TYPES[this.unitType.toUpperCase()];
         const text = `${stats.name} HP:${stats.health} DMG:${stats.damage}`;
 
-        // Text only tooltip - no boxes
-        this.tooltip = this.scene.add.text(this.x + 50, this.y, text, {
-            fontSize: '13px',
+        // Text only tooltip - x2 bigger but transparent
+        this.tooltip = this.scene.add.text(this.x + 60, this.y, text, {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0, 0.5).setDepth(1000);
+            strokeThickness: 4
+        }).setOrigin(0, 0.5).setDepth(1000).setAlpha(0.6);
     }
 
     hideTooltip() {

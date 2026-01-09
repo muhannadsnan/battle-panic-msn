@@ -604,7 +604,7 @@ class GameScene extends Phaser.Scene {
 
         // Cost/info text (always visible, outside spinner container)
         this.castleUpgradeCostText = this.add.text(0, 170, '', {
-            fontSize: '32px',  // x2 larger
+            fontSize: '26px',  // Same as resources
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#888888',
@@ -615,7 +615,7 @@ class GameScene extends Phaser.Scene {
 
         // Glow effect for cost text (shown when affordable)
         this.castleCostGlow = this.add.text(0, 170, '', {
-            fontSize: '32px',  // x2 larger
+            fontSize: '26px',  // Same as resources
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#4ade80',
@@ -669,7 +669,8 @@ class GameScene extends Phaser.Scene {
         // Update cost display
         const costText = isMaxLevel
             ? `${cost.gold}g ${cost.wood}w REPAIR`
-            : `${cost.gold}g ${cost.wood}w Lv.${currentLevel + 1}`;
+            : `${cost.gold}g ${cost.wood}w
+Lv.${currentLevel + 1}`;
 
         this.castleUpgradeCostText.setText(costText);
         this.castleCostGlow.setText(costText);
@@ -833,7 +834,8 @@ class GameScene extends Phaser.Scene {
 
         const costText = isMaxLevel
             ? `${cost.gold}g ${cost.wood}w REPAIR`
-            : `${cost.gold}g ${cost.wood}w Lv.${level + 1}`;
+            : `${cost.gold}g ${cost.wood}w
+Lv.${level + 1}`;
 
         this.castleUpgradeCostText.setText(costText);
         this.castleCostGlow.setText(costText);
@@ -860,7 +862,7 @@ class GameScene extends Phaser.Scene {
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
-        this.resourceDisplay = new ResourceDisplay(this, GAME_WIDTH / 2, 30);
+        this.resourceDisplay = new ResourceDisplay(this, 200, 30);  // Moved left
         this.resourceDisplay.setGold(this.gold);
         this.resourceDisplay.setWood(this.wood);
 
@@ -887,17 +889,17 @@ class GameScene extends Phaser.Scene {
         const rankInfo = saveSystem.getRankInfo(this.saveData);
 
         // Container for rank badge - bottom left corner (below unit buttons)
-        this.rankBadge = this.add.container(GAME_WIDTH - 180, GAME_HEIGHT - 25);  // Next to wave count
+        this.rankBadge = this.add.container(GAME_WIDTH - 260, GAME_HEIGHT - 28);  // More room from wave
         this.rankBadge.setDepth(900);
 
         // Background
-        const bg = this.add.rectangle(0, 0, 105, 28, 0x000000, 0.7);
-        bg.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color);
+        const bg = this.add.rectangle(0, 0, 140, 36, 0x000000, 0.7);
+        // No border - cleaner look
         this.rankBadge.add(bg);
 
         // Rank icon and full name with grade
         this.rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
-            fontSize: '15px',
+            fontSize: '20px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: rankInfo.rank.color
@@ -932,7 +934,7 @@ class GameScene extends Phaser.Scene {
 
             // Count text next to icon
             const countText = this.add.text(x + 22, 0, '0', {
-                fontSize: '32px',  // x2 larger
+                fontSize: '26px',  // Same as resources
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: colorHex[type],
@@ -1723,13 +1725,45 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.pauseOverlay.add(waveInfo);
 
-        // Resource info
-        const resourceInfo = this.add.text(0, -40, `Gold: ${this.gold} | Wood: ${this.wood}`, {
+        // Sound controls
+        const soundLabel = this.add.text(-60, -40, 'Sound:', {
             fontSize: '16px',
             fontFamily: 'Arial',
-            color: '#ffd700'
-        }).setOrigin(0.5);
-        this.pauseOverlay.add(resourceInfo);
+            color: '#aaaaaa'
+        }).setOrigin(0, 0.5);
+        this.pauseOverlay.add(soundLabel);
+
+        // Music toggle button
+        const musicBtn = this.add.text(10, -40, '🎵', {
+            fontSize: '28px'
+        }).setOrigin(0.5).setInteractive({});
+        musicBtn.setAlpha(typeof audioManager !== 'undefined' && audioManager.musicEnabled ? 1 : 0.4);
+        musicBtn.on('pointerdown', () => {
+            if (typeof audioManager !== 'undefined') {
+                const enabled = audioManager.toggleMusic();
+                musicBtn.setAlpha(enabled ? 1 : 0.4);
+            }
+        });
+        this.pauseOverlay.add(musicBtn);
+
+        // Volume toggle button
+        const volumeIcons = ['🔊', '🔉', '🔇'];
+        const volumeBtn = this.add.text(60, -40, volumeIcons[this.volumeState || 0], {
+            fontSize: '28px'
+        }).setOrigin(0.5).setInteractive({});
+        volumeBtn.on('pointerdown', () => {
+            if (typeof audioManager !== 'undefined') {
+                this.volumeState = (this.volumeState + 1) % 3;
+                const volumes = [1.0, 0.25, 0];
+                audioManager.setMasterVolume(volumes[this.volumeState]);
+                volumeBtn.setText(volumeIcons[this.volumeState]);
+                musicBtn.setAlpha(volumes[this.volumeState] > 0 ? 1 : 0.3);
+                // Also update the top bar icons
+                if (this.muteIcon) this.muteIcon.setText(volumeIcons[this.volumeState]);
+                if (this.musicIcon) this.musicIcon.setAlpha(volumes[this.volumeState] > 0 ? 1 : 0.3);
+            }
+        });
+        this.pauseOverlay.add(volumeBtn);
 
         // Resume button
         const resumeBtn = this.createPauseMenuButton(0, 10, 'Resume', () => {

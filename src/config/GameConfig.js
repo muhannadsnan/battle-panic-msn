@@ -242,7 +242,7 @@ const RESOURCE_CONFIG = {
     mineGoldAmount: 5,  // Less per mine (was 8)
     mineWoodAmount: 5,
     mineInterval: 2000,
-    goldMineX: 140,     // Moved right for space from unit bar
+    goldMineX: 185,     // Aligned with resource display
     goldMineY: 100,
     woodMineX: 220,     // Moved farther right
     woodMineY: 530      // Bottom area

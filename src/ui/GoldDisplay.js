@@ -12,7 +12,7 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         // Clean text-based layout for top bar
 
         // Gold label
-        this.goldLabel = scene.add.text(-80, 0, 'GOLD', {
+        this.goldLabel = scene.add.text(-35, 0, 'GOLD', {
             fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -23,7 +23,7 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.add(this.goldLabel);
 
         // Gold value
-        this.goldText = scene.add.text(-30, 0, '0', {
+        this.goldText = scene.add.text(15, 0, '0', {
             fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -34,7 +34,7 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.add(this.goldText);
 
         // Wood label
-        this.woodLabel = scene.add.text(25, 0, 'WOOD', {
+        this.woodLabel = scene.add.text(55, 0, 'WOOD', {
             fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -45,7 +45,7 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.add(this.woodLabel);
 
         // Wood value
-        this.woodText = scene.add.text(80, 0, '0', {
+        this.woodText = scene.add.text(110, 0, '0', {
             fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',

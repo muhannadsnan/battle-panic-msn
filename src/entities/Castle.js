@@ -56,14 +56,14 @@ class Castle extends Phaser.GameObjects.Container {
         this.add(this.healthBarShine);
 
         // Health text (x3 bigger, outside bar to right)
-        this.healthText = scene.add.text(75, -130, `${this.currentHealth}`, {
+        this.healthText = scene.add.text(60, -130, `${this.currentHealth}`, {
             fontSize: '33px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 3
-        }).setOrigin(0, 0.5);  // Left-aligned at right of bar
+        }).setOrigin(0, 0.5).setAlpha(0.7);  // Left-aligned at right of bar
         this.add(this.healthText);
     }
 
@@ -84,7 +84,7 @@ class Castle extends Phaser.GameObjects.Container {
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700'
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setAlpha(0.7);
         badge.add(this.levelText);
 
         return badge;
@@ -455,12 +455,14 @@ class Castle extends Phaser.GameObjects.Container {
         this.fenceHealthBarFill.setOrigin(0, 0.5);
         this.fenceContainer.add(this.fenceHealthBarFill);
 
-        this.fenceHealthText = this.scene.add.text(0, -120, `${this.fenceCurrentHealth}`, {
-            fontSize: '9px',
+        this.fenceHealthText = this.scene.add.text(55, -120, `${this.fenceCurrentHealth}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0, 0.5);  // Outside bar to right, x2 bigger
         this.fenceContainer.add(this.fenceHealthText);
 
         // "FENCE" label
