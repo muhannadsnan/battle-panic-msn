@@ -118,7 +118,7 @@ class UnitButton extends Phaser.GameObjects.Container {
         }
 
         // Make interactive
-        this.background.setInteractive({ useHandCursor: true });
+        this.background.setInteractive({});
 
         this.background.on('pointerover', () => {
             if (this.isEnabled && this.isUnlocked) {

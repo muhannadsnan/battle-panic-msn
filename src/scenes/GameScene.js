@@ -378,7 +378,7 @@ class GameScene extends Phaser.Scene {
 
         // Larger interactive area (invisible rectangle)
         const hitArea = this.add.rectangle(0, 0, 100, 100, 0x000000, 0);
-        hitArea.setInteractive({ useHandCursor: true });
+        hitArea.setInteractive({});
         container.add(hitArea);
 
         // Glowing frame (shows when hovering)
@@ -565,7 +565,7 @@ class GameScene extends Phaser.Scene {
 
         // Hit area (invisible, covers castle)
         const hitArea = this.add.rectangle(0, 50, 140, 200, 0x000000, 0);
-        hitArea.setInteractive({ useHandCursor: true });
+        hitArea.setInteractive({});
         this.castleUpgradeZone.add(hitArea);
 
         // Spinner container (hidden by default, shown on hover)
@@ -1086,7 +1086,7 @@ class GameScene extends Phaser.Scene {
 
         // Invisible touch target (50x50 for iPad)
         this.pauseHitArea = this.add.rectangle(pauseX, pauseY, 50, 50, 0x000000, 0)
-            .setInteractive({ useHandCursor: true })
+            .setInteractive({})
             .setDepth(950);
 
         this.pauseText = this.add.text(pauseX, pauseY, 'II', {
@@ -1109,7 +1109,7 @@ class GameScene extends Phaser.Scene {
 
         // Music icon with 50x50 touch target
         this.musicHitArea = this.add.rectangle(musicX, iconY, 50, 50, 0x000000, 0)
-            .setInteractive({ useHandCursor: true })
+            .setInteractive({})
             .setDepth(950);
 
         this.musicIcon = this.add.text(musicX, iconY, '🎵', {
@@ -1127,7 +1127,7 @@ class GameScene extends Phaser.Scene {
         this.volumeState = 0; // 0=100%, 1=25%, 2=mute
 
         this.volumeHitArea = this.add.rectangle(volumeX, iconY, 50, 50, 0x000000, 0)
-            .setInteractive({ useHandCursor: true })
+            .setInteractive({})
             .setDepth(950);
 
         this.muteIcon = this.add.text(volumeX, iconY, '🔊', {
@@ -1769,7 +1769,7 @@ class GameScene extends Phaser.Scene {
 
         // Modern button - no border
         const bg = this.add.rectangle(0, 0, 200, 42, 0x2a4a6a, 0.9);
-        bg.setInteractive({ useHandCursor: true });
+        bg.setInteractive({});
         container.add(bg);
         const inner = this.add.rectangle(0, 0, 196, 38, 0x3a5a7a, 0.8);
         container.add(inner);
@@ -1831,7 +1831,7 @@ class GameScene extends Phaser.Scene {
 
         // Yes button
         const yesBtn = this.add.rectangle(-60, 30, 90, 36, 0x4ade80, 0.9);
-        yesBtn.setInteractive({ useHandCursor: true });
+        yesBtn.setInteractive({});
         confirmOverlay.add(yesBtn);
         const yesText = this.add.text(-60, 30, 'Yes', {
             fontSize: '16px',
@@ -1843,7 +1843,7 @@ class GameScene extends Phaser.Scene {
 
         // No button
         const noBtn = this.add.rectangle(60, 30, 90, 36, 0xef4444, 0.9);
-        noBtn.setInteractive({ useHandCursor: true });
+        noBtn.setInteractive({});
         confirmOverlay.add(noBtn);
         const noText = this.add.text(60, 30, 'No', {
             fontSize: '16px',

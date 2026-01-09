@@ -74,12 +74,12 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Play button
-        this.createButton(width / 2, 320, 'PLAY', () => {
+        this.createButton(width / 2, 360, 'PLAY', () => {
             this.scene.start('GameScene');
         });
 
         // Upgrades button
-        this.createButton(width / 2, 390, 'UPGRADES', () => {
+        this.createButton(width / 2, 430, 'UPGRADES', () => {
             this.scene.start('UpgradeScene');
         });
 
@@ -116,7 +116,7 @@ class MenuScene extends Phaser.Scene {
             strokeThickness: 4
         }).setOrigin(0.5);
 
-        label.setInteractive({ useHandCursor: true });
+        label.setInteractive({});
 
         label.on('pointerover', () => {
             label.setColor('#6495ED');
@@ -162,7 +162,7 @@ class MenuScene extends Phaser.Scene {
             strokeThickness: 2
         }).setOrigin(0.5);
 
-        label.setInteractive({ useHandCursor: true });
+        label.setInteractive({});
 
         label.on('pointerover', () => {
             label.setColor('#ffffff');
@@ -230,7 +230,7 @@ class MenuScene extends Phaser.Scene {
         container.add(text2);
 
         // Make interactive
-        bg.setInteractive({ useHandCursor: true });
+        bg.setInteractive({});
 
         bg.on('pointerover', () => {
             bg.setFillStyle(0xA0522D);
@@ -338,7 +338,7 @@ class MenuScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5);
-        claimText.setInteractive({ useHandCursor: true });
+        claimText.setInteractive({});
         dialog.add(claimText);
 
         claimText.on('pointerdown', () => {
@@ -355,7 +355,7 @@ class MenuScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 2
         }).setOrigin(0.5);
-        cancelText.setInteractive({ useHandCursor: true });
+        cancelText.setInteractive({});
         dialog.add(cancelText);
 
         cancelText.on('pointerdown', () => {
@@ -408,7 +408,7 @@ class MenuScene extends Phaser.Scene {
             strokeThickness: 3
         }).setOrigin(0.5);
         if (canReset) {
-            yesText.setInteractive({ useHandCursor: true });
+            yesText.setInteractive({});
             yesText.on('pointerdown', () => {
                 const result = saveSystem.resetUpgrades();
                 if (result.success) {
@@ -428,7 +428,7 @@ class MenuScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 3
         }).setOrigin(0.5);
-        noText.setInteractive({ useHandCursor: true });
+        noText.setInteractive({});
         dialog.add(noText);
 
         noText.on('pointerdown', () => {

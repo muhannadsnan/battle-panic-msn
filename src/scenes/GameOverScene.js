@@ -353,7 +353,7 @@ class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5);
         button.add(label);
 
-        bg.setInteractive({ useHandCursor: true });
+        bg.setInteractive({});
 
         bg.on('pointerover', () => {
             bg.setFillStyle(0x5179F1);

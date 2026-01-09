@@ -524,7 +524,7 @@ class UpgradeScene extends Phaser.Scene {
                 repeat: -1
             });
 
-            bg.setInteractive({ useHandCursor: true });
+            bg.setInteractive({});
 
             bg.on('pointerover', () => {
                 bg.setFillStyle(0x66CC66);
@@ -551,7 +551,7 @@ class UpgradeScene extends Phaser.Scene {
 
         const bg = this.add.rectangle(0, 0, 120, 40, 0x666666);
         bg.setStrokeStyle(2, 0x888888);
-        bg.setInteractive({ useHandCursor: true });
+        bg.setInteractive({});
         btn.add(bg);
 
         const label = this.add.text(0, 0, '← Back', {
