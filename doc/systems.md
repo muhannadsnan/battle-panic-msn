@@ -236,7 +236,23 @@ Called after game over:
 2. Adds to `totalGoldEarned` and `totalEnemiesKilled`
 3. Updates detailed `killStats` per enemy type
 4. Updates lifetime `stats` (games played, waves completed, bosses killed, etc.)
-5. Awards XP: `floor(wave / 10)` per game
+5. Awards XP: `floor(wave / divisor)` - divisor based on player rank
+
+**`getXPDivisorForRank(data)`**
+Returns XP divisor based on player rank (easier for new players, harder for veterans):
+
+| Rank | Divisor | Min Wave for 1 XP |
+|------|---------|-------------------|
+| Recruit | 3 | 3 |
+| Soldier | 6 | 6 |
+| Warrior | 9 | 9 |
+| Knight | 12 | 12 |
+| Captain | 15 | 15 |
+| Commander | 18 | 18 |
+| General | 22 | 22 |
+| Champion | 25 | 25 |
+| Legend | 28 | 28 |
+| Immortal | 31 | 31 |
 
 **`calculateSpentXP(data)`**
 Calculates total XP invested in upgrades:
@@ -352,7 +368,8 @@ GameScene.onCastleDestroyed()
       ↓
 SaveSystem.updateHighScore(wave, gold, kills)
       ↓
-Awards XP: floor(wave / 10)
+Awards XP: floor(wave / divisor)
+  (divisor based on rank: 3-31)
       ↓
 Transition to GameOverScene
 ```
