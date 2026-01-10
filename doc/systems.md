@@ -212,6 +212,16 @@ Handles localStorage persistence for game progress.
         armor: 1,                // -5% damage taken per level (permanent)
         goldIncome: 1            // +10% mining speed per level (permanent)
     },
+    // Legacy stats - NEVER reset, persist through account deletion
+    legacy: {
+        highestWaveEver: 0,          // Best wave across all resets
+        totalGamesPlayedAllTime: 0,  // Lifetime games played
+        totalEnemiesKilledAllTime: 0,// Lifetime enemy kills
+        totalBossesKilledAllTime: 0, // Lifetime boss kills
+        accountResets: 0,            // How many times player reset
+        firstPlayedAt: null,         // Timestamp of first game
+        lastResetAt: null            // Timestamp of last reset
+    },
     settings: {
         musicVolume: 0.5,
         sfxVolume: 0.7
@@ -228,7 +238,15 @@ Saves data to localStorage as JSON.
 Loads data from localStorage, merges with defaults for new fields.
 
 **`reset()`**
-Deletes all save data, returns defaults.
+Full reset for debugging - clears data but preserves legacy stats.
+
+**`resetAccount()`**
+Account reset (used by Delete Account button):
+1. Preserves legacy stats and updates them with current progress
+2. Preserves audio settings
+3. Resets: XP, upgrades, rank, current stats
+4. Increments `legacy.accountResets`
+5. Updates `legacy.lastResetAt` timestamp
 
 **`updateHighScore(wave, goldEarned, enemiesKilled, killStats, gameStats)`**
 Called after game over:
