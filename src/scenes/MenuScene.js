@@ -103,6 +103,9 @@ class MenuScene extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 2
         }).setOrigin(1, 0);
+
+        // Settings gear icon (top left corner)
+        this.createSettingsGear(40, 40);
     }
 
     createButton(x, y, text, callback) {
@@ -512,6 +515,263 @@ class MenuScene extends Phaser.Scene {
         }
 
         return container;
+    }
+
+    createSettingsGear(x, y) {
+        const container = this.add.container(x, y);
+
+        // Gear outer circle
+        const outerCircle = this.add.circle(0, 0, 18, 0x555555);
+        outerCircle.setStrokeStyle(2, 0x888888);
+        container.add(outerCircle);
+
+        // Gear teeth (8 teeth around the circle)
+        for (let i = 0; i < 8; i++) {
+            const angle = (i * 45) * Math.PI / 180;
+            const toothX = Math.cos(angle) * 14;
+            const toothY = Math.sin(angle) * 14;
+            const tooth = this.add.rectangle(toothX, toothY, 8, 8, 0x555555);
+            tooth.setAngle(i * 45);
+            container.add(tooth);
+        }
+
+        // Inner circle (hole)
+        const innerCircle = this.add.circle(0, 0, 6, 0x1a1a2e);
+        innerCircle.setStrokeStyle(2, 0x888888);
+        container.add(innerCircle);
+
+        // Make interactive
+        outerCircle.setInteractive({ useHandCursor: true });
+
+        outerCircle.on('pointerover', () => {
+            this.tweens.add({
+                targets: container,
+                angle: 45,
+                scaleX: 1.1,
+                scaleY: 1.1,
+                duration: 200
+            });
+        });
+
+        outerCircle.on('pointerout', () => {
+            this.tweens.add({
+                targets: container,
+                angle: 0,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 200
+            });
+        });
+
+        outerCircle.on('pointerdown', () => {
+            this.showSettingsPanel();
+        });
+
+        return container;
+    }
+
+    showSettingsPanel() {
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+        // Overlay
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.85);
+        overlay.setInteractive(); // Block clicks behind
+        dialog.add(overlay);
+
+        // Panel background
+        const panel = this.add.rectangle(0, 0, 320, 280, 0x2a2a3e);
+        panel.setStrokeStyle(3, 0x4169E1);
+        dialog.add(panel);
+
+        // Title
+        const title = this.add.text(0, -100, 'ACCOUNT', {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4169E1',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        // User status
+        const statusText = this.add.text(0, -60, 'Guest Account', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        dialog.add(statusText);
+
+        // Logout button (placeholder - greyed out)
+        const logoutBtn = this.createSettingsButton(0, -15, 'Sign In / Sign Up', 0x333333, () => {
+            // Placeholder - will be implemented with auth
+        }, true); // disabled
+        dialog.add(logoutBtn);
+
+        // Coming soon label for sign in
+        const comingSoon = this.add.text(0, -35, 'Coming Soon', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            fontStyle: 'italic',
+            color: '#ffaa00'
+        }).setOrigin(0.5);
+        dialog.add(comingSoon);
+
+        // Delete Account / Reset Progress button
+        const deleteBtn = this.createSettingsButton(0, 45, 'Delete Account', 0x8B0000, () => {
+            this.confirmDeleteAccount(dialog);
+        }, false);
+        dialog.add(deleteBtn);
+
+        // Warning text
+        const warning = this.add.text(0, 80, 'Resets all progress to Rank 0', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        dialog.add(warning);
+
+        // Close button
+        const closeBtn = this.add.text(0, 115, 'Close', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            color: '#888888',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        closeBtn.setInteractive({ useHandCursor: true });
+        dialog.add(closeBtn);
+
+        closeBtn.on('pointerover', () => closeBtn.setColor('#ffffff'));
+        closeBtn.on('pointerout', () => closeBtn.setColor('#888888'));
+        closeBtn.on('pointerdown', () => dialog.destroy());
+
+        dialog.setDepth(1000);
+        this.settingsDialog = dialog;
+    }
+
+    createSettingsButton(x, y, text, bgColor, callback, disabled = false) {
+        const container = this.add.container(x, y);
+
+        const bg = this.add.rectangle(0, 0, 200, 40, bgColor);
+        bg.setStrokeStyle(2, disabled ? 0x444444 : 0x666666);
+        container.add(bg);
+
+        const label = this.add.text(0, 0, text, {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: disabled ? '#555555' : '#ffffff'
+        }).setOrigin(0.5);
+        container.add(label);
+
+        if (!disabled) {
+            bg.setInteractive({ useHandCursor: true });
+
+            bg.on('pointerover', () => {
+                bg.setFillStyle(bgColor + 0x222222);
+                this.tweens.add({
+                    targets: container,
+                    scaleX: 1.05,
+                    scaleY: 1.05,
+                    duration: 100
+                });
+            });
+
+            bg.on('pointerout', () => {
+                bg.setFillStyle(bgColor);
+                this.tweens.add({
+                    targets: container,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 100
+                });
+            });
+
+            bg.on('pointerdown', callback);
+        }
+
+        return container;
+    }
+
+    confirmDeleteAccount(parentDialog) {
+        parentDialog.destroy();
+
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+        overlay.setInteractive();
+        dialog.add(overlay);
+
+        const panel = this.add.rectangle(0, 0, 350, 220, 0x2a2a3e);
+        panel.setStrokeStyle(3, 0x8B0000);
+        dialog.add(panel);
+
+        const title = this.add.text(0, -70, 'DELETE ACCOUNT?', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        const warning = this.add.text(0, -20, 'This will permanently delete:\n• All progress and stats\n• All upgrades and XP\n• Your rank (back to Recruit I)', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center'
+        }).setOrigin(0.5);
+        dialog.add(warning);
+
+        const irreversible = this.add.text(0, 40, 'This cannot be undone!', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        dialog.add(irreversible);
+
+        // Delete button
+        const deleteBtn = this.add.text(-70, 80, 'DELETE', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        deleteBtn.setInteractive({ useHandCursor: true });
+        dialog.add(deleteBtn);
+
+        deleteBtn.on('pointerover', () => deleteBtn.setColor('#ff6666'));
+        deleteBtn.on('pointerout', () => deleteBtn.setColor('#ff4444'));
+        deleteBtn.on('pointerdown', () => {
+            saveSystem.reset();
+            dialog.destroy();
+            this.scene.restart();
+        });
+
+        // Cancel button
+        const cancelBtn = this.add.text(70, 80, 'CANCEL', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#44ff44',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        cancelBtn.setInteractive({ useHandCursor: true });
+        dialog.add(cancelBtn);
+
+        cancelBtn.on('pointerover', () => cancelBtn.setColor('#66ff66'));
+        cancelBtn.on('pointerout', () => cancelBtn.setColor('#44ff44'));
+        cancelBtn.on('pointerdown', () => {
+            dialog.destroy();
+        });
+
+        dialog.setDepth(1001);
     }
 
     createSwordCursor() {
