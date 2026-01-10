@@ -589,8 +589,8 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeZone.add(hitArea);
 
         // Spinner container (hidden by default, shown on hover)
-        // Positioned below castle health bar (health bar is at y ~250)
-        this.castleSpinnerContainer = this.add.container(0, 80);
+        // Positioned ABOVE the castle for visibility
+        this.castleSpinnerContainer = this.add.container(0, -80);
         this.castleUpgradeZone.add(this.castleSpinnerContainer);
         this.castleSpinnerContainer.setVisible(false);
 
@@ -892,7 +892,7 @@ Lv.${level + 1}`;
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
-        this.resourceDisplay = new ResourceDisplay(this, 150, 30);  // Adjusted right
+        this.resourceDisplay = new ResourceDisplay(this, 200, 45);  // Larger for iPad
         this.resourceDisplay.setGold(this.gold);
         this.resourceDisplay.setWood(this.wood);
 
@@ -1607,8 +1607,9 @@ Lv.${level + 1}`;
         this.addWood(woodReward);
         this.waveDisplay.showWaveComplete(waveNumber, goldReward, woodReward);
 
-        // Castle gains +20 max HP per wave completed
+        // Castle gains +20 max HP per wave completed (tracked for upgrade preservation)
         const hpGain = 20;
+        this.playerCastle.waveHealthBonus += hpGain;
         this.playerCastle.maxHealth += hpGain;
         this.playerCastle.currentHealth += hpGain;
         this.playerCastle.updateHealthBar();

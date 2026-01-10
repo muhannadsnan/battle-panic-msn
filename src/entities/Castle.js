@@ -9,6 +9,8 @@ class Castle extends Phaser.GameObjects.Container {
         this.currentHealth = maxHealth;
         this.isDead = false;
         this.level = 1;
+        this.permanentHealthBonus = maxHealth - CASTLE_CONFIG.playerHealth; // Store XP upgrade bonus
+        this.waveHealthBonus = 0; // Tracks HP gained from completing waves
 
         // Castle arrow attack properties
         this.attackRange = 300;      // How far castle can shoot
@@ -320,9 +322,9 @@ class Castle extends Phaser.GameObjects.Container {
         this.level = Math.min(level, CASTLE_CONFIG.maxLevel);
         this.levelText.setText(`${this.level}`);
 
-        // Update health based on level
-        const newHealthBonus = (this.level - 1) * 25;
-        this.maxHealth = 100 + newHealthBonus;
+        // Update health based on level (includes permanent XP upgrade bonus + wave bonus)
+        const levelHealthBonus = (this.level - 1) * 25;
+        this.maxHealth = CASTLE_CONFIG.playerHealth + this.permanentHealthBonus + this.waveHealthBonus + levelHealthBonus;
         // Restore to full HP on upgrade
         this.currentHealth = this.maxHealth;
         this.updateHealthBar();

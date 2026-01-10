@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.6.2';
+const GAME_VERSION = 'v1.6.4';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -204,10 +204,10 @@ const WAVE_CONFIG = {
     timeBetweenWaves: 3000,
     spawnInterval: 1000,
     // Enemy scaling per wave (tiered system, increases every 20 waves)
-    // Waves 1-20: +3%, 21-40: +6%, 41-60: +9%, 61-80: +12%, etc.
+    // Waves 1-20: +2.7%, 21-40: +5.4%, 41-60: +8.1%, etc. (10% less intense)
     scalingTierSize: 20,        // Waves per tier
-    baseScalingPercent: 0.03,   // Starting at 3% per wave
-    scalingIncrement: 0.03,     // +3% more per tier
+    baseScalingPercent: 0.027,  // Starting at 2.7% per wave (was 3%)
+    scalingIncrement: 0.027,    // +2.7% more per tier (was 3%)
     // Diminishing wave rewards after wave 25
     diminishingRewardsWave: 25,
     rewardDiminishRate: 0.9  // 10% less reward per wave after threshold
