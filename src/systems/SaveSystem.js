@@ -393,18 +393,18 @@ class SaveSystem {
         // All 30 ranks with explicit thresholds (increasing gaps as rank goes up)
         // Pattern: each tier's grades have progressively larger gaps
         const allRanks = [
-            // Recruit: 0, 30, 60 (gap: 30) - 3x harder
+            // Recruit: 0, 36, 72 (20% slower progression)
             { name: 'Recruit', grade: 1, minScore: 0, color: '#888888', icon: '🔰' },
-            { name: 'Recruit', grade: 2, minScore: 30, color: '#888888', icon: '🔰' },
-            { name: 'Recruit', grade: 3, minScore: 60, color: '#888888', icon: '🔰' },
-            // Soldier: 90, 135, 180 (gap: 45)
-            { name: 'Soldier', grade: 1, minScore: 90, color: '#4a9c4a', icon: '⚔️' },
-            { name: 'Soldier', grade: 2, minScore: 135, color: '#4a9c4a', icon: '⚔️' },
-            { name: 'Soldier', grade: 3, minScore: 180, color: '#4a9c4a', icon: '⚔️' },
-            // Warrior: 240, 315, 405 (gap: 75-90)
-            { name: 'Warrior', grade: 1, minScore: 240, color: '#4169E1', icon: '🗡️' },
-            { name: 'Warrior', grade: 2, minScore: 315, color: '#4169E1', icon: '🗡️' },
-            { name: 'Warrior', grade: 3, minScore: 405, color: '#4169E1', icon: '🗡️' },
+            { name: 'Recruit', grade: 2, minScore: 36, color: '#888888', icon: '🔰' },
+            { name: 'Recruit', grade: 3, minScore: 72, color: '#888888', icon: '🔰' },
+            // Soldier: 108, 162, 216 (20% slower progression)
+            { name: 'Soldier', grade: 1, minScore: 108, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Soldier', grade: 2, minScore: 162, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Soldier', grade: 3, minScore: 216, color: '#4a9c4a', icon: '⚔️' },
+            // Warrior: 288, 378, 486 (20% slower progression)
+            { name: 'Warrior', grade: 1, minScore: 288, color: '#4169E1', icon: '🗡️' },
+            { name: 'Warrior', grade: 2, minScore: 378, color: '#4169E1', icon: '🗡️' },
+            { name: 'Warrior', grade: 3, minScore: 486, color: '#4169E1', icon: '🗡️' },
             // Knight: 510, 645, 810 (gap: 135-165)
             { name: 'Knight', grade: 1, minScore: 510, color: '#9932CC', icon: '🛡️' },
             { name: 'Knight', grade: 2, minScore: 645, color: '#9932CC', icon: '🛡️' },
