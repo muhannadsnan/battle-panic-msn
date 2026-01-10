@@ -94,8 +94,17 @@ Main menu with navigation and monetization.
 | Settings gear | Top left | Opens account panel |
 | Buy XP ($2) | Bottom left | Disabled (Coming Soon) |
 | Buy Me a Coffee | Bottom right | Opens donation page |
+| Battlefield characters | Left & right sides | Decorative enemies/units |
 
 ### Methods
+
+**`createBattlefieldDisplay()`**
+Displays decorative battlefield characters on menu:
+- 4 random enemies on left side (staggered positions)
+- 4 random player units on right side (staggered positions)
+- All 8 enemy types and 5 unit types available
+- Characters randomized each menu load
+- Scale: 1.2-1.4x
 
 **`create()`**
 Sets up all UI elements:

@@ -612,7 +612,7 @@ class MenuScene extends Phaser.Scene {
         ];
         for (let i = 0; i < enemyCount; i++) {
             const pos = enemyPositions[i];
-            const scale = Phaser.Math.FloatBetween(2.4, 2.8);
+            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
             shuffledEnemies[i](pos.x, pos.y, scale);
         }
 
@@ -628,7 +628,7 @@ class MenuScene extends Phaser.Scene {
         ];
         for (let i = 0; i < unitCount; i++) {
             const pos = unitPositions[i];
-            const scale = Phaser.Math.FloatBetween(2.4, 2.8);
+            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
             shuffledUnits[i](pos.x, pos.y, scale);
         }
     }
