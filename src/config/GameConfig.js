@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.6.1';
+const GAME_VERSION = 'v1.6.2';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -13,7 +13,7 @@ const UNIT_TYPES = {
         woodCost: 10,
         health: 14,
         damage: 4,
-        speed: 80,
+        speed: 88,      // 10% faster than orcs (55)
         attackSpeed: 1000,
         range: 30,
         color: 0x8B4513,
@@ -26,7 +26,7 @@ const UNIT_TYPES = {
         woodCost: 20,
         health: 18,
         damage: 6,
-        speed: 60,
+        speed: 66,      // 10% faster than orcs
         attackSpeed: 1500,
         range: 200,
         isRanged: true,
@@ -40,7 +40,7 @@ const UNIT_TYPES = {
         woodCost: 40,
         health: 43,
         damage: 11,
-        speed: 50,
+        speed: 61,      // 10% faster than orcs
         attackSpeed: 1200,
         range: 35,
         color: 0x4169E1,
@@ -53,7 +53,7 @@ const UNIT_TYPES = {
         woodCost: 50,
         health: 22,
         damage: 14,
-        speed: 40,
+        speed: 61,      // 10% faster than orcs
         attackSpeed: 2000,
         range: 180,
         isRanged: true,
@@ -69,7 +69,7 @@ const UNIT_TYPES = {
         woodCost: 80,
         health: 86,
         damage: 20,
-        speed: 30,
+        speed: 61,      // 10% faster than orcs
         attackSpeed: 2000,
         range: 45,
         color: 0x8B0000,
