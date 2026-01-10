@@ -236,17 +236,6 @@ class GameOverScene extends Phaser.Scene {
                     }
                 });
 
-                // Gentle glow pulse for earned stars
-                this.tweens.add({
-                    targets: star,
-                    scaleX: 1.1,
-                    scaleY: 1.1,
-                    duration: 1000,
-                    delay: 900 + i * 350,
-                    yoyo: true,
-                    repeat: -1,
-                    ease: 'Sine.easeInOut'
-                });
             }
         }
 
@@ -286,14 +275,6 @@ class GameOverScene extends Phaser.Scene {
                 x: Math.cos(angle) * radius,
                 y: Math.sin(angle) * radius
             });
-        }
-
-        // Draw outer glow for earned stars
-        if (isEarned) {
-            graphics.fillStyle(0xffd700, 0.2);
-            graphics.fillCircle(0, 0, size + 12);
-            graphics.fillStyle(0xffd700, 0.1);
-            graphics.fillCircle(0, 0, size + 20);
         }
 
         // Draw border (slightly larger star behind)

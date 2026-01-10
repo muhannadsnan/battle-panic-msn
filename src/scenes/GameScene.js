@@ -1514,10 +1514,12 @@ Lv.${level + 1}`;
             const stats = UNIT_TYPES[type];
 
             // Cost increases with promotion level to balance spam
+            // Gold tier (4+) spawns 2 units, so cost is doubled
             const promotionLevel = this.getPromotionLevel(type);
             const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
-            const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
-            const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+            const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
+            const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
+            const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
 
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
@@ -1526,7 +1528,7 @@ Lv.${level + 1}`;
             button.updateCosts(totalGoldCost, totalWoodCost);
 
             // Update affordable count display (pass multiplier for accurate count)
-            button.updateAffordableCount(this.gold, this.wood, costMultiplier);
+            button.updateAffordableCount(this.gold, this.wood, costMultiplier * unitsToSpawn);
 
             // Update hover-to-spawn progress
             button.updateSpawnProgress(delta);
@@ -1566,8 +1568,8 @@ Lv.${level + 1}`;
         // Cost increases with promotion level, at gold tier (level 4+) spawn 2 units
         const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
         const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-        const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
-        const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+        const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
+        const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
 
         // Check costs (including double cost for max promotion)
         if (this.gold < totalGoldCost) {

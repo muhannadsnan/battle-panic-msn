@@ -170,7 +170,7 @@ class SaveSystem {
         // This prevents rank jumping mid-calculation from penalizing players
         const rankInfo = this.getRankInfo(data);
         const xpDivisor = this.getXPDivisorForRank(data);
-        const xpEarned = Math.floor(wave / xpDivisor);
+        const xpEarned = Math.min(3, Math.floor(wave / xpDivisor)); // Max 3 XP per game
 
         // Debug logging
         console.log(`[XP Debug] Wave: ${wave}, Rank: ${rankInfo.rank.name}, Divisor: ${xpDivisor}, XP Earned: ${xpEarned}`);
