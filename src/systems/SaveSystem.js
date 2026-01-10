@@ -155,8 +155,10 @@ class SaveSystem {
         data.stats.totalGoldSpent += (gameStats.goldSpent || 0);
         data.stats.totalWoodSpent += (gameStats.woodSpent || 0);
 
-        // Award XP: 1 point per 10 waves completed
-        const xpEarned = Math.floor(wave / 10);
+        // Award XP: Dynamic divisor based on player rank
+        // Easier for new players, harder for veterans
+        const xpDivisor = this.getXPDivisorForRank(data);
+        const xpEarned = Math.floor(wave / xpDivisor);
         data.xp = (data.xp || 0) + xpEarned;
 
         this.save(data);
@@ -258,6 +260,28 @@ class SaveSystem {
         data.xp = (data.xp || 0) + amount;
         this.save(data);
         return data.xp;
+    }
+
+    // Get XP divisor based on player rank - easier for new players, harder for veterans
+    // Recruit: wave/3, Soldier: wave/6, ... Immortal: wave/31
+    getXPDivisorForRank(data) {
+        const rankInfo = this.getRankInfo(data);
+        const rankName = rankInfo.rank.name;
+
+        const divisors = {
+            'Recruit': 3,
+            'Soldier': 6,
+            'Warrior': 9,
+            'Knight': 12,
+            'Captain': 15,
+            'Commander': 18,
+            'General': 22,
+            'Champion': 25,
+            'Legend': 28,
+            'Immortal': 31
+        };
+
+        return divisors[rankName] || 3;
     }
 
     // Calculate total rank score based on all achievements
