@@ -227,6 +227,22 @@ Mines generate resources every 2 seconds:
 - Wood mill: +5 wood
 - Castle upgrade bonus: +1 gold/sec per level
 
+### Wave Tips
+Tips appear before challenging waves to help players prepare:
+
+| Wave | Threat | Tip |
+|------|--------|-----|
+| 6 | Skeleton Archers | Ranged enemies, position tanks in front |
+| 8 | Trolls | One-shot peasants, use Knights |
+| 10 | Dragon Boss | Use Giants to tank |
+| 12 | Dark Knights | High damage, use Wizards for splash |
+| 18 | Demons | Need balanced army |
+| 20, 30 | Scaled Dragons | Max promotion units needed |
+
+- Game pauses when tip appears
+- 3 second countdown before can close
+- Resumes when player clicks CONTINUE
+
 ---
 
 ## UpgradeScene

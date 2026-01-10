@@ -1754,23 +1754,8 @@ Lv.${level + 1}`;
             }
         }
 
-        // Get player rank for smart duration
-        const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const rankName = rankInfo.rank.name;
-
-        // Determine display duration based on rank
-        // New players get more time, veterans get minimum
-        let minDisplayTime = 3000; // 3 seconds minimum for all
-        if (['Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'].includes(rankName)) {
-            minDisplayTime = 1500; // 1.5 seconds for high ranks
-        } else if (['Warrior', 'Knight'].includes(rankName)) {
-            minDisplayTime = 2000; // 2 seconds for mid ranks
-        }
-
-        // Check if player already beat this wave before
-        if (this.saveData.highestWave >= waveNumber) {
-            minDisplayTime = Math.min(minDisplayTime, 2000); // Cap at 2 seconds if already beaten
-        }
+        // Fixed 3 second display time for all players
+        const minDisplayTime = 3000;
 
         // Create tip overlay
         const tipOverlay = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
