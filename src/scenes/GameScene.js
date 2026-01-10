@@ -1592,6 +1592,15 @@ Lv.${level + 1}`;
         this.addWood(woodReward);
         this.waveDisplay.showWaveComplete(waveNumber, goldReward, woodReward);
 
+        // Castle gains +20 max HP per wave completed
+        const hpGain = 20;
+        this.playerCastle.maxHealth += hpGain;
+        this.playerCastle.currentHealth += hpGain;
+        this.playerCastle.updateHealthBar();
+
+        // Show HP gain message
+        this.showMessage(`Castle +${hpGain} HP!`, '#00d26a');
+
         // Bonus message for milestone waves
         if (waveNumber % 5 === 0) {
             this.showMessage(`Wave ${waveNumber} complete! Bonus: +50g +30w`, '#ffd700');
