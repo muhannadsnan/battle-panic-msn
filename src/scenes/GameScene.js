@@ -922,12 +922,12 @@ Lv.${level + 1}`;
     }
 
     updateMiningSpeed() {
-        // Mining speed increases 10% per castle level
+        // Mining speed increases 25% per castle level (in-game upgrade)
         const level = this.castleLevel || 1;
-        // Gold Income upgrade adds +25% mining speed per level
+        // Gold Income XP upgrade adds +10% mining speed per level
         const goldIncomeLevel = this.goldIncomeLevel || 1;
-        const goldIncomeBonus = 1 + (goldIncomeLevel - 1) * 0.25;
-        this.miningSpeed = 50 * (1 + (level - 1) * 0.1) * goldIncomeBonus;
+        const goldIncomeBonus = 1 + (goldIncomeLevel - 1) * 0.1;
+        this.miningSpeed = 50 * (1 + (level - 1) * 0.25) * goldIncomeBonus;
     }
 
     createUI() {

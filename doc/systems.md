@@ -210,7 +210,7 @@ Handles localStorage persistence for game progress.
     castleUpgrades: {
         health: 1,               // +20 HP per level (permanent) + unlocks +20 HP/wave at L2+
         armor: 1,                // -5% damage taken per level (permanent)
-        goldIncome: 1            // +25% mining speed per level (permanent)
+        goldIncome: 1            // +10% mining speed per level (permanent)
     },
     // Legacy stats - NEVER reset, persist through account deletion
     legacy: {
