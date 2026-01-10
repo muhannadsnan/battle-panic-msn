@@ -608,7 +608,7 @@ class MenuScene extends Phaser.Scene {
             { x: 70, y: 180 },
             { x: 140, y: 300 },
             { x: 55, y: 420 },
-            { x: 130, y: 530 }
+            { x: 180, y: 480 }
         ];
         for (let i = 0; i < enemyCount; i++) {
             const pos = enemyPositions[i];
