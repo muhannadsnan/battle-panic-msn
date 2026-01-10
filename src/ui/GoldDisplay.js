@@ -155,7 +155,7 @@ class WaveDisplay extends Phaser.GameObjects.Container {
     }
 
     showWaveStart(waveNumber) {
-        // Big wave announcement
+        // Big wave announcement - no zoom, just fade out
         const announcement = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, `WAVE ${waveNumber}`, {
             fontSize: '64px',
             fontFamily: 'Arial',
@@ -169,9 +169,9 @@ class WaveDisplay extends Phaser.GameObjects.Container {
             audioManager.playWaveStart();
         }
 
+        // Simple fade out, no zoom
         this.scene.tweens.add({
             targets: announcement,
-            scale: 1.5,
             alpha: 0,
             duration: 1500,
             ease: 'Power2',
@@ -180,24 +180,38 @@ class WaveDisplay extends Phaser.GameObjects.Container {
     }
 
     showWaveComplete(waveNumber, goldReward, woodReward) {
-        // Show at top of screen, smaller font, stays for 5 seconds
-        const announcement = this.scene.add.text(GAME_WIDTH / 2, 50, `WAVE ${waveNumber}  +${goldReward}g  +${woodReward}w`, {
-            fontSize: '24px',
+        // Show rewards below resource display (ResourceDisplay is at 150, 30)
+        // Gold reward below gold value
+        const goldBonusText = this.scene.add.text(165, 55, `+${goldReward}`, {
+            fontSize: '20px',
             fontFamily: 'Arial',
-            color: '#00ff00',
+            fontStyle: 'bold',
+            color: '#44ff44',
             stroke: '#000000',
-            strokeThickness: 3,
-            align: 'center'
+            strokeThickness: 2
         }).setOrigin(0.5).setDepth(1000);
 
-        // Stay visible for 5 seconds, then fade out
+        // Wood reward below wood value
+        const woodBonusText = this.scene.add.text(280, 55, `+${woodReward}`, {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#44ff44',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setDepth(1000);
+
+        // Stay visible for 3 seconds, then fade out
         this.scene.tweens.add({
-            targets: announcement,
+            targets: [goldBonusText, woodBonusText],
             alpha: 0,
-            delay: 5000,        // Wait 5 seconds before fading
+            delay: 3000,        // Wait 3 seconds before fading
             duration: 500,      // Quick fade out
             ease: 'Power2',
-            onComplete: () => announcement.destroy()
+            onComplete: () => {
+                goldBonusText.destroy();
+                woodBonusText.destroy();
+            }
         });
     }
 }
