@@ -600,27 +600,36 @@ class MenuScene extends Phaser.Scene {
             (x, y, s) => this.createMenuWizard(x, y, s, true)
         ];
 
-        // Shuffle and pick unique enemies (4 per side, well spaced)
+        // Shuffle and pick unique enemies (4 per side, staggered positions)
         const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
         const enemyCount = 4;
-        // Fixed Y positions spread vertically
-        const enemyYPositions = [140, 260, 380, 500];
+        // Staggered positions - different X and Y for each
+        const enemyPositions = [
+            { x: 70, y: 180 },
+            { x: 140, y: 300 },
+            { x: 55, y: 420 },
+            { x: 130, y: 530 }
+        ];
         for (let i = 0; i < enemyCount; i++) {
-            const x = Phaser.Math.Between(50, 140);
-            const y = enemyYPositions[i];
+            const pos = enemyPositions[i];
             const scale = Phaser.Math.FloatBetween(1.2, 1.4);
-            shuffledEnemies[i](x, y, scale);
+            shuffledEnemies[i](pos.x, pos.y, scale);
         }
 
-        // Shuffle and pick unique units (4 per side, well spaced)
+        // Shuffle and pick unique units (4 per side, staggered positions)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
         const unitCount = 4;
-        const unitYPositions = [140, 260, 380, 500];
+        // Staggered positions - mirror pattern on right side
+        const unitPositions = [
+            { x: GAME_WIDTH - 130, y: 180 },
+            { x: GAME_WIDTH - 55, y: 300 },
+            { x: GAME_WIDTH - 140, y: 420 },
+            { x: GAME_WIDTH - 70, y: 530 }
+        ];
         for (let i = 0; i < unitCount; i++) {
-            const x = Phaser.Math.Between(GAME_WIDTH - 140, GAME_WIDTH - 50);
-            const y = unitYPositions[i];
+            const pos = unitPositions[i];
             const scale = Phaser.Math.FloatBetween(1.2, 1.4);
-            shuffledUnits[i](x, y, scale);
+            shuffledUnits[i](pos.x, pos.y, scale);
         }
     }
 
