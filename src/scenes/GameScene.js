@@ -446,20 +446,6 @@ class GameScene extends Phaser.Scene {
                 });
             }
 
-            // Big "$" or coin symbol floating above
-            const coinSymbol = this.add.text(0, -35, '💰', {
-                fontSize: '24px'
-            }).setOrigin(0.5);
-            container.add(coinSymbol);
-            this.tweens.add({
-                targets: coinSymbol,
-                y: -40,
-                duration: 1000,
-                yoyo: true,
-                repeat: -1,
-                ease: 'Sine.easeInOut'
-            });
-
         } else {
             // STYLIZED TREE with lumber!
             // Tree trunk
@@ -503,20 +489,6 @@ class GameScene extends Phaser.Scene {
             for (let i = 0; i < 6; i++) {
                 container.add(this.add.rectangle(-28 + i * 5, -10, 3, 4, 0x808090));
             }
-
-            // Wood symbol floating above
-            const woodSymbol = this.add.text(0, -65, '🪵', {
-                fontSize: '24px'
-            }).setOrigin(0.5);
-            container.add(woodSymbol);
-            this.tweens.add({
-                targets: woodSymbol,
-                y: -70,
-                duration: 1000,
-                yoyo: true,
-                repeat: -1,
-                ease: 'Sine.easeInOut'
-            });
         }
 
         // No spinner - just axe cursor and glow
@@ -580,7 +552,7 @@ class GameScene extends Phaser.Scene {
         container.isHovering = false;
         container.mineType = type;
         container.setDepth(100);
-        container.setScale(2);  // 2x larger for iPad touch
+        container.setScale(1.5);  // 1.5x scale for iPad touch
         return container;
     }
 
