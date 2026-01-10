@@ -17,16 +17,28 @@ class MenuScene extends Phaser.Scene {
         // Background gradient effect
         this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
 
-        // Add some decorative elements
-        for (let i = 0; i < 20; i++) {
+        // Ground at bottom
+        this.add.rectangle(width / 2, height - 40, width, 80, 0x2d4a2d); // Dark grass
+        this.add.rectangle(width / 2, height - 15, width, 30, 0x3d5a3d); // Lighter grass top
+        // Ground texture details
+        for (let i = 0; i < 30; i++) {
+            const gx = Phaser.Math.Between(0, width);
+            this.add.rectangle(gx, height - 30 + Phaser.Math.Between(-10, 10), 3, 8, 0x4a6a4a, 0.5);
+        }
+
+        // Add battlefield characters - enemies on left, units on right
+        this.createBattlefieldDisplay();
+
+        // Add some decorative stars (fewer, only in top area)
+        for (let i = 0; i < 12; i++) {
             const x = Phaser.Math.Between(0, width);
-            const y = Phaser.Math.Between(0, height);
-            const size = Phaser.Math.Between(2, 5);
-            const star = this.add.circle(x, y, size, 0xffffff, 0.3);
+            const y = Phaser.Math.Between(0, 200);
+            const size = Phaser.Math.Between(2, 4);
+            const star = this.add.circle(x, y, size, 0xffffff, 0.2);
 
             this.tweens.add({
                 targets: star,
-                alpha: 0.8,
+                alpha: 0.6,
                 duration: Phaser.Math.Between(1000, 3000),
                 yoyo: true,
                 repeat: -1
@@ -570,6 +582,328 @@ class MenuScene extends Phaser.Scene {
 
         hitArea.on('pointerdown', () => {
             this.showSettingsPanel();
+        });
+
+        return container;
+    }
+
+    createBattlefieldDisplay() {
+        // LEFT SIDE - ENEMIES (facing right)
+
+        // Far layer - small goblins (dark, distant)
+        this.createGoblin(60, 420, 0.5, 0.3);
+        this.createGoblin(100, 400, 0.4, 0.25);
+        this.createGoblin(40, 380, 0.45, 0.28);
+
+        // Mid layer - orc and skeleton
+        this.createOrc(130, 460, 0.7, 0.6);
+        this.createSkeleton(70, 480, 0.65, 0.55);
+
+        // Near layer - large troll
+        this.createTroll(160, 520, 1.0, 1.0);
+
+        // RIGHT SIDE - PLAYER UNITS (facing left)
+
+        // Far layer - small peasants (dark, distant)
+        this.createPeasant(GAME_WIDTH - 60, 420, 0.5, 0.3, true);
+        this.createPeasant(GAME_WIDTH - 100, 405, 0.45, 0.28, true);
+        this.createPeasant(GAME_WIDTH - 45, 390, 0.4, 0.25, true);
+
+        // Mid layer - archer and knight
+        this.createArcher(GAME_WIDTH - 140, 460, 0.7, 0.6, true);
+        this.createKnight(GAME_WIDTH - 80, 475, 0.7, 0.6, true);
+
+        // Near layer - large giant
+        this.createGiant(GAME_WIDTH - 170, 510, 1.0, 1.0, true);
+    }
+
+    // Enemy sprites
+    createGoblin(x, y, scale, alpha) {
+        const container = this.add.container(x, y);
+        container.setScale(scale);
+        container.setAlpha(alpha);
+
+        // Body (green)
+        container.add(this.add.rectangle(0, 0, 20, 25, 0x32CD32));
+        // Head
+        container.add(this.add.rectangle(0, -18, 16, 14, 0x32CD32));
+        // Eyes
+        container.add(this.add.rectangle(-4, -20, 4, 4, 0xff0000));
+        container.add(this.add.rectangle(4, -20, 4, 4, 0xff0000));
+        // Ears (pointy)
+        container.add(this.add.rectangle(-10, -22, 6, 8, 0x32CD32));
+        container.add(this.add.rectangle(10, -22, 6, 8, 0x32CD32));
+        // Legs
+        container.add(this.add.rectangle(-5, 18, 6, 12, 0x228B22));
+        container.add(this.add.rectangle(5, 18, 6, 12, 0x228B22));
+
+        // Idle animation
+        this.tweens.add({
+            targets: container,
+            y: y - 3,
+            duration: 800 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    createOrc(x, y, scale, alpha) {
+        const container = this.add.container(x, y);
+        container.setScale(scale);
+        container.setAlpha(alpha);
+
+        // Body (dark green, bulky)
+        container.add(this.add.rectangle(0, 0, 30, 35, 0x556B2F));
+        // Head
+        container.add(this.add.rectangle(0, -24, 22, 18, 0x556B2F));
+        // Eyes
+        container.add(this.add.rectangle(-5, -26, 5, 5, 0xff4444));
+        container.add(this.add.rectangle(5, -26, 5, 5, 0xff4444));
+        // Tusks
+        container.add(this.add.rectangle(-8, -18, 4, 8, 0xfffff0));
+        container.add(this.add.rectangle(8, -18, 4, 8, 0xfffff0));
+        // Arms
+        container.add(this.add.rectangle(-18, 0, 10, 25, 0x4a5a2f));
+        container.add(this.add.rectangle(18, 0, 10, 25, 0x4a5a2f));
+        // Legs
+        container.add(this.add.rectangle(-8, 24, 10, 16, 0x3a4a1f));
+        container.add(this.add.rectangle(8, 24, 10, 16, 0x3a4a1f));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 4,
+            duration: 1000 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    createSkeleton(x, y, scale, alpha) {
+        const container = this.add.container(x, y);
+        container.setScale(scale);
+        container.setAlpha(alpha);
+
+        // Body (bone white)
+        container.add(this.add.rectangle(0, 0, 18, 28, 0xD3D3D3));
+        // Ribcage lines
+        container.add(this.add.rectangle(0, -5, 14, 3, 0x888888));
+        container.add(this.add.rectangle(0, 0, 14, 3, 0x888888));
+        container.add(this.add.rectangle(0, 5, 14, 3, 0x888888));
+        // Head (skull)
+        container.add(this.add.rectangle(0, -20, 16, 16, 0xE8E8E8));
+        // Eye sockets
+        container.add(this.add.rectangle(-4, -22, 5, 5, 0x222222));
+        container.add(this.add.rectangle(4, -22, 5, 5, 0x222222));
+        // Jaw
+        container.add(this.add.rectangle(0, -14, 10, 4, 0xcccccc));
+        // Arms
+        container.add(this.add.rectangle(-12, 0, 6, 20, 0xC0C0C0));
+        container.add(this.add.rectangle(12, 0, 6, 20, 0xC0C0C0));
+        // Legs
+        container.add(this.add.rectangle(-5, 20, 6, 14, 0xB0B0B0));
+        container.add(this.add.rectangle(5, 20, 6, 14, 0xB0B0B0));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 3,
+            duration: 900 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    createTroll(x, y, scale, alpha) {
+        const container = this.add.container(x, y);
+        container.setScale(scale);
+        container.setAlpha(alpha);
+
+        // Body (large, dark teal)
+        container.add(this.add.rectangle(0, 0, 45, 55, 0x2F4F4F));
+        // Head
+        container.add(this.add.rectangle(0, -38, 30, 26, 0x2F4F4F));
+        // Eyes
+        container.add(this.add.rectangle(-8, -40, 7, 7, 0xffff00));
+        container.add(this.add.rectangle(8, -40, 7, 7, 0xffff00));
+        // Nose
+        container.add(this.add.rectangle(0, -34, 10, 8, 0x3a5a5a));
+        // Mouth
+        container.add(this.add.rectangle(0, -26, 16, 6, 0x1a3a3a));
+        // Arms (huge)
+        container.add(this.add.rectangle(-28, 5, 16, 40, 0x264040));
+        container.add(this.add.rectangle(28, 5, 16, 40, 0x264040));
+        // Fists
+        container.add(this.add.rectangle(-28, 30, 18, 16, 0x2F4F4F));
+        container.add(this.add.rectangle(28, 30, 18, 16, 0x2F4F4F));
+        // Legs
+        container.add(this.add.rectangle(-12, 38, 14, 22, 0x1F3F3F));
+        container.add(this.add.rectangle(12, 38, 14, 22, 0x1F3F3F));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 5,
+            duration: 1200 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    // Player unit sprites
+    createPeasant(x, y, scale, alpha, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+        container.setAlpha(alpha);
+
+        // Body (brown tunic)
+        container.add(this.add.rectangle(0, 0, 18, 24, 0x8B4513));
+        // Head
+        container.add(this.add.rectangle(0, -16, 14, 14, 0xDEB887));
+        // Eyes
+        container.add(this.add.rectangle(-3, -17, 3, 3, 0x000000));
+        container.add(this.add.rectangle(3, -17, 3, 3, 0x000000));
+        // Hair
+        container.add(this.add.rectangle(0, -24, 14, 6, 0x654321));
+        // Arms
+        container.add(this.add.rectangle(-11, 0, 6, 18, 0xDEB887));
+        container.add(this.add.rectangle(11, 0, 6, 18, 0xDEB887));
+        // Legs
+        container.add(this.add.rectangle(-4, 18, 6, 12, 0x654321));
+        container.add(this.add.rectangle(4, 18, 6, 12, 0x654321));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 3,
+            duration: 800 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    createArcher(x, y, scale, alpha, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+        container.setAlpha(alpha);
+
+        // Body (green tunic)
+        container.add(this.add.rectangle(0, 0, 18, 26, 0x228B22));
+        // Hood
+        container.add(this.add.rectangle(0, -16, 16, 16, 0x1a6b1a));
+        // Face
+        container.add(this.add.rectangle(0, -14, 12, 10, 0xDEB887));
+        // Eyes
+        container.add(this.add.rectangle(-3, -15, 3, 3, 0x000000));
+        container.add(this.add.rectangle(3, -15, 3, 3, 0x000000));
+        // Bow (on side)
+        container.add(this.add.rectangle(14, -5, 4, 30, 0x8B4513));
+        // Quiver
+        container.add(this.add.rectangle(-10, 0, 6, 20, 0x654321));
+        // Legs
+        container.add(this.add.rectangle(-4, 18, 6, 12, 0x1a5a1a));
+        container.add(this.add.rectangle(4, 18, 6, 12, 0x1a5a1a));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 3,
+            duration: 850 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    createKnight(x, y, scale, alpha, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+        container.setAlpha(alpha);
+
+        // Body (blue armor)
+        container.add(this.add.rectangle(0, 0, 24, 30, 0x4169E1));
+        // Armor highlight
+        container.add(this.add.rectangle(-4, 0, 8, 26, 0x5179F1));
+        // Helmet
+        container.add(this.add.rectangle(0, -20, 20, 18, 0x4a4a5a));
+        // Visor
+        container.add(this.add.rectangle(0, -18, 14, 6, 0x222222));
+        // Plume
+        container.add(this.add.rectangle(0, -32, 6, 10, 0xff4444));
+        // Shield (on arm)
+        container.add(this.add.rectangle(-16, 0, 10, 22, 0x4169E1));
+        container.add(this.add.rectangle(-16, 0, 6, 18, 0x6189F1));
+        // Sword arm
+        container.add(this.add.rectangle(14, 0, 8, 24, 0x4a4a5a));
+        // Legs
+        container.add(this.add.rectangle(-6, 22, 8, 14, 0x3a3a4a));
+        container.add(this.add.rectangle(6, 22, 8, 14, 0x3a3a4a));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 4,
+            duration: 950 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        return container;
+    }
+
+    createGiant(x, y, scale, alpha, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+        container.setAlpha(alpha);
+
+        // Body (large, dark red/brown)
+        container.add(this.add.rectangle(0, 0, 50, 60, 0x8B0000));
+        // Chest
+        container.add(this.add.rectangle(0, -5, 40, 30, 0x9B1010));
+        // Head
+        container.add(this.add.rectangle(0, -42, 28, 24, 0xCD853F));
+        // Eyes
+        container.add(this.add.rectangle(-7, -44, 6, 6, 0x000000));
+        container.add(this.add.rectangle(7, -44, 6, 6, 0x000000));
+        // Angry brow
+        container.add(this.add.rectangle(-7, -50, 10, 4, 0x8B4513));
+        container.add(this.add.rectangle(7, -50, 10, 4, 0x8B4513));
+        // Mouth
+        container.add(this.add.rectangle(0, -36, 14, 6, 0x5a3a2a));
+        // Arms (huge)
+        container.add(this.add.rectangle(-32, 0, 18, 45, 0xCD853F));
+        container.add(this.add.rectangle(32, 0, 18, 45, 0xCD853F));
+        // Fists
+        container.add(this.add.rectangle(-32, 28, 20, 18, 0xDEB887));
+        container.add(this.add.rectangle(32, 28, 20, 18, 0xDEB887));
+        // Belt
+        container.add(this.add.rectangle(0, 20, 46, 8, 0x654321));
+        // Legs
+        container.add(this.add.rectangle(-14, 42, 16, 26, 0x6B0000));
+        container.add(this.add.rectangle(14, 42, 16, 26, 0x6B0000));
+        // Feet
+        container.add(this.add.rectangle(-14, 58, 20, 10, 0x4a2a1a));
+        container.add(this.add.rectangle(14, 58, 20, 10, 0x4a2a1a));
+
+        this.tweens.add({
+            targets: container,
+            y: y - 6,
+            duration: 1100 + Math.random() * 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
         });
 
         return container;
