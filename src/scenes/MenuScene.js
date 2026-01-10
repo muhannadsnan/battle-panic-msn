@@ -603,12 +603,12 @@ class MenuScene extends Phaser.Scene {
         // Shuffle and pick unique enemies (4 per side, staggered, above buttons)
         const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
         const enemyCount = 4;
-        // All Y values <= 400 to avoid buttons, staggered X
+        // More spacing, closer to middle horizontally
         const enemyPositions = [
-            { x: 60, y: 160 },
-            { x: 150, y: 240 },
-            { x: 50, y: 320 },
-            { x: 140, y: 400 }
+            { x: 100, y: 140 },
+            { x: 180, y: 260 },
+            { x: 90, y: 380 },
+            { x: 200, y: 500 }
         ];
         for (let i = 0; i < enemyCount; i++) {
             const pos = enemyPositions[i];
@@ -619,12 +619,12 @@ class MenuScene extends Phaser.Scene {
         // Shuffle and pick unique units (4 per side, staggered, above buttons)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
         const unitCount = 4;
-        // All Y values <= 400 to avoid buttons, staggered X
+        // More spacing, closer to middle horizontally
         const unitPositions = [
-            { x: GAME_WIDTH - 140, y: 160 },
-            { x: GAME_WIDTH - 50, y: 240 },
-            { x: GAME_WIDTH - 150, y: 320 },
-            { x: GAME_WIDTH - 60, y: 400 }
+            { x: GAME_WIDTH - 180, y: 140 },
+            { x: GAME_WIDTH - 100, y: 260 },
+            { x: GAME_WIDTH - 200, y: 380 },
+            { x: GAME_WIDTH - 90, y: 500 }
         ];
         for (let i = 0; i < unitCount; i++) {
             const pos = unitPositions[i];
