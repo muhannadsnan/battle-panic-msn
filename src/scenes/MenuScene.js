@@ -17,15 +17,6 @@ class MenuScene extends Phaser.Scene {
         // Background gradient effect
         this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e);
 
-        // Ground at bottom
-        this.add.rectangle(width / 2, height - 40, width, 80, 0x2d4a2d); // Dark grass
-        this.add.rectangle(width / 2, height - 15, width, 30, 0x3d5a3d); // Lighter grass top
-        // Ground texture details
-        for (let i = 0; i < 30; i++) {
-            const gx = Phaser.Math.Between(0, width);
-            this.add.rectangle(gx, height - 30 + Phaser.Math.Between(-10, 10), 3, 8, 0x4a6a4a, 0.5);
-        }
-
         // Add battlefield characters - enemies on left, units on right
         this.createBattlefieldDisplay();
 
@@ -588,40 +579,47 @@ class MenuScene extends Phaser.Scene {
     }
 
     createBattlefieldDisplay() {
-        // LEFT SIDE - ENEMIES (facing right)
+        // Enemy creation functions
+        const enemyTypes = [
+            (x, y, s) => this.createGoblin(x, y, s),
+            (x, y, s) => this.createOrc(x, y, s),
+            (x, y, s) => this.createSkeleton(x, y, s),
+            (x, y, s) => this.createTroll(x, y, s)
+        ];
 
-        // Far layer - small goblins (dark, distant)
-        this.createGoblin(60, 420, 0.5, 0.3);
-        this.createGoblin(100, 400, 0.4, 0.25);
-        this.createGoblin(40, 380, 0.45, 0.28);
+        // Unit creation functions
+        const unitTypes = [
+            (x, y, s) => this.createPeasant(x, y, s, true),
+            (x, y, s) => this.createArcher(x, y, s, true),
+            (x, y, s) => this.createKnight(x, y, s, true),
+            (x, y, s) => this.createGiant(x, y, s, true)
+        ];
 
-        // Mid layer - orc and skeleton
-        this.createOrc(130, 460, 0.7, 0.6);
-        this.createSkeleton(70, 480, 0.65, 0.55);
+        // LEFT SIDE - Random enemies (3-5 of them)
+        const enemyCount = Phaser.Math.Between(3, 5);
+        for (let i = 0; i < enemyCount; i++) {
+            const x = Phaser.Math.Between(40, 180);
+            const y = Phaser.Math.Between(150, 500);
+            const scale = Phaser.Math.FloatBetween(0.6, 1.0);
+            const typeIndex = Phaser.Math.Between(0, enemyTypes.length - 1);
+            enemyTypes[typeIndex](x, y, scale);
+        }
 
-        // Near layer - large troll
-        this.createTroll(160, 520, 1.0, 1.0);
-
-        // RIGHT SIDE - PLAYER UNITS (facing left)
-
-        // Far layer - small peasants (dark, distant)
-        this.createPeasant(GAME_WIDTH - 60, 420, 0.5, 0.3, true);
-        this.createPeasant(GAME_WIDTH - 100, 405, 0.45, 0.28, true);
-        this.createPeasant(GAME_WIDTH - 45, 390, 0.4, 0.25, true);
-
-        // Mid layer - archer and knight
-        this.createArcher(GAME_WIDTH - 140, 460, 0.7, 0.6, true);
-        this.createKnight(GAME_WIDTH - 80, 475, 0.7, 0.6, true);
-
-        // Near layer - large giant
-        this.createGiant(GAME_WIDTH - 170, 510, 1.0, 1.0, true);
+        // RIGHT SIDE - Random units (3-5 of them)
+        const unitCount = Phaser.Math.Between(3, 5);
+        for (let i = 0; i < unitCount; i++) {
+            const x = Phaser.Math.Between(GAME_WIDTH - 180, GAME_WIDTH - 40);
+            const y = Phaser.Math.Between(150, 500);
+            const scale = Phaser.Math.FloatBetween(0.6, 1.0);
+            const typeIndex = Phaser.Math.Between(0, unitTypes.length - 1);
+            unitTypes[typeIndex](x, y, scale);
+        }
     }
 
     // Enemy sprites
-    createGoblin(x, y, scale, alpha) {
+    createGoblin(x, y, scale) {
         const container = this.add.container(x, y);
         container.setScale(scale);
-        container.setAlpha(alpha);
 
         // Body (green)
         container.add(this.add.rectangle(0, 0, 20, 25, 0x32CD32));
@@ -637,23 +635,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-5, 18, 6, 12, 0x228B22));
         container.add(this.add.rectangle(5, 18, 6, 12, 0x228B22));
 
-        // Idle animation
-        this.tweens.add({
-            targets: container,
-            y: y - 3,
-            duration: 800 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
-    createOrc(x, y, scale, alpha) {
+    createOrc(x, y, scale) {
         const container = this.add.container(x, y);
         container.setScale(scale);
-        container.setAlpha(alpha);
 
         // Body (dark green, bulky)
         container.add(this.add.rectangle(0, 0, 30, 35, 0x556B2F));
@@ -672,22 +659,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-8, 24, 10, 16, 0x3a4a1f));
         container.add(this.add.rectangle(8, 24, 10, 16, 0x3a4a1f));
 
-        this.tweens.add({
-            targets: container,
-            y: y - 4,
-            duration: 1000 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
-    createSkeleton(x, y, scale, alpha) {
+    createSkeleton(x, y, scale) {
         const container = this.add.container(x, y);
         container.setScale(scale);
-        container.setAlpha(alpha);
 
         // Body (bone white)
         container.add(this.add.rectangle(0, 0, 18, 28, 0xD3D3D3));
@@ -709,22 +686,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-5, 20, 6, 14, 0xB0B0B0));
         container.add(this.add.rectangle(5, 20, 6, 14, 0xB0B0B0));
 
-        this.tweens.add({
-            targets: container,
-            y: y - 3,
-            duration: 900 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
-    createTroll(x, y, scale, alpha) {
+    createTroll(x, y, scale) {
         const container = this.add.container(x, y);
         container.setScale(scale);
-        container.setAlpha(alpha);
 
         // Body (large, dark teal)
         container.add(this.add.rectangle(0, 0, 45, 55, 0x2F4F4F));
@@ -747,23 +714,13 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-12, 38, 14, 22, 0x1F3F3F));
         container.add(this.add.rectangle(12, 38, 14, 22, 0x1F3F3F));
 
-        this.tweens.add({
-            targets: container,
-            y: y - 5,
-            duration: 1200 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
     // Player unit sprites
-    createPeasant(x, y, scale, alpha, flipX = false) {
+    createPeasant(x, y, scale, flipX = false) {
         const container = this.add.container(x, y);
         container.setScale(flipX ? -scale : scale, scale);
-        container.setAlpha(alpha);
 
         // Body (brown tunic)
         container.add(this.add.rectangle(0, 0, 18, 24, 0x8B4513));
@@ -781,22 +738,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-4, 18, 6, 12, 0x654321));
         container.add(this.add.rectangle(4, 18, 6, 12, 0x654321));
 
-        this.tweens.add({
-            targets: container,
-            y: y - 3,
-            duration: 800 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
-    createArcher(x, y, scale, alpha, flipX = false) {
+    createArcher(x, y, scale, flipX = false) {
         const container = this.add.container(x, y);
         container.setScale(flipX ? -scale : scale, scale);
-        container.setAlpha(alpha);
 
         // Body (green tunic)
         container.add(this.add.rectangle(0, 0, 18, 26, 0x228B22));
@@ -815,22 +762,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-4, 18, 6, 12, 0x1a5a1a));
         container.add(this.add.rectangle(4, 18, 6, 12, 0x1a5a1a));
 
-        this.tweens.add({
-            targets: container,
-            y: y - 3,
-            duration: 850 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
-    createKnight(x, y, scale, alpha, flipX = false) {
+    createKnight(x, y, scale, flipX = false) {
         const container = this.add.container(x, y);
         container.setScale(flipX ? -scale : scale, scale);
-        container.setAlpha(alpha);
 
         // Body (blue armor)
         container.add(this.add.rectangle(0, 0, 24, 30, 0x4169E1));
@@ -851,22 +788,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(-6, 22, 8, 14, 0x3a3a4a));
         container.add(this.add.rectangle(6, 22, 8, 14, 0x3a3a4a));
 
-        this.tweens.add({
-            targets: container,
-            y: y - 4,
-            duration: 950 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         return container;
     }
 
-    createGiant(x, y, scale, alpha, flipX = false) {
+    createGiant(x, y, scale, flipX = false) {
         const container = this.add.container(x, y);
         container.setScale(flipX ? -scale : scale, scale);
-        container.setAlpha(alpha);
 
         // Body (large, dark red/brown)
         container.add(this.add.rectangle(0, 0, 50, 60, 0x8B0000));
@@ -896,15 +823,6 @@ class MenuScene extends Phaser.Scene {
         // Feet
         container.add(this.add.rectangle(-14, 58, 20, 10, 0x4a2a1a));
         container.add(this.add.rectangle(14, 58, 20, 10, 0x4a2a1a));
-
-        this.tweens.add({
-            targets: container,
-            y: y - 6,
-            duration: 1100 + Math.random() * 400,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
 
         return container;
     }
