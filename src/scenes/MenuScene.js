@@ -605,10 +605,10 @@ class MenuScene extends Phaser.Scene {
         const enemyCount = 4;
         // More spacing, closer to middle horizontally
         const enemyPositions = [
-            { x: 100, y: 140 },
-            { x: 180, y: 260 },
-            { x: 90, y: 380 },
-            { x: 200, y: 500 }
+            { x: 100, y: 175 },
+            { x: 180, y: 270 },
+            { x: 90, y: 365 },
+            { x: 200, y: 460 }
         ];
         for (let i = 0; i < enemyCount; i++) {
             const pos = enemyPositions[i];
@@ -621,10 +621,10 @@ class MenuScene extends Phaser.Scene {
         const unitCount = 4;
         // More spacing, closer to middle horizontally
         const unitPositions = [
-            { x: GAME_WIDTH - 180, y: 140 },
-            { x: GAME_WIDTH - 100, y: 260 },
-            { x: GAME_WIDTH - 200, y: 380 },
-            { x: GAME_WIDTH - 90, y: 500 }
+            { x: GAME_WIDTH - 180, y: 175 },
+            { x: GAME_WIDTH - 100, y: 270 },
+            { x: GAME_WIDTH - 200, y: 365 },
+            { x: GAME_WIDTH - 90, y: 460 }
         ];
         for (let i = 0; i < unitCount; i++) {
             const pos = unitPositions[i];

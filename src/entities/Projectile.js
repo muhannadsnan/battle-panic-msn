@@ -66,20 +66,35 @@ class Projectile extends Phaser.GameObjects.Container {
     }
 
     createArrow() {
-        // Arrow shaft
-        const shaft = this.scene.add.rectangle(0, 0, 20, 3, 0x8B4513);
+        // Sleek wooden arrow shaft with gradient effect
+        const shaftBack = this.scene.add.rectangle(-2, 0, 22, 4, 0x6B4423);
+        this.add(shaftBack);
+        const shaft = this.scene.add.rectangle(0, 0, 20, 3, 0x8B5A33);
         this.add(shaft);
+        const shaftHighlight = this.scene.add.rectangle(0, -1, 18, 1, 0xA67B5B);
+        this.add(shaftHighlight);
 
-        // Arrow head
-        const head = this.scene.add.triangle(12, 0, 0, -4, 8, 0, 0, 4, 0xC0C0C0);
-        head.setStrokeStyle(1, 0x888888);
-        this.add(head);
+        // Sharp metal arrowhead
+        const headBase = this.scene.add.rectangle(14, 0, 8, 5, 0x888888);
+        this.add(headBase);
+        const headMid = this.scene.add.rectangle(17, 0, 6, 4, 0xAAAAAA);
+        this.add(headMid);
+        const headTip = this.scene.add.rectangle(21, 0, 4, 2, 0xCCCCCC);
+        this.add(headTip);
 
-        // Arrow feathers
-        const feather1 = this.scene.add.triangle(-8, -2, 0, 0, -6, -4, -6, 2, 0xFFFFFF);
-        const feather2 = this.scene.add.triangle(-8, 2, 0, 0, -6, -2, -6, 4, 0xFFFFFF);
-        this.add(feather1);
-        this.add(feather2);
+        // Fletching (feathers) - red and white striped
+        const fletchBase = this.scene.add.rectangle(-10, 0, 6, 6, 0xCC3333);
+        this.add(fletchBase);
+        const fletchTop = this.scene.add.rectangle(-10, -3, 5, 4, 0xEE5555);
+        this.add(fletchTop);
+        const fletchBot = this.scene.add.rectangle(-10, 3, 5, 4, 0xEE5555);
+        this.add(fletchBot);
+        const fletchStripe = this.scene.add.rectangle(-10, 0, 6, 1, 0xFFFFFF);
+        this.add(fletchStripe);
+
+        // Nock (back end)
+        const nock = this.scene.add.rectangle(-13, 0, 3, 3, 0x4A3020);
+        this.add(nock);
 
         this.mainSprite = shaft;
     }
