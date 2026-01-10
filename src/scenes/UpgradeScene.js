@@ -132,22 +132,22 @@ class UpgradeScene extends Phaser.Scene {
 
         // DMG line
         const dmgContainer = this.add.container(0, 48);
-        const dmgLabel = this.add.text(-35, 0, 'DMG:', {
+        const dmgLabel = this.add.text(-35, 0, 'DMG: ', {
             fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         dmgContainer.add(dmgLabel);
 
-        const dmgCurrent = this.add.text(-2, 0, `${currentStats.damage}`, {
+        const dmgCurrent = this.add.text(0, 0, `${currentStats.damage}`, {
             fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(0, 0.5);
         dmgContainer.add(dmgCurrent);
 
         if (!isMaxLevel) {
-            const dmgArrow = this.add.text(18, 0, '▶', {
+            const dmgArrow = this.add.text(20, 0, '▶', {
                 fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
             }).setOrigin(0.5, 0.5);
             dmgContainer.add(dmgArrow);
-            const dmgNext = this.add.text(32, 0, `${nextStats.damage}`, {
+            const dmgNext = this.add.text(34, 0, `${nextStats.damage}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             dmgContainer.add(dmgNext);
