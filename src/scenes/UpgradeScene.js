@@ -101,15 +101,58 @@ class UpgradeScene extends Phaser.Scene {
         }).setOrigin(0.5);
         card.add(levelText);
 
-        // Stats preview
+        // Stats preview with current -> next values
         const currentStats = this.getUpgradedStats(stats, upgradeData.level);
-        const statsText = this.add.text(0, 35, `HP: ${currentStats.health}\nDMG: ${currentStats.damage}`, {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            color: '#88ff88',
-            align: 'center'
-        }).setOrigin(0.5);
-        card.add(statsText);
+        const nextStats = this.getUpgradedStats(stats, upgradeData.level + 1);
+        const isMaxLevel = upgradeData.level >= UPGRADE_CONFIG.maxLevel;
+
+        // HP line
+        const hpContainer = this.add.container(0, 30);
+        const hpLabel = this.add.text(-35, 0, 'HP:', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+        }).setOrigin(0, 0.5);
+        hpContainer.add(hpLabel);
+
+        const hpCurrent = this.add.text(-10, 0, `${currentStats.health}`, {
+            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0, 0.5);
+        hpContainer.add(hpCurrent);
+
+        if (!isMaxLevel) {
+            const hpArrow = this.add.text(12, 0, '→', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#666666'
+            }).setOrigin(0, 0.5);
+            hpContainer.add(hpArrow);
+            const hpNext = this.add.text(28, 0, `${nextStats.health}`, {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+            }).setOrigin(0, 0.5);
+            hpContainer.add(hpNext);
+        }
+        card.add(hpContainer);
+
+        // DMG line
+        const dmgContainer = this.add.container(0, 48);
+        const dmgLabel = this.add.text(-35, 0, 'DMG:', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+        }).setOrigin(0, 0.5);
+        dmgContainer.add(dmgLabel);
+
+        const dmgCurrent = this.add.text(-2, 0, `${currentStats.damage}`, {
+            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0, 0.5);
+        dmgContainer.add(dmgCurrent);
+
+        if (!isMaxLevel) {
+            const dmgArrow = this.add.text(16, 0, '→', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#666666'
+            }).setOrigin(0, 0.5);
+            dmgContainer.add(dmgArrow);
+            const dmgNext = this.add.text(32, 0, `${nextStats.damage}`, {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+            }).setOrigin(0, 0.5);
+            dmgContainer.add(dmgNext);
+        }
+        card.add(dmgContainer);
 
         const xp = this.saveData.xp || 0;
 
@@ -117,12 +160,12 @@ class UpgradeScene extends Phaser.Scene {
             // Upgrade button (uses XP)
             if (upgradeData.level < UPGRADE_CONFIG.maxLevel) {
                 const cost = this.calculateUpgradeCost(typeKey, upgradeData.level);
-                const upgradeBtn = this.createCardButton(0, 75, `Upgrade\n${cost} XP`, () => {
+                const upgradeBtn = this.createCardButton(0, 80, `Upgrade\n${cost} XP`, () => {
                     this.purchaseUpgrade(typeKey, cost);
                 }, xp >= cost);
                 card.add(upgradeBtn);
             } else {
-                const maxText = this.add.text(0, 75, 'MAX LEVEL', {
+                const maxText = this.add.text(0, 80, 'MAX LEVEL', {
                     fontSize: '16px',
                     fontFamily: 'Arial',
                     color: '#ffd700'
@@ -132,7 +175,7 @@ class UpgradeScene extends Phaser.Scene {
         } else {
             // Unlock button (uses XP)
             const unlockCost = this.getUnlockCost(typeKey);
-            const unlockBtn = this.createCardButton(0, 75, `Unlock\n${unlockCost} XP`, () => {
+            const unlockBtn = this.createCardButton(0, 80, `Unlock\n${unlockCost} XP`, () => {
                 this.unlockUnit(typeKey, unlockCost);
             }, xp >= unlockCost);
             card.add(unlockBtn);
@@ -447,6 +490,7 @@ class UpgradeScene extends Phaser.Scene {
     createCastleUpgradeCard(x, y, upgrade) {
         const level = this.saveData.castleUpgrades[upgrade.key];
         const card = this.add.container(x, y);
+        const isMaxLevel = level >= UPGRADE_CONFIG.maxLevel;
 
         // Background
         const bg = this.add.rectangle(0, 0, 180, 100, 0x333344);
@@ -462,20 +506,34 @@ class UpgradeScene extends Phaser.Scene {
         card.add(header);
 
         // Level
-        const levelText = this.add.text(0, -8, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
-            fontSize: '16px',
+        const levelText = this.add.text(0, -10, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
         card.add(levelText);
 
-        // Description
-        const desc = this.add.text(0, 10, upgrade.desc, {
-            fontSize: '13px',
-            fontFamily: 'Arial',
-            color: '#88ff88'
-        }).setOrigin(0.5);
-        card.add(desc);
+        // Progression display: current -> next
+        const currentBonus = this.getCastleBonus(upgrade.key, level);
+        const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
+
+        const progressContainer = this.add.container(0, 8);
+        const currentText = this.add.text(-20, 0, currentBonus, {
+            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(1, 0.5);
+        progressContainer.add(currentText);
+
+        if (!isMaxLevel) {
+            const arrow = this.add.text(-10, 0, '→', {
+                fontSize: '13px', fontFamily: 'Arial', color: '#666666'
+            }).setOrigin(0.5, 0.5);
+            progressContainer.add(arrow);
+            const nextText = this.add.text(0, 0, nextBonus, {
+                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+            }).setOrigin(0, 0.5);
+            progressContainer.add(nextText);
+        }
+        card.add(progressContainer);
 
         // Upgrade button (uses XP)
         const xp = this.saveData.xp || 0;
@@ -587,6 +645,21 @@ class UpgradeScene extends Phaser.Scene {
             health: baseStats.health + hpBonus,
             damage: baseStats.damage + dmgBonus
         };
+    }
+
+    getCastleBonus(upgradeKey, level) {
+        // Returns formatted bonus string for castle upgrades
+        const bonus = (level - 1); // Level 1 = 0 bonus, Level 2 = 1 bonus, etc.
+        switch (upgradeKey) {
+            case 'health':
+                return `+${bonus * 20} HP`;
+            case 'armor':
+                return `-${bonus * 5}% DMG`;
+            case 'goldIncome':
+                return `+${bonus * 10}% SPD`;
+            default:
+                return '';
+        }
     }
 
     calculateUpgradeCost(unitKey, currentLevel) {
