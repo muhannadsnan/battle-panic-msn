@@ -913,11 +913,48 @@ class Enemy extends Phaser.GameObjects.Container {
             }
         }
 
+        // Separate from other enemies to avoid stacking
+        this.separateFromEnemies(delta);
+
         // Update walking animation
         this.updateAnimation(delta, isMoving);
 
         // Update depth based on y
         this.setDepth(this.y);
+    }
+
+    separateFromEnemies(delta) {
+        const enemies = this.scene.enemies.getChildren();
+        const separationRadius = 45; // How close before pushing away
+        const separationForce = 100; // How strong the push is
+
+        let pushX = 0;
+        let pushY = 0;
+
+        for (const enemy of enemies) {
+            if (enemy === this || enemy.isDead) continue;
+
+            const dx = this.x - enemy.x;
+            const dy = this.y - enemy.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // Scale separation radius based on enemy size
+            const effectiveRadius = separationRadius * Math.max(this.currentScale || 1, enemy.currentScale || 1);
+
+            if (distance < effectiveRadius && distance > 0) {
+                // Push away - stronger when closer
+                const force = (effectiveRadius - distance) / effectiveRadius;
+                pushX += (dx / distance) * force * force;
+                pushY += (dy / distance) * force * force;
+            }
+        }
+
+        // Apply separation movement
+        if (pushX !== 0 || pushY !== 0) {
+            const moveAmount = separationForce * (delta / 1000);
+            this.x += pushX * moveAmount;
+            this.y = Phaser.Math.Clamp(this.y + pushY * moveAmount, 120, 550);
+        }
     }
 
     moveToward(target, delta) {

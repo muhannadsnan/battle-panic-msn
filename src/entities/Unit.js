@@ -596,8 +596,8 @@ class Unit extends Phaser.GameObjects.Container {
 
     separateFromAllies(delta) {
         const allies = this.scene.units.getChildren();
-        const separationRadius = 35; // How close before pushing away
-        const separationForce = 60; // How strong the push is
+        const separationRadius = 50; // Increased - how close before pushing away
+        const separationForce = 120; // Increased - how strong the push is
 
         let pushX = 0;
         let pushY = 0;
@@ -610,10 +610,10 @@ class Unit extends Phaser.GameObjects.Container {
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < separationRadius && distance > 0) {
-                // Push away from this ally
+                // Push away from this ally - stronger when closer
                 const force = (separationRadius - distance) / separationRadius;
-                pushX += (dx / distance) * force;
-                pushY += (dy / distance) * force;
+                pushX += (dx / distance) * force * force; // Squared for stronger close-range push
+                pushY += (dy / distance) * force * force;
             }
         }
 
