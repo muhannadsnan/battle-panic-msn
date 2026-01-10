@@ -711,11 +711,10 @@ class GameScene extends Phaser.Scene {
         const scaleProgress = (level - 1) / (CASTLE_CONFIG.maxLevel - 1);
         const castleScale = minScale + (maxScale - minScale) * scaleProgress;
 
-        // Castle top is around y=-200 at scale 1.0, adjust for current scale
-        // Spinner should be above the scaled castle top with some padding
-        const baseTopY = -200;
+        // Spinner should be right above the castle (closer positioning)
+        const baseTopY = -80;
         const scaledTopY = baseTopY * castleScale;
-        const spinnerY = scaledTopY - 40; // 40px padding above castle
+        const spinnerY = scaledTopY - 10; // Small padding above castle
 
         if (this.castleSpinnerContainer) {
             this.castleSpinnerContainer.setY(spinnerY);

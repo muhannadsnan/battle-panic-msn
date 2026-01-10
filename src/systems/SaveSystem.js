@@ -168,8 +168,12 @@ class SaveSystem {
 
         // Calculate XP divisor BEFORE updating stats (use rank at start of game, not after)
         // This prevents rank jumping mid-calculation from penalizing players
+        const rankInfo = this.getRankInfo(data);
         const xpDivisor = this.getXPDivisorForRank(data);
         const xpEarned = Math.floor(wave / xpDivisor);
+
+        // Debug logging
+        console.log(`[XP Debug] Wave: ${wave}, Rank: ${rankInfo.rank.name}, Divisor: ${xpDivisor}, XP Earned: ${xpEarned}`);
 
         if (wave > data.highestWave) {
             data.highestWave = wave;
