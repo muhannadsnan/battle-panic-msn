@@ -388,90 +388,135 @@ class GameScene extends Phaser.Scene {
         container.glowRing = glowRing;
 
         if (isGold) {
-            // CARTOONY GOLD MINE - Bright and inviting!
-            // Cave entrance - warm brown rock
-            container.add(this.add.rectangle(0, 10, 60, 50, 0x6B5A4A));
-            container.add(this.add.rectangle(0, 12, 55, 45, 0x7B6A5A));
+            // TREASURE CHEST with gold coins!
+            // Chest base (dark wood)
+            container.add(this.add.rectangle(0, 20, 70, 40, 0x5D3A1A));
+            container.add(this.add.rectangle(0, 22, 66, 36, 0x7D4A2A));
+            // Chest front panel
+            container.add(this.add.rectangle(0, 25, 60, 28, 0x8B5A3A));
 
-            // Cave hole (dark but not black)
-            container.add(this.add.rectangle(0, 18, 40, 35, 0x2A2520));
-            container.add(this.add.rectangle(0, 20, 35, 28, 0x3A3530));
+            // Chest lid (open, tilted back)
+            container.add(this.add.rectangle(0, -8, 70, 24, 0x6D4A2A));
+            container.add(this.add.rectangle(0, -6, 66, 20, 0x8D5A3A));
+            container.add(this.add.rectangle(0, -14, 64, 8, 0x9D6A4A)); // lid top
 
-            // Cute wooden frame
-            container.add(this.add.rectangle(-22, 8, 8, 42, 0xB8956A));
-            container.add(this.add.rectangle(-20, 8, 5, 40, 0xC8A57A)); // highlight
-            container.add(this.add.rectangle(22, 8, 8, 42, 0xB8956A));
-            container.add(this.add.rectangle(24, 8, 5, 40, 0xC8A57A));
-            container.add(this.add.rectangle(0, -14, 52, 8, 0xB8956A));
-            container.add(this.add.rectangle(0, -12, 48, 5, 0xC8A57A));
+            // Gold metal bands
+            container.add(this.add.rectangle(0, 8, 72, 6, 0xDAA520));
+            container.add(this.add.rectangle(0, 32, 72, 6, 0xDAA520));
+            container.add(this.add.rectangle(-30, 20, 6, 44, 0xDAA520));
+            container.add(this.add.rectangle(30, 20, 6, 44, 0xDAA520));
 
-            // "GOLD" sign on top
-            container.add(this.add.rectangle(0, -22, 36, 12, 0xD4A84B));
-            container.add(this.add.rectangle(0, -22, 32, 8, 0xE4B85B));
+            // Lock (golden)
+            container.add(this.add.rectangle(0, 20, 14, 18, 0xFFD700));
+            container.add(this.add.rectangle(0, 16, 10, 8, 0xFFE855));
+            container.add(this.add.rectangle(0, 24, 6, 6, 0x222222)); // keyhole
 
-            // Sparkly gold nuggets inside cave
-            for (let i = 0; i < 6; i++) {
+            // Overflowing gold coins!
+            const coinPositions = [
+                {x: -20, y: -2}, {x: -8, y: -5}, {x: 5, y: -3}, {x: 18, y: -4},
+                {x: -14, y: -12}, {x: 0, y: -14}, {x: 12, y: -10},
+                {x: -6, y: -20}, {x: 8, y: -18}
+            ];
+            coinPositions.forEach((pos, i) => {
+                // Coin base
+                container.add(this.add.rectangle(pos.x, pos.y, 14, 14, 0xDAA520));
+                // Coin shine
+                container.add(this.add.rectangle(pos.x - 2, pos.y - 2, 6, 6, 0xFFE855));
+                // Coin edge
+                container.add(this.add.rectangle(pos.x, pos.y, 10, 10, 0xFFD700));
+            });
+
+            // Sparkle effects on coins
+            for (let i = 0; i < 5; i++) {
                 const sparkle = this.add.rectangle(
-                    Phaser.Math.Between(-14, 14),
-                    Phaser.Math.Between(8, 28),
-                    6, 6, 0xFFD700
+                    Phaser.Math.Between(-25, 25),
+                    Phaser.Math.Between(-25, 5),
+                    4, 4, 0xFFFFFF
                 );
                 container.add(sparkle);
                 this.tweens.add({
                     targets: sparkle,
-                    alpha: 0.4,
-                    scaleX: 0.6,
-                    scaleY: 0.6,
-                    duration: 400 + Math.random() * 400,
+                    alpha: 0,
+                    scaleX: 2,
+                    scaleY: 2,
+                    duration: 600 + Math.random() * 400,
                     yoyo: true,
                     repeat: -1,
-                    delay: Math.random() * 400
+                    delay: Math.random() * 600
                 });
             }
 
-            // Cute mining cart
-            container.add(this.add.rectangle(36, 24, 26, 18, 0x6B7B8B));
-            container.add(this.add.rectangle(36, 22, 22, 12, 0x7B8B9B)); // rim
-            // Gold pile in cart
-            container.add(this.add.rectangle(36, 16, 20, 10, 0xFFD700));
-            container.add(this.add.rectangle(36, 13, 16, 5, 0xFFE855));
-            container.add(this.add.rectangle(34, 11, 8, 4, 0xFFEE88)); // shine
-            // Wheels
-            container.add(this.add.rectangle(27, 35, 10, 10, 0x5A6A7A));
-            container.add(this.add.rectangle(27, 35, 6, 6, 0x4A5A6A));
-            container.add(this.add.rectangle(45, 35, 10, 10, 0x5A6A7A));
-            container.add(this.add.rectangle(45, 35, 6, 6, 0x4A5A6A));
+            // Big "$" or coin symbol floating above
+            const coinSymbol = this.add.text(0, -35, '💰', {
+                fontSize: '24px'
+            }).setOrigin(0.5);
+            container.add(coinSymbol);
+            this.tweens.add({
+                targets: coinSymbol,
+                y: -40,
+                duration: 1000,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+
         } else {
-            // CARTOONY WOOD PILE - Warm and cozy!
-            // Big friendly tree stump
-            container.add(this.add.rectangle(0, 22, 50, 24, 0x8B6B4A));
-            container.add(this.add.rectangle(0, 18, 46, 18, 0x9B7B5A));
-            container.add(this.add.rectangle(0, 14, 42, 10, 0xAB8B6A)); // top
-            // Tree rings
-            container.add(this.add.rectangle(0, 14, 28, 3, 0x7B5B3A));
-            container.add(this.add.rectangle(0, 14, 3, 10, 0x7B5B3A));
-            container.add(this.add.rectangle(0, 14, 16, 2, 0x6B4B2A));
+            // STYLIZED TREE with lumber!
+            // Tree trunk
+            container.add(this.add.rectangle(0, 25, 24, 50, 0x6B4423));
+            container.add(this.add.rectangle(-4, 25, 8, 48, 0x7B5433)); // highlight
+            container.add(this.add.rectangle(0, 48, 32, 8, 0x5B3413)); // base/roots
 
-            // Cute log pile (brighter browns)
-            container.add(this.add.rectangle(-24, -10, 28, 14, 0xA87B5A));
-            container.add(this.add.rectangle(-24, -10, 24, 10, 0xB88B6A)); // highlight
-            container.add(this.add.rectangle(-36, -10, 8, 14, 0xD4A574)); // end grain
+            // Tree foliage (layered for depth) - bright green
+            container.add(this.add.rectangle(0, -15, 60, 30, 0x2D8B2D));
+            container.add(this.add.rectangle(0, -12, 54, 24, 0x3DA83D));
+            container.add(this.add.rectangle(0, -30, 48, 26, 0x2D8B2D));
+            container.add(this.add.rectangle(0, -28, 42, 20, 0x4DB84D));
+            container.add(this.add.rectangle(0, -42, 32, 20, 0x3DA83D));
+            container.add(this.add.rectangle(0, -40, 26, 14, 0x5DC85D));
+            container.add(this.add.rectangle(0, -52, 18, 14, 0x4DB84D));
+            container.add(this.add.rectangle(0, -50, 12, 10, 0x6DD86D));
 
-            container.add(this.add.rectangle(-20, 2, 26, 12, 0x9B6B4A));
-            container.add(this.add.rectangle(-20, 2, 22, 8, 0xAB7B5A));
-            container.add(this.add.rectangle(-32, 2, 8, 12, 0xC49564));
+            // Leaf highlights
+            container.add(this.add.rectangle(-15, -20, 10, 8, 0x6DE86D, 0.7));
+            container.add(this.add.rectangle(10, -35, 8, 6, 0x7DF87D, 0.7));
 
-            container.add(this.add.rectangle(-28, 12, 22, 10, 0x8B5B3A));
-            container.add(this.add.rectangle(-28, 12, 18, 7, 0x9B6B4A));
-            container.add(this.add.rectangle(-38, 12, 6, 10, 0xB48554));
+            // Stacked logs beside tree
+            // Bottom logs
+            container.add(this.add.rectangle(-35, 35, 30, 12, 0x8B5A3A));
+            container.add(this.add.rectangle(-35, 35, 26, 8, 0x9B6A4A));
+            container.add(this.add.rectangle(-48, 35, 6, 12, 0xC49564)); // end
 
-            // Cute axe stuck in stump
-            container.add(this.add.rectangle(20, 4, 6, 36, 0xC4956A));
-            container.add(this.add.rectangle(22, 4, 3, 34, 0xD4A57A)); // highlight
-            // Axe head (shiny!)
-            container.add(this.add.rectangle(30, -12, 18, 14, 0x8899AA));
-            container.add(this.add.rectangle(35, -12, 8, 12, 0x7789AA)); // edge
-            container.add(this.add.rectangle(27, -15, 10, 5, 0xAABBCC)); // shine
+            container.add(this.add.rectangle(-32, 22, 28, 11, 0x7B4A2A));
+            container.add(this.add.rectangle(-32, 22, 24, 7, 0x8B5A3A));
+            container.add(this.add.rectangle(-44, 22, 6, 11, 0xB48554)); // end
+
+            container.add(this.add.rectangle(-30, 10, 24, 10, 0x6B3A1A));
+            container.add(this.add.rectangle(-30, 10, 20, 6, 0x7B4A2A));
+            container.add(this.add.rectangle(-40, 10, 6, 10, 0xA47544)); // end
+
+            // Saw leaning on logs
+            container.add(this.add.rectangle(-15, 15, 4, 35, 0x8B7355)); // handle
+            container.add(this.add.rectangle(-15, -5, 30, 8, 0xA0A0B0)); // blade
+            container.add(this.add.rectangle(-15, -5, 28, 4, 0xC0C0D0)); // blade shine
+            // Saw teeth
+            for (let i = 0; i < 6; i++) {
+                container.add(this.add.rectangle(-28 + i * 5, -10, 3, 4, 0x808090));
+            }
+
+            // Wood symbol floating above
+            const woodSymbol = this.add.text(0, -65, '🪵', {
+                fontSize: '24px'
+            }).setOrigin(0.5);
+            container.add(woodSymbol);
+            this.tweens.add({
+                targets: woodSymbol,
+                y: -70,
+                duration: 1000,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
         }
 
         // No spinner - just axe cursor and glow
