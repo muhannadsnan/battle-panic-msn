@@ -579,6 +579,9 @@ class GameScene extends Phaser.Scene {
         // Store armor level for damage reduction (applied in Castle.takeDamage)
         this.playerCastle.armorLevel = castleUpgrades.armor || 1;
 
+        // Store health upgrade level for wave HP bonus
+        this.castleHealthLevel = castleUpgrades.health || 1;
+
         // Store gold income bonus for mining
         this.goldIncomeLevel = castleUpgrades.goldIncome || 1;
 
@@ -1692,15 +1695,16 @@ Lv.${level + 1}`;
         this.addWood(woodReward);
         this.waveDisplay.showWaveComplete(waveNumber, goldReward, woodReward);
 
-        // Castle gains +20 max HP per wave completed (tracked for upgrade preservation)
-        const hpGain = 20;
-        this.playerCastle.waveHealthBonus += hpGain;
-        this.playerCastle.maxHealth += hpGain;
-        this.playerCastle.currentHealth += hpGain;
-        this.playerCastle.updateHealthBar();
-
-        // Show HP gain message
-        this.showMessage(`Castle +${hpGain} HP!`, '#00d26a');
+        // Castle gains HP per wave only if Castle Health upgrade is level 2+
+        // Level 1 = no wave HP bonus, Level 2+ = +20 HP per wave
+        if (this.castleHealthLevel >= 2) {
+            const hpGain = 20;
+            this.playerCastle.waveHealthBonus += hpGain;
+            this.playerCastle.maxHealth += hpGain;
+            this.playerCastle.currentHealth += hpGain;
+            this.playerCastle.updateHealthBar();
+            this.showMessage(`Castle +${hpGain} HP!`, '#00d26a');
+        }
 
         // Bonus message for milestone waves
         if (waveNumber % 5 === 0) {
