@@ -106,24 +106,30 @@ class UpgradeScene extends Phaser.Scene {
         const nextStats = this.getUpgradedStats(stats, upgradeData.level + 1);
         const isMaxLevel = upgradeData.level >= UPGRADE_CONFIG.maxLevel;
 
+        // Stats layout - fixed positions for alignment
+        const labelX = -55;
+        const currentX = -5;
+        const arrowX = 18;
+        const nextX = 32;
+
         // HP line
         const hpContainer = this.add.container(0, 30);
-        const hpLabel = this.add.text(-35, 0, 'HP:', {
+        const hpLabel = this.add.text(labelX, 0, 'HP:', {
             fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         hpContainer.add(hpLabel);
 
-        const hpCurrent = this.add.text(-10, 0, `${currentStats.health}`, {
+        const hpCurrent = this.add.text(currentX, 0, `${currentStats.health}`, {
             fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
-        }).setOrigin(0, 0.5);
+        }).setOrigin(1, 0.5);
         hpContainer.add(hpCurrent);
 
         if (!isMaxLevel) {
-            const hpArrow = this.add.text(14, 0, '▶', {
+            const hpArrow = this.add.text(arrowX, 0, '▶', {
                 fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
             }).setOrigin(0.5, 0.5);
             hpContainer.add(hpArrow);
-            const hpNext = this.add.text(28, 0, `${nextStats.health}`, {
+            const hpNext = this.add.text(nextX, 0, `${nextStats.health}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             hpContainer.add(hpNext);
@@ -132,22 +138,22 @@ class UpgradeScene extends Phaser.Scene {
 
         // DMG line
         const dmgContainer = this.add.container(0, 48);
-        const dmgLabel = this.add.text(-35, 0, 'DMG: ', {
+        const dmgLabel = this.add.text(labelX, 0, 'DMG:', {
             fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         dmgContainer.add(dmgLabel);
 
-        const dmgCurrent = this.add.text(0, 0, `${currentStats.damage}`, {
+        const dmgCurrent = this.add.text(currentX, 0, `${currentStats.damage}`, {
             fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
-        }).setOrigin(0, 0.5);
+        }).setOrigin(1, 0.5);
         dmgContainer.add(dmgCurrent);
 
         if (!isMaxLevel) {
-            const dmgArrow = this.add.text(20, 0, '▶', {
+            const dmgArrow = this.add.text(arrowX, 0, '▶', {
                 fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
             }).setOrigin(0.5, 0.5);
             dmgContainer.add(dmgArrow);
-            const dmgNext = this.add.text(34, 0, `${nextStats.damage}`, {
+            const dmgNext = this.add.text(nextX, 0, `${nextStats.damage}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             dmgContainer.add(dmgNext);
@@ -518,17 +524,17 @@ class UpgradeScene extends Phaser.Scene {
         const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
 
         const progressContainer = this.add.container(0, 8);
-        const currentText = this.add.text(-20, 0, currentBonus, {
+        const currentText = this.add.text(-10, 0, currentBonus, {
             fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         progressContainer.add(currentText);
 
         if (!isMaxLevel) {
-            const arrow = this.add.text(-10, 0, '▶', {
+            const arrow = this.add.text(6, 0, '▶', {
                 fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
             }).setOrigin(0.5, 0.5);
             progressContainer.add(arrow);
-            const nextText = this.add.text(0, 0, nextBonus, {
+            const nextText = this.add.text(18, 0, nextBonus, {
                 fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             progressContainer.add(nextText);
