@@ -8,7 +8,7 @@ A tower defense game built with Phaser 3 where players defend their castle again
 npm run dev    # Starts local server at http://localhost:3000
 ```
 
-**Controls:** Hover over unit buttons to spawn, ESC/P to pause
+**Controls:** Hover over unit buttons to spawn, ESC/P to pause, M to toggle music
 
 ---
 
@@ -82,7 +82,10 @@ BootScene → PreloadScene → MenuScene
 ### Resources
 - **Gold** - Earned from killing enemies and completing waves. Used to spawn units in battle.
 - **Wood** - Earned from killing enemies and completing waves. Used alongside gold to spawn units.
-- **XP** - Earned from battles (1 XP per 10 waves). Used in Upgrade menu for permanent upgrades.
+- **XP** - Earned from battles (max 3 per game). Divisor based on rank:
+  - Recruit: 1 XP per 3 waves
+  - Soldier: 1 XP per 6 waves
+  - Higher ranks need more waves per XP
 
 ### Units (Player)
 | Unit | Cost | Role | Special |
@@ -115,7 +118,7 @@ BootScene → PreloadScene → MenuScene
 ## Monetization
 
 - **Buy Me a Coffee** button in main menu
-- **Buy XP** button: 10 XP for $2 donation
+- **Buy XP** button: 25 XP for $2 donation (Coming Soon)
 - Links to: https://www.buymeacoffee.com/masterassassin
 
 ---

@@ -85,10 +85,13 @@ Main menu with navigation and monetization.
 |---------|----------|--------|
 | Title "BATTLE PANIC" | Top center | Animated bounce |
 | Subtitle | Below title | Static |
+| Rank display | Center | Shows rank, grade, progress |
 | Stats display | Center | Shows highest wave |
 | PLAY button | Center | Starts GameScene |
 | UPGRADES button | Center | Opens UpgradeScene |
-| Reset Upgrades | Center | Opens reset dialog |
+| TIPS & INFO button | Center | Opens tips modal |
+| Reset Upgrades | Bottom center | Opens reset dialog |
+| Settings gear | Top left | Opens account panel |
 | Buy XP ($2) | Bottom left | Disabled (Coming Soon) |
 | Buy Me a Coffee | Bottom right | Opens donation page |
 
@@ -212,12 +215,11 @@ Pauses/resumes game:
 ### Input Handling
 | Key | Action |
 |-----|--------|
-| 1 | Spawn Peasant |
-| 2 | Spawn Archer |
-| 3 | Spawn Knight |
-| 4 | Spawn Wizard |
-| 5 | Spawn Giant |
 | ESC / P | Toggle pause |
+| M | Toggle music |
+| Right-click | Toggle pause |
+
+**Note:** Units are spawned by hovering over unit buttons (no keyboard shortcuts).
 
 ### Resource Generation
 Mines generate resources every 2 seconds:
@@ -311,7 +313,7 @@ End screen showing results and stats.
     wave: number,        // Final wave reached
     goldEarned: number,  // Gold earned this game
     enemiesKilled: number,
-    xpEarned: number     // XP awarded (wave/10)
+    xpEarned: number     // XP awarded (max 3, based on rank divisor)
 }
 ```
 
@@ -327,8 +329,8 @@ End screen showing results and stats.
 - "MAIN MENU" button → MenuScene
 
 ### XP Award Display
-Shows "+X XP!" with explanation:
-"(1 XP per 10 waves)"
+Shows "+X XP!" with star display (max 3 stars).
+XP earned based on rank divisor (Recruit: wave/3, Soldier: wave/6, etc.)
 
 ---
 
