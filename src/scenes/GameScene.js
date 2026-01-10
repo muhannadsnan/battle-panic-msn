@@ -21,6 +21,7 @@ class GameScene extends Phaser.Scene {
         this.gold = RESOURCE_CONFIG.startingGold;
         this.wood = RESOURCE_CONFIG.startingWood;
         this.isPaused = false;
+        this.activeInteraction = null; // Prevents multi-touch exploitation (iPad)
         this.goldEarnedThisRun = 0;
         this.woodEarnedThisRun = 0;
         this.enemiesKilledThisRun = 0;
@@ -487,8 +488,11 @@ class GameScene extends Phaser.Scene {
         container.add(label);
         container.mineLabel = label;  // Store reference to hide when mining
 
-        // Hover events
+        // Hover events - with single interaction lock (prevents multi-touch on iPad)
         hitArea.on('pointerover', (pointer) => {
+            // Block if another interaction is active
+            if (this.activeInteraction && this.activeInteraction !== container) return;
+            this.activeInteraction = container;
             container.isHovering = true;
             container.mineLabel.setVisible(false);  // Hide label when mining
             glowRing.setAlpha(0.3);
@@ -522,6 +526,10 @@ class GameScene extends Phaser.Scene {
             this.axeChopPhase = 0;
             this.axeCursor.setAngle(0);
             this.swordCursor.setVisible(true);
+            // Release interaction lock
+            if (this.activeInteraction === container) {
+                this.activeInteraction = null;
+            }
         });
 
         container.isHovering = false;
@@ -638,8 +646,11 @@ class GameScene extends Phaser.Scene {
         // Bring cost text in front of glow
         this.castleUpgradeZone.bringToTop(this.castleUpgradeCostText);
 
-        // Hover events
+        // Hover events - with single interaction lock
         hitArea.on('pointerover', () => {
+            // Block if another interaction is active
+            if (this.activeInteraction && this.activeInteraction !== 'castle') return;
+            this.activeInteraction = 'castle';
             this.castleUpgradeHovering = true;
             this.castleHoverStartTime = Date.now(); // Record when hover started
             this.castleSpinnerContainer.setVisible(true);
@@ -651,6 +662,10 @@ class GameScene extends Phaser.Scene {
             // Keep visible if there's progress, otherwise hide
             if (this.castleUpgradeProgress <= 0) {
                 this.castleSpinnerContainer.setVisible(false);
+            }
+            // Release interaction lock
+            if (this.activeInteraction === 'castle') {
+                this.activeInteraction = null;
             }
         });
 

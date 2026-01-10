@@ -121,7 +121,10 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.background.setInteractive({});
 
         this.background.on('pointerover', () => {
+            // Block if another interaction is active (prevents multi-touch on iPad)
+            if (this.scene.activeInteraction && this.scene.activeInteraction !== this) return;
             if (this.isEnabled && this.isUnlocked) {
+                this.scene.activeInteraction = this;
                 this.isHovering = true;
                 this.hoverStartTime = Date.now(); // Record when hover started
                 this.innerBg.setFillStyle(0x4a6a8a, 0.85);
@@ -136,10 +139,16 @@ class UnitButton extends Phaser.GameObjects.Container {
             this.innerBg.setFillStyle(0x3a4a5a, 0.7);
             this.percentText.setVisible(false);
             this.hideTooltip();
+            // Release interaction lock
+            if (this.scene.activeInteraction === this) {
+                this.scene.activeInteraction = null;
+            }
         });
 
-        // Click still works for instant spawn
+        // Click still works for instant spawn (but blocked during other interactions)
         this.background.on('pointerdown', () => {
+            // Block if another interaction is active
+            if (this.scene.activeInteraction && this.scene.activeInteraction !== this) return;
             if (this.isUnlocked) {
                 if (this.isEnabled) {
                     audioManager.playClick();
