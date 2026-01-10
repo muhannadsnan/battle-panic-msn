@@ -525,116 +525,47 @@ class MenuScene extends Phaser.Scene {
     createSettingsGear(x, y) {
         const container = this.add.container(x, y);
 
-        // Gear base - metallic silver/steel look
-        const gearBase = this.add.circle(0, 0, 20, 0x708090);
-        container.add(gearBase);
-
-        // Gear body - brushed metal effect
-        const gearBody = this.add.circle(0, 0, 17, 0x9CA3AF);
+        // Simple Minecraft-like 2D gear
+        // Gear body - simple gray circle
+        const gearBody = this.add.circle(0, 0, 16, 0x888888);
         container.add(gearBody);
 
-        // Gear teeth - 8 bold teeth with beveled look
+        // Simple square teeth - 8 teeth, no fancy effects
         for (let i = 0; i < 8; i++) {
             const angle = (i * 45) * Math.PI / 180;
-            const toothX = Math.cos(angle) * 20;
-            const toothY = Math.sin(angle) * 20;
-
-            // Tooth shadow (depth)
-            const toothShadow = this.add.rectangle(toothX + 1, toothY + 1, 12, 10, 0x4B5563);
-            toothShadow.setAngle(i * 45);
-            container.add(toothShadow);
-
-            // Main tooth
-            const tooth = this.add.rectangle(toothX, toothY, 12, 10, 0x9CA3AF);
+            const toothX = Math.cos(angle) * 18;
+            const toothY = Math.sin(angle) * 18;
+            const tooth = this.add.rectangle(toothX, toothY, 10, 8, 0x888888);
             tooth.setAngle(i * 45);
             container.add(tooth);
-
-            // Tooth highlight
-            const toothHighlight = this.add.rectangle(toothX - 1, toothY - 1, 10, 6, 0xD1D5DB);
-            toothHighlight.setAngle(i * 45);
-            container.add(toothHighlight);
         }
 
-        // Inner ring - darker for depth
-        const innerRing = this.add.circle(0, 0, 12, 0x6B7280);
-        container.add(innerRing);
+        // Center hole - simple dark circle
+        const hole = this.add.circle(0, 0, 6, 0x333333);
+        container.add(hole);
 
-        // Center hub - polished metal
-        const centerHub = this.add.circle(0, 0, 9, 0xB0B8C4);
-        container.add(centerHub);
-
-        // Center hole with depth
-        const holeOuter = this.add.circle(0, 0, 6, 0x374151);
-        container.add(holeOuter);
-
-        const holeInner = this.add.circle(0, 0, 4, 0x1F2937);
-        container.add(holeInner);
-
-        // Shine/highlight on top-left
-        const shine = this.add.ellipse(-5, -5, 8, 6, 0xFFFFFF, 0.3);
-        shine.setAngle(-45);
-        container.add(shine);
-
-        // Small highlight dots for polish effect
-        const dot1 = this.add.circle(-8, -8, 2, 0xFFFFFF, 0.4);
-        container.add(dot1);
-        const dot2 = this.add.circle(6, -10, 1.5, 0xFFFFFF, 0.3);
-        container.add(dot2);
-
-        // Hit area for interaction (invisible, covers whole gear)
+        // Hit area
         const hitArea = this.add.circle(0, 0, 28, 0x000000, 0);
         hitArea.setInteractive({ useHandCursor: true });
         container.add(hitArea);
 
-        // Idle spin animation
-        this.tweens.add({
-            targets: container,
-            angle: 360,
-            duration: 20000,
-            repeat: -1,
-            ease: 'Linear'
-        });
-
+        // Simple hover effect - just brighten
         hitArea.on('pointerover', () => {
-            // Speed up rotation and glow
-            this.tweens.killTweensOf(container);
-            this.tweens.add({
-                targets: container,
-                scaleX: 1.15,
-                scaleY: 1.15,
-                duration: 150
+            gearBody.setFillStyle(0xaaaaaa);
+            container.list.forEach(child => {
+                if (child !== hitArea && child !== hole) {
+                    if (child.setFillStyle) child.setFillStyle(0xaaaaaa);
+                }
             });
-            this.tweens.add({
-                targets: container,
-                angle: '+=360',
-                duration: 800,
-                repeat: -1,
-                ease: 'Linear'
-            });
-            // Add glow effect
-            gearBase.setFillStyle(0x60A5FA);
-            gearBody.setFillStyle(0xBFDBFE);
         });
 
         hitArea.on('pointerout', () => {
-            this.tweens.killTweensOf(container);
-            this.tweens.add({
-                targets: container,
-                scaleX: 1,
-                scaleY: 1,
-                duration: 150
+            gearBody.setFillStyle(0x888888);
+            container.list.forEach(child => {
+                if (child !== hitArea && child !== hole) {
+                    if (child.setFillStyle) child.setFillStyle(0x888888);
+                }
             });
-            // Restore slow spin
-            this.tweens.add({
-                targets: container,
-                angle: '+=360',
-                duration: 20000,
-                repeat: -1,
-                ease: 'Linear'
-            });
-            // Remove glow
-            gearBase.setFillStyle(0x708090);
-            gearBody.setFillStyle(0x9CA3AF);
         });
 
         hitArea.on('pointerdown', () => {
