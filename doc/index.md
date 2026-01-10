@@ -8,7 +8,7 @@ A tower defense game built with Phaser 3 where players defend their castle again
 npm run dev    # Starts local server at http://localhost:3000
 ```
 
-**Controls:** Press 1-5 to spawn units, ESC/P to pause
+**Controls:** Hover over unit buttons to spawn, ESC/P to pause
 
 ---
 

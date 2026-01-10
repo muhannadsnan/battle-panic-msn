@@ -236,7 +236,7 @@ if (isMobile) {
 ### Current Controls to Adapt:
 | Desktop | Mobile Equivalent |
 |---------|-------------------|
-| Keys 1-5 | Touch unit buttons (already works!) |
+| Mouse hover unit buttons | Touch unit buttons (already works!) |
 | Mouse hover mining | Touch and hold |
 | ESC/P pause | Pause button |
 

@@ -166,7 +166,6 @@ new UnitButton(scene, x, y, unitType, hotkey, isUnlocked = true)
 | Property | Type | Description |
 |----------|------|-------------|
 | `unitType` | string | Unit type key |
-| `hotkey` | string | Keyboard key (1-5) |
 | `isUnlocked` | boolean | Can be used |
 | `isEnabled` | boolean | Has enough resources |
 | `isHovering` | boolean | Mouse over button |

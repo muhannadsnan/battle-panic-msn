@@ -1266,13 +1266,6 @@ Lv.${level + 1}`;
     }
 
     setupInput() {
-        // Number keys for spawning units
-        this.input.keyboard.on('keydown-ONE', () => this.spawnUnit('PEASANT'));
-        this.input.keyboard.on('keydown-TWO', () => this.spawnUnit('ARCHER'));
-        this.input.keyboard.on('keydown-THREE', () => this.spawnUnit('KNIGHT'));
-        this.input.keyboard.on('keydown-FOUR', () => this.spawnUnit('WIZARD'));
-        this.input.keyboard.on('keydown-FIVE', () => this.spawnUnit('GIANT'));
-
         // Pause
         this.input.keyboard.on('keydown-ESC', () => this.togglePause());
         this.input.keyboard.on('keydown-P', () => this.togglePause());
