@@ -102,7 +102,7 @@ Units get promoted based on how many of that type have been spawned in the curre
 - Attack Speed (faster by bonus)
 - Range (Archers only: +10% per promotion level)
 
-At max promotion (level 6), units have **3x stats** and **spawn 2 at a time** (cost 4x)!
+At gold tier (level 4+), units **spawn 2 at a time**! Max promotion (level 6) gives **3x stats** (cost 4x).
 Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**

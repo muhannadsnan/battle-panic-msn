@@ -1566,9 +1566,9 @@ Lv.${level + 1}`;
         const promotionLevel = this.getPromotionLevel(unitType);
         const promotionBonus = this.getPromotionBonus(promotionLevel);
 
-        // Cost increases with promotion level, at max (level 6) spawn 2 units
+        // Cost increases with promotion level, at gold tier (level 4+) spawn 2 units
         const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
-        const unitsToSpawn = promotionLevel >= 6 ? 2 : 1;
+        const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
         const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
         const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
 

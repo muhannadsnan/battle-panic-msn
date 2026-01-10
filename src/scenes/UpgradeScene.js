@@ -125,11 +125,16 @@ class UpgradeScene extends Phaser.Scene {
         hpContainer.add(hpCurrent);
 
         if (!isMaxLevel) {
-            // Draw proper arrow using graphics
+            // Draw sleek double chevron arrow
             const hpArrow = this.add.graphics();
-            hpArrow.fillStyle(0x44ff44, 1);
-            hpArrow.fillRect(arrowX, -2, 10, 4);
-            hpArrow.fillTriangle(arrowX + 10, -5, arrowX + 10, 5, arrowX + 18, 0);
+            hpArrow.lineStyle(2, 0x44ff44, 1);
+            hpArrow.moveTo(arrowX, -4);
+            hpArrow.lineTo(arrowX + 5, 0);
+            hpArrow.lineTo(arrowX, 4);
+            hpArrow.moveTo(arrowX + 7, -4);
+            hpArrow.lineTo(arrowX + 12, 0);
+            hpArrow.lineTo(arrowX + 7, 4);
+            hpArrow.strokePath();
             hpContainer.add(hpArrow);
             const hpNext = this.add.text(nextX, 0, `${nextStats.health}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
@@ -151,11 +156,16 @@ class UpgradeScene extends Phaser.Scene {
         dmgContainer.add(dmgCurrent);
 
         if (!isMaxLevel) {
-            // Draw proper arrow using graphics
+            // Draw sleek double chevron arrow
             const dmgArrow = this.add.graphics();
-            dmgArrow.fillStyle(0x44ff44, 1);
-            dmgArrow.fillRect(arrowX, -2, 10, 4);
-            dmgArrow.fillTriangle(arrowX + 10, -5, arrowX + 10, 5, arrowX + 18, 0);
+            dmgArrow.lineStyle(2, 0x44ff44, 1);
+            dmgArrow.moveTo(arrowX, -4);
+            dmgArrow.lineTo(arrowX + 5, 0);
+            dmgArrow.lineTo(arrowX, 4);
+            dmgArrow.moveTo(arrowX + 7, -4);
+            dmgArrow.lineTo(arrowX + 12, 0);
+            dmgArrow.lineTo(arrowX + 7, 4);
+            dmgArrow.strokePath();
             dmgContainer.add(dmgArrow);
             const dmgNext = this.add.text(nextX, 0, `${nextStats.damage}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
@@ -528,22 +538,27 @@ class UpgradeScene extends Phaser.Scene {
         const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
 
         const progressContainer = this.add.container(0, 8);
-        const currentText = this.add.text(-15, 0, currentBonus, {
+        const currentText = this.add.text(-12, 0, currentBonus, {
             fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         progressContainer.add(currentText);
 
         if (!isMaxLevel) {
-            // Draw a proper arrow using graphics
+            // Draw sleek double chevron arrow
             const arrow = this.add.graphics();
-            arrow.fillStyle(0x44ff44, 1);
-            // Arrow shaft
-            arrow.fillRect(0, -2, 12, 4);
-            // Arrow head (triangle)
-            arrow.fillTriangle(12, -6, 12, 6, 22, 0);
+            arrow.lineStyle(2, 0x44ff44, 1);
+            // First chevron
+            arrow.moveTo(2, -5);
+            arrow.lineTo(8, 0);
+            arrow.lineTo(2, 5);
+            // Second chevron
+            arrow.moveTo(10, -5);
+            arrow.lineTo(16, 0);
+            arrow.lineTo(10, 5);
+            arrow.strokePath();
             progressContainer.add(arrow);
 
-            const nextText = this.add.text(30, 0, nextBonus, {
+            const nextText = this.add.text(24, 0, nextBonus, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             progressContainer.add(nextText);
