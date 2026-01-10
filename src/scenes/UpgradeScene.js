@@ -119,9 +119,9 @@ class UpgradeScene extends Phaser.Scene {
         hpContainer.add(hpCurrent);
 
         if (!isMaxLevel) {
-            const hpArrow = this.add.text(12, 0, '→', {
-                fontSize: '14px', fontFamily: 'Arial', color: '#666666'
-            }).setOrigin(0, 0.5);
+            const hpArrow = this.add.text(14, 0, '▶', {
+                fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
+            }).setOrigin(0.5, 0.5);
             hpContainer.add(hpArrow);
             const hpNext = this.add.text(28, 0, `${nextStats.health}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
@@ -143,9 +143,9 @@ class UpgradeScene extends Phaser.Scene {
         dmgContainer.add(dmgCurrent);
 
         if (!isMaxLevel) {
-            const dmgArrow = this.add.text(16, 0, '→', {
-                fontSize: '14px', fontFamily: 'Arial', color: '#666666'
-            }).setOrigin(0, 0.5);
+            const dmgArrow = this.add.text(18, 0, '▶', {
+                fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
+            }).setOrigin(0.5, 0.5);
             dmgContainer.add(dmgArrow);
             const dmgNext = this.add.text(32, 0, `${nextStats.damage}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
@@ -524,8 +524,8 @@ class UpgradeScene extends Phaser.Scene {
         progressContainer.add(currentText);
 
         if (!isMaxLevel) {
-            const arrow = this.add.text(-10, 0, '→', {
-                fontSize: '13px', fontFamily: 'Arial', color: '#666666'
+            const arrow = this.add.text(-10, 0, '▶', {
+                fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
             }).setOrigin(0.5, 0.5);
             progressContainer.add(arrow);
             const nextText = this.add.text(0, 0, nextBonus, {
