@@ -595,26 +595,26 @@ class MenuScene extends Phaser.Scene {
             (x, y, s) => this.createMenuGiant(x, y, s, true)
         ];
 
-        // LEFT SIDE - Random enemies (2-3, well spaced)
-        const enemyCount = Phaser.Math.Between(2, 3);
+        // Shuffle and pick unique enemies (3-4)
+        const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
+        const enemyCount = Phaser.Math.Between(3, 4);
         const enemyYPositions = this.getSpacedPositions(enemyCount, 180, 480);
         for (let i = 0; i < enemyCount; i++) {
             const x = Phaser.Math.Between(60, 160);
             const y = enemyYPositions[i];
             const scale = Phaser.Math.FloatBetween(1.0, 1.3);
-            const typeIndex = Phaser.Math.Between(0, enemyTypes.length - 1);
-            enemyTypes[typeIndex](x, y, scale);
+            shuffledEnemies[i](x, y, scale);
         }
 
-        // RIGHT SIDE - Random units (2-3, well spaced)
-        const unitCount = Phaser.Math.Between(2, 3);
+        // Shuffle and pick unique units (3-4)
+        const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
+        const unitCount = Phaser.Math.Between(3, 4);
         const unitYPositions = this.getSpacedPositions(unitCount, 180, 480);
         for (let i = 0; i < unitCount; i++) {
             const x = Phaser.Math.Between(GAME_WIDTH - 160, GAME_WIDTH - 60);
             const y = unitYPositions[i];
             const scale = Phaser.Math.FloatBetween(1.0, 1.3);
-            const typeIndex = Phaser.Math.Between(0, unitTypes.length - 1);
-            unitTypes[typeIndex](x, y, scale);
+            shuffledUnits[i](x, y, scale);
         }
     }
 
