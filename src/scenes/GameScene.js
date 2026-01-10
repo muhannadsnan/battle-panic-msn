@@ -535,6 +535,7 @@ class GameScene extends Phaser.Scene {
         container.isHovering = false;
         container.mineType = type;
         container.setDepth(100);
+        container.setScale(2);  // 2x larger for iPad touch
         return container;
     }
 
@@ -892,7 +893,7 @@ Lv.${level + 1}`;
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
 
         // Resource display (gold and wood) - center top
-        this.resourceDisplay = new ResourceDisplay(this, 200, 45);  // Larger for iPad
+        this.resourceDisplay = new ResourceDisplay(this, 150, 30);  // Top bar
         this.resourceDisplay.setGold(this.gold);
         this.resourceDisplay.setWood(this.wood);
 

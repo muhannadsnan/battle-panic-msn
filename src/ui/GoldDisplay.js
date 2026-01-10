@@ -9,49 +9,49 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
         this.displayedGold = 0;
         this.displayedWood = 0;
 
-        // Large text layout for iPad touch
+        // Clean text-based layout for top bar
 
-        // Gold label (large for iPad)
-        this.goldLabel = scene.add.text(-100, 0, 'GOLD', {
-            fontSize: '48px',
+        // Gold label
+        this.goldLabel = scene.add.text(-35, 0, 'GOLD', {
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700',
             stroke: '#000000',
-            strokeThickness: 5
+            strokeThickness: 2
         }).setOrigin(0, 0.5);
         this.add(this.goldLabel);
 
-        // Gold value (large for iPad)
-        this.goldText = scene.add.text(50, 0, '0', {
-            fontSize: '72px',
+        // Gold value
+        this.goldText = scene.add.text(15, 0, '0', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700',
             stroke: '#000000',
-            strokeThickness: 6
+            strokeThickness: 3
         }).setOrigin(0, 0.5);
         this.add(this.goldText);
 
-        // Wood label (large for iPad)
-        this.woodLabel = scene.add.text(200, 0, 'WOOD', {
-            fontSize: '48px',
+        // Wood label
+        this.woodLabel = scene.add.text(75, 0, 'WOOD', {
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#cd853f',
             stroke: '#000000',
-            strokeThickness: 5
+            strokeThickness: 2
         }).setOrigin(0, 0.5);
         this.add(this.woodLabel);
 
-        // Wood value (large for iPad)
-        this.woodText = scene.add.text(370, 0, '0', {
-            fontSize: '72px',
+        // Wood value
+        this.woodText = scene.add.text(130, 0, '0', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#cd853f',
             stroke: '#000000',
-            strokeThickness: 6
+            strokeThickness: 3
         }).setOrigin(0, 0.5);
         this.add(this.woodText);
 
@@ -75,36 +75,36 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
 
     addGold(amount) {
         this.setGold(this.currentGold + amount);
-        this.showFloatingText(-30, 0, `+${amount}`, '#ffd700');
+        this.showFloatingText(-20, 0, `+${amount}`, '#ffd700');
     }
 
     addWood(amount) {
         this.setWood(this.currentWood + amount);
-        this.showFloatingText(280, 0, `+${amount}`, '#8B4513');
+        this.showFloatingText(60, 0, `+${amount}`, '#8B4513');
     }
 
     subtractGold(amount) {
         this.setGold(this.currentGold - amount);
-        this.showFloatingText(-30, 0, `-${amount}`, '#ff4444');
+        this.showFloatingText(-20, 0, `-${amount}`, '#ff4444');
     }
 
     subtractWood(amount) {
         this.setWood(this.currentWood - amount);
-        this.showFloatingText(280, 0, `-${amount}`, '#ff4444');
+        this.showFloatingText(60, 0, `-${amount}`, '#ff4444');
     }
 
     showFloatingText(offsetX, offsetY, text, color) {
         const floatText = this.scene.add.text(this.x + offsetX, this.y + offsetY, text, {
-            fontSize: '36px',
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: color,
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 2
         }).setOrigin(0.5).setDepth(1000);
 
         this.scene.tweens.add({
             targets: floatText,
-            y: floatText.y - 50,
+            y: floatText.y - 25,
             alpha: 0,
             duration: 800,
             onComplete: () => floatText.destroy()
