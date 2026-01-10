@@ -799,8 +799,20 @@ class Castle extends Phaser.GameObjects.Container {
         if (this.level < 2) return null;
         if (!this.scene.enemies) return null;
 
-        let closestEnemy = null;
-        let closestDistance = this.attackRange;
+        // Keep current target if still alive and in range (focus fire)
+        if (this.target && this.target.active && !this.target.isDead) {
+            const distance = Phaser.Math.Distance.Between(
+                this.x, this.y,
+                this.target.x, this.target.y
+            );
+            if (distance <= this.attackRange) {
+                return this.target;
+            }
+        }
+
+        // Find new target - prioritize most powerful enemy (highest damage) in range
+        let bestTarget = null;
+        let highestThreat = -1;
 
         this.scene.enemies.getChildren().forEach(enemy => {
             if (!enemy.active || enemy.isDead) return;
@@ -810,13 +822,17 @@ class Castle extends Phaser.GameObjects.Container {
                 enemy.x, enemy.y
             );
 
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestEnemy = enemy;
+            if (distance <= this.attackRange) {
+                // Threat score: damage * 10 + current health (prioritize high damage dealers)
+                const threat = (enemy.damage || 10) * 10 + (enemy.currentHealth || 50);
+                if (threat > highestThreat) {
+                    highestThreat = threat;
+                    bestTarget = enemy;
+                }
             }
         });
 
-        return closestEnemy;
+        return bestTarget;
     }
 
     shootArrow(time) {
