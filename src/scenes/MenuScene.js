@@ -600,26 +600,26 @@ class MenuScene extends Phaser.Scene {
             (x, y, s) => this.createMenuWizard(x, y, s, true)
         ];
 
-        // Shuffle and pick unique enemies (2 per side, well spaced)
+        // Shuffle and pick unique enemies (4 per side, well spaced)
         const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
-        const enemyCount = 2;
-        // Fixed Y positions: top area and bottom area, no overlap
-        const enemyYPositions = [160, 400];
+        const enemyCount = 4;
+        // Fixed Y positions spread vertically
+        const enemyYPositions = [140, 260, 380, 500];
         for (let i = 0; i < enemyCount; i++) {
-            const x = Phaser.Math.Between(60, 150);
+            const x = Phaser.Math.Between(50, 140);
             const y = enemyYPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.4, 1.7);
+            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
             shuffledEnemies[i](x, y, scale);
         }
 
-        // Shuffle and pick unique units (2 per side, well spaced)
+        // Shuffle and pick unique units (4 per side, well spaced)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
-        const unitCount = 2;
-        const unitYPositions = [160, 400];
+        const unitCount = 4;
+        const unitYPositions = [140, 260, 380, 500];
         for (let i = 0; i < unitCount; i++) {
-            const x = Phaser.Math.Between(GAME_WIDTH - 150, GAME_WIDTH - 60);
+            const x = Phaser.Math.Between(GAME_WIDTH - 140, GAME_WIDTH - 50);
             const y = unitYPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.4, 1.7);
+            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
             shuffledUnits[i](x, y, scale);
         }
     }
