@@ -786,7 +786,7 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         dialog.add(title);
 
-        const warning = this.add.text(0, -20, 'This will permanently delete:\n• All progress and stats\n• All upgrades and XP\n• Your rank (back to Recruit I)', {
+        const warning = this.add.text(0, -25, 'This will reset:\n• All upgrades and XP\n• Current stats and rank (back to Recruit I)', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -794,13 +794,13 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         dialog.add(warning);
 
-        const irreversible = this.add.text(0, 40, 'This cannot be undone!', {
-            fontSize: '16px',
+        const preserved = this.add.text(0, 30, 'Legacy achievements will be preserved:\n• Highest wave ever  • Total games played', {
+            fontSize: '12px',
             fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ff6666'
+            color: '#44ff44',
+            align: 'center'
         }).setOrigin(0.5);
-        dialog.add(irreversible);
+        dialog.add(preserved);
 
         // Delete button
         const deleteBtn = this.add.text(-70, 80, 'DELETE', {
@@ -817,7 +817,7 @@ class MenuScene extends Phaser.Scene {
         deleteBtn.on('pointerover', () => deleteBtn.setColor('#ff6666'));
         deleteBtn.on('pointerout', () => deleteBtn.setColor('#ff4444'));
         deleteBtn.on('pointerdown', () => {
-            saveSystem.reset();
+            saveSystem.resetAccount();
             dialog.destroy();
             this.scene.restart();
         });

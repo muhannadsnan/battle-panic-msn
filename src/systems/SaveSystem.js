@@ -44,6 +44,16 @@ class SaveSystem {
                 totalGoldSpent: 0,
                 totalWoodSpent: 0
             },
+            // Legacy stats - NEVER reset, persist through account deletion
+            legacy: {
+                highestWaveEver: 0,
+                totalGamesPlayedAllTime: 0,
+                totalEnemiesKilledAllTime: 0,
+                totalBossesKilledAllTime: 0,
+                accountResets: 0,  // Track how many times player has reset
+                firstPlayedAt: null,  // Timestamp of first game
+                lastResetAt: null  // Timestamp of last reset
+            },
             upgrades: {
                 peasant: { level: 1, unlocked: true },
                 archer: { level: 1, unlocked: true },
@@ -92,6 +102,7 @@ class SaveSystem {
     mergeWithDefaults(saved) {
         const defaults = this.getDefaultData();
         const savedStats = saved.stats || {};
+        const savedLegacy = saved.legacy || {};
         return {
             ...defaults,
             ...saved,
@@ -101,6 +112,7 @@ class SaveSystem {
                 ...savedStats,
                 unitsSpawned: { ...defaults.stats.unitsSpawned, ...(savedStats.unitsSpawned || {}) }
             },
+            legacy: { ...defaults.legacy, ...savedLegacy },
             upgrades: { ...defaults.upgrades, ...saved.upgrades },
             castleUpgrades: { ...defaults.castleUpgrades, ...saved.castleUpgrades },
             settings: { ...defaults.settings, ...saved.settings }
@@ -108,8 +120,43 @@ class SaveSystem {
     }
 
     reset() {
+        // Full reset - only used for debugging, preserves legacy
+        const data = this.load();
+        const legacy = data.legacy || this.getDefaultData().legacy;
         localStorage.removeItem(this.saveKey);
-        return this.getDefaultData();
+        const newData = this.getDefaultData();
+        newData.legacy = legacy;
+        this.save(newData);
+        return newData;
+    }
+
+    // Reset account - preserves legacy achievements
+    resetAccount() {
+        const data = this.load();
+
+        // Preserve and update legacy stats
+        const legacy = data.legacy || this.getDefaultData().legacy;
+
+        // Update legacy with current stats before reset
+        if (data.highestWave > legacy.highestWaveEver) {
+            legacy.highestWaveEver = data.highestWave;
+        }
+        legacy.totalGamesPlayedAllTime += data.stats?.totalGamesPlayed || 0;
+        legacy.totalEnemiesKilledAllTime += data.totalEnemiesKilled || 0;
+        legacy.totalBossesKilledAllTime += data.stats?.totalBossesKilled || 0;
+        legacy.accountResets += 1;
+        legacy.lastResetAt = Date.now();
+        if (!legacy.firstPlayedAt) {
+            legacy.firstPlayedAt = Date.now();
+        }
+
+        // Get fresh defaults and restore legacy + settings
+        const newData = this.getDefaultData();
+        newData.legacy = legacy;
+        newData.settings = data.settings; // Keep audio settings
+
+        this.save(newData);
+        return { success: true, legacy: legacy };
     }
 
     exists() {
@@ -160,6 +207,17 @@ class SaveSystem {
         const xpDivisor = this.getXPDivisorForRank(data);
         const xpEarned = Math.floor(wave / xpDivisor);
         data.xp = (data.xp || 0) + xpEarned;
+
+        // Update legacy stats
+        if (!data.legacy) {
+            data.legacy = this.getDefaultData().legacy;
+        }
+        if (!data.legacy.firstPlayedAt) {
+            data.legacy.firstPlayedAt = Date.now();
+        }
+        if (wave > data.legacy.highestWaveEver) {
+            data.legacy.highestWaveEver = wave;
+        }
 
         this.save(data);
         return { ...data, xpEarned };
