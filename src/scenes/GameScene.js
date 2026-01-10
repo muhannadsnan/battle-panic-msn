@@ -607,10 +607,11 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeZone.add(hitArea);
 
         // Spinner container (hidden by default, shown on hover)
-        // Positioned well ABOVE the castle for visibility
+        // Position updated dynamically based on castle scale
         this.castleSpinnerContainer = this.add.container(0, -150);
         this.castleUpgradeZone.add(this.castleSpinnerContainer);
         this.castleSpinnerContainer.setVisible(false);
+        this.updateCastleSpinnerPosition(); // Set initial position
 
         // Spinner background
         const spinnerRadius = 28;
@@ -697,6 +698,25 @@ class GameScene extends Phaser.Scene {
             gold: Math.floor(CASTLE_CONFIG.upgradeGoldBase * multiplier),
             wood: Math.floor(CASTLE_CONFIG.upgradeWoodBase * multiplier)
         };
+    }
+
+    updateCastleSpinnerPosition() {
+        // Calculate castle scale based on level (matches Castle.setLevel logic)
+        const level = this.castleLevel || 1;
+        const minScale = 0.6;
+        const maxScale = 1.4;
+        const scaleProgress = (level - 1) / (CASTLE_CONFIG.maxLevel - 1);
+        const castleScale = minScale + (maxScale - minScale) * scaleProgress;
+
+        // Castle top is around y=-200 at scale 1.0, adjust for current scale
+        // Spinner should be above the scaled castle top with some padding
+        const baseTopY = -200;
+        const scaledTopY = baseTopY * castleScale;
+        const spinnerY = scaledTopY - 40; // 40px padding above castle
+
+        if (this.castleSpinnerContainer) {
+            this.castleSpinnerContainer.setY(spinnerY);
+        }
     }
 
     updateCastleUpgrade(delta) {
@@ -840,6 +860,9 @@ Lv.${currentLevel + 1}`;
 
             // Update castle display and stats (setLevel handles health bonus)
             this.playerCastle.setLevel(this.castleLevel);
+
+            // Update spinner position for new castle size
+            this.updateCastleSpinnerPosition();
 
             // Update mining speed
             this.updateMiningSpeed();
