@@ -133,15 +133,13 @@ class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5);
         panel.add(waveText);
 
-        // XP Stars display
-        const starsEarned = this.resultData.wave >= 30 ? 3 :
-                           this.resultData.wave >= 20 ? 2 :
-                           this.resultData.wave >= 10 ? 1 : 0;
+        // XP Stars display - stars reflect XP earned (max 3 stars)
+        const xpEarned = this.resultData.xpEarned || 0;
+        const starsEarned = Math.min(xpEarned, 3);
 
         this.createStarDisplay(panel, 0, -40, starsEarned);
 
         // XP earned text
-        const xpEarned = Math.floor(this.resultData.wave / 10);
         const xpText = this.add.text(0, 5, `XP Earned: +${xpEarned}`, {
             fontSize: '18px',
             fontFamily: 'Arial',
@@ -253,7 +251,7 @@ class GameOverScene extends Phaser.Scene {
         }
 
         // Add milestone labels below stars
-        const milestones = ['Wave 10', 'Wave 20', 'Wave 30'];
+        const milestones = ['1 XP', '2 XP', '3 XP'];
         for (let i = 0; i < 3; i++) {
             const labelX = x + (i - 1) * starSpacing;
             const isEarned = i < earnedCount;

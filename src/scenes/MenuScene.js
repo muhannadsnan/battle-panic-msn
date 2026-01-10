@@ -286,7 +286,7 @@ class MenuScene extends Phaser.Scene {
         container.add(star);
 
         // Text (dimmed)
-        const text = this.add.text(20, -8, '10 XP', {
+        const text = this.add.text(20, -8, '25 XP', {
             fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -322,7 +322,7 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         dialog.add(title);
 
-        const message = this.add.text(0, 0, 'After your $2 donation, click below\nto receive your 10 XP!', {
+        const message = this.add.text(0, 0, 'After your $2 donation, click below\nto receive your 25 XP!', {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -333,7 +333,7 @@ class MenuScene extends Phaser.Scene {
         dialog.add(message);
 
         // Claim XP button
-        const claimText = this.add.text(0, 60, 'CLAIM 10 XP', {
+        const claimText = this.add.text(0, 60, 'CLAIM 25 XP', {
             fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -345,7 +345,7 @@ class MenuScene extends Phaser.Scene {
         dialog.add(claimText);
 
         claimText.on('pointerdown', () => {
-            saveSystem.addXP(10);
+            saveSystem.addXP(25);
             dialog.destroy();
             this.scene.restart();
         });

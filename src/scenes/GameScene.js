@@ -1740,7 +1740,7 @@ Lv.${level + 1}`;
         // Update save data with detailed stats
         const finalWave = this.waveSystem.currentWave;
         const survivalTime = Math.floor((Date.now() - this.gameStartTime) / 1000);
-        saveSystem.updateHighScore(
+        const saveResult = saveSystem.updateHighScore(
             finalWave,
             this.goldEarnedThisRun,
             this.enemiesKilledThisRun,
@@ -1755,6 +1755,7 @@ Lv.${level + 1}`;
                 woodSpent: this.woodSpentThisRun
             }
         );
+        const xpEarned = saveResult.xpEarned || 0;
 
         // Show game over text
         const gameOverText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50, 'CASTLE DESTROYED!', {
@@ -1780,6 +1781,7 @@ Lv.${level + 1}`;
                 goldEarned: this.goldEarnedThisRun,
                 woodEarned: this.woodEarnedThisRun,
                 enemiesKilled: this.enemiesKilledThisRun,
+                xpEarned: xpEarned,
                 isVictory: false
             });
         });

@@ -523,7 +523,7 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         const stats = UNIT_TYPES[this.unitType.toUpperCase()];
 
-        // Get upgraded stats
+        // Get XP upgrade bonuses
         const saveData = saveSystem.load();
         const upgradeLevel = saveData.upgrades[this.unitType.toLowerCase()]?.level || 1;
         const hpBonus = Math.pow(2, upgradeLevel - 1) - 1;
@@ -531,7 +531,17 @@ class UnitButton extends Phaser.GameObjects.Container {
         const upgradedHP = stats.health + hpBonus;
         const upgradedDMG = stats.damage + dmgBonus;
 
-        const text = `${stats.name} HP:${upgradedHP} DMG:${upgradedDMG}`;
+        // Get promotion bonus from GameScene
+        let finalHP = upgradedHP;
+        let finalDMG = upgradedDMG;
+        if (this.scene.getPromotionBonus) {
+            const promotionLevel = this.scene.getPromotionLevel(this.unitType.toUpperCase());
+            const promotionBonus = this.scene.getPromotionBonus(promotionLevel);
+            finalHP = Math.floor(upgradedHP * promotionBonus);
+            finalDMG = Math.floor(upgradedDMG * promotionBonus);
+        }
+
+        const text = `${stats.name} HP:${finalHP} DMG:${finalDMG}`;
 
         // Text only tooltip - x2 bigger but transparent
         this.tooltip = this.scene.add.text(this.x + 60, this.y, text, {
