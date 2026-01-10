@@ -377,13 +377,13 @@ class GameScene extends Phaser.Scene {
         const isGold = type === 'gold';
         const mainColor = isGold ? 0xFFD700 : 0x8B6B4A;
 
-        // Larger interactive area (invisible rectangle)
-        const hitArea = this.add.rectangle(0, 0, 100, 100, 0x000000, 0);
+        // Large interactive area for iPad touch (invisible rectangle)
+        const hitArea = this.add.rectangle(0, 0, 200, 200, 0x000000, 0);
         hitArea.setInteractive({});
         container.add(hitArea);
 
-        // Glowing frame (shows when hovering)
-        const glowRing = this.add.rectangle(0, 0, 105, 105, mainColor, 0);
+        // Glowing frame (shows when hovering) - matches larger hit area
+        const glowRing = this.add.rectangle(0, 0, 210, 210, mainColor, 0);
         container.add(glowRing);
         container.glowRing = glowRing;
 
@@ -589,8 +589,8 @@ class GameScene extends Phaser.Scene {
         this.castleUpgradeZone.add(hitArea);
 
         // Spinner container (hidden by default, shown on hover)
-        // Positioned ABOVE the castle for visibility
-        this.castleSpinnerContainer = this.add.container(0, -80);
+        // Positioned well ABOVE the castle for visibility
+        this.castleSpinnerContainer = this.add.container(0, -150);
         this.castleUpgradeZone.add(this.castleSpinnerContainer);
         this.castleSpinnerContainer.setVisible(false);
 
