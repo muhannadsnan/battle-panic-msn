@@ -208,9 +208,9 @@ Handles localStorage persistence for game progress.
         giant: { level: 1, unlocked: false }
     },
     castleUpgrades: {
-        health: 1,               // +20 HP per level
-        armor: 1,                // -5% damage per level
-        goldIncome: 1            // +1 gold/sec per level
+        health: 1,               // +20 HP per level (permanent, applies at game start)
+        armor: 1,                // -5% damage taken per level (permanent)
+        goldIncome: 1            // +10% mining speed per level (permanent)
     },
     settings: {
         musicVolume: 0.5,

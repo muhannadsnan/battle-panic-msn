@@ -432,7 +432,7 @@ class UpgradeScene extends Phaser.Scene {
         const upgrades = [
             { key: 'health', name: 'Castle Health', desc: '+20 HP per level', icon: '❤️' },
             { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' },
-            { key: 'goldIncome', name: 'Gold Income', desc: '+1 gold/sec', icon: '💰' }
+            { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' }
         ];
 
         const startX = 250;

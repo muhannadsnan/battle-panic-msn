@@ -532,9 +532,15 @@ class GameScene extends Phaser.Scene {
 
 
     createCastle() {
-        // Castle always starts at level 1 each battle (upgrades are in-game only)
+        // Castle always starts at level 1 each battle (in-game upgrades)
         this.castleLevel = 1;
-        const playerHealth = CASTLE_CONFIG.playerHealth;
+
+        // Apply PERMANENT upgrades from XP upgrades menu
+        const castleUpgrades = this.saveData.castleUpgrades || { health: 1, armor: 1, goldIncome: 1 };
+
+        // Health upgrade: +20 HP per level (level 1 = base, level 2 = +20, etc.)
+        const permanentHealthBonus = (castleUpgrades.health - 1) * 20;
+        const playerHealth = CASTLE_CONFIG.playerHealth + permanentHealthBonus;
 
         this.playerCastle = new Castle(
             this,
@@ -543,6 +549,12 @@ class GameScene extends Phaser.Scene {
             true,
             playerHealth
         );
+
+        // Store armor level for damage reduction (applied in Castle.takeDamage)
+        this.playerCastle.armorLevel = castleUpgrades.armor || 1;
+
+        // Store gold income bonus for mining
+        this.goldIncomeLevel = castleUpgrades.goldIncome || 1;
 
         // Set castle level for display
         this.playerCastle.setLevel(this.castleLevel);
@@ -854,7 +866,10 @@ Lv.${level + 1}`;
     updateMiningSpeed() {
         // Mining speed increases 10% per castle level
         const level = this.castleLevel || 1;
-        this.miningSpeed = 50 * (1 + (level - 1) * 0.1);
+        // Gold Income upgrade adds +10% mining speed per level
+        const goldIncomeLevel = this.goldIncomeLevel || 1;
+        const goldIncomeBonus = 1 + (goldIncomeLevel - 1) * 0.1;
+        this.miningSpeed = 50 * (1 + (level - 1) * 0.1) * goldIncomeBonus;
     }
 
     createUI() {

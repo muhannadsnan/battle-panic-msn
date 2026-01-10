@@ -543,9 +543,14 @@ class Castle extends Phaser.GameObjects.Container {
     takeDamage(amount) {
         if (this.isDead) return;
 
+        // Apply armor damage reduction: -5% per armor level (level 1 = 0%, level 2 = 5%, etc.)
+        const armorLevel = this.armorLevel || 1;
+        const damageReduction = (armorLevel - 1) * 0.05;
+        const reducedAmount = Math.floor(amount * (1 - damageReduction));
+
         // If fence exists, damage fence first
         if (this.hasFence && this.fenceCurrentHealth > 0) {
-            this.fenceCurrentHealth -= amount;
+            this.fenceCurrentHealth -= reducedAmount;
 
             // Play orc hit sound (same for all orc attacks)
             if (typeof audioManager !== 'undefined') {
@@ -589,8 +594,8 @@ class Castle extends Phaser.GameObjects.Container {
             return; // Fence absorbed the damage
         }
 
-        // No fence or fence destroyed - damage castle
-        this.currentHealth -= amount;
+        // No fence or fence destroyed - damage castle (with armor reduction)
+        this.currentHealth -= reducedAmount;
         this.currentHealth = Math.max(0, this.currentHealth);
         this.updateHealthBar();
 
