@@ -600,35 +600,35 @@ class MenuScene extends Phaser.Scene {
             (x, y, s) => this.createMenuWizard(x, y, s, true)
         ];
 
-        // Shuffle and pick unique enemies (4 per side, staggered positions)
+        // Shuffle and pick unique enemies (4 per side, staggered, above buttons)
         const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
         const enemyCount = 4;
-        // Staggered positions - different X and Y for each
+        // All Y values <= 400 to avoid buttons, staggered X
         const enemyPositions = [
-            { x: 70, y: 180 },
-            { x: 140, y: 300 },
-            { x: 55, y: 420 },
-            { x: 180, y: 480 }
+            { x: 60, y: 160 },
+            { x: 150, y: 240 },
+            { x: 50, y: 320 },
+            { x: 140, y: 400 }
         ];
         for (let i = 0; i < enemyCount; i++) {
             const pos = enemyPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
+            const scale = Phaser.Math.FloatBetween(2.4, 2.8);
             shuffledEnemies[i](pos.x, pos.y, scale);
         }
 
-        // Shuffle and pick unique units (4 per side, staggered positions)
+        // Shuffle and pick unique units (4 per side, staggered, above buttons)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
         const unitCount = 4;
-        // Staggered positions - mirror pattern on right side
+        // All Y values <= 400 to avoid buttons, staggered X
         const unitPositions = [
-            { x: GAME_WIDTH - 130, y: 180 },
-            { x: GAME_WIDTH - 55, y: 300 },
-            { x: GAME_WIDTH - 140, y: 420 },
-            { x: GAME_WIDTH - 70, y: 530 }
+            { x: GAME_WIDTH - 140, y: 160 },
+            { x: GAME_WIDTH - 50, y: 240 },
+            { x: GAME_WIDTH - 150, y: 320 },
+            { x: GAME_WIDTH - 60, y: 400 }
         ];
         for (let i = 0; i < unitCount; i++) {
             const pos = unitPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
+            const scale = Phaser.Math.FloatBetween(2.4, 2.8);
             shuffledUnits[i](pos.x, pos.y, scale);
         }
     }
