@@ -249,177 +249,229 @@ class UnitButton extends Phaser.GameObjects.Container {
     }
 
     createPeasantIcon(scene, scale) {
-        // CARTOONY PEASANT ICON - Friendly farmer
+        // EXPRESSIVE PEASANT - Determined worker with pickaxe
         const s = scale;
 
-        // Body (brown tunic)
-        this.iconContainer.add(scene.add.rectangle(0, 5 * s, 16 * s, 22 * s, 0xC4956A));
-        this.iconContainer.add(scene.add.rectangle(0, 6 * s, 14 * s, 18 * s, 0xD4A57A)); // highlight
+        // Body (tan work clothes)
+        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 18 * s, 26 * s, 0xC4956A));
+        this.iconContainer.add(scene.add.rectangle(0, 9 * s, 16 * s, 22 * s, 0xD4A57A));
+        // Belt
+        this.iconContainer.add(scene.add.rectangle(0, 2 * s, 18 * s, 4 * s, 0x6B4423));
+        this.iconContainer.add(scene.add.rectangle(0, 2 * s, 6 * s, 6 * s, 0xDAA520)); // buckle
 
-        // Big cartoony head
-        this.iconContainer.add(scene.add.rectangle(0, -10 * s, 18 * s, 16 * s, 0xFFCBA4));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, -12 * s, 12 * s, 10 * s, 0xFFDDB8)); // face highlight
+        // Big round head
+        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 20 * s, 18 * s, 0xFFCBA4));
+        this.iconContainer.add(scene.add.rectangle(-2 * s, -14 * s, 14 * s, 12 * s, 0xFFDDB8));
 
-        // Cute eyes
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -10 * s, 6 * s, 7 * s, 0xFFFFFF)); // left eye
-        this.iconContainer.add(scene.add.rectangle(-3 * s, -9 * s, 4 * s, 5 * s, 0x4A3020)); // left pupil
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -11 * s, 2 * s, 2 * s, 0xFFFFFF)); // left shine
-        this.iconContainer.add(scene.add.rectangle(4 * s, -10 * s, 6 * s, 7 * s, 0xFFFFFF)); // right eye
-        this.iconContainer.add(scene.add.rectangle(5 * s, -9 * s, 4 * s, 5 * s, 0x4A3020)); // right pupil
+        // Determined eyes (slight frown)
+        this.iconContainer.add(scene.add.rectangle(-5 * s, -12 * s, 7 * s, 8 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -11 * s, 5 * s, 6 * s, 0x4A3020));
+        this.iconContainer.add(scene.add.rectangle(-5 * s, -13 * s, 2 * s, 2 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(5 * s, -12 * s, 7 * s, 8 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(6 * s, -11 * s, 5 * s, 6 * s, 0x4A3020));
+        // Eyebrows (determined)
+        this.iconContainer.add(scene.add.rectangle(-5 * s, -17 * s, 8 * s, 3 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(5 * s, -17 * s, 8 * s, 3 * s, 0x5D4037));
 
-        // Rosy cheeks
-        this.iconContainer.add(scene.add.rectangle(-7 * s, -6 * s, 4 * s, 3 * s, 0xFFAAAA, 0.5));
-        this.iconContainer.add(scene.add.rectangle(7 * s, -6 * s, 4 * s, 3 * s, 0xFFAAAA, 0.5));
+        // Nose
+        this.iconContainer.add(scene.add.rectangle(0, -8 * s, 4 * s, 5 * s, 0xFFBB99));
 
-        // Happy mouth
-        this.iconContainer.add(scene.add.rectangle(0, -4 * s, 6 * s, 3 * s, 0xFF9988));
+        // Grin
+        this.iconContainer.add(scene.add.rectangle(0, -3 * s, 8 * s, 4 * s, 0xDD8877));
 
-        // Hair
-        this.iconContainer.add(scene.add.rectangle(0, -17 * s, 16 * s, 6 * s, 0x6B4423));
+        // Messy hair + headband
+        this.iconContainer.add(scene.add.rectangle(0, -22 * s, 18 * s, 8 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(-7 * s, -20 * s, 5 * s, 6 * s, 0x6B4423));
+        this.iconContainer.add(scene.add.rectangle(7 * s, -20 * s, 5 * s, 6 * s, 0x6B4423));
+        this.iconContainer.add(scene.add.rectangle(0, -19 * s, 20 * s, 3 * s, 0xCC4444)); // red headband
 
-        // Pitchfork
-        this.iconContainer.add(scene.add.rectangle(12 * s, 0, 3 * s, 28 * s, 0x9B7B5A));
-        this.iconContainer.add(scene.add.rectangle(12 * s, -15 * s, 3 * s, 10 * s, 0x8899AA));
-        this.iconContainer.add(scene.add.rectangle(8 * s, -16 * s, 3 * s, 8 * s, 0x8899AA));
-        this.iconContainer.add(scene.add.rectangle(16 * s, -16 * s, 3 * s, 8 * s, 0x8899AA));
+        // PICKAXE (more iconic than pitchfork)
+        this.iconContainer.add(scene.add.rectangle(14 * s, 5 * s, 4 * s, 30 * s, 0x8B6B4A)); // handle
+        this.iconContainer.add(scene.add.rectangle(14 * s, -12 * s, 20 * s, 6 * s, 0x708090)); // head
+        this.iconContainer.add(scene.add.rectangle(6 * s, -12 * s, 8 * s, 4 * s, 0x909090)); // pick point
+        this.iconContainer.add(scene.add.rectangle(22 * s, -12 * s, 8 * s, 4 * s, 0x909090)); // other point
     }
 
     createArcherIcon(scene, scale) {
-        // CARTOONY ARCHER ICON - Forest ranger
+        // EXPRESSIVE ARCHER - Focused ranger with bow drawn
         const s = scale;
 
-        // Body (green tunic)
-        this.iconContainer.add(scene.add.rectangle(0, 5 * s, 14 * s, 20 * s, 0x4CAF50));
-        this.iconContainer.add(scene.add.rectangle(0, 6 * s, 12 * s, 16 * s, 0x66BB6A)); // highlight
+        // Body (forest green tunic)
+        this.iconContainer.add(scene.add.rectangle(0, 7 * s, 16 * s, 24 * s, 0x2E7D32));
+        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 14 * s, 20 * s, 0x388E3C));
+        // Leather strap
+        this.iconContainer.add(scene.add.rectangle(-4 * s, 4 * s, 4 * s, 20 * s, 0x6B4423));
 
-        // Hood (stacked rectangles for pyramid)
-        this.iconContainer.add(scene.add.rectangle(0, -6 * s, 18 * s, 10 * s, 0x388E3C));
-        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 14 * s, 8 * s, 0x2E7D32));
-        this.iconContainer.add(scene.add.rectangle(0, -17 * s, 10 * s, 6 * s, 0x1B5E20));
+        // Hood (layered)
+        this.iconContainer.add(scene.add.rectangle(0, -8 * s, 20 * s, 12 * s, 0x1B5E20));
+        this.iconContainer.add(scene.add.rectangle(0, -14 * s, 16 * s, 10 * s, 0x2E7D32));
+        this.iconContainer.add(scene.add.rectangle(0, -20 * s, 10 * s, 8 * s, 0x388E3C));
+        this.iconContainer.add(scene.add.rectangle(0, -24 * s, 6 * s, 6 * s, 0x4CAF50));
 
-        // Face peeking out
-        this.iconContainer.add(scene.add.rectangle(0, -4 * s, 12 * s, 10 * s, 0xFFCBA4));
-        this.iconContainer.add(scene.add.rectangle(-1 * s, -5 * s, 8 * s, 7 * s, 0xFFDDB8)); // highlight
+        // Face in shadow
+        this.iconContainer.add(scene.add.rectangle(0, -5 * s, 14 * s, 12 * s, 0xFFCBA4));
+        this.iconContainer.add(scene.add.rectangle(-1 * s, -6 * s, 10 * s, 8 * s, 0xFFDDB8));
 
-        // Cute eyes
-        this.iconContainer.add(scene.add.rectangle(-3 * s, -5 * s, 5 * s, 6 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, -4 * s, 3 * s, 4 * s, 0x2E7D32));
-        this.iconContainer.add(scene.add.rectangle(3 * s, -5 * s, 5 * s, 6 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(4 * s, -4 * s, 3 * s, 4 * s, 0x2E7D32));
+        // Focused eyes (narrowed)
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -6 * s, 6 * s, 5 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(-3 * s, -5 * s, 4 * s, 4 * s, 0x1B5E20));
+        this.iconContainer.add(scene.add.rectangle(4 * s, -6 * s, 6 * s, 5 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(5 * s, -5 * s, 4 * s, 4 * s, 0x1B5E20));
+        // Furrowed brows
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -10 * s, 7 * s, 2 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(4 * s, -10 * s, 7 * s, 2 * s, 0x5D4037));
 
-        // Bow (rectangles only)
-        this.iconContainer.add(scene.add.rectangle(12 * s, -6 * s, 3 * s, 12 * s, 0xA87B5A));
-        this.iconContainer.add(scene.add.rectangle(12 * s, 6 * s, 3 * s, 12 * s, 0xA87B5A));
-        this.iconContainer.add(scene.add.rectangle(14 * s, 0, 2 * s, 22 * s, 0xD4A574)); // string
+        // BOW (drawn position)
+        this.iconContainer.add(scene.add.rectangle(14 * s, -10 * s, 4 * s, 16 * s, 0x8B4513)); // top curve
+        this.iconContainer.add(scene.add.rectangle(14 * s, 10 * s, 4 * s, 16 * s, 0x8B4513)); // bottom curve
+        this.iconContainer.add(scene.add.rectangle(12 * s, 0, 2 * s, 34 * s, 0xC4956A)); // string
+        // Arrow
+        this.iconContainer.add(scene.add.rectangle(8 * s, 0, 20 * s, 3 * s, 0x8B4513)); // shaft
+        this.iconContainer.add(scene.add.rectangle(-4 * s, 0, 8 * s, 5 * s, 0xA0A0B0)); // arrowhead
     }
 
     createKnightIcon(scene, scale) {
-        // CARTOONY KNIGHT ICON - Brave hero
+        // EXPRESSIVE KNIGHT - Noble warrior with shining armor
         const s = scale;
 
-        // Body (blue armor)
-        this.iconContainer.add(scene.add.rectangle(0, 5 * s, 18 * s, 24 * s, 0x5B8DEE));
-        this.iconContainer.add(scene.add.rectangle(0, 6 * s, 16 * s, 20 * s, 0x7BA3FF)); // highlight
-        this.iconContainer.add(scene.add.rectangle(-5 * s, 8 * s, 4 * s, 16 * s, 0x4B7DDE)); // shade
+        // Body (gleaming blue armor)
+        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 20 * s, 28 * s, 0x4169E1));
+        this.iconContainer.add(scene.add.rectangle(0, 9 * s, 18 * s, 24 * s, 0x5B8DEE));
+        this.iconContainer.add(scene.add.rectangle(-3 * s, 9 * s, 8 * s, 22 * s, 0x7BA3FF)); // shine
+        // Armor details
+        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 16 * s, 4 * s, 0x3A59C1)); // chest plate line
+        this.iconContainer.add(scene.add.rectangle(0, 14 * s, 14 * s, 3 * s, 0x3A59C1));
 
-        // Helmet
-        this.iconContainer.add(scene.add.rectangle(0, -10 * s, 16 * s, 14 * s, 0x8899AA));
-        this.iconContainer.add(scene.add.rectangle(0, -9 * s, 14 * s, 10 * s, 0x99AABB)); // highlight
-        this.iconContainer.add(scene.add.rectangle(0, -16 * s, 12 * s, 4 * s, 0x7789AA)); // top
+        // Helmet (rounded top)
+        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 18 * s, 16 * s, 0x708090));
+        this.iconContainer.add(scene.add.rectangle(0, -11 * s, 16 * s, 12 * s, 0x8899AA));
+        this.iconContainer.add(scene.add.rectangle(-2 * s, -13 * s, 8 * s, 8 * s, 0x99AABB)); // shine
+        this.iconContainer.add(scene.add.rectangle(0, -18 * s, 14 * s, 4 * s, 0x607080));
 
-        // Plume (stacked rectangles)
-        this.iconContainer.add(scene.add.rectangle(0, -20 * s, 8 * s, 6 * s, 0xFF5555));
-        this.iconContainer.add(scene.add.rectangle(0, -24 * s, 6 * s, 5 * s, 0xFF6666));
-        this.iconContainer.add(scene.add.rectangle(0, -27 * s, 4 * s, 4 * s, 0xFF7777));
+        // Majestic plume
+        this.iconContainer.add(scene.add.rectangle(0, -22 * s, 10 * s, 6 * s, 0xDD3333));
+        this.iconContainer.add(scene.add.rectangle(0, -27 * s, 8 * s, 8 * s, 0xEE4444));
+        this.iconContainer.add(scene.add.rectangle(0, -33 * s, 6 * s, 8 * s, 0xFF5555));
+        this.iconContainer.add(scene.add.rectangle(-1 * s, -30 * s, 3 * s, 10 * s, 0xFF7777)); // shine
 
-        // Visor slot (eyes peeking)
-        this.iconContainer.add(scene.add.rectangle(0, -8 * s, 12 * s, 4 * s, 0x222222));
-        this.iconContainer.add(scene.add.rectangle(-3 * s, -8 * s, 3 * s, 3 * s, 0x55AAFF)); // eye glow
-        this.iconContainer.add(scene.add.rectangle(3 * s, -8 * s, 3 * s, 3 * s, 0x55AAFF));
+        // Visor (glowing eyes)
+        this.iconContainer.add(scene.add.rectangle(0, -9 * s, 14 * s, 5 * s, 0x222222));
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -9 * s, 4 * s, 4 * s, 0x55DDFF)); // eye
+        this.iconContainer.add(scene.add.rectangle(4 * s, -9 * s, 4 * s, 4 * s, 0x55DDFF));
 
-        // Shield
-        this.iconContainer.add(scene.add.rectangle(-12 * s, 5 * s, 10 * s, 14 * s, 0x5B8DEE));
-        this.iconContainer.add(scene.add.rectangle(-12 * s, 5 * s, 8 * s, 12 * s, 0x7BA3FF));
-        this.iconContainer.add(scene.add.rectangle(-12 * s, 5 * s, 4 * s, 6 * s, 0xFFDD00)); // emblem
+        // SHIELD (emblazoned)
+        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 12 * s, 18 * s, 0x4169E1));
+        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 10 * s, 16 * s, 0x5B8DEE));
+        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 6 * s, 10 * s, 0xFFD700)); // lion emblem
+        this.iconContainer.add(scene.add.rectangle(-14 * s, 4 * s, 4 * s, 6 * s, 0xFFE855));
 
-        // Sword
-        this.iconContainer.add(scene.add.rectangle(14 * s, -5 * s, 4 * s, 22 * s, 0xCCDDEE));
-        this.iconContainer.add(scene.add.rectangle(14 * s, -4 * s, 3 * s, 18 * s, 0xDDEEFF)); // shine
-        this.iconContainer.add(scene.add.rectangle(14 * s, 8 * s, 8 * s, 4 * s, 0xFFDD00)); // hilt
+        // SWORD (raised)
+        this.iconContainer.add(scene.add.rectangle(16 * s, -8 * s, 5 * s, 28 * s, 0xC0C0C0)); // blade
+        this.iconContainer.add(scene.add.rectangle(15 * s, -10 * s, 3 * s, 22 * s, 0xE0E0E0)); // shine
+        this.iconContainer.add(scene.add.rectangle(16 * s, -22 * s, 4 * s, 6 * s, 0xE8E8E8)); // tip
+        this.iconContainer.add(scene.add.rectangle(16 * s, 8 * s, 12 * s, 4 * s, 0xDAA520)); // guard
+        this.iconContainer.add(scene.add.rectangle(16 * s, 14 * s, 4 * s, 8 * s, 0x8B4513)); // hilt
     }
 
     createWizardIcon(scene, scale) {
-        // CARTOONY WIZARD ICON - Mystical mage
+        // EXPRESSIVE WIZARD - Wise sage with glowing magic
         const s = scale;
 
-        // Robe (purple, stacked for pyramid shape)
-        this.iconContainer.add(scene.add.rectangle(0, 12 * s, 20 * s, 16 * s, 0xAA55DD));
-        this.iconContainer.add(scene.add.rectangle(0, 6 * s, 16 * s, 12 * s, 0xBB66EE));
-        this.iconContainer.add(scene.add.rectangle(0, 0, 12 * s, 10 * s, 0xCC77FF));
+        // Robe (mystical purple, flowing)
+        this.iconContainer.add(scene.add.rectangle(0, 14 * s, 22 * s, 20 * s, 0x6A1B9A));
+        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 18 * s, 14 * s, 0x7B1FA2));
+        this.iconContainer.add(scene.add.rectangle(0, 2 * s, 14 * s, 10 * s, 0x8E24AA));
+        // Robe trim
+        this.iconContainer.add(scene.add.rectangle(0, 22 * s, 24 * s, 4 * s, 0xFFD700));
+        this.iconContainer.add(scene.add.rectangle(-8 * s, 10 * s, 3 * s, 16 * s, 0xFFD700));
+        this.iconContainer.add(scene.add.rectangle(8 * s, 10 * s, 3 * s, 16 * s, 0xFFD700));
 
-        // Face
-        this.iconContainer.add(scene.add.rectangle(0, -8 * s, 14 * s, 12 * s, 0xFFCBA4));
-        this.iconContainer.add(scene.add.rectangle(-1 * s, -9 * s, 10 * s, 8 * s, 0xFFDDB8));
+        // Wise face
+        this.iconContainer.add(scene.add.rectangle(0, -10 * s, 16 * s, 14 * s, 0xFFCBA4));
+        this.iconContainer.add(scene.add.rectangle(-1 * s, -11 * s, 12 * s, 10 * s, 0xFFDDB8));
 
-        // Wise eyes
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -8 * s, 5 * s, 6 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(-3 * s, -7 * s, 3 * s, 4 * s, 0x6633AA));
-        this.iconContainer.add(scene.add.rectangle(4 * s, -8 * s, 5 * s, 6 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(5 * s, -7 * s, 3 * s, 4 * s, 0x6633AA));
+        // Mystical eyes (glowing)
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -10 * s, 6 * s, 7 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(-3 * s, -9 * s, 4 * s, 5 * s, 0x7B1FA2));
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -11 * s, 2 * s, 2 * s, 0x55FFFF)); // magic glow
+        this.iconContainer.add(scene.add.rectangle(4 * s, -10 * s, 6 * s, 7 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(5 * s, -9 * s, 4 * s, 5 * s, 0x7B1FA2));
+        this.iconContainer.add(scene.add.rectangle(4 * s, -11 * s, 2 * s, 2 * s, 0x55FFFF));
 
-        // Beard
-        this.iconContainer.add(scene.add.rectangle(0, -2 * s, 10 * s, 6 * s, 0xDDDDDD));
-        this.iconContainer.add(scene.add.rectangle(0, 2 * s, 8 * s, 5 * s, 0xEEEEEE));
-        this.iconContainer.add(scene.add.rectangle(0, 6 * s, 6 * s, 4 * s, 0xFFFFFF));
+        // Long beard
+        this.iconContainer.add(scene.add.rectangle(0, -3 * s, 12 * s, 8 * s, 0xCCCCCC));
+        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 10 * s, 8 * s, 0xDDDDDD));
+        this.iconContainer.add(scene.add.rectangle(0, 11 * s, 8 * s, 8 * s, 0xEEEEEE));
+        this.iconContainer.add(scene.add.rectangle(0, 17 * s, 6 * s, 6 * s, 0xFFFFFF));
 
-        // Wizard hat (stacked rectangles)
-        this.iconContainer.add(scene.add.rectangle(0, -16 * s, 18 * s, 6 * s, 0xAA55DD));
-        this.iconContainer.add(scene.add.rectangle(0, -21 * s, 14 * s, 6 * s, 0xBB66EE));
-        this.iconContainer.add(scene.add.rectangle(0, -26 * s, 10 * s, 6 * s, 0xCC77FF));
-        this.iconContainer.add(scene.add.rectangle(0, -30 * s, 6 * s, 5 * s, 0xDD88FF));
-        // Star on hat
-        this.iconContainer.add(scene.add.rectangle(0, -25 * s, 5 * s, 5 * s, 0xFFDD00));
-        this.iconContainer.add(scene.add.rectangle(0, -25 * s, 3 * s, 3 * s, 0xFFEE55));
+        // WIZARD HAT (tall and mystical)
+        this.iconContainer.add(scene.add.rectangle(0, -19 * s, 20 * s, 6 * s, 0x6A1B9A));
+        this.iconContainer.add(scene.add.rectangle(0, -25 * s, 16 * s, 8 * s, 0x7B1FA2));
+        this.iconContainer.add(scene.add.rectangle(0, -32 * s, 12 * s, 10 * s, 0x8E24AA));
+        this.iconContainer.add(scene.add.rectangle(0, -40 * s, 8 * s, 12 * s, 0x9C27B0));
+        this.iconContainer.add(scene.add.rectangle(0, -46 * s, 4 * s, 8 * s, 0xAB47BC));
+        // Stars on hat
+        this.iconContainer.add(scene.add.rectangle(-5 * s, -28 * s, 4 * s, 4 * s, 0xFFD700));
+        this.iconContainer.add(scene.add.rectangle(4 * s, -36 * s, 3 * s, 3 * s, 0xFFD700));
+        this.iconContainer.add(scene.add.rectangle(0, -42 * s, 5 * s, 5 * s, 0xFFE855));
 
-        // Staff
-        this.iconContainer.add(scene.add.rectangle(14 * s, 2 * s, 4 * s, 32 * s, 0x8B6B4A));
-        this.iconContainer.add(scene.add.rectangle(14 * s, -16 * s, 8 * s, 8 * s, 0x55FFFF)); // orb
-        this.iconContainer.add(scene.add.rectangle(12 * s, -18 * s, 4 * s, 4 * s, 0xAAFFFF)); // orb shine
+        // STAFF with orb
+        this.iconContainer.add(scene.add.rectangle(16 * s, 6 * s, 4 * s, 36 * s, 0x6B4423)); // wood
+        this.iconContainer.add(scene.add.rectangle(16 * s, -14 * s, 12 * s, 12 * s, 0x00FFFF)); // orb
+        this.iconContainer.add(scene.add.rectangle(14 * s, -16 * s, 6 * s, 6 * s, 0xAAFFFF)); // shine
+        this.iconContainer.add(scene.add.rectangle(18 * s, -12 * s, 4 * s, 4 * s, 0xFFFFFF)); // sparkle
     }
 
     createGiantIcon(scene, scale) {
-        // CARTOONY GIANT ICON - Friendly brute
-        const s = scale * 0.85;
+        // EXPRESSIVE GIANT - Powerful but friendly ogre
+        const s = scale * 0.8;
 
-        // Massive body
-        this.iconContainer.add(scene.add.rectangle(0, 6 * s, 24 * s, 30 * s, 0xDD8844));
-        this.iconContainer.add(scene.add.rectangle(0, 7 * s, 22 * s, 26 * s, 0xEE9955)); // highlight
-        this.iconContainer.add(scene.add.rectangle(-8 * s, 8 * s, 6 * s, 24 * s, 0xCC7733)); // shade
+        // Massive body (orange/brown)
+        this.iconContainer.add(scene.add.rectangle(0, 10 * s, 28 * s, 34 * s, 0xCD853F));
+        this.iconContainer.add(scene.add.rectangle(0, 11 * s, 26 * s, 30 * s, 0xDEB887));
+        this.iconContainer.add(scene.add.rectangle(-9 * s, 12 * s, 8 * s, 28 * s, 0xBB7733)); // shade
+        // Belly
+        this.iconContainer.add(scene.add.rectangle(0, 16 * s, 18 * s, 16 * s, 0xE8C99A));
+        // Belt
+        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 28 * s, 6 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 8 * s, 8 * s, 0x808080)); // buckle
 
-        // Big friendly head
-        this.iconContainer.add(scene.add.rectangle(0, -14 * s, 22 * s, 20 * s, 0xFFCBA4));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, -15 * s, 16 * s, 14 * s, 0xFFDDB8));
+        // Big round head
+        this.iconContainer.add(scene.add.rectangle(0, -18 * s, 26 * s, 24 * s, 0xCD853F));
+        this.iconContainer.add(scene.add.rectangle(-2 * s, -19 * s, 20 * s, 18 * s, 0xDEB887));
 
-        // Big goofy eyes
-        this.iconContainer.add(scene.add.rectangle(-5 * s, -14 * s, 8 * s, 9 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -13 * s, 5 * s, 6 * s, 0x664422));
-        this.iconContainer.add(scene.add.rectangle(-5 * s, -15 * s, 3 * s, 3 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(5 * s, -14 * s, 8 * s, 9 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(6 * s, -13 * s, 5 * s, 6 * s, 0x664422));
+        // Big friendly eyes
+        this.iconContainer.add(scene.add.rectangle(-7 * s, -18 * s, 10 * s, 12 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(-6 * s, -17 * s, 7 * s, 9 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(-7 * s, -20 * s, 4 * s, 4 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(7 * s, -18 * s, 10 * s, 12 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(8 * s, -17 * s, 7 * s, 9 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(7 * s, -20 * s, 4 * s, 4 * s, 0xFFFFFF));
+        // Heavy brow
+        this.iconContainer.add(scene.add.rectangle(0, -26 * s, 24 * s, 6 * s, 0xBB7733));
 
-        // Happy grin
-        this.iconContainer.add(scene.add.rectangle(0, -6 * s, 12 * s, 5 * s, 0xFF9988));
-        this.iconContainer.add(scene.add.rectangle(0, -7 * s, 10 * s, 3 * s, 0xFFFFFF)); // teeth
+        // Big nose
+        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 8 * s, 8 * s, 0xBB8855));
 
-        // Messy hair
-        this.iconContainer.add(scene.add.rectangle(-6 * s, -24 * s, 6 * s, 8 * s, 0x664422));
-        this.iconContainer.add(scene.add.rectangle(0, -25 * s, 6 * s, 10 * s, 0x775533));
-        this.iconContainer.add(scene.add.rectangle(6 * s, -24 * s, 6 * s, 8 * s, 0x664422));
+        // Big toothy grin
+        this.iconContainer.add(scene.add.rectangle(0, -4 * s, 16 * s, 8 * s, 0xDD8877));
+        this.iconContainer.add(scene.add.rectangle(-6 * s, -5 * s, 5 * s, 6 * s, 0xFFFFFF)); // tooth
+        this.iconContainer.add(scene.add.rectangle(6 * s, -5 * s, 5 * s, 6 * s, 0xFFFFFF));
+        this.iconContainer.add(scene.add.rectangle(0, -6 * s, 4 * s, 4 * s, 0xFFFFFF));
 
-        // Big club
-        this.iconContainer.add(scene.add.rectangle(18 * s, 2 * s, 6 * s, 32 * s, 0x8B6B4A));
-        this.iconContainer.add(scene.add.rectangle(18 * s, -16 * s, 12 * s, 16 * s, 0x6B4B2A));
-        this.iconContainer.add(scene.add.rectangle(18 * s, -15 * s, 10 * s, 12 * s, 0x7B5B3A)); // highlight
+        // Wild hair
+        this.iconContainer.add(scene.add.rectangle(-8 * s, -32 * s, 8 * s, 10 * s, 0x5D4037));
+        this.iconContainer.add(scene.add.rectangle(0, -34 * s, 10 * s, 14 * s, 0x6B4423));
+        this.iconContainer.add(scene.add.rectangle(8 * s, -32 * s, 8 * s, 10 * s, 0x5D4037));
+
+        // MASSIVE CLUB
+        this.iconContainer.add(scene.add.rectangle(22 * s, 8 * s, 8 * s, 40 * s, 0x6B4423)); // handle
+        this.iconContainer.add(scene.add.rectangle(22 * s, -18 * s, 16 * s, 22 * s, 0x5D4037)); // head
+        this.iconContainer.add(scene.add.rectangle(22 * s, -17 * s, 14 * s, 18 * s, 0x6B4423)); // inner
+        // Spikes/studs on club
+        this.iconContainer.add(scene.add.rectangle(14 * s, -22 * s, 6 * s, 6 * s, 0x808080));
+        this.iconContainer.add(scene.add.rectangle(30 * s, -22 * s, 6 * s, 6 * s, 0x808080));
+        this.iconContainer.add(scene.add.rectangle(22 * s, -28 * s, 6 * s, 6 * s, 0x808080));
     }
 
     onClick() {

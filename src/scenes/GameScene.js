@@ -992,71 +992,115 @@ Lv.${level + 1}`;
     }
 
     createMiniUnitIcon(container, unitType) {
-        // Bigger, more expressive mini icons
+        // Expressive mini icons matching unit bar style
         switch (unitType) {
             case 'PEASANT':
-                // Tan tunic body
-                container.add(this.add.rectangle(0, 3, 8, 10, 0xE8C87A));
-                // Head with skin tone
-                container.add(this.add.rectangle(0, -6, 7, 7, 0xFFDBB4));
-                // Brown hair
-                container.add(this.add.rectangle(0, -10, 7, 3, 0x5D4037));
+                // Body with belt
+                container.add(this.add.rectangle(0, 4, 9, 12, 0xD4A57A));
+                container.add(this.add.rectangle(0, 1, 9, 2, 0x6B4423)); // belt
+                // Head
+                container.add(this.add.rectangle(0, -6, 10, 9, 0xFFCBA4));
+                // Hair + headband
+                container.add(this.add.rectangle(0, -11, 9, 4, 0x5D4037));
+                container.add(this.add.rectangle(0, -9, 10, 2, 0xCC4444)); // red headband
                 // Eyes
-                container.add(this.add.rectangle(-2, -6, 2, 2, 0x000000));
-                container.add(this.add.rectangle(2, -6, 2, 2, 0x000000));
-                // Pitchfork
-                container.add(this.add.rectangle(6, -2, 2, 12, 0x8B7355));
+                container.add(this.add.rectangle(-2, -6, 3, 3, 0xFFFFFF));
+                container.add(this.add.rectangle(-2, -5, 2, 2, 0x4A3020));
+                container.add(this.add.rectangle(2, -6, 3, 3, 0xFFFFFF));
+                container.add(this.add.rectangle(2, -5, 2, 2, 0x4A3020));
+                // Pickaxe
+                container.add(this.add.rectangle(7, 0, 2, 14, 0x8B6B4A));
+                container.add(this.add.rectangle(7, -7, 10, 3, 0x708090));
                 break;
             case 'ARCHER':
-                // Green tunic
-                container.add(this.add.rectangle(0, 3, 8, 10, 0x4CC053));
-                // Hood
-                container.add(this.add.rectangle(0, -5, 9, 8, 0x2E7D32));
-                container.add(this.add.rectangle(0, -10, 5, 4, 0x1B5E20));
-                // Face peek
-                container.add(this.add.rectangle(0, -4, 5, 4, 0xFFDBB4));
-                // Bow
-                container.add(this.add.rectangle(7, 0, 2, 14, 0x8B4513));
+                // Body with strap
+                container.add(this.add.rectangle(0, 4, 8, 12, 0x388E3C));
+                container.add(this.add.rectangle(-2, 2, 2, 10, 0x6B4423)); // strap
+                // Hood layers
+                container.add(this.add.rectangle(0, -5, 10, 7, 0x1B5E20));
+                container.add(this.add.rectangle(0, -10, 7, 5, 0x2E7D32));
+                container.add(this.add.rectangle(0, -13, 4, 3, 0x4CAF50));
+                // Face
+                container.add(this.add.rectangle(0, -3, 7, 5, 0xFFCBA4));
+                // Focused eyes
+                container.add(this.add.rectangle(-2, -3, 3, 2, 0xFFFFFF));
+                container.add(this.add.rectangle(-2, -3, 2, 2, 0x1B5E20));
+                container.add(this.add.rectangle(2, -3, 3, 2, 0xFFFFFF));
+                container.add(this.add.rectangle(2, -3, 2, 2, 0x1B5E20));
+                // Bow + arrow
+                container.add(this.add.rectangle(7, -5, 2, 8, 0x8B4513));
+                container.add(this.add.rectangle(7, 5, 2, 8, 0x8B4513));
+                container.add(this.add.rectangle(5, 0, 10, 2, 0x8B4513)); // arrow
                 break;
             case 'KNIGHT':
-                // Blue armor
-                container.add(this.add.rectangle(0, 3, 10, 12, 0x55AAEE));
-                // Steel helmet
-                container.add(this.add.rectangle(0, -6, 9, 9, 0x708090));
-                // Visor slit
-                container.add(this.add.rectangle(0, -5, 6, 2, 0x333333));
-                // Red plume
-                container.add(this.add.rectangle(0, -12, 3, 5, 0xFF4444));
+                // Shining armor
+                container.add(this.add.rectangle(0, 4, 10, 14, 0x5B8DEE));
+                container.add(this.add.rectangle(-2, 4, 4, 12, 0x7BA3FF)); // shine
+                // Helmet
+                container.add(this.add.rectangle(0, -6, 9, 9, 0x8899AA));
+                container.add(this.add.rectangle(-1, -7, 4, 5, 0x99AABB)); // shine
+                // Plume
+                container.add(this.add.rectangle(0, -12, 4, 4, 0xEE4444));
+                container.add(this.add.rectangle(0, -15, 3, 4, 0xFF5555));
+                // Visor with glowing eyes
+                container.add(this.add.rectangle(0, -5, 7, 3, 0x222222));
+                container.add(this.add.rectangle(-2, -5, 2, 2, 0x55DDFF));
+                container.add(this.add.rectangle(2, -5, 2, 2, 0x55DDFF));
                 // Shield
-                container.add(this.add.rectangle(-6, 2, 4, 6, 0x4169E1));
+                container.add(this.add.rectangle(-6, 3, 5, 8, 0x5B8DEE));
+                container.add(this.add.rectangle(-6, 3, 3, 5, 0xFFD700)); // emblem
+                // Sword
+                container.add(this.add.rectangle(7, -4, 3, 14, 0xC0C0C0));
                 break;
             case 'WIZARD':
-                // Purple robe
-                container.add(this.add.rectangle(0, 4, 10, 12, 0xBB66FF));
+                // Purple robe with trim
+                container.add(this.add.rectangle(0, 6, 11, 12, 0x7B1FA2));
+                container.add(this.add.rectangle(0, 0, 8, 6, 0x8E24AA));
+                container.add(this.add.rectangle(0, 10, 12, 2, 0xFFD700)); // gold trim
                 // Face
-                container.add(this.add.rectangle(0, -4, 6, 6, 0xFFDBB4));
-                // Pointy hat
-                container.add(this.add.rectangle(0, -10, 10, 4, 0x9932CC));
-                container.add(this.add.rectangle(0, -14, 6, 5, 0x9932CC));
-                container.add(this.add.rectangle(0, -18, 3, 4, 0x9932CC));
-                // Star on hat
-                container.add(this.add.rectangle(0, -12, 4, 2, 0xFFD700));
-                // Staff
-                container.add(this.add.rectangle(7, 0, 2, 16, 0x8B4513));
-                container.add(this.add.rectangle(7, -9, 5, 5, 0x00FFFF)); // Orb
+                container.add(this.add.rectangle(0, -5, 8, 7, 0xFFCBA4));
+                // Mystical eyes
+                container.add(this.add.rectangle(-2, -5, 3, 3, 0xFFFFFF));
+                container.add(this.add.rectangle(-2, -5, 2, 2, 0x7B1FA2));
+                container.add(this.add.rectangle(2, -5, 3, 3, 0xFFFFFF));
+                container.add(this.add.rectangle(2, -5, 2, 2, 0x7B1FA2));
+                // Beard
+                container.add(this.add.rectangle(0, 0, 6, 4, 0xDDDDDD));
+                container.add(this.add.rectangle(0, 4, 4, 4, 0xEEEEEE));
+                // Tall hat
+                container.add(this.add.rectangle(0, -10, 10, 3, 0x7B1FA2));
+                container.add(this.add.rectangle(0, -14, 7, 5, 0x8E24AA));
+                container.add(this.add.rectangle(0, -18, 4, 5, 0x9C27B0));
+                container.add(this.add.rectangle(0, -21, 2, 4, 0xAB47BC));
+                container.add(this.add.rectangle(0, -15, 3, 2, 0xFFD700)); // star
+                // Staff with orb
+                container.add(this.add.rectangle(8, 2, 2, 16, 0x6B4423));
+                container.add(this.add.rectangle(8, -8, 6, 6, 0x00FFFF));
+                container.add(this.add.rectangle(7, -9, 3, 3, 0xAAFFFF)); // shine
                 break;
             case 'GIANT':
-                // Big orange body
-                container.add(this.add.rectangle(0, 4, 12, 14, 0xEE9955));
+                // Massive body with belly
+                container.add(this.add.rectangle(0, 5, 14, 16, 0xDEB887));
+                container.add(this.add.rectangle(0, 8, 9, 8, 0xE8C99A)); // belly
+                container.add(this.add.rectangle(0, 1, 14, 3, 0x5D4037)); // belt
                 // Big head
-                container.add(this.add.rectangle(0, -8, 11, 10, 0xCD853F));
-                // Angry brow
-                container.add(this.add.rectangle(0, -12, 10, 3, 0x664422));
-                // Red eyes
-                container.add(this.add.rectangle(-3, -7, 3, 2, 0xFF0000));
-                container.add(this.add.rectangle(3, -7, 3, 2, 0xFF0000));
-                // Club
-                container.add(this.add.rectangle(8, -2, 4, 14, 0x654321));
+                container.add(this.add.rectangle(0, -9, 13, 12, 0xDEB887));
+                // Heavy brow
+                container.add(this.add.rectangle(0, -14, 12, 3, 0xBB7733));
+                // Big friendly eyes
+                container.add(this.add.rectangle(-3, -9, 5, 5, 0xFFFFFF));
+                container.add(this.add.rectangle(-3, -8, 3, 4, 0x5D4037));
+                container.add(this.add.rectangle(3, -9, 5, 5, 0xFFFFFF));
+                container.add(this.add.rectangle(3, -8, 3, 4, 0x5D4037));
+                // Toothy grin
+                container.add(this.add.rectangle(0, -3, 8, 4, 0xDD8877));
+                container.add(this.add.rectangle(-3, -3, 3, 3, 0xFFFFFF)); // tooth
+                container.add(this.add.rectangle(3, -3, 3, 3, 0xFFFFFF));
+                // Club with studs
+                container.add(this.add.rectangle(10, 0, 4, 18, 0x6B4423));
+                container.add(this.add.rectangle(10, -10, 8, 10, 0x5D4037));
+                container.add(this.add.rectangle(7, -12, 3, 3, 0x808080)); // stud
+                container.add(this.add.rectangle(13, -12, 3, 3, 0x808080));
                 break;
         }
     }
