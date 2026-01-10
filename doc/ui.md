@@ -208,7 +208,7 @@ Updates visual state:
 Shows/hides lock overlay.
 
 **`showTooltip()` / `hideTooltip()`**
-Shows unit stats on hover.
+Shows unit stats on hover (displays upgraded HP/DMG based on XP upgrade level, not base stats).
 
 #### Unit Icons
 Each unit has a procedural icon:
