@@ -494,7 +494,9 @@ class GameScene extends Phaser.Scene {
         // No spinner - just axe cursor and glow
 
         // Label with instruction
-        const label = this.add.text(0, 52, `HOVER TO MINE`, {
+        // Gold mine: label below (y: 52), Wood mine: label above (y: -55) since it's near screen bottom
+        const labelY = isGold ? 52 : -55;
+        const label = this.add.text(0, labelY, `HOVER TO MINE`, {
             fontSize: '15px',
             fontFamily: 'Arial',
             fontStyle: 'bold',

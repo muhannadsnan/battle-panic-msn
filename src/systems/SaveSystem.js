@@ -393,46 +393,46 @@ class SaveSystem {
         // All 30 ranks with explicit thresholds (increasing gaps as rank goes up)
         // Pattern: each tier's grades have progressively larger gaps
         const allRanks = [
-            // Recruit: 0, 36, 72 (20% slower progression)
+            // Recruit: special lower thresholds (0, 60, 120) for newcomer dopamine
             { name: 'Recruit', grade: 1, minScore: 0, color: '#888888', icon: '🔰' },
-            { name: 'Recruit', grade: 2, minScore: 36, color: '#888888', icon: '🔰' },
-            { name: 'Recruit', grade: 3, minScore: 72, color: '#888888', icon: '🔰' },
-            // Soldier: 108, 162, 216 (20% slower progression)
-            { name: 'Soldier', grade: 1, minScore: 108, color: '#4a9c4a', icon: '⚔️' },
-            { name: 'Soldier', grade: 2, minScore: 162, color: '#4a9c4a', icon: '⚔️' },
-            { name: 'Soldier', grade: 3, minScore: 216, color: '#4a9c4a', icon: '⚔️' },
-            // Warrior: 288, 378, 486 (20% slower progression)
-            { name: 'Warrior', grade: 1, minScore: 288, color: '#4169E1', icon: '🗡️' },
-            { name: 'Warrior', grade: 2, minScore: 378, color: '#4169E1', icon: '🗡️' },
-            { name: 'Warrior', grade: 3, minScore: 486, color: '#4169E1', icon: '🗡️' },
-            // Knight: 510, 645, 810 (gap: 135-165)
-            { name: 'Knight', grade: 1, minScore: 510, color: '#9932CC', icon: '🛡️' },
-            { name: 'Knight', grade: 2, minScore: 645, color: '#9932CC', icon: '🛡️' },
-            { name: 'Knight', grade: 3, minScore: 810, color: '#9932CC', icon: '🛡️' },
-            // Captain: 1020, 1290, 1620 (gap: 270-330)
-            { name: 'Captain', grade: 1, minScore: 1020, color: '#ff6b6b', icon: '⭐' },
-            { name: 'Captain', grade: 2, minScore: 1290, color: '#ff6b6b', icon: '⭐' },
-            { name: 'Captain', grade: 3, minScore: 1620, color: '#ff6b6b', icon: '⭐' },
-            // Commander: 2040, 2580, 3240 (gap: 540-660)
-            { name: 'Commander', grade: 1, minScore: 2040, color: '#ff4500', icon: '🌟' },
-            { name: 'Commander', grade: 2, minScore: 2580, color: '#ff4500', icon: '🌟' },
-            { name: 'Commander', grade: 3, minScore: 3240, color: '#ff4500', icon: '🌟' },
-            // General: 4050, 5100, 6450 (gap: 1050-1350)
-            { name: 'General', grade: 1, minScore: 4050, color: '#ffd700', icon: '👑' },
-            { name: 'General', grade: 2, minScore: 5100, color: '#ffd700', icon: '👑' },
-            { name: 'General', grade: 3, minScore: 6450, color: '#ffd700', icon: '👑' },
-            // Champion: 8100, 10200, 12900 (gap: 2100-2700)
-            { name: 'Champion', grade: 1, minScore: 8100, color: '#00ffff', icon: '💎' },
-            { name: 'Champion', grade: 2, minScore: 10200, color: '#00ffff', icon: '💎' },
-            { name: 'Champion', grade: 3, minScore: 12900, color: '#00ffff', icon: '💎' },
-            // Legend: 16200, 20400, 25800 (gap: 4200-5400)
-            { name: 'Legend', grade: 1, minScore: 16200, color: '#ff00ff', icon: '🔥' },
-            { name: 'Legend', grade: 2, minScore: 20400, color: '#ff00ff', icon: '🔥' },
-            { name: 'Legend', grade: 3, minScore: 25800, color: '#ff00ff', icon: '🔥' },
-            // Immortal: 32400, 40800, 51600 (gap: 8400-10800)
-            { name: 'Immortal', grade: 1, minScore: 32400, color: '#ffffff', icon: '⚡' },
-            { name: 'Immortal', grade: 2, minScore: 40800, color: '#ffffff', icon: '⚡' },
-            { name: 'Immortal', grade: 3, minScore: 51600, color: '#ffffff', icon: '⚡' }
+            { name: 'Recruit', grade: 2, minScore: 60, color: '#888888', icon: '🔰' },
+            { name: 'Recruit', grade: 3, minScore: 120, color: '#888888', icon: '🔰' },
+            // Soldier: 324, 486, 648
+            { name: 'Soldier', grade: 1, minScore: 324, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Soldier', grade: 2, minScore: 486, color: '#4a9c4a', icon: '⚔️' },
+            { name: 'Soldier', grade: 3, minScore: 648, color: '#4a9c4a', icon: '⚔️' },
+            // Warrior: 864, 1134, 1458
+            { name: 'Warrior', grade: 1, minScore: 864, color: '#4169E1', icon: '🗡️' },
+            { name: 'Warrior', grade: 2, minScore: 1134, color: '#4169E1', icon: '🗡️' },
+            { name: 'Warrior', grade: 3, minScore: 1458, color: '#4169E1', icon: '🗡️' },
+            // Knight: 1530, 1935, 2430
+            { name: 'Knight', grade: 1, minScore: 1530, color: '#9932CC', icon: '🛡️' },
+            { name: 'Knight', grade: 2, minScore: 1935, color: '#9932CC', icon: '🛡️' },
+            { name: 'Knight', grade: 3, minScore: 2430, color: '#9932CC', icon: '🛡️' },
+            // Captain: 3060, 3870, 4860
+            { name: 'Captain', grade: 1, minScore: 3060, color: '#ff6b6b', icon: '⭐' },
+            { name: 'Captain', grade: 2, minScore: 3870, color: '#ff6b6b', icon: '⭐' },
+            { name: 'Captain', grade: 3, minScore: 4860, color: '#ff6b6b', icon: '⭐' },
+            // Commander: 6120, 7740, 9720
+            { name: 'Commander', grade: 1, minScore: 6120, color: '#ff4500', icon: '🌟' },
+            { name: 'Commander', grade: 2, minScore: 7740, color: '#ff4500', icon: '🌟' },
+            { name: 'Commander', grade: 3, minScore: 9720, color: '#ff4500', icon: '🌟' },
+            // General: 12150, 15300, 19350
+            { name: 'General', grade: 1, minScore: 12150, color: '#ffd700', icon: '👑' },
+            { name: 'General', grade: 2, minScore: 15300, color: '#ffd700', icon: '👑' },
+            { name: 'General', grade: 3, minScore: 19350, color: '#ffd700', icon: '👑' },
+            // Champion: 24300, 30600, 38700
+            { name: 'Champion', grade: 1, minScore: 24300, color: '#00ffff', icon: '💎' },
+            { name: 'Champion', grade: 2, minScore: 30600, color: '#00ffff', icon: '💎' },
+            { name: 'Champion', grade: 3, minScore: 38700, color: '#00ffff', icon: '💎' },
+            // Legend: 48600, 61200, 77400
+            { name: 'Legend', grade: 1, minScore: 48600, color: '#ff00ff', icon: '🔥' },
+            { name: 'Legend', grade: 2, minScore: 61200, color: '#ff00ff', icon: '🔥' },
+            { name: 'Legend', grade: 3, minScore: 77400, color: '#ff00ff', icon: '🔥' },
+            // Immortal: 97200, 122400, 154800
+            { name: 'Immortal', grade: 1, minScore: 97200, color: '#ffffff', icon: '⚡' },
+            { name: 'Immortal', grade: 2, minScore: 122400, color: '#ffffff', icon: '⚡' },
+            { name: 'Immortal', grade: 3, minScore: 154800, color: '#ffffff', icon: '⚡' }
         ];
 
         // Find current rank
