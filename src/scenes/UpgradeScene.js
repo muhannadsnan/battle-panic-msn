@@ -109,8 +109,8 @@ class UpgradeScene extends Phaser.Scene {
         // Stats layout - fixed positions for alignment
         const labelX = -55;
         const currentX = -5;
-        const arrowX = 18;
-        const nextX = 32;
+        const arrowX = 8;
+        const nextX = 30;
 
         // HP line
         const hpContainer = this.add.container(0, 30);
@@ -125,9 +125,11 @@ class UpgradeScene extends Phaser.Scene {
         hpContainer.add(hpCurrent);
 
         if (!isMaxLevel) {
-            const hpArrow = this.add.text(arrowX, 0, '▶', {
-                fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
-            }).setOrigin(0.5, 0.5);
+            // Draw proper arrow using graphics
+            const hpArrow = this.add.graphics();
+            hpArrow.fillStyle(0x44ff44, 1);
+            hpArrow.fillRect(arrowX, -2, 10, 4);
+            hpArrow.fillTriangle(arrowX + 10, -5, arrowX + 10, 5, arrowX + 18, 0);
             hpContainer.add(hpArrow);
             const hpNext = this.add.text(nextX, 0, `${nextStats.health}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
@@ -149,9 +151,11 @@ class UpgradeScene extends Phaser.Scene {
         dmgContainer.add(dmgCurrent);
 
         if (!isMaxLevel) {
-            const dmgArrow = this.add.text(arrowX, 0, '▶', {
-                fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
-            }).setOrigin(0.5, 0.5);
+            // Draw proper arrow using graphics
+            const dmgArrow = this.add.graphics();
+            dmgArrow.fillStyle(0x44ff44, 1);
+            dmgArrow.fillRect(arrowX, -2, 10, 4);
+            dmgArrow.fillTriangle(arrowX + 10, -5, arrowX + 10, 5, arrowX + 18, 0);
             dmgContainer.add(dmgArrow);
             const dmgNext = this.add.text(nextX, 0, `${nextStats.damage}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
@@ -481,7 +485,7 @@ class UpgradeScene extends Phaser.Scene {
         const upgrades = [
             { key: 'health', name: 'Castle Health', desc: '+20 HP per level', icon: '❤️' },
             { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' },
-            { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' }
+            { key: 'goldIncome', name: 'Mining Speed', desc: '+25% mining speed', icon: '💰' }
         ];
 
         const startX = 250;
@@ -524,18 +528,23 @@ class UpgradeScene extends Phaser.Scene {
         const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
 
         const progressContainer = this.add.container(0, 8);
-        const currentText = this.add.text(-10, 0, currentBonus, {
-            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
+        const currentText = this.add.text(-15, 0, currentBonus, {
+            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         progressContainer.add(currentText);
 
         if (!isMaxLevel) {
-            const arrow = this.add.text(6, 0, '▶', {
-                fontSize: '10px', fontFamily: 'Arial', color: '#44ff44'
-            }).setOrigin(0.5, 0.5);
+            // Draw a proper arrow using graphics
+            const arrow = this.add.graphics();
+            arrow.fillStyle(0x44ff44, 1);
+            // Arrow shaft
+            arrow.fillRect(0, -2, 12, 4);
+            // Arrow head (triangle)
+            arrow.fillTriangle(12, -6, 12, 6, 22, 0);
             progressContainer.add(arrow);
-            const nextText = this.add.text(18, 0, nextBonus, {
-                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+
+            const nextText = this.add.text(30, 0, nextBonus, {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             progressContainer.add(nextText);
         }
@@ -662,7 +671,7 @@ class UpgradeScene extends Phaser.Scene {
             case 'armor':
                 return `-${bonus * 5}% DMG`;
             case 'goldIncome':
-                return `+${bonus * 10}% SPD`;
+                return `+${bonus * 25}% SPD`;
             default:
                 return '';
         }

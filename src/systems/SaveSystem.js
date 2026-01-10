@@ -165,6 +165,12 @@ class SaveSystem {
 
     updateHighScore(wave, goldEarned, enemiesKilled, killStats = {}, gameStats = {}) {
         const data = this.load();
+
+        // Calculate XP divisor BEFORE updating stats (use rank at start of game, not after)
+        // This prevents rank jumping mid-calculation from penalizing players
+        const xpDivisor = this.getXPDivisorForRank(data);
+        const xpEarned = Math.floor(wave / xpDivisor);
+
         if (wave > data.highestWave) {
             data.highestWave = wave;
         }
@@ -202,10 +208,7 @@ class SaveSystem {
         data.stats.totalGoldSpent += (gameStats.goldSpent || 0);
         data.stats.totalWoodSpent += (gameStats.woodSpent || 0);
 
-        // Award XP: Dynamic divisor based on player rank
-        // Easier for new players, harder for veterans
-        const xpDivisor = this.getXPDivisorForRank(data);
-        const xpEarned = Math.floor(wave / xpDivisor);
+        // Award XP (calculated above before stat updates)
         data.xp = (data.xp || 0) + xpEarned;
 
         // Update legacy stats

@@ -210,7 +210,7 @@ Handles localStorage persistence for game progress.
     castleUpgrades: {
         health: 1,               // +20 HP per level (permanent, applies at game start)
         armor: 1,                // -5% damage taken per level (permanent)
-        goldIncome: 1            // +10% mining speed per level (permanent)
+        goldIncome: 1            // +25% mining speed per level (permanent)
     },
     // Legacy stats - NEVER reset, persist through account deletion
     legacy: {
@@ -250,11 +250,12 @@ Account reset (used by Delete Account button):
 
 **`updateHighScore(wave, goldEarned, enemiesKilled, killStats, gameStats)`**
 Called after game over:
-1. Updates `highestWave` if new record
-2. Adds to `totalGoldEarned` and `totalEnemiesKilled`
-3. Updates detailed `killStats` per enemy type
-4. Updates lifetime `stats` (games played, waves completed, bosses killed, etc.)
-5. Awards XP: `floor(wave / divisor)` - divisor based on player rank
+1. Calculates XP divisor FIRST (based on rank at game start, not after stats update)
+2. Updates `highestWave` if new record
+3. Adds to `totalGoldEarned` and `totalEnemiesKilled`
+4. Updates detailed `killStats` per enemy type
+5. Updates lifetime `stats` (games played, waves completed, bosses killed, etc.)
+6. Awards XP: `floor(wave / divisor)` - divisor based on player rank at game start
 
 **`getXPDivisorForRank(data)`**
 Returns XP divisor based on player rank (easier for new players, harder for veterans):
@@ -387,7 +388,8 @@ GameScene.onCastleDestroyed()
 SaveSystem.updateHighScore(wave, gold, kills)
       ↓
 Awards XP: floor(wave / divisor)
-  (divisor based on rank: 3-31)
+  (divisor based on rank at game START: 3-31)
+  (calculated before stats update to prevent rank-jump penalty)
       ↓
 Transition to GameOverScene
 ```
