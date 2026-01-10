@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.6.5';
+const GAME_VERSION = 'v1.6.6';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -243,9 +243,9 @@ const RESOURCE_CONFIG = {
     mineGoldAmount: 5,  // Less per mine (was 8)
     mineWoodAmount: 5,
     mineInterval: 2000,
-    goldMineX: 185,     // Aligned with resource display
+    goldMineX: 330,     // Aligned with fence
     goldMineY: 100,
-    woodMineX: 220,     // Moved farther right
+    woodMineX: 330,     // Aligned with fence
     woodMineY: 530      // Bottom area
 };
 
