@@ -1683,7 +1683,200 @@ Lv.${level + 1}`;
     }
 
     onWaveStart(waveNumber, enemyCount) {
-        this.waveDisplay.showWaveStart(waveNumber);
+        // Check if there's a tip for this wave
+        const tip = this.getWaveTip(waveNumber);
+        if (tip) {
+            this.showWaveTip(tip, waveNumber, () => {
+                this.waveDisplay.showWaveStart(waveNumber);
+            });
+        } else {
+            this.waveDisplay.showWaveStart(waveNumber);
+        }
+    }
+
+    // Wave tips for challenging waves
+    getWaveTip(waveNumber) {
+        const tips = {
+            6: {
+                icon: '🏹',
+                title: 'RANGED ENEMIES!',
+                message: 'Skeleton Archers are coming!\nPosition tanks in front to protect your ranged units.',
+                suggestion: 'Consider: Knights as frontline'
+            },
+            8: {
+                icon: '🧌',
+                title: 'TROLLS INCOMING!',
+                message: 'Trolls hit HARD and have high HP!\nPeasants will die in one hit.',
+                suggestion: 'Consider: Knights can survive multiple hits'
+            },
+            10: {
+                icon: '🐉',
+                title: 'BOSS WAVE!',
+                message: 'A DRAGON is coming!\nExtremely high damage, ranged attacks.',
+                suggestion: 'Consider: Giants to tank, mix ranged DPS'
+            },
+            12: {
+                icon: '⚫',
+                title: 'DARK KNIGHTS!',
+                message: 'Armored enemies with high damage!\nThey will shred weak units.',
+                suggestion: 'Consider: Wizards for splash damage'
+            },
+            18: {
+                icon: '😈',
+                title: 'DEMONS APPROACH!',
+                message: 'Demons are brutal! High HP and damage.\nYou need a balanced army.',
+                suggestion: 'Consider: Mix tanks, ranged, and splash'
+            },
+            20: {
+                icon: '🐉',
+                title: 'SECOND DRAGON!',
+                message: 'Another Dragon boss!\nEnemies are much stronger now.',
+                suggestion: 'Consider: Multiple Giants, strong ranged'
+            },
+            30: {
+                icon: '🐉',
+                title: 'THIRD DRAGON!',
+                message: 'Dragon boss with scaled-up enemies!\nThis will be a tough fight.',
+                suggestion: 'Consider: Max promotion units, full army'
+            }
+        };
+
+        return tips[waveNumber] || null;
+    }
+
+    showWaveTip(tip, waveNumber, onClose) {
+        // Pause the game
+        if (!this.isPaused) {
+            this.isPaused = true;
+            this.waveSystem.pause();
+            if (typeof audioManager !== 'undefined') {
+                audioManager.pauseMusic();
+            }
+        }
+
+        // Get player rank for smart duration
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        const rankName = rankInfo.rank.name;
+
+        // Determine display duration based on rank
+        // New players get more time, veterans get minimum
+        let minDisplayTime = 3000; // 3 seconds minimum for all
+        if (['Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'].includes(rankName)) {
+            minDisplayTime = 1500; // 1.5 seconds for high ranks
+        } else if (['Warrior', 'Knight'].includes(rankName)) {
+            minDisplayTime = 2000; // 2 seconds for mid ranks
+        }
+
+        // Check if player already beat this wave before
+        if (this.saveData.highestWave >= waveNumber) {
+            minDisplayTime = Math.min(minDisplayTime, 2000); // Cap at 2 seconds if already beaten
+        }
+
+        // Create tip overlay
+        const tipOverlay = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        tipOverlay.setDepth(1100);
+
+        // Dark background
+        const bg = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.85);
+        tipOverlay.add(bg);
+
+        // Tip panel
+        const panel = this.add.rectangle(0, 0, 500, 320, 0x1a2a3a, 0.95);
+        panel.setStrokeStyle(3, 0xffaa00);
+        tipOverlay.add(panel);
+
+        // Icon
+        const icon = this.add.text(0, -110, tip.icon, {
+            fontSize: '48px'
+        }).setOrigin(0.5);
+        tipOverlay.add(icon);
+
+        // Title
+        const title = this.add.text(0, -60, tip.title, {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffaa00',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        tipOverlay.add(title);
+
+        // Message
+        const message = this.add.text(0, 10, tip.message, {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center',
+            lineSpacing: 8
+        }).setOrigin(0.5);
+        tipOverlay.add(message);
+
+        // Suggestion
+        const suggestion = this.add.text(0, 80, tip.suggestion, {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'italic',
+            color: '#44ff44'
+        }).setOrigin(0.5);
+        tipOverlay.add(suggestion);
+
+        // Continue button (disabled initially)
+        const continueBtn = this.add.container(0, 130);
+        tipOverlay.add(continueBtn);
+
+        const btnBg = this.add.rectangle(0, 0, 200, 45, 0x333333);
+        btnBg.setStrokeStyle(2, 0x555555);
+        continueBtn.add(btnBg);
+
+        const btnText = this.add.text(0, 0, 'Please wait...', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#666666'
+        }).setOrigin(0.5);
+        continueBtn.add(btnText);
+
+        // Countdown timer
+        let timeRemaining = Math.ceil(minDisplayTime / 1000);
+        btnText.setText(`Wait ${timeRemaining}s...`);
+
+        const countdownTimer = this.time.addEvent({
+            delay: 1000,
+            repeat: timeRemaining - 1,
+            callback: () => {
+                timeRemaining--;
+                if (timeRemaining > 0) {
+                    btnText.setText(`Wait ${timeRemaining}s...`);
+                } else {
+                    // Enable the button
+                    btnBg.setFillStyle(0x44aa44);
+                    btnBg.setStrokeStyle(2, 0x66cc66);
+                    btnText.setText('CONTINUE');
+                    btnText.setColor('#ffffff');
+                    btnBg.setInteractive({ useHandCursor: true });
+
+                    btnBg.on('pointerover', () => {
+                        btnBg.setFillStyle(0x55bb55);
+                    });
+                    btnBg.on('pointerout', () => {
+                        btnBg.setFillStyle(0x44aa44);
+                    });
+                    btnBg.on('pointerdown', () => {
+                        // Close tip and resume
+                        tipOverlay.destroy();
+                        this.isPaused = false;
+                        this.waveSystem.resume();
+                        if (typeof audioManager !== 'undefined') {
+                            audioManager.resumeMusic();
+                        }
+                        if (onClose) onClose();
+                    });
+                }
+            }
+        });
+
+        this.currentTipOverlay = tipOverlay;
     }
 
     onWaveComplete(waveNumber, goldReward, woodReward) {
