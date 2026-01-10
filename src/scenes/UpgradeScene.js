@@ -47,16 +47,17 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createUnitUpgrades() {
-        this.add.text(GAME_WIDTH / 2, 130, 'UNIT UPGRADES', {
-            fontSize: '20px',
+        this.add.text(GAME_WIDTH / 2, 135, 'UNIT UPGRADES', {
+            fontSize: '22px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#ffffff',
+            fontStyle: 'bold'
         }).setOrigin(0.5);
 
         const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
-        const startX = 110;
-        const spacing = 170;
-        const y = 250;
+        const startX = 105;
+        const spacing = 172;
+        const y = 265;
 
         this.upgradeCards = [];
 
@@ -73,29 +74,30 @@ class UpgradeScene extends Phaser.Scene {
 
         const card = this.add.container(x, y);
 
-        // Card background
+        // Card background - larger to fit bigger icons
         const isUnlocked = upgradeData.unlocked;
         const bgColor = isUnlocked ? 0x333344 : 0x222222;
-        const bg = this.add.rectangle(0, 0, 150, 200, bgColor);
+        const bg = this.add.rectangle(0, 0, 160, 220, bgColor);
         bg.setStrokeStyle(3, isUnlocked ? stats.color : 0x444444);
         card.add(bg);
 
-        // Unit icon container
-        const iconContainer = this.add.container(0, -60);
+        // Unit icon container - positioned higher for larger icon
+        const iconContainer = this.add.container(0, -50);
         this.createUnitIcon(iconContainer, unitType, isUnlocked);
         card.add(iconContainer);
 
         // Unit name
-        const name = this.add.text(0, -15, stats.name, {
-            fontSize: '16px',
+        const name = this.add.text(0, 10, stats.name, {
+            fontSize: '15px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#ffffff',
+            fontStyle: 'bold'
         }).setOrigin(0.5);
         card.add(name);
 
         // Level
-        const levelText = this.add.text(0, 8, `Level ${upgradeData.level}`, {
-            fontSize: '16px',
+        const levelText = this.add.text(0, 28, `Level ${upgradeData.level}`, {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -107,20 +109,20 @@ class UpgradeScene extends Phaser.Scene {
         const isMaxLevel = upgradeData.level >= UPGRADE_CONFIG.maxLevel;
 
         // Stats layout - fixed positions for alignment
-        const labelX = -55;
-        const currentX = -5;
-        const arrowX = 8;
-        const nextX = 30;
+        const labelX = -58;
+        const currentX = -8;
+        const arrowX = 5;
+        const nextX = 27;
 
         // HP line
-        const hpContainer = this.add.container(0, 30);
+        const hpContainer = this.add.container(0, 48);
         const hpLabel = this.add.text(labelX, 0, 'HP:', {
-            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+            fontSize: '13px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         hpContainer.add(hpLabel);
 
         const hpCurrent = this.add.text(currentX, 0, `${currentStats.health}`, {
-            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
+            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         hpContainer.add(hpCurrent);
 
@@ -137,21 +139,21 @@ class UpgradeScene extends Phaser.Scene {
             hpArrow.strokePath();
             hpContainer.add(hpArrow);
             const hpNext = this.add.text(nextX, 0, `${nextStats.health}`, {
-                fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             hpContainer.add(hpNext);
         }
         card.add(hpContainer);
 
         // DMG line
-        const dmgContainer = this.add.container(0, 48);
+        const dmgContainer = this.add.container(0, 65);
         const dmgLabel = this.add.text(labelX, 0, 'DMG:', {
-            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+            fontSize: '13px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         dmgContainer.add(dmgLabel);
 
         const dmgCurrent = this.add.text(currentX, 0, `${currentStats.damage}`, {
-            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
+            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         dmgContainer.add(dmgCurrent);
 
@@ -168,7 +170,7 @@ class UpgradeScene extends Phaser.Scene {
             dmgArrow.strokePath();
             dmgContainer.add(dmgArrow);
             const dmgNext = this.add.text(nextX, 0, `${nextStats.damage}`, {
-                fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             dmgContainer.add(dmgNext);
         }
@@ -180,32 +182,33 @@ class UpgradeScene extends Phaser.Scene {
             // Upgrade button (uses XP)
             if (upgradeData.level < UPGRADE_CONFIG.maxLevel) {
                 const cost = this.calculateUpgradeCost(typeKey, upgradeData.level);
-                const upgradeBtn = this.createCardButton(0, 80, `Upgrade\n${cost} XP`, () => {
+                const upgradeBtn = this.createCardButton(0, 92, `Upgrade\n${cost} XP`, () => {
                     this.purchaseUpgrade(typeKey, cost);
                 }, xp >= cost);
                 card.add(upgradeBtn);
             } else {
-                const maxText = this.add.text(0, 80, 'MAX LEVEL', {
-                    fontSize: '16px',
+                const maxText = this.add.text(0, 92, 'MAX LEVEL', {
+                    fontSize: '14px',
                     fontFamily: 'Arial',
-                    color: '#ffd700'
+                    color: '#ffd700',
+                    fontStyle: 'bold'
                 }).setOrigin(0.5);
                 card.add(maxText);
             }
         } else {
             // Unlock button (uses XP)
             const unlockCost = this.getUnlockCost(typeKey);
-            const unlockBtn = this.createCardButton(0, 80, `Unlock\n${unlockCost} XP`, () => {
+            const unlockBtn = this.createCardButton(0, 92, `Unlock\n${unlockCost} XP`, () => {
                 this.unlockUnit(typeKey, unlockCost);
             }, xp >= unlockCost);
             card.add(unlockBtn);
 
             // Lock overlay
-            const lockOverlay = this.add.rectangle(0, 0, 150, 200, 0x000000, 0.5);
+            const lockOverlay = this.add.rectangle(0, 0, 160, 220, 0x000000, 0.5);
             card.add(lockOverlay);
 
-            const lockIcon = this.add.text(0, -60, '🔒', {
-                fontSize: '30px'
+            const lockIcon = this.add.text(0, -50, '🔒', {
+                fontSize: '36px'
             }).setOrigin(0.5);
             card.add(lockIcon);
         }
@@ -214,7 +217,7 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createUnitIcon(container, unitType, isUnlocked) {
-        const scale = 0.5;
+        const scale = 1.0; // Matches in-game unit scale
         const alpha = isUnlocked ? 1 : 0.5;
 
         switch (unitType.toUpperCase()) {
@@ -237,259 +240,693 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createPeasantIcon(container, scale, alpha) {
-        const s = scale * 1.2;
-        // Tan body (tunic)
-        const body = this.add.rectangle(0, 6 * s, 16 * s, 22 * s, 0xE8C87A);
+        // EXACT copy of Unit.js createPeasant - cartoony peasant friendly farmer style
+        const s = scale;
+
+        // Shadow
+        const shadow = this.add.rectangle(0, 30 * s, 24 * s, 6 * s, 0x000000, 0.2);
+        shadow.setAlpha(alpha);
+        container.add(shadow);
+
+        // Legs
+        const leftLeg = this.add.rectangle(-6 * s, 22 * s, 10 * s, 14 * s, 0x6B4423);
+        leftLeg.setAlpha(alpha);
+        container.add(leftLeg);
+        const leftShoe = this.add.rectangle(-7 * s, 28 * s, 12 * s, 6 * s, 0x4A3020);
+        leftShoe.setAlpha(alpha);
+        container.add(leftShoe);
+        const rightLeg = this.add.rectangle(6 * s, 22 * s, 10 * s, 14 * s, 0x6B4423);
+        rightLeg.setAlpha(alpha);
+        container.add(rightLeg);
+        const rightShoe = this.add.rectangle(7 * s, 28 * s, 12 * s, 6 * s, 0x4A3020);
+        rightShoe.setAlpha(alpha);
+        container.add(rightShoe);
+
+        // Body - puffy tunic
+        const body = this.add.rectangle(0, 6 * s, 22 * s, 22 * s, 0xE8C87A);
         body.setAlpha(alpha);
         container.add(body);
-        // Brown belt
-        const belt = this.add.rectangle(0, 8 * s, 18 * s, 4 * s, 0x8B5A2B);
+        const bodyHighlight = this.add.rectangle(0, 8 * s, 18 * s, 16 * s, 0xF5D88A);
+        bodyHighlight.setAlpha(alpha);
+        container.add(bodyHighlight);
+        const bodyShade = this.add.rectangle(-8 * s, 6 * s, 4 * s, 18 * s, 0xD4B060);
+        bodyShade.setAlpha(alpha);
+        container.add(bodyShade);
+
+        // Belt with buckle
+        const belt = this.add.rectangle(0, 14 * s, 24 * s, 5 * s, 0x8B5A2B);
         belt.setAlpha(alpha);
         container.add(belt);
-        // Head (square cartoony)
-        const head = this.add.rectangle(0, -12 * s, 14 * s, 14 * s, 0xFFDBB4);
+        const buckle = this.add.rectangle(0, 14 * s, 6 * s, 6 * s, 0xFFD700);
+        buckle.setAlpha(alpha);
+        container.add(buckle);
+
+        // Arms
+        const leftArm = this.add.rectangle(-14 * s, 4 * s, 8 * s, 14 * s, 0xFFCBA4);
+        leftArm.setAlpha(alpha);
+        container.add(leftArm);
+        const leftHand = this.add.rectangle(-14 * s, 12 * s, 10 * s, 8 * s, 0xFFDDBB);
+        leftHand.setAlpha(alpha);
+        container.add(leftHand);
+        const rightArm = this.add.rectangle(14 * s, 4 * s, 8 * s, 14 * s, 0xFFCBA4);
+        rightArm.setAlpha(alpha);
+        container.add(rightArm);
+        const rightHand = this.add.rectangle(14 * s, 12 * s, 10 * s, 8 * s, 0xFFDDBB);
+        rightHand.setAlpha(alpha);
+        container.add(rightHand);
+
+        // BIG cartoony head
+        const head = this.add.rectangle(0, -14 * s, 26 * s, 24 * s, 0xFFCBA4);
         head.setAlpha(alpha);
         container.add(head);
-        // Hair (brown rectangle on top)
-        const hair = this.add.rectangle(0, -20 * s, 14 * s, 6 * s, 0x5D4037);
-        hair.setAlpha(alpha);
-        container.add(hair);
-        // Eyes
-        const eye1 = this.add.rectangle(-3 * s, -12 * s, 3 * s, 3 * s, 0x000000);
-        const eye2 = this.add.rectangle(3 * s, -12 * s, 3 * s, 3 * s, 0x000000);
-        eye1.setAlpha(alpha);
-        eye2.setAlpha(alpha);
-        container.add(eye1);
-        container.add(eye2);
-        // Pitchfork handle
-        const handle = this.add.rectangle(12 * s, -2 * s, 3 * s, 32 * s, 0x8B7355);
+        const headHighlight = this.add.rectangle(0, -12 * s, 22 * s, 18 * s, 0xFFDDBB);
+        headHighlight.setAlpha(alpha);
+        container.add(headHighlight);
+        const headShade = this.add.rectangle(-10 * s, -14 * s, 4 * s, 20 * s, 0xE8B090);
+        headShade.setAlpha(alpha);
+        container.add(headShade);
+
+        // Messy hair
+        const hair1 = this.add.rectangle(0, -26 * s, 28 * s, 10 * s, 0x8B6914);
+        hair1.setAlpha(alpha);
+        container.add(hair1);
+        const hair2 = this.add.rectangle(-8 * s, -24 * s, 8 * s, 8 * s, 0x8B6914);
+        hair2.setAlpha(alpha);
+        container.add(hair2);
+        const hair3 = this.add.rectangle(8 * s, -24 * s, 8 * s, 8 * s, 0x8B6914);
+        hair3.setAlpha(alpha);
+        container.add(hair3);
+        const hairTuft = this.add.rectangle(-4 * s, -30 * s, 6 * s, 6 * s, 0x9B7924);
+        hairTuft.setAlpha(alpha);
+        container.add(hairTuft);
+
+        // BIG cute eyes
+        const eyeWhiteL = this.add.rectangle(-6 * s, -14 * s, 10 * s, 12 * s, 0xFFFFFF);
+        eyeWhiteL.setAlpha(alpha);
+        container.add(eyeWhiteL);
+        const eyeWhiteR = this.add.rectangle(6 * s, -14 * s, 10 * s, 12 * s, 0xFFFFFF);
+        eyeWhiteR.setAlpha(alpha);
+        container.add(eyeWhiteR);
+        const pupilL = this.add.rectangle(-5 * s, -13 * s, 6 * s, 8 * s, 0x4A3020);
+        pupilL.setAlpha(alpha);
+        container.add(pupilL);
+        const pupilR = this.add.rectangle(7 * s, -13 * s, 6 * s, 8 * s, 0x4A3020);
+        pupilR.setAlpha(alpha);
+        container.add(pupilR);
+        const shineL = this.add.rectangle(-6 * s, -15 * s, 3 * s, 3 * s, 0xFFFFFF);
+        shineL.setAlpha(alpha);
+        container.add(shineL);
+        const shineR = this.add.rectangle(6 * s, -15 * s, 3 * s, 3 * s, 0xFFFFFF);
+        shineR.setAlpha(alpha);
+        container.add(shineR);
+
+        // Happy mouth
+        const mouth = this.add.rectangle(0, -4 * s, 8 * s, 4 * s, 0xE08080);
+        mouth.setAlpha(alpha);
+        container.add(mouth);
+        const mouthInner = this.add.rectangle(0, -3 * s, 6 * s, 2 * s, 0xC06060);
+        mouthInner.setAlpha(alpha);
+        container.add(mouthInner);
+
+        // Rosy cheeks
+        const cheekL = this.add.rectangle(-10 * s, -8 * s, 6 * s, 4 * s, 0xFFAAAA, 0.5 * alpha);
+        container.add(cheekL);
+        const cheekR = this.add.rectangle(10 * s, -8 * s, 6 * s, 4 * s, 0xFFAAAA, 0.5 * alpha);
+        container.add(cheekR);
+
+        // Pitchfork weapon
+        const handle = this.add.rectangle(20 * s, 0, 5 * s, 36 * s, 0xC49A4A);
         handle.setAlpha(alpha);
         container.add(handle);
-        // Pitchfork prongs (3 rectangles)
-        const prong1 = this.add.rectangle(12 * s, -20 * s, 2 * s, 8 * s, 0x888888);
-        const prong2 = this.add.rectangle(8 * s, -18 * s, 2 * s, 6 * s, 0x888888);
-        const prong3 = this.add.rectangle(16 * s, -18 * s, 2 * s, 6 * s, 0x888888);
+        const handleHighlight = this.add.rectangle(20 * s, 2 * s, 3 * s, 32 * s, 0xD4AA5A);
+        handleHighlight.setAlpha(alpha);
+        container.add(handleHighlight);
+        const prong1 = this.add.rectangle(20 * s, -18 * s, 4 * s, 10 * s, 0x88AACC);
         prong1.setAlpha(alpha);
-        prong2.setAlpha(alpha);
-        prong3.setAlpha(alpha);
         container.add(prong1);
+        const prong2 = this.add.rectangle(14 * s, -16 * s, 4 * s, 8 * s, 0x88AACC);
+        prong2.setAlpha(alpha);
         container.add(prong2);
+        const prong3 = this.add.rectangle(26 * s, -16 * s, 4 * s, 8 * s, 0x88AACC);
+        prong3.setAlpha(alpha);
         container.add(prong3);
+        const crossbar = this.add.rectangle(20 * s, -12 * s, 16 * s, 4 * s, 0x99BBDD);
+        crossbar.setAlpha(alpha);
+        container.add(crossbar);
     }
 
     createArcherIcon(container, scale, alpha) {
-        const s = scale * 1.2;
-        // Green tunic body
-        const body = this.add.rectangle(0, 6 * s, 14 * s, 20 * s, 0x4CC053);
+        // EXACT copy of Unit.js createArcher - cartoony cool ranger style
+        const s = scale;
+
+        // Shadow
+        const shadow = this.add.rectangle(0, 28 * s, 22 * s, 5 * s, 0x000000, 0.2);
+        shadow.setAlpha(alpha);
+        container.add(shadow);
+
+        // Legs with boots
+        const leftLeg = this.add.rectangle(-5 * s, 20 * s, 8 * s, 14 * s, 0x2E5A2E);
+        leftLeg.setAlpha(alpha);
+        container.add(leftLeg);
+        const leftBoot = this.add.rectangle(-6 * s, 26 * s, 10 * s, 6 * s, 0x5A3A20);
+        leftBoot.setAlpha(alpha);
+        container.add(leftBoot);
+        const rightLeg = this.add.rectangle(5 * s, 20 * s, 8 * s, 14 * s, 0x2E5A2E);
+        rightLeg.setAlpha(alpha);
+        container.add(rightLeg);
+        const rightBoot = this.add.rectangle(6 * s, 26 * s, 10 * s, 6 * s, 0x5A3A20);
+        rightBoot.setAlpha(alpha);
+        container.add(rightBoot);
+
+        // Body - sleek tunic
+        const body = this.add.rectangle(0, 4 * s, 18 * s, 20 * s, 0x3CB043);
         body.setAlpha(alpha);
         container.add(body);
-        // Darker green belt
-        const belt = this.add.rectangle(0, 8 * s, 16 * s, 4 * s, 0x2E7D32);
+        const bodyHighlight = this.add.rectangle(0, 6 * s, 14 * s, 14 * s, 0x4CC053);
+        bodyHighlight.setAlpha(alpha);
+        container.add(bodyHighlight);
+        const bodyShade = this.add.rectangle(-6 * s, 4 * s, 4 * s, 16 * s, 0x2A9030);
+        bodyShade.setAlpha(alpha);
+        container.add(bodyShade);
+        const belt = this.add.rectangle(0, 12 * s, 20 * s, 4 * s, 0x6B4423);
         belt.setAlpha(alpha);
         container.add(belt);
-        // Head
-        const head = this.add.rectangle(0, -10 * s, 12 * s, 12 * s, 0xFFDBB4);
-        head.setAlpha(alpha);
-        container.add(head);
-        // Hood (rectangles forming hood shape)
-        const hoodTop = this.add.rectangle(0, -20 * s, 16 * s, 8 * s, 0x2E7D32);
-        const hoodLeft = this.add.rectangle(-6 * s, -14 * s, 4 * s, 6 * s, 0x2E7D32);
-        const hoodRight = this.add.rectangle(6 * s, -14 * s, 4 * s, 6 * s, 0x2E7D32);
-        hoodTop.setAlpha(alpha);
-        hoodLeft.setAlpha(alpha);
-        hoodRight.setAlpha(alpha);
-        container.add(hoodTop);
-        container.add(hoodLeft);
-        container.add(hoodRight);
-        // Eyes
-        const eye1 = this.add.rectangle(-2 * s, -10 * s, 2 * s, 3 * s, 0x000000);
-        const eye2 = this.add.rectangle(2 * s, -10 * s, 2 * s, 3 * s, 0x000000);
-        eye1.setAlpha(alpha);
-        eye2.setAlpha(alpha);
-        container.add(eye1);
-        container.add(eye2);
-        // Bow (made of rectangles)
-        const bowMain = this.add.rectangle(14 * s, 0, 3 * s, 28 * s, 0x8B4513);
-        const bowTop = this.add.rectangle(12 * s, -12 * s, 6 * s, 3 * s, 0x8B4513);
-        const bowBottom = this.add.rectangle(12 * s, 12 * s, 6 * s, 3 * s, 0x8B4513);
-        bowMain.setAlpha(alpha);
-        bowTop.setAlpha(alpha);
-        bowBottom.setAlpha(alpha);
-        container.add(bowMain);
-        container.add(bowTop);
-        container.add(bowBottom);
-        // Bowstring
-        const string = this.add.rectangle(10 * s, 0, 1 * s, 26 * s, 0xCCCCCC);
-        string.setAlpha(alpha);
-        container.add(string);
+
+        // Quiver on back
+        const quiver = this.add.rectangle(-14 * s, 2 * s, 8 * s, 20 * s, 0x6B4423);
+        quiver.setAlpha(alpha);
+        container.add(quiver);
+        const quiverInner = this.add.rectangle(-14 * s, 0, 6 * s, 16 * s, 0x7B5433);
+        quiverInner.setAlpha(alpha);
+        container.add(quiverInner);
+        const arrow1 = this.add.rectangle(-14 * s, -10 * s, 3 * s, 6 * s, 0xFF6666);
+        arrow1.setAlpha(alpha);
+        container.add(arrow1);
+        const arrow2 = this.add.rectangle(-12 * s, -10 * s, 3 * s, 6 * s, 0x66FF66);
+        arrow2.setAlpha(alpha);
+        container.add(arrow2);
+
+        // Arms
+        const leftArm = this.add.rectangle(-12 * s, 2 * s, 6 * s, 12 * s, 0xFFCBA4);
+        leftArm.setAlpha(alpha);
+        container.add(leftArm);
+        const rightArm = this.add.rectangle(12 * s, 2 * s, 6 * s, 12 * s, 0xFFCBA4);
+        rightArm.setAlpha(alpha);
+        container.add(rightArm);
+
+        // Cool hood/cape
+        const hood1 = this.add.rectangle(0, -4 * s, 22 * s, 14 * s, 0x228B22);
+        hood1.setAlpha(alpha);
+        container.add(hood1);
+        const hood2 = this.add.rectangle(0, -10 * s, 20 * s, 10 * s, 0x228B22);
+        hood2.setAlpha(alpha);
+        container.add(hood2);
+        const hood3 = this.add.rectangle(0, -16 * s, 16 * s, 8 * s, 0x2A9B32);
+        hood3.setAlpha(alpha);
+        container.add(hood3);
+        const hood4 = this.add.rectangle(0, -20 * s, 10 * s, 6 * s, 0x2A9B32);
+        hood4.setAlpha(alpha);
+        container.add(hood4);
+
+        // Face under hood
+        const face = this.add.rectangle(0, -6 * s, 16 * s, 14 * s, 0xFFCBA4);
+        face.setAlpha(alpha);
+        container.add(face);
+        const faceHighlight = this.add.rectangle(0, -5 * s, 14 * s, 10 * s, 0xFFDDBB);
+        faceHighlight.setAlpha(alpha);
+        container.add(faceHighlight);
+
+        // Determined eyes
+        const eyeWhiteL = this.add.rectangle(-4 * s, -8 * s, 8 * s, 8 * s, 0xFFFFFF);
+        eyeWhiteL.setAlpha(alpha);
+        container.add(eyeWhiteL);
+        const eyeWhiteR = this.add.rectangle(4 * s, -8 * s, 8 * s, 8 * s, 0xFFFFFF);
+        eyeWhiteR.setAlpha(alpha);
+        container.add(eyeWhiteR);
+        const irisL = this.add.rectangle(-3 * s, -7 * s, 5 * s, 6 * s, 0x228B22);
+        irisL.setAlpha(alpha);
+        container.add(irisL);
+        const irisR = this.add.rectangle(5 * s, -7 * s, 5 * s, 6 * s, 0x228B22);
+        irisR.setAlpha(alpha);
+        container.add(irisR);
+        const pupilL = this.add.rectangle(-4 * s, -8 * s, 3 * s, 3 * s, 0x000000);
+        pupilL.setAlpha(alpha);
+        container.add(pupilL);
+        const pupilR = this.add.rectangle(4 * s, -8 * s, 3 * s, 3 * s, 0x000000);
+        pupilR.setAlpha(alpha);
+        container.add(pupilR);
+        const shineL = this.add.rectangle(-5 * s, -10 * s, 2 * s, 2 * s, 0xFFFFFF);
+        shineL.setAlpha(alpha);
+        container.add(shineL);
+        const smirk = this.add.rectangle(2 * s, -1 * s, 6 * s, 2 * s, 0xCC8888);
+        smirk.setAlpha(alpha);
+        container.add(smirk);
+
+        // Cool bow
+        const bow1 = this.add.rectangle(18 * s, -12 * s, 5 * s, 8 * s, 0x8B5A33);
+        bow1.setAlpha(alpha);
+        container.add(bow1);
+        const bow2 = this.add.rectangle(20 * s, -6 * s, 5 * s, 6 * s, 0x9B6A43);
+        bow2.setAlpha(alpha);
+        container.add(bow2);
+        const bow3 = this.add.rectangle(22 * s, 0, 5 * s, 8 * s, 0x9B6A43);
+        bow3.setAlpha(alpha);
+        container.add(bow3);
+        const bow4 = this.add.rectangle(20 * s, 6 * s, 5 * s, 6 * s, 0x9B6A43);
+        bow4.setAlpha(alpha);
+        container.add(bow4);
+        const bow5 = this.add.rectangle(18 * s, 12 * s, 5 * s, 8 * s, 0x8B5A33);
+        bow5.setAlpha(alpha);
+        container.add(bow5);
+        const bowstring = this.add.rectangle(16 * s, 0, 2 * s, 28 * s, 0xDDDDDD);
+        bowstring.setAlpha(alpha);
+        container.add(bowstring);
     }
 
     createKnightIcon(container, scale, alpha) {
-        const s = scale * 1.2;
-        // Blue armor body
-        const body = this.add.rectangle(0, 6 * s, 18 * s, 24 * s, 0x55AAEE);
+        // EXACT copy of Unit.js createKnight - cartoony heroic shiny knight
+        const s = scale;
+
+        // Shadow
+        const shadow = this.add.rectangle(0, 32 * s, 28 * s, 6 * s, 0x000000, 0.2);
+        shadow.setAlpha(alpha);
+        container.add(shadow);
+
+        // Legs
+        const leftLeg = this.add.rectangle(-6 * s, 22 * s, 10 * s, 16 * s, 0x5080C0);
+        leftLeg.setAlpha(alpha);
+        container.add(leftLeg);
+        const leftLegHighlight = this.add.rectangle(-5 * s, 22 * s, 6 * s, 12 * s, 0x60A0E0);
+        leftLegHighlight.setAlpha(alpha);
+        container.add(leftLegHighlight);
+        const leftBoot = this.add.rectangle(-7 * s, 30 * s, 12 * s, 6 * s, 0x4070B0);
+        leftBoot.setAlpha(alpha);
+        container.add(leftBoot);
+        const rightLeg = this.add.rectangle(6 * s, 22 * s, 10 * s, 16 * s, 0x5080C0);
+        rightLeg.setAlpha(alpha);
+        container.add(rightLeg);
+        const rightBoot = this.add.rectangle(7 * s, 30 * s, 12 * s, 6 * s, 0x4070B0);
+        rightBoot.setAlpha(alpha);
+        container.add(rightBoot);
+
+        // Body - heroic blue armor
+        const body = this.add.rectangle(0, 4 * s, 24 * s, 24 * s, 0x4488DD);
         body.setAlpha(alpha);
         container.add(body);
-        // Armor detail (chest plate)
-        const chestPlate = this.add.rectangle(0, 4 * s, 14 * s, 12 * s, 0x77CCFF);
-        chestPlate.setAlpha(alpha);
-        container.add(chestPlate);
-        // Steel helmet
-        const helmet = this.add.rectangle(0, -12 * s, 16 * s, 14 * s, 0x708090);
-        helmet.setAlpha(alpha);
-        container.add(helmet);
-        // Helmet visor slit
-        const visor = this.add.rectangle(0, -10 * s, 10 * s, 3 * s, 0x333333);
-        visor.setAlpha(alpha);
-        container.add(visor);
-        // Red plume on helmet (stacked rectangles)
-        const plume1 = this.add.rectangle(0, -22 * s, 4 * s, 8 * s, 0xFF4444);
-        const plume2 = this.add.rectangle(0, -26 * s, 3 * s, 5 * s, 0xFF6666);
-        plume1.setAlpha(alpha);
-        plume2.setAlpha(alpha);
-        container.add(plume1);
-        container.add(plume2);
-        // Shield (rectangle with cross)
-        const shield = this.add.rectangle(-12 * s, 4 * s, 12 * s, 16 * s, 0x4169E1);
-        shield.setStrokeStyle(2 * s, 0xFFD700);
+        const bodyHighlight = this.add.rectangle(0, 6 * s, 20 * s, 18 * s, 0x55AAEE);
+        bodyHighlight.setAlpha(alpha);
+        container.add(bodyHighlight);
+        const bodyShade = this.add.rectangle(-9 * s, 4 * s, 5 * s, 20 * s, 0x3366AA);
+        bodyShade.setAlpha(alpha);
+        container.add(bodyShade);
+        // Golden chest emblem
+        const emblem = this.add.rectangle(0, 4 * s, 10 * s, 10 * s, 0xFFD700);
+        emblem.setAlpha(alpha);
+        container.add(emblem);
+        const emblemShine = this.add.rectangle(0, 4 * s, 6 * s, 6 * s, 0xFFEE44);
+        emblemShine.setAlpha(alpha);
+        container.add(emblemShine);
+
+        // Shield arm
+        const shield = this.add.rectangle(-18 * s, 6 * s, 14 * s, 26 * s, 0x4488DD);
         shield.setAlpha(alpha);
         container.add(shield);
-        const crossV = this.add.rectangle(-12 * s, 4 * s, 2 * s, 12 * s, 0xFFD700);
-        const crossH = this.add.rectangle(-12 * s, 4 * s, 8 * s, 2 * s, 0xFFD700);
-        crossV.setAlpha(alpha);
-        crossH.setAlpha(alpha);
-        container.add(crossV);
-        container.add(crossH);
-        // Sword
-        const swordBlade = this.add.rectangle(14 * s, -4 * s, 4 * s, 24 * s, 0xC0C0C0);
-        const swordHilt = this.add.rectangle(14 * s, 10 * s, 10 * s, 3 * s, 0x8B4513);
-        const swordHandle = this.add.rectangle(14 * s, 14 * s, 3 * s, 6 * s, 0x654321);
-        swordBlade.setAlpha(alpha);
-        swordHilt.setAlpha(alpha);
-        swordHandle.setAlpha(alpha);
-        container.add(swordBlade);
-        container.add(swordHilt);
-        container.add(swordHandle);
+        const shieldHighlight = this.add.rectangle(-18 * s, 6 * s, 12 * s, 22 * s, 0x55AAEE);
+        shieldHighlight.setAlpha(alpha);
+        container.add(shieldHighlight);
+        const shieldEmblem = this.add.rectangle(-18 * s, 4 * s, 8 * s, 8 * s, 0xFFD700);
+        shieldEmblem.setAlpha(alpha);
+        container.add(shieldEmblem);
+        const shieldShine = this.add.rectangle(-18 * s, 4 * s, 4 * s, 4 * s, 0xFFEE66);
+        shieldShine.setAlpha(alpha);
+        container.add(shieldShine);
+
+        // Sword arm
+        const rightArm = this.add.rectangle(13 * s, 8 * s, 6 * s, 14 * s, 0x5080C0);
+        rightArm.setAlpha(alpha);
+        container.add(rightArm);
+
+        // AWESOME Helmet
+        const helmet = this.add.rectangle(0, -14 * s, 22 * s, 18 * s, 0x6090D0);
+        helmet.setAlpha(alpha);
+        container.add(helmet);
+        const helmetHighlight = this.add.rectangle(0, -12 * s, 18 * s, 14 * s, 0x70A0E0);
+        helmetHighlight.setAlpha(alpha);
+        container.add(helmetHighlight);
+        // Visor
+        const visor = this.add.rectangle(0, -12 * s, 16 * s, 8 * s, 0x303030);
+        visor.setAlpha(alpha);
+        container.add(visor);
+        const eyeGlowL = this.add.rectangle(-4 * s, -12 * s, 6 * s, 5 * s, 0x4488FF);
+        eyeGlowL.setAlpha(alpha);
+        container.add(eyeGlowL);
+        const eyeGlowR = this.add.rectangle(4 * s, -12 * s, 6 * s, 5 * s, 0x4488FF);
+        eyeGlowR.setAlpha(alpha);
+        container.add(eyeGlowR);
+        const eyeShineL = this.add.rectangle(-4 * s, -13 * s, 3 * s, 2 * s, 0xAADDFF);
+        eyeShineL.setAlpha(alpha);
+        container.add(eyeShineL);
+        const eyeShineR = this.add.rectangle(4 * s, -13 * s, 3 * s, 2 * s, 0xAADDFF);
+        eyeShineR.setAlpha(alpha);
+        container.add(eyeShineR);
+        // Epic plume
+        const plume1 = this.add.rectangle(0, -24 * s, 6 * s, 12 * s, 0xFF4444);
+        plume1.setAlpha(alpha);
+        container.add(plume1);
+        const plume2 = this.add.rectangle(0, -30 * s, 5 * s, 8 * s, 0xFF6666);
+        plume2.setAlpha(alpha);
+        container.add(plume2);
+        const plume3 = this.add.rectangle(0, -34 * s, 4 * s, 6 * s, 0xFF8888);
+        plume3.setAlpha(alpha);
+        container.add(plume3);
+
+        // SHINY Sword
+        const blade = this.add.rectangle(20 * s, -8 * s, 6 * s, 32 * s, 0xDDDDDD);
+        blade.setAlpha(alpha);
+        container.add(blade);
+        const bladeShine = this.add.rectangle(20 * s, -6 * s, 4 * s, 28 * s, 0xFFFFFF);
+        bladeShine.setAlpha(alpha);
+        container.add(bladeShine);
+        const bladeTip = this.add.rectangle(20 * s, -22 * s, 4 * s, 6 * s, 0xFFFFFF);
+        bladeTip.setAlpha(alpha);
+        container.add(bladeTip);
+        const crossguard = this.add.rectangle(20 * s, 10 * s, 14 * s, 6 * s, 0xC49A4A);
+        crossguard.setAlpha(alpha);
+        container.add(crossguard);
+        const crossguardHighlight = this.add.rectangle(20 * s, 10 * s, 10 * s, 4 * s, 0xD4AA5A);
+        crossguardHighlight.setAlpha(alpha);
+        container.add(crossguardHighlight);
+        const pommel = this.add.rectangle(20 * s, 16 * s, 6 * s, 6 * s, 0xFFD700);
+        pommel.setAlpha(alpha);
+        container.add(pommel);
     }
 
     createWizardIcon(container, scale, alpha) {
-        const s = scale * 1.2;
-        // Purple robe body (wider at bottom for robe effect)
-        const robeBottom = this.add.rectangle(0, 14 * s, 22 * s, 14 * s, 0xBB66FF);
-        const robeTop = this.add.rectangle(0, 2 * s, 16 * s, 14 * s, 0xBB66FF);
-        robeBottom.setAlpha(alpha);
-        robeTop.setAlpha(alpha);
-        container.add(robeBottom);
-        container.add(robeTop);
-        // Gold belt/sash
-        const belt = this.add.rectangle(0, 6 * s, 18 * s, 3 * s, 0xFFD700);
-        belt.setAlpha(alpha);
-        container.add(belt);
-        // Face
-        const head = this.add.rectangle(0, -10 * s, 12 * s, 12 * s, 0xFFDBB4);
-        head.setAlpha(alpha);
-        container.add(head);
-        // Eyes
-        const eye1 = this.add.rectangle(-2 * s, -10 * s, 2 * s, 3 * s, 0x000000);
-        const eye2 = this.add.rectangle(2 * s, -10 * s, 2 * s, 3 * s, 0x000000);
-        eye1.setAlpha(alpha);
-        eye2.setAlpha(alpha);
-        container.add(eye1);
-        container.add(eye2);
-        // Wizard hat (stacked rectangles forming pointy hat)
-        const hatBase = this.add.rectangle(0, -18 * s, 18 * s, 6 * s, 0x9932CC);
-        const hatMid = this.add.rectangle(0, -24 * s, 12 * s, 8 * s, 0x9932CC);
-        const hatTop = this.add.rectangle(0, -32 * s, 6 * s, 10 * s, 0x9932CC);
-        const hatTip = this.add.rectangle(0, -38 * s, 3 * s, 6 * s, 0x9932CC);
+        // EXACT copy of Unit.js createWizard - cartoony magical mysterious wizard
+        const s = scale;
+
+        // Shadow
+        const shadow = this.add.rectangle(0, 30 * s, 26 * s, 6 * s, 0x000000, 0.2);
+        shadow.setAlpha(alpha);
+        container.add(shadow);
+
+        // Robe legs
+        const leftRobe = this.add.rectangle(-5 * s, 22 * s, 12 * s, 16 * s, 0x8844CC);
+        leftRobe.setAlpha(alpha);
+        container.add(leftRobe);
+        const leftRobeHighlight = this.add.rectangle(-5 * s, 24 * s, 10 * s, 12 * s, 0x9955DD);
+        leftRobeHighlight.setAlpha(alpha);
+        container.add(leftRobeHighlight);
+        const rightRobe = this.add.rectangle(5 * s, 22 * s, 12 * s, 16 * s, 0x8844CC);
+        rightRobe.setAlpha(alpha);
+        container.add(rightRobe);
+        const rightRobeHighlight = this.add.rectangle(5 * s, 24 * s, 10 * s, 12 * s, 0x9955DD);
+        rightRobeHighlight.setAlpha(alpha);
+        container.add(rightRobeHighlight);
+
+        // Robe body
+        const robe = this.add.rectangle(0, 6 * s, 22 * s, 20 * s, 0xAA55EE);
+        robe.setAlpha(alpha);
+        container.add(robe);
+        const robeHighlight = this.add.rectangle(0, 8 * s, 18 * s, 14 * s, 0xBB66FF);
+        robeHighlight.setAlpha(alpha);
+        container.add(robeHighlight);
+        const robeShade = this.add.rectangle(-8 * s, 6 * s, 4 * s, 16 * s, 0x8844CC);
+        robeShade.setAlpha(alpha);
+        container.add(robeShade);
+
+        // Gold trim
+        const trimBottom = this.add.rectangle(0, 28 * s, 28 * s, 4 * s, 0xFFD700);
+        trimBottom.setAlpha(alpha);
+        container.add(trimBottom);
+        const trimL = this.add.rectangle(-8 * s, 28 * s, 4 * s, 3 * s, 0xFFEE66);
+        trimL.setAlpha(alpha);
+        container.add(trimL);
+        const trimR = this.add.rectangle(8 * s, 28 * s, 4 * s, 3 * s, 0xFFEE66);
+        trimR.setAlpha(alpha);
+        container.add(trimR);
+
+        // Arms with sleeves
+        const leftArm = this.add.rectangle(-14 * s, 6 * s, 8 * s, 14 * s, 0xAA55EE);
+        leftArm.setAlpha(alpha);
+        container.add(leftArm);
+        const leftHand = this.add.rectangle(-14 * s, 14 * s, 8 * s, 6 * s, 0xFFCBA4);
+        leftHand.setAlpha(alpha);
+        container.add(leftHand);
+        const rightArm = this.add.rectangle(14 * s, 6 * s, 8 * s, 14 * s, 0xAA55EE);
+        rightArm.setAlpha(alpha);
+        container.add(rightArm);
+        const rightHand = this.add.rectangle(14 * s, 14 * s, 8 * s, 6 * s, 0xFFCBA4);
+        rightHand.setAlpha(alpha);
+        container.add(rightHand);
+
+        // Wise old face
+        const face = this.add.rectangle(0, -8 * s, 18 * s, 16 * s, 0xFFCBA4);
+        face.setAlpha(alpha);
+        container.add(face);
+        const faceHighlight = this.add.rectangle(0, -6 * s, 14 * s, 12 * s, 0xFFDDBB);
+        faceHighlight.setAlpha(alpha);
+        container.add(faceHighlight);
+
+        // Magnificent beard
+        const beard1 = this.add.rectangle(0, 4 * s, 14 * s, 14 * s, 0xEEEEEE);
+        beard1.setAlpha(alpha);
+        container.add(beard1);
+        const beard2 = this.add.rectangle(0, 10 * s, 12 * s, 10 * s, 0xFFFFFF);
+        beard2.setAlpha(alpha);
+        container.add(beard2);
+        const beardL = this.add.rectangle(-4 * s, 14 * s, 6 * s, 8 * s, 0xDDDDDD);
+        beardL.setAlpha(alpha);
+        container.add(beardL);
+        const beardR = this.add.rectangle(4 * s, 14 * s, 6 * s, 8 * s, 0xDDDDDD);
+        beardR.setAlpha(alpha);
+        container.add(beardR);
+        const beardTip = this.add.rectangle(0, 18 * s, 4 * s, 6 * s, 0xFFFFFF);
+        beardTip.setAlpha(alpha);
+        container.add(beardTip);
+
+        // Magical glowing eyes
+        const eyeL = this.add.rectangle(-4 * s, -10 * s, 8 * s, 8 * s, 0x00DDFF);
+        eyeL.setAlpha(alpha);
+        container.add(eyeL);
+        const eyeR = this.add.rectangle(4 * s, -10 * s, 8 * s, 8 * s, 0x00DDFF);
+        eyeR.setAlpha(alpha);
+        container.add(eyeR);
+        const eyeLInner = this.add.rectangle(-4 * s, -10 * s, 4 * s, 4 * s, 0xAAFFFF);
+        eyeLInner.setAlpha(alpha);
+        container.add(eyeLInner);
+        const eyeRInner = this.add.rectangle(4 * s, -10 * s, 4 * s, 4 * s, 0xAAFFFF);
+        eyeRInner.setAlpha(alpha);
+        container.add(eyeRInner);
+
+        // Bushy eyebrows
+        const browL = this.add.rectangle(-5 * s, -15 * s, 8 * s, 3 * s, 0xCCCCCC);
+        browL.setAlpha(alpha);
+        container.add(browL);
+        const browR = this.add.rectangle(5 * s, -15 * s, 8 * s, 3 * s, 0xCCCCCC);
+        browR.setAlpha(alpha);
+        container.add(browR);
+
+        // MAGICAL Wizard hat
+        const hatBase = this.add.rectangle(0, -18 * s, 24 * s, 8 * s, 0x8844CC);
         hatBase.setAlpha(alpha);
-        hatMid.setAlpha(alpha);
-        hatTop.setAlpha(alpha);
-        hatTip.setAlpha(alpha);
         container.add(hatBase);
+        const hatMid = this.add.rectangle(0, -26 * s, 18 * s, 12 * s, 0x9955DD);
+        hatMid.setAlpha(alpha);
         container.add(hatMid);
+        const hatTop = this.add.rectangle(0, -34 * s, 14 * s, 10 * s, 0xAA66EE);
+        hatTop.setAlpha(alpha);
         container.add(hatTop);
+        const hatTip = this.add.rectangle(0, -42 * s, 10 * s, 10 * s, 0xBB77FF);
+        hatTip.setAlpha(alpha);
         container.add(hatTip);
-        // Star on hat (made of rectangles)
-        const starV = this.add.rectangle(0, -26 * s, 2 * s, 8 * s, 0xFFD700);
-        const starH = this.add.rectangle(0, -26 * s, 8 * s, 2 * s, 0xFFD700);
-        starV.setAlpha(alpha);
-        starH.setAlpha(alpha);
-        container.add(starV);
-        container.add(starH);
-        // Magic staff
-        const staff = this.add.rectangle(14 * s, 0, 3 * s, 40 * s, 0x8B4513);
+        const hatPeak = this.add.rectangle(4 * s, -48 * s, 8 * s, 8 * s, 0xCC88FF);
+        hatPeak.setAlpha(alpha);
+        container.add(hatPeak);
+        const star1 = this.add.rectangle(-4 * s, -30 * s, 5 * s, 5 * s, 0xFFD700);
+        star1.setAlpha(alpha);
+        container.add(star1);
+        const star2 = this.add.rectangle(4 * s, -38 * s, 4 * s, 4 * s, 0xFFEE88);
+        star2.setAlpha(alpha);
+        container.add(star2);
+
+        // MAGICAL Staff
+        const staff = this.add.rectangle(22 * s, 4 * s, 6 * s, 44 * s, 0x8B5A33);
         staff.setAlpha(alpha);
         container.add(staff);
-        // Orb on staff (square glowing orb)
-        const orb = this.add.rectangle(14 * s, -22 * s, 10 * s, 10 * s, 0x00FFFF);
-        const orbInner = this.add.rectangle(14 * s, -22 * s, 6 * s, 6 * s, 0xAAFFFF);
+        const staffHighlight = this.add.rectangle(22 * s, 6 * s, 4 * s, 40 * s, 0x9B6A43);
+        staffHighlight.setAlpha(alpha);
+        container.add(staffHighlight);
+        const orb = this.add.rectangle(22 * s, -22 * s, 16 * s, 16 * s, 0x00BBCC);
         orb.setAlpha(alpha);
-        orbInner.setAlpha(alpha);
         container.add(orb);
+        const orbMid = this.add.rectangle(22 * s, -22 * s, 12 * s, 12 * s, 0x00DDEE);
+        orbMid.setAlpha(alpha);
+        container.add(orbMid);
+        const orbInner = this.add.rectangle(22 * s, -22 * s, 6 * s, 6 * s, 0x66FFFF);
+        orbInner.setAlpha(alpha);
         container.add(orbInner);
+        const orbShine = this.add.rectangle(19 * s, -25 * s, 4 * s, 4 * s, 0xFFFFFF);
+        orbShine.setAlpha(alpha);
+        container.add(orbShine);
     }
 
     createGiantIcon(container, scale, alpha) {
-        const s = scale * 1.0;
-        // Large brown/orange body
-        const body = this.add.rectangle(0, 8 * s, 26 * s, 32 * s, 0xEE9955);
+        // EXACT copy of Unit.js createGiant - cartoony big friendly fierce warrior
+        const s = scale * 0.85; // Slightly smaller to fit in card
+
+        // Big shadow
+        const shadow = this.add.rectangle(0, 48 * s, 40 * s, 8 * s, 0x000000, 0.2);
+        shadow.setAlpha(alpha);
+        container.add(shadow);
+
+        // Chunky legs
+        const leftLeg = this.add.rectangle(-10 * s, 32 * s, 14 * s, 20 * s, 0x7B5040);
+        leftLeg.setAlpha(alpha);
+        container.add(leftLeg);
+        const leftFoot = this.add.rectangle(-11 * s, 44 * s, 16 * s, 8 * s, 0x6B4030);
+        leftFoot.setAlpha(alpha);
+        container.add(leftFoot);
+        const rightLeg = this.add.rectangle(10 * s, 32 * s, 14 * s, 20 * s, 0x7B5040);
+        rightLeg.setAlpha(alpha);
+        container.add(rightLeg);
+        const rightFoot = this.add.rectangle(11 * s, 44 * s, 16 * s, 8 * s, 0x6B4030);
+        rightFoot.setAlpha(alpha);
+        container.add(rightFoot);
+
+        // MASSIVE body
+        const body = this.add.rectangle(0, 10 * s, 36 * s, 32 * s, 0xBB4444);
         body.setAlpha(alpha);
         container.add(body);
-        // Chest/belly detail
-        const belly = this.add.rectangle(0, 12 * s, 18 * s, 20 * s, 0xFFAA66);
+        const bodyHighlight = this.add.rectangle(0, 12 * s, 30 * s, 26 * s, 0xCC5555);
+        bodyHighlight.setAlpha(alpha);
+        container.add(bodyHighlight);
+        const bodyShade = this.add.rectangle(-14 * s, 10 * s, 6 * s, 28 * s, 0x993333);
+        bodyShade.setAlpha(alpha);
+        container.add(bodyShade);
+
+        // Friendly belly
+        const belly = this.add.rectangle(0, 16 * s, 24 * s, 18 * s, 0xDD7766);
         belly.setAlpha(alpha);
         container.add(belly);
-        // Brown loincloth
-        const loincloth = this.add.rectangle(0, 22 * s, 22 * s, 6 * s, 0x8B4513);
-        loincloth.setAlpha(alpha);
-        container.add(loincloth);
-        // Big square head
-        const head = this.add.rectangle(0, -14 * s, 20 * s, 18 * s, 0xCD853F);
+        const bellyInner = this.add.rectangle(0, 14 * s, 18 * s, 12 * s, 0xEE8877);
+        bellyInner.setAlpha(alpha);
+        container.add(bellyInner);
+
+        // Cool belt
+        const belt = this.add.rectangle(0, 24 * s, 38 * s, 6 * s, 0x5A4030);
+        belt.setAlpha(alpha);
+        container.add(belt);
+        const buckle = this.add.rectangle(0, 24 * s, 10 * s, 8 * s, 0xFFD700);
+        buckle.setAlpha(alpha);
+        container.add(buckle);
+        const buckleShine = this.add.rectangle(0, 24 * s, 6 * s, 4 * s, 0xFFEE66);
+        buckleShine.setAlpha(alpha);
+        container.add(buckleShine);
+
+        // Huge arms
+        const leftArm = this.add.rectangle(-22 * s, 10 * s, 12 * s, 28 * s, 0xDD9966);
+        leftArm.setAlpha(alpha);
+        container.add(leftArm);
+        const leftArmHighlight = this.add.rectangle(-20 * s, 10 * s, 6 * s, 24 * s, 0xEEAA77);
+        leftArmHighlight.setAlpha(alpha);
+        container.add(leftArmHighlight);
+        const leftFist = this.add.rectangle(-22 * s, 26 * s, 14 * s, 12 * s, 0xEEAA77);
+        leftFist.setAlpha(alpha);
+        container.add(leftFist);
+        const rightArm = this.add.rectangle(22 * s, 10 * s, 12 * s, 28 * s, 0xDD9966);
+        rightArm.setAlpha(alpha);
+        container.add(rightArm);
+        const rightFist = this.add.rectangle(22 * s, 26 * s, 14 * s, 12 * s, 0xEEAA77);
+        rightFist.setAlpha(alpha);
+        container.add(rightFist);
+
+        // Big lovable head
+        const head = this.add.rectangle(0, -16 * s, 28 * s, 24 * s, 0xDD9966);
         head.setAlpha(alpha);
         container.add(head);
-        // Angry brow
-        const brow = this.add.rectangle(0, -20 * s, 18 * s, 5 * s, 0x8B6914);
-        brow.setAlpha(alpha);
-        container.add(brow);
-        // Red angry eyes
-        const eye1 = this.add.rectangle(-5 * s, -14 * s, 5 * s, 4 * s, 0xFF0000);
-        const eye2 = this.add.rectangle(5 * s, -14 * s, 5 * s, 4 * s, 0xFF0000);
-        eye1.setAlpha(alpha);
-        eye2.setAlpha(alpha);
-        container.add(eye1);
-        container.add(eye2);
-        // Angry mouth
-        const mouth = this.add.rectangle(0, -6 * s, 10 * s, 4 * s, 0x330000);
+        const headHighlight = this.add.rectangle(0, -14 * s, 24 * s, 18 * s, 0xEEAA77);
+        headHighlight.setAlpha(alpha);
+        container.add(headHighlight);
+        const headShade = this.add.rectangle(-10 * s, -16 * s, 6 * s, 20 * s, 0xCC8855);
+        headShade.setAlpha(alpha);
+        container.add(headShade);
+
+        // Friendly but fierce eyes
+        const eyeWhiteL = this.add.rectangle(-7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF);
+        eyeWhiteL.setAlpha(alpha);
+        container.add(eyeWhiteL);
+        const eyeWhiteR = this.add.rectangle(7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF);
+        eyeWhiteR.setAlpha(alpha);
+        container.add(eyeWhiteR);
+        const pupilL = this.add.rectangle(-6 * s, -17 * s, 6 * s, 8 * s, 0x664422);
+        pupilL.setAlpha(alpha);
+        container.add(pupilL);
+        const pupilR = this.add.rectangle(8 * s, -17 * s, 6 * s, 8 * s, 0x664422);
+        pupilR.setAlpha(alpha);
+        container.add(pupilR);
+        const shineL = this.add.rectangle(-8 * s, -19 * s, 3 * s, 3 * s, 0xFFFFFF);
+        shineL.setAlpha(alpha);
+        container.add(shineL);
+        const shineR = this.add.rectangle(6 * s, -19 * s, 3 * s, 3 * s, 0xFFFFFF);
+        shineR.setAlpha(alpha);
+        container.add(shineR);
+
+        // Determined eyebrows
+        const browL = this.add.rectangle(-7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020);
+        browL.setAlpha(alpha);
+        container.add(browL);
+        const browR = this.add.rectangle(7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020);
+        browR.setAlpha(alpha);
+        container.add(browR);
+
+        // Big smile with teeth
+        const mouth = this.add.rectangle(0, -6 * s, 16 * s, 8 * s, 0xAA4040);
         mouth.setAlpha(alpha);
         container.add(mouth);
-        // Big club
-        const clubHandle = this.add.rectangle(18 * s, 2 * s, 6 * s, 36 * s, 0x654321);
+        const teeth = this.add.rectangle(0, -8 * s, 12 * s, 4 * s, 0xFFFFFF);
+        teeth.setAlpha(alpha);
+        container.add(teeth);
+        const toothL = this.add.rectangle(-5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE);
+        toothL.setAlpha(alpha);
+        container.add(toothL);
+        const toothR = this.add.rectangle(5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE);
+        toothR.setAlpha(alpha);
+        container.add(toothR);
+
+        // EPIC spiked club
+        const clubHandle = this.add.rectangle(34 * s, 4 * s, 10 * s, 50 * s, 0x6B5030);
         clubHandle.setAlpha(alpha);
         container.add(clubHandle);
-        // Club head (stacked rectangles for chunky look)
-        const clubHead1 = this.add.rectangle(18 * s, -20 * s, 14 * s, 12 * s, 0x4A3728);
-        const clubHead2 = this.add.rectangle(18 * s, -28 * s, 10 * s, 8 * s, 0x4A3728);
-        clubHead1.setAlpha(alpha);
-        clubHead2.setAlpha(alpha);
-        container.add(clubHead1);
-        container.add(clubHead2);
-        // Spikes on club (small rectangles)
-        const spike1 = this.add.rectangle(12 * s, -22 * s, 4 * s, 4 * s, 0x888888);
-        const spike2 = this.add.rectangle(24 * s, -22 * s, 4 * s, 4 * s, 0x888888);
-        const spike3 = this.add.rectangle(18 * s, -32 * s, 4 * s, 4 * s, 0x888888);
+        const clubHighlight = this.add.rectangle(34 * s, 6 * s, 6 * s, 46 * s, 0x7B6040);
+        clubHighlight.setAlpha(alpha);
+        container.add(clubHighlight);
+        const clubHead = this.add.rectangle(34 * s, -26 * s, 20 * s, 24 * s, 0x5A4030);
+        clubHead.setAlpha(alpha);
+        container.add(clubHead);
+        const clubHeadInner = this.add.rectangle(34 * s, -26 * s, 16 * s, 20 * s, 0x6B5040);
+        clubHeadInner.setAlpha(alpha);
+        container.add(clubHeadInner);
+        const spike1 = this.add.rectangle(34 * s, -42 * s, 6 * s, 12 * s, 0x888888);
         spike1.setAlpha(alpha);
-        spike2.setAlpha(alpha);
-        spike3.setAlpha(alpha);
         container.add(spike1);
+        const spike2 = this.add.rectangle(34 * s, -44 * s, 4 * s, 8 * s, 0xAAAAAA);
+        spike2.setAlpha(alpha);
         container.add(spike2);
+        const spike3 = this.add.rectangle(46 * s, -28 * s, 10 * s, 5 * s, 0x888888);
+        spike3.setAlpha(alpha);
         container.add(spike3);
+        const spike4 = this.add.rectangle(22 * s, -28 * s, 10 * s, 5 * s, 0x888888);
+        spike4.setAlpha(alpha);
+        container.add(spike4);
     }
 
     createCastleUpgrades() {
-        this.add.text(GAME_WIDTH / 2, 380, 'CASTLE UPGRADES', {
-            fontSize: '20px',
+        this.add.text(GAME_WIDTH / 2, 400, 'CASTLE UPGRADES', {
+            fontSize: '22px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#ffffff',
+            fontStyle: 'bold'
         }).setOrigin(0.5);
 
         const upgrades = [
@@ -498,9 +935,9 @@ class UpgradeScene extends Phaser.Scene {
             { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' }
         ];
 
-        const startX = 250;
+        const startX = 260;
         const spacing = 200;
-        const y = 490;
+        const y = 500;
 
         upgrades.forEach((upgrade, index) => {
             this.createCastleUpgradeCard(startX + (index * spacing), y, upgrade);
@@ -513,21 +950,22 @@ class UpgradeScene extends Phaser.Scene {
         const isMaxLevel = level >= UPGRADE_CONFIG.maxLevel;
 
         // Background
-        const bg = this.add.rectangle(0, 0, 180, 100, 0x333344);
+        const bg = this.add.rectangle(0, 0, 180, 90, 0x333344);
         bg.setStrokeStyle(2, 0x4169E1);
         card.add(bg);
 
         // Icon and name
-        const header = this.add.text(0, -30, `${upgrade.icon} ${upgrade.name}`, {
-            fontSize: '16px',
+        const header = this.add.text(0, -28, `${upgrade.icon} ${upgrade.name}`, {
+            fontSize: '14px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#ffffff',
+            fontStyle: 'bold'
         }).setOrigin(0.5);
         card.add(header);
 
         // Level
         const levelText = this.add.text(0, -10, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
-            fontSize: '14px',
+            fontSize: '13px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -537,9 +975,9 @@ class UpgradeScene extends Phaser.Scene {
         const currentBonus = this.getCastleBonus(upgrade.key, level);
         const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
 
-        const progressContainer = this.add.container(0, 8);
+        const progressContainer = this.add.container(0, 6);
         const currentText = this.add.text(-12, 0, currentBonus, {
-            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88'
+            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         progressContainer.add(currentText);
 
@@ -559,7 +997,7 @@ class UpgradeScene extends Phaser.Scene {
             progressContainer.add(arrow);
 
             const nextText = this.add.text(24, 0, nextBonus, {
-                fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             progressContainer.add(nextText);
         }
@@ -569,15 +1007,16 @@ class UpgradeScene extends Phaser.Scene {
         const xp = this.saveData.xp || 0;
         if (level < UPGRADE_CONFIG.maxLevel) {
             const cost = this.calculateCastleUpgradeCost(level);
-            const btn = this.createCardButton(0, 38, `${cost} XP`, () => {
+            const btn = this.createCardButton(0, 32, `${cost} XP`, () => {
                 this.purchaseCastleUpgrade(upgrade.key, cost);
-            }, xp >= cost, 80, 25);
+            }, xp >= cost, 70, 22);
             card.add(btn);
         } else {
-            const maxText = this.add.text(0, 38, 'MAX', {
-                fontSize: '16px',
+            const maxText = this.add.text(0, 32, 'MAX', {
+                fontSize: '14px',
                 fontFamily: 'Arial',
-                color: '#ffd700'
+                color: '#ffd700',
+                fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(maxText);
         }
@@ -635,26 +1074,29 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createBackButton() {
-        const btn = this.add.container(80, GAME_HEIGHT - 40);
+        const btn = this.add.container(75, GAME_HEIGHT - 30);
 
-        const bg = this.add.rectangle(0, 0, 120, 40, 0x666666);
-        bg.setStrokeStyle(2, 0x888888);
+        const bg = this.add.rectangle(0, 0, 100, 32, 0x444455);
+        bg.setStrokeStyle(2, 0x666688);
         bg.setInteractive({});
         btn.add(bg);
 
         const label = this.add.text(0, 0, '← Back', {
-            fontSize: '18px',
+            fontSize: '16px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#cccccc',
+            fontStyle: 'bold'
         }).setOrigin(0.5);
         btn.add(label);
 
         bg.on('pointerover', () => {
-            bg.setFillStyle(0x888888);
+            bg.setFillStyle(0x555566);
+            label.setColor('#ffffff');
         });
 
         bg.on('pointerout', () => {
-            bg.setFillStyle(0x666666);
+            bg.setFillStyle(0x444455);
+            label.setColor('#cccccc');
         });
 
         bg.on('pointerdown', () => {
