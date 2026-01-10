@@ -545,8 +545,8 @@ class Castle extends Phaser.GameObjects.Container {
 
         // Apply armor damage reduction: -5% per armor level (level 1 = 0%, level 2 = 5%, etc.)
         const armorLevel = this.armorLevel || 1;
-        const damageReduction = (armorLevel - 1) * 0.05;
-        const reducedAmount = Math.floor(amount * (1 - damageReduction));
+        const damageReduction = Math.min((armorLevel - 1) * 0.05, 0.75); // Cap at 75% reduction
+        const reducedAmount = Math.max(1, Math.floor(amount * (1 - damageReduction))); // Minimum 1 damage
 
         // If fence exists, damage fence first
         if (this.hasFence && this.fenceCurrentHealth > 0) {
