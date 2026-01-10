@@ -83,6 +83,11 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('UpgradeScene');
         });
 
+        // Tips button
+        this.createSmallButton(width / 2, 480, 'TIPS & INFO', () => {
+            this.showTipsPanel();
+        });
+
         // Reset upgrades button (at bottom)
         this.createSmallButton(width / 2, height - 15, 'Reset Upgrades (2 XP)', () => {
             this.confirmResetUpgrades();
@@ -841,6 +846,223 @@ class MenuScene extends Phaser.Scene {
         });
 
         dialog.setDepth(1001);
+    }
+
+    showTipsPanel() {
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+        // Overlay
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+        overlay.setInteractive();
+        dialog.add(overlay);
+
+        // Panel background
+        const panel = this.add.rectangle(0, 0, 700, 500, 0x1a1a2e);
+        panel.setStrokeStyle(3, 0x4169E1);
+        dialog.add(panel);
+
+        // Title
+        const title = this.add.text(0, -220, 'TIPS & INFO', {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4169E1',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        // Tips pages content
+        const tipsPages = [
+            {
+                title: 'CONTROLS',
+                tips: [
+                    { icon: '🎮', text: 'Hover over unit buttons to spawn units' },
+                    { icon: '⏸️', text: 'Press ESC or P to pause the game' },
+                    { icon: '🔇', text: 'Press M to toggle music on/off' },
+                    { icon: '🖱️', text: 'Right-click anywhere to pause' },
+                    { icon: '⛏️', text: 'Hover over gold/wood mines to collect resources' }
+                ]
+            },
+            {
+                title: 'GAMEPLAY BASICS',
+                tips: [
+                    { icon: '🏰', text: 'Defend your castle from waves of enemies' },
+                    { icon: '⚔️', text: 'Spawn units using gold and wood resources' },
+                    { icon: '💰', text: 'Earn resources by killing enemies and completing waves' },
+                    { icon: '🎯', text: 'Units automatically attack nearby enemies' },
+                    { icon: '🛡️', text: 'Position tanks (Knights, Giants) in front to protect ranged units' }
+                ]
+            },
+            {
+                title: 'UNIT PROMOTION',
+                tips: [
+                    { icon: '⭐', text: 'Spawning the same unit type promotes it!' },
+                    { icon: '🥈', text: 'Silver tier (1-3): +10% HP/DMG per level' },
+                    { icon: '🥇', text: 'Gold tier (4-6): +10% HP/DMG per level' },
+                    { icon: '👥', text: 'Gold tier (level 4+) spawns TWO units at once!' },
+                    { icon: '💎', text: 'Higher promotion = higher cost (balanced)' }
+                ]
+            },
+            {
+                title: 'CASTLE & MINING',
+                tips: [
+                    { icon: '🏰', text: 'Upgrade castle in-game by hovering over it' },
+                    { icon: '🔨', text: 'Castle level 3+ builds a defensive fence' },
+                    { icon: '⛏️', text: 'Castle upgrades increase mining speed by 25%/level' },
+                    { icon: '❤️', text: 'Castle Health XP upgrade gives +20 HP per wave (level 2+)' },
+                    { icon: '🛡️', text: 'Castle Armor reduces incoming damage' }
+                ]
+            },
+            {
+                title: 'ENEMIES & BOSSES',
+                tips: [
+                    { icon: '👺', text: 'Goblins (Wave 1+): Fast but weak' },
+                    { icon: '👹', text: 'Orcs (Wave 2+): Stronger melee fighters' },
+                    { icon: '💀', text: 'Skeletons (Wave 4+): Medium threat' },
+                    { icon: '🏹', text: 'Skeleton Archers (Wave 6+): Ranged enemies!' },
+                    { icon: '🐉', text: 'DRAGON BOSS every 10 waves - very dangerous!' }
+                ]
+            },
+            {
+                title: 'MORE ENEMIES',
+                tips: [
+                    { icon: '🗡️', text: 'Spear Monsters (Wave 7+): Throw big spears' },
+                    { icon: '🧌', text: 'Trolls (Wave 8+): High HP tanks' },
+                    { icon: '⚫', text: 'Dark Knights (Wave 12+): Strong armored foes' },
+                    { icon: '😈', text: 'Demons (Wave 18+): Very powerful enemies' },
+                    { icon: '⚠️', text: 'Enemies get stronger each wave!' }
+                ]
+            },
+            {
+                title: 'XP & RANKINGS',
+                tips: [
+                    { icon: '✨', text: 'Earn XP by reaching wave milestones (max 3/game)' },
+                    { icon: '📊', text: 'Recruit earns XP every 3 waves' },
+                    { icon: '📈', text: 'Higher ranks need more waves per XP' },
+                    { icon: '🎖️', text: 'Ranks: Recruit → Soldier → Warrior → Knight → ...' },
+                    { icon: '👑', text: 'Each rank has 3 grades (I, II, III)' }
+                ]
+            },
+            {
+                title: 'UPGRADES & XP',
+                tips: [
+                    { icon: '⬆️', text: 'Spend XP in Upgrades menu for permanent boosts' },
+                    { icon: '🔓', text: 'Unlock Knight (2 XP), Wizard (3 XP), Giant (5 XP)' },
+                    { icon: '💪', text: 'Unit upgrades increase base HP and damage' },
+                    { icon: '🔄', text: 'Reset upgrades costs 2 XP fee (refunds spent XP)' },
+                    { icon: '⛏️', text: 'Mining Speed upgrade increases rate by 10%/level' }
+                ]
+            }
+        ];
+
+        // Current page tracking
+        let currentPage = 0;
+
+        // Page content container
+        const pageContainer = this.add.container(0, 20);
+        dialog.add(pageContainer);
+
+        // Page indicator
+        const pageIndicator = this.add.text(0, 210, '', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        dialog.add(pageIndicator);
+
+        // Function to render current page
+        const renderPage = () => {
+            pageContainer.removeAll(true);
+
+            const page = tipsPages[currentPage];
+
+            // Page title
+            const pageTitle = this.add.text(0, -160, page.title, {
+                fontSize: '24px',
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                color: '#ffd700',
+                stroke: '#000000',
+                strokeThickness: 3
+            }).setOrigin(0.5);
+            pageContainer.add(pageTitle);
+
+            // Tips list
+            page.tips.forEach((tip, index) => {
+                const y = -100 + index * 50;
+
+                const tipText = this.add.text(-300, y, `${tip.icon}  ${tip.text}`, {
+                    fontSize: '18px',
+                    fontFamily: 'Arial',
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 1
+                }).setOrigin(0, 0.5);
+                pageContainer.add(tipText);
+            });
+
+            // Update page indicator
+            pageIndicator.setText(`Page ${currentPage + 1} of ${tipsPages.length}`);
+        };
+
+        // Navigation buttons
+        const prevBtn = this.add.text(-280, 210, '< PREV', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4169E1',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        prevBtn.setInteractive({ useHandCursor: true });
+        dialog.add(prevBtn);
+
+        prevBtn.on('pointerover', () => prevBtn.setColor('#6495ED'));
+        prevBtn.on('pointerout', () => prevBtn.setColor('#4169E1'));
+        prevBtn.on('pointerdown', () => {
+            currentPage = (currentPage - 1 + tipsPages.length) % tipsPages.length;
+            renderPage();
+        });
+
+        const nextBtn = this.add.text(280, 210, 'NEXT >', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4169E1',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        nextBtn.setInteractive({ useHandCursor: true });
+        dialog.add(nextBtn);
+
+        nextBtn.on('pointerover', () => nextBtn.setColor('#6495ED'));
+        nextBtn.on('pointerout', () => nextBtn.setColor('#4169E1'));
+        nextBtn.on('pointerdown', () => {
+            currentPage = (currentPage + 1) % tipsPages.length;
+            renderPage();
+        });
+
+        // Close button
+        const closeBtn = this.add.text(320, -220, 'X', {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        closeBtn.setInteractive({ useHandCursor: true });
+        dialog.add(closeBtn);
+
+        closeBtn.on('pointerover', () => closeBtn.setColor('#ff6666'));
+        closeBtn.on('pointerout', () => closeBtn.setColor('#ff4444'));
+        closeBtn.on('pointerdown', () => dialog.destroy());
+
+        // Render first page
+        renderPage();
+
+        dialog.setDepth(1000);
     }
 
     createSwordCursor() {
