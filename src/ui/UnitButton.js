@@ -522,7 +522,16 @@ class UnitButton extends Phaser.GameObjects.Container {
         if (this.tooltip) return;
 
         const stats = UNIT_TYPES[this.unitType.toUpperCase()];
-        const text = `${stats.name} HP:${stats.health} DMG:${stats.damage}`;
+
+        // Get upgraded stats
+        const saveData = saveSystem.load();
+        const upgradeLevel = saveData.upgrades[this.unitType.toLowerCase()]?.level || 1;
+        const hpBonus = Math.pow(2, upgradeLevel - 1) - 1;
+        const dmgBonus = Math.pow(2, upgradeLevel) - 2;
+        const upgradedHP = stats.health + hpBonus;
+        const upgradedDMG = stats.damage + dmgBonus;
+
+        const text = `${stats.name} HP:${upgradedHP} DMG:${upgradedDMG}`;
 
         // Text only tooltip - x2 bigger but transparent
         this.tooltip = this.scene.add.text(this.x + 60, this.y, text, {
