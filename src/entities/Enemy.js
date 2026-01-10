@@ -306,285 +306,331 @@ class Enemy extends Phaser.GameObjects.Container {
     }
 
     createSkeleton(scene) {
-        // CARTOONY SKELETON - spooky but silly!
+        // CARTOONY SKELETON - spooky but silly! WITH ANIMATIONS
         // Shadow
         this.spriteContainer.add(scene.add.rectangle(0, 38, 18, 5, 0x000000, 0.2));
 
-        // Bony legs
-        this.spriteContainer.add(scene.add.rectangle(-4, 26, 6, 20, 0xFFFFFF)); // left leg
-        this.spriteContainer.add(scene.add.rectangle(4, 26, 6, 20, 0xFFFFFF)); // right leg
-        this.spriteContainer.add(scene.add.rectangle(-4, 28, 4, 16, 0xEEEEEE)); // detail
-        this.spriteContainer.add(scene.add.rectangle(4, 28, 4, 16, 0xEEEEEE));
-        // Bony feet
-        this.spriteContainer.add(scene.add.rectangle(-5, 36, 8, 4, 0xEEEEEE));
-        this.spriteContainer.add(scene.add.rectangle(5, 36, 8, 4, 0xEEEEEE));
+        // Animated bony legs
+        this.bodyParts.leftLeg = scene.add.container(-4, 26);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 6, 20, 0xFFFFFF));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 2, 4, 16, 0xEEEEEE));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 10, 8, 4, 0xEEEEEE)); // foot
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(4, 26);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 6, 20, 0xFFFFFF));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 2, 4, 16, 0xEEEEEE));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 10, 8, 4, 0xEEEEEE)); // foot
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container (torso)
+        this.bodyParts.torso = scene.add.container(0, 0);
 
         // Ribcage (cartoony)
         const body = scene.add.rectangle(0, 8, 18, 22, 0xFFFFFF);
-        this.spriteContainer.add(body);
-        // Rib details
-        this.spriteContainer.add(scene.add.rectangle(0, 2, 16, 4, 0xDDDDDD));
-        this.spriteContainer.add(scene.add.rectangle(0, 8, 14, 4, 0xDDDDDD));
-        this.spriteContainer.add(scene.add.rectangle(0, 14, 12, 4, 0xDDDDDD));
-        // Spine
-        this.spriteContainer.add(scene.add.rectangle(0, 10, 4, 24, 0xCCCCCC));
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 16, 4, 0xDDDDDD));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 8, 14, 4, 0xDDDDDD));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 14, 12, 4, 0xDDDDDD));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 4, 24, 0xCCCCCC)); // spine
 
-        // Bony arms
-        this.spriteContainer.add(scene.add.rectangle(-12, 6, 6, 18, 0xFFFFFF));
-        this.spriteContainer.add(scene.add.rectangle(12, 6, 6, 18, 0xFFFFFF));
-        this.spriteContainer.add(scene.add.rectangle(-12, 8, 4, 14, 0xEEEEEE)); // detail
+        // Animated bony arms
+        this.bodyParts.leftArm = scene.add.container(-12, 6);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 6, 18, 0xFFFFFF));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 2, 4, 14, 0xEEEEEE));
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
+
+        this.bodyParts.rightArm = scene.add.container(12, 6);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 6, 18, 0xFFFFFF));
+        this.bodyParts.torso.add(this.bodyParts.rightArm);
 
         // BIG cartoony skull
         const skull = scene.add.rectangle(0, -14, 24, 22, 0xFFFFFF);
-        this.spriteContainer.add(skull);
-        this.spriteContainer.add(scene.add.rectangle(0, -12, 20, 16, 0xF8F8F8)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-8, -14, 6, 18, 0xDDDDDD)); // shade
+        this.bodyParts.torso.add(skull);
+        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 20, 16, 0xF8F8F8));
+        this.bodyParts.torso.add(scene.add.rectangle(-8, -14, 6, 18, 0xDDDDDD));
 
         // Big spooky eye sockets
-        this.spriteContainer.add(scene.add.rectangle(-6, -16, 10, 10, 0x222222)); // left socket
-        this.spriteContainer.add(scene.add.rectangle(6, -16, 10, 10, 0x222222)); // right socket
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -16, 10, 10, 0x222222));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -16, 10, 10, 0x222222));
         // Glowing eyes
-        this.spriteContainer.add(scene.add.rectangle(-5, -15, 6, 6, 0xFF3333)); // left eye
-        this.spriteContainer.add(scene.add.rectangle(7, -15, 6, 6, 0xFF3333)); // right eye
-        this.spriteContainer.add(scene.add.rectangle(-6, -17, 3, 3, 0xFF6666)); // shine
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -15, 6, 6, 0xFF3333));
+        this.bodyParts.torso.add(scene.add.rectangle(7, -15, 6, 6, 0xFF3333));
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -17, 3, 3, 0xFF6666));
 
         // Nose hole
-        this.spriteContainer.add(scene.add.rectangle(0, -8, 6, 6, 0x333333));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 6, 6, 0x333333));
 
         // Toothy grin
-        this.spriteContainer.add(scene.add.rectangle(0, -2, 14, 6, 0x222222)); // mouth
-        this.spriteContainer.add(scene.add.rectangle(-5, -2, 3, 4, 0xFFFFFF)); // tooth
-        this.spriteContainer.add(scene.add.rectangle(0, -2, 3, 4, 0xFFFFFF)); // tooth
-        this.spriteContainer.add(scene.add.rectangle(5, -2, 3, 4, 0xFFFFFF)); // tooth
+        this.bodyParts.torso.add(scene.add.rectangle(0, -2, 14, 6, 0x222222));
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -2, 3, 4, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -2, 3, 4, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -2, 3, 4, 0xFFFFFF));
 
-        // Rusty old sword
-        this.spriteContainer.add(scene.add.rectangle(-18, 0, 5, 28, 0x998866)); // blade
-        this.spriteContainer.add(scene.add.rectangle(-17, 2, 3, 24, 0xAA9977)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-18, 14, 10, 4, 0x6B4423)); // hilt
+        // Rusty old sword (animated weapon)
+        this.bodyParts.weapon = scene.add.container(-18, 0);
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 5, 28, 0x998866));
+        this.bodyParts.weapon.add(scene.add.rectangle(1, 2, 3, 24, 0xAA9977));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 14, 10, 4, 0x6B4423));
+        this.bodyParts.torso.add(this.bodyParts.weapon);
 
+        this.spriteContainer.add(this.bodyParts.torso);
         this.mainSprite = skull;
     }
 
     createSkeletonArcher(scene) {
-        // CARTOONY SKELETON ARCHER - hooded spooky sniper!
+        // CARTOONY SKELETON ARCHER - hooded spooky sniper! WITH ANIMATIONS
         // Shadow
         this.spriteContainer.add(scene.add.rectangle(0, 34, 16, 5, 0x000000, 0.2));
 
-        // Bony legs
-        this.spriteContainer.add(scene.add.rectangle(-3, 22, 5, 18, 0xEEEEEE));
-        this.spriteContainer.add(scene.add.rectangle(3, 22, 5, 18, 0xEEEEEE));
-        // Feet
-        this.spriteContainer.add(scene.add.rectangle(-4, 32, 7, 4, 0xDDDDDD));
-        this.spriteContainer.add(scene.add.rectangle(4, 32, 7, 4, 0xDDDDDD));
+        // Animated bony legs
+        this.bodyParts.leftLeg = scene.add.container(-3, 22);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 5, 18, 0xEEEEEE));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 10, 7, 4, 0xDDDDDD)); // foot
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(3, 22);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 5, 18, 0xEEEEEE));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 10, 7, 4, 0xDDDDDD)); // foot
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container (torso)
+        this.bodyParts.torso = scene.add.container(0, 0);
 
         // Ribcage with tattered cloak
         const body = scene.add.rectangle(0, 6, 16, 18, 0xEEEEEE);
-        this.spriteContainer.add(body);
-        this.spriteContainer.add(scene.add.rectangle(0, 4, 14, 4, 0xDDDDDD));
-        this.spriteContainer.add(scene.add.rectangle(0, 10, 12, 4, 0xDDDDDD));
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 14, 4, 0xDDDDDD));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 12, 4, 0xDDDDDD));
 
         // Dark hood and cloak
-        this.spriteContainer.add(scene.add.rectangle(0, 4, 20, 20, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(0, 2, 18, 16, 0x444455)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(0, -8, 24, 18, 0x333344)); // hood
-        this.spriteContainer.add(scene.add.rectangle(0, -14, 22, 14, 0x444455));
-        this.spriteContainer.add(scene.add.rectangle(0, -20, 18, 10, 0x555566));
-        this.spriteContainer.add(scene.add.rectangle(0, -26, 12, 8, 0x555566)); // hood tip
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 20, 20, 0x333344));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 18, 16, 0x444455));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 24, 18, 0x333344));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 22, 14, 0x444455));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -20, 18, 10, 0x555566));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -26, 12, 8, 0x555566));
 
         // Skull face in hood
         const skull = scene.add.rectangle(0, -10, 18, 16, 0xEEEEEE);
-        this.spriteContainer.add(skull);
-        this.spriteContainer.add(scene.add.rectangle(0, -8, 14, 12, 0xFFFFFF)); // highlight
+        this.bodyParts.torso.add(skull);
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 14, 12, 0xFFFFFF));
 
         // Spooky eye sockets
-        this.spriteContainer.add(scene.add.rectangle(-5, -12, 8, 8, 0x111111));
-        this.spriteContainer.add(scene.add.rectangle(5, -12, 8, 8, 0x111111));
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -12, 8, 8, 0x111111));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -12, 8, 8, 0x111111));
         // Green ghostly eyes
-        this.spriteContainer.add(scene.add.rectangle(-4, -11, 5, 5, 0x44FF44));
-        this.spriteContainer.add(scene.add.rectangle(6, -11, 5, 5, 0x44FF44));
-        this.spriteContainer.add(scene.add.rectangle(-5, -13, 3, 3, 0xAAFFAA)); // shine
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -11, 5, 5, 0x44FF44));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -11, 5, 5, 0x44FF44));
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -13, 3, 3, 0xAAFFAA));
 
         // Nose and teeth
-        this.spriteContainer.add(scene.add.rectangle(0, -4, 4, 4, 0x222222));
-        this.spriteContainer.add(scene.add.rectangle(-3, 0, 2, 3, 0xFFFFFF));
-        this.spriteContainer.add(scene.add.rectangle(3, 0, 2, 3, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -4, 4, 4, 0x222222));
+        this.bodyParts.torso.add(scene.add.rectangle(-3, 0, 2, 3, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(3, 0, 2, 3, 0xFFFFFF));
 
+        // Animated bow arm
+        this.bodyParts.leftArm = scene.add.container(-14, 2);
         // Dark bow
-        this.spriteContainer.add(scene.add.rectangle(-18, -14, 5, 10, 0x554433));
-        this.spriteContainer.add(scene.add.rectangle(-20, -6, 5, 8, 0x665544));
-        this.spriteContainer.add(scene.add.rectangle(-18, 2, 5, 10, 0x554433));
-        this.spriteContainer.add(scene.add.rectangle(-20, 10, 5, 8, 0x665544));
-        this.spriteContainer.add(scene.add.rectangle(-18, 18, 5, 10, 0x554433));
-        // Bowstring
-        this.spriteContainer.add(scene.add.rectangle(-14, 2, 2, 36, 0x888888));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-4, -16, 5, 10, 0x554433));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-6, -8, 5, 8, 0x665544));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-4, 0, 5, 10, 0x554433));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-6, 8, 5, 8, 0x665544));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-4, 16, 5, 10, 0x554433));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 2, 36, 0x888888)); // bowstring
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
 
         // Ghostly arrow
-        this.spriteContainer.add(scene.add.rectangle(-8, 2, 18, 3, 0x88AA88));
-        this.spriteContainer.add(scene.add.rectangle(4, 2, 6, 4, 0x44FF44)); // glowing tip
+        this.bodyParts.torso.add(scene.add.rectangle(-8, 2, 18, 3, 0x88AA88));
+        this.bodyParts.torso.add(scene.add.rectangle(4, 2, 6, 4, 0x44FF44));
 
+        this.spriteContainer.add(this.bodyParts.torso);
         this.mainSprite = skull;
     }
 
     createTroll(scene) {
-        // CARTOONY TROLL - big dumb brute with warts!
+        // CARTOONY TROLL - big dumb brute with warts! WITH ANIMATIONS
         const s = 1.3;
 
         // Shadow
         this.spriteContainer.add(scene.add.rectangle(0, 46 * s, 36 * s, 8, 0x000000, 0.2));
 
-        // Chunky legs
-        this.spriteContainer.add(scene.add.rectangle(-10 * s, 34 * s, 14 * s, 20 * s, 0x558866));
-        this.spriteContainer.add(scene.add.rectangle(10 * s, 34 * s, 14 * s, 20 * s, 0x558866));
-        // Huge feet
-        this.spriteContainer.add(scene.add.rectangle(-11 * s, 46 * s, 18 * s, 8 * s, 0x447755));
-        this.spriteContainer.add(scene.add.rectangle(11 * s, 46 * s, 18 * s, 8 * s, 0x447755));
+        // Animated chunky legs
+        this.bodyParts.leftLeg = scene.add.container(-10 * s, 34 * s);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 14 * s, 20 * s, 0x558866));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1 * s, 12 * s, 18 * s, 8 * s, 0x447755));
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(10 * s, 34 * s);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 14 * s, 20 * s, 0x558866));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1 * s, 12 * s, 18 * s, 8 * s, 0x447755));
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container (torso)
+        this.bodyParts.torso = scene.add.container(0, 0);
 
         // FAT body
         const body = scene.add.rectangle(0, 10 * s, 34 * s, 38 * s, 0x669977);
-        this.spriteContainer.add(body);
-        this.spriteContainer.add(scene.add.rectangle(0, 12 * s, 30 * s, 32 * s, 0x77AA88)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, 10 * s, 6 * s, 34 * s, 0x447755)); // shade
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 12 * s, 30 * s, 32 * s, 0x77AA88));
+        this.bodyParts.torso.add(scene.add.rectangle(-14 * s, 10 * s, 6 * s, 34 * s, 0x447755));
 
         // Big belly
-        this.spriteContainer.add(scene.add.rectangle(0, 16 * s, 28 * s, 26 * s, 0x88BB99));
-        this.spriteContainer.add(scene.add.rectangle(4 * s, 14 * s, 14 * s, 14 * s, 0x99CCAA, 0.5)); // highlight
+        this.bodyParts.torso.add(scene.add.rectangle(0, 16 * s, 28 * s, 26 * s, 0x88BB99));
+        this.bodyParts.torso.add(scene.add.rectangle(4 * s, 14 * s, 14 * s, 14 * s, 0x99CCAA, 0.5));
 
-        // Huge arms
-        this.spriteContainer.add(scene.add.rectangle(-24 * s, 10 * s, 14 * s, 30 * s, 0x669977));
-        this.spriteContainer.add(scene.add.rectangle(24 * s, 10 * s, 14 * s, 30 * s, 0x669977));
-        this.spriteContainer.add(scene.add.rectangle(-22 * s, 12 * s, 8 * s, 24 * s, 0x77AA88)); // highlight
-        // Big fists
-        this.spriteContainer.add(scene.add.rectangle(-24 * s, 28 * s, 16 * s, 12 * s, 0x77AA88));
-        this.spriteContainer.add(scene.add.rectangle(24 * s, 28 * s, 16 * s, 12 * s, 0x77AA88));
+        // Animated huge arms
+        this.bodyParts.leftArm = scene.add.container(-24 * s, 10 * s);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 14 * s, 30 * s, 0x669977));
+        this.bodyParts.leftArm.add(scene.add.rectangle(2 * s, 2 * s, 8 * s, 24 * s, 0x77AA88));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 18 * s, 16 * s, 12 * s, 0x77AA88)); // fist
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
+
+        this.bodyParts.rightArm = scene.add.container(24 * s, 10 * s);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 14 * s, 30 * s, 0x669977));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 18 * s, 16 * s, 12 * s, 0x77AA88)); // fist
+        this.bodyParts.torso.add(this.bodyParts.rightArm);
 
         // Dumb-looking head
         const head = scene.add.rectangle(0, -18 * s, 30 * s, 26 * s, 0x669977);
-        this.spriteContainer.add(head);
-        this.spriteContainer.add(scene.add.rectangle(0, -16 * s, 26 * s, 20 * s, 0x77AA88)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-12 * s, -18 * s, 6 * s, 22 * s, 0x447755)); // shade
+        this.bodyParts.torso.add(head);
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16 * s, 26 * s, 20 * s, 0x77AA88));
+        this.bodyParts.torso.add(scene.add.rectangle(-12 * s, -18 * s, 6 * s, 22 * s, 0x447755));
 
         // Warts!
-        this.spriteContainer.add(scene.add.rectangle(-10 * s, -26 * s, 6 * s, 6 * s, 0x88BB99));
-        this.spriteContainer.add(scene.add.rectangle(12 * s, -16 * s, 5 * s, 5 * s, 0x88BB99));
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, -10 * s, 4 * s, 4 * s, 0x88BB99));
+        this.bodyParts.torso.add(scene.add.rectangle(-10 * s, -26 * s, 6 * s, 6 * s, 0x88BB99));
+        this.bodyParts.torso.add(scene.add.rectangle(12 * s, -16 * s, 5 * s, 5 * s, 0x88BB99));
+        this.bodyParts.torso.add(scene.add.rectangle(-14 * s, -10 * s, 4 * s, 4 * s, 0x88BB99));
 
         // Dopey eyes
-        this.spriteContainer.add(scene.add.rectangle(-8 * s, -20 * s, 10 * s, 10 * s, 0xFFFF66)); // left eye
-        this.spriteContainer.add(scene.add.rectangle(8 * s, -20 * s, 10 * s, 10 * s, 0xFFFF66)); // right eye
-        this.spriteContainer.add(scene.add.rectangle(-7 * s, -19 * s, 5 * s, 6 * s, 0x000000)); // left pupil
-        this.spriteContainer.add(scene.add.rectangle(9 * s, -19 * s, 5 * s, 6 * s, 0x000000)); // right pupil
-        this.spriteContainer.add(scene.add.rectangle(-9 * s, -22 * s, 3 * s, 3 * s, 0xFFFFAA)); // shine
+        this.bodyParts.torso.add(scene.add.rectangle(-8 * s, -20 * s, 10 * s, 10 * s, 0xFFFF66));
+        this.bodyParts.torso.add(scene.add.rectangle(8 * s, -20 * s, 10 * s, 10 * s, 0xFFFF66));
+        this.bodyParts.torso.add(scene.add.rectangle(-7 * s, -19 * s, 5 * s, 6 * s, 0x000000));
+        this.bodyParts.torso.add(scene.add.rectangle(9 * s, -19 * s, 5 * s, 6 * s, 0x000000));
+        this.bodyParts.torso.add(scene.add.rectangle(-9 * s, -22 * s, 3 * s, 3 * s, 0xFFFFAA));
         // Confused brow
-        this.spriteContainer.add(scene.add.rectangle(-8 * s, -28 * s, 12 * s, 4 * s, 0x447755));
-        this.spriteContainer.add(scene.add.rectangle(8 * s, -28 * s, 12 * s, 4 * s, 0x447755));
+        this.bodyParts.torso.add(scene.add.rectangle(-8 * s, -28 * s, 12 * s, 4 * s, 0x447755));
+        this.bodyParts.torso.add(scene.add.rectangle(8 * s, -28 * s, 12 * s, 4 * s, 0x447755));
 
         // Big bulbous nose
-        this.spriteContainer.add(scene.add.rectangle(0, -10 * s, 14 * s, 12 * s, 0x558866));
-        this.spriteContainer.add(scene.add.rectangle(0, -8 * s, 10 * s, 8 * s, 0x669977)); // highlight
-        // Nostrils
-        this.spriteContainer.add(scene.add.rectangle(-3 * s, -6 * s, 4 * s, 4 * s, 0x336644));
-        this.spriteContainer.add(scene.add.rectangle(3 * s, -6 * s, 4 * s, 4 * s, 0x336644));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -10 * s, 14 * s, 12 * s, 0x558866));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8 * s, 10 * s, 8 * s, 0x669977));
+        this.bodyParts.torso.add(scene.add.rectangle(-3 * s, -6 * s, 4 * s, 4 * s, 0x336644));
+        this.bodyParts.torso.add(scene.add.rectangle(3 * s, -6 * s, 4 * s, 4 * s, 0x336644));
 
         // Dumb open mouth
-        this.spriteContainer.add(scene.add.rectangle(0, -2 * s, 16 * s, 8 * s, 0x336644));
-        // Snaggle teeth
-        this.spriteContainer.add(scene.add.rectangle(-5 * s, -4 * s, 4 * s, 5 * s, 0xFFFFEE));
-        this.spriteContainer.add(scene.add.rectangle(5 * s, -4 * s, 4 * s, 5 * s, 0xFFFFEE));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -2 * s, 16 * s, 8 * s, 0x336644));
+        this.bodyParts.torso.add(scene.add.rectangle(-5 * s, -4 * s, 4 * s, 5 * s, 0xFFFFEE));
+        this.bodyParts.torso.add(scene.add.rectangle(5 * s, -4 * s, 4 * s, 5 * s, 0xFFFFEE));
 
-        // Big wooden club
-        this.spriteContainer.add(scene.add.rectangle(-30 * s, 24 * s, 8 * s, 38 * s, 0x8B6633));
-        this.spriteContainer.add(scene.add.rectangle(-29 * s, 26 * s, 4 * s, 34 * s, 0x9B7643)); // highlight
-        // Club head (big and knobby)
-        this.spriteContainer.add(scene.add.rectangle(-30 * s, 48 * s, 18 * s, 20 * s, 0x6B5533));
-        this.spriteContainer.add(scene.add.rectangle(-30 * s, 46 * s, 14 * s, 14 * s, 0x7B6543)); // highlight
+        // Big wooden club (animated weapon)
+        this.bodyParts.weapon = scene.add.container(-30 * s, 24 * s);
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 8 * s, 38 * s, 0x8B6633));
+        this.bodyParts.weapon.add(scene.add.rectangle(1 * s, 2 * s, 4 * s, 34 * s, 0x9B7643));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 24 * s, 18 * s, 20 * s, 0x6B5533));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 22 * s, 14 * s, 14 * s, 0x7B6543));
+        this.bodyParts.torso.add(this.bodyParts.weapon);
 
+        this.spriteContainer.add(this.bodyParts.torso);
         this.mainSprite = body;
     }
 
     createDarkKnight(scene) {
-        // CARTOONY DARK KNIGHT - menacing evil warrior!
+        // CARTOONY DARK KNIGHT - menacing evil warrior! WITH ANIMATIONS
         // Shadow
         this.spriteContainer.add(scene.add.rectangle(0, 40, 30, 6, 0x000000, 0.2));
 
-        // Flowing evil cape
+        // Flowing evil cape (behind body)
         this.spriteContainer.add(scene.add.rectangle(0, 22, 34, 36, 0x660022));
-        this.spriteContainer.add(scene.add.rectangle(0, 24, 30, 30, 0x880033)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-12, 28, 8, 24, 0x550011)); // shade
+        this.spriteContainer.add(scene.add.rectangle(0, 24, 30, 30, 0x880033));
+        this.spriteContainer.add(scene.add.rectangle(-12, 28, 8, 24, 0x550011));
 
-        // Armored legs
-        this.spriteContainer.add(scene.add.rectangle(-6, 26, 10, 18, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(6, 26, 10, 18, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(-5, 27, 6, 14, 0x444455)); // highlight
-        // Evil boots
-        this.spriteContainer.add(scene.add.rectangle(-7, 36, 12, 6, 0x222233));
-        this.spriteContainer.add(scene.add.rectangle(7, 36, 12, 6, 0x222233));
+        // Animated armored legs
+        this.bodyParts.leftLeg = scene.add.container(-6, 26);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 10, 18, 0x333344));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(1, 1, 6, 14, 0x444455));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 10, 12, 6, 0x222233)); // boot
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(6, 26);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 10, 18, 0x333344));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 10, 12, 6, 0x222233)); // boot
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container (torso)
+        this.bodyParts.torso = scene.add.container(0, 0);
 
         // Dark armor body
         const body = scene.add.rectangle(0, 6, 26, 28, 0x333344);
-        this.spriteContainer.add(body);
-        this.spriteContainer.add(scene.add.rectangle(0, 8, 22, 22, 0x444455)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-10, 6, 5, 24, 0x222233)); // shade
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 8, 22, 22, 0x444455));
+        this.bodyParts.torso.add(scene.add.rectangle(-10, 6, 5, 24, 0x222233));
 
         // Evil emblem on chest
-        this.spriteContainer.add(scene.add.rectangle(0, 4, 12, 12, 0xAA0022));
-        this.spriteContainer.add(scene.add.rectangle(0, 4, 8, 8, 0xCC0033)); // inner
-        this.spriteContainer.add(scene.add.rectangle(0, 4, 4, 4, 0xFF0044)); // glow
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 12, 12, 0xAA0022));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 8, 8, 0xCC0033));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 4, 4, 0xFF0044));
 
-        // Arms
-        this.spriteContainer.add(scene.add.rectangle(-16, 6, 8, 18, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(16, 6, 8, 18, 0x333344));
+        // Animated sword arm
+        this.bodyParts.leftArm = scene.add.container(-16, 6);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 8, 18, 0x333344));
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
+
+        // Animated shield arm
+        this.bodyParts.rightArm = scene.add.container(16, 6);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 8, 18, 0x333344));
+        this.bodyParts.rightArm.add(scene.add.rectangle(2, 0, 18, 28, 0x333344)); // shield
+        this.bodyParts.rightArm.add(scene.add.rectangle(2, 0, 14, 24, 0x444455));
+        this.bodyParts.rightArm.add(scene.add.rectangle(2, -2, 10, 10, 0xAA0022)); // emblem
+        this.bodyParts.rightArm.add(scene.add.rectangle(2, -2, 6, 6, 0xFF0044));
+        this.bodyParts.torso.add(this.bodyParts.rightArm);
 
         // EVIL helmet
         const helmet = scene.add.rectangle(0, -18, 24, 22, 0x333344);
-        this.spriteContainer.add(helmet);
-        this.spriteContainer.add(scene.add.rectangle(0, -16, 20, 18, 0x444455)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-8, -18, 6, 18, 0x222233)); // shade
+        this.bodyParts.torso.add(helmet);
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16, 20, 18, 0x444455));
+        this.bodyParts.torso.add(scene.add.rectangle(-8, -18, 6, 18, 0x222233));
 
         // Menacing visor with red eyes
-        this.spriteContainer.add(scene.add.rectangle(0, -16, 18, 8, 0x111122));
-        this.spriteContainer.add(scene.add.rectangle(-5, -16, 8, 5, 0xFF2222)); // left eye
-        this.spriteContainer.add(scene.add.rectangle(5, -16, 8, 5, 0xFF2222)); // right eye
-        this.spriteContainer.add(scene.add.rectangle(-5, -17, 4, 3, 0xFF6666)); // glow
-        this.spriteContainer.add(scene.add.rectangle(5, -17, 4, 3, 0xFF6666));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16, 18, 8, 0x111122));
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -16, 8, 5, 0xFF2222));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -16, 8, 5, 0xFF2222));
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -17, 4, 3, 0xFF6666));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -17, 4, 3, 0xFF6666));
 
         // Evil horns
-        this.spriteContainer.add(scene.add.rectangle(-12, -28, 6, 12, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(-12, -36, 5, 10, 0x444455));
-        this.spriteContainer.add(scene.add.rectangle(-12, -42, 4, 8, 0x555566));
-        this.spriteContainer.add(scene.add.rectangle(12, -28, 6, 12, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(12, -36, 5, 10, 0x444455));
-        this.spriteContainer.add(scene.add.rectangle(12, -42, 4, 8, 0x555566));
+        this.bodyParts.torso.add(scene.add.rectangle(-12, -28, 6, 12, 0x333344));
+        this.bodyParts.torso.add(scene.add.rectangle(-12, -36, 5, 10, 0x444455));
+        this.bodyParts.torso.add(scene.add.rectangle(-12, -42, 4, 8, 0x555566));
+        this.bodyParts.torso.add(scene.add.rectangle(12, -28, 6, 12, 0x333344));
+        this.bodyParts.torso.add(scene.add.rectangle(12, -36, 5, 10, 0x444455));
+        this.bodyParts.torso.add(scene.add.rectangle(12, -42, 4, 8, 0x555566));
 
-        // DARK glowing sword
-        this.spriteContainer.add(scene.add.rectangle(-22, -4, 6, 36, 0x444466));
-        this.spriteContainer.add(scene.add.rectangle(-21, -2, 4, 32, 0x555588)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-22, -20, 8, 4, 0xFF0044)); // evil glow
-        this.spriteContainer.add(scene.add.rectangle(-22, 16, 16, 6, 0x333344)); // hilt
-        this.spriteContainer.add(scene.add.rectangle(-22, 16, 6, 8, 0xAA0022)); // gem
+        // DARK glowing sword (animated weapon)
+        this.bodyParts.weapon = scene.add.container(-22, -4);
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 6, 36, 0x444466));
+        this.bodyParts.weapon.add(scene.add.rectangle(1, 2, 4, 32, 0x555588));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -16, 8, 4, 0xFF0044));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 20, 16, 6, 0x333344)); // hilt
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 20, 6, 8, 0xAA0022));
+        this.bodyParts.torso.add(this.bodyParts.weapon);
 
-        // Evil shield
-        this.spriteContainer.add(scene.add.rectangle(18, 6, 18, 28, 0x333344));
-        this.spriteContainer.add(scene.add.rectangle(18, 6, 14, 24, 0x444455)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(18, 4, 10, 10, 0xAA0022)); // emblem
-        this.spriteContainer.add(scene.add.rectangle(18, 4, 6, 6, 0xFF0044)); // glow
-
+        this.spriteContainer.add(this.bodyParts.torso);
         this.mainSprite = body;
     }
 
     createDemon(scene) {
-        // CARTOONY DEMON - scary but cool hellspawn!
+        // CARTOONY DEMON - scary but cool hellspawn! WITH ANIMATIONS
         const s = 1.2;
 
         // Shadow
         this.spriteContainer.add(scene.add.rectangle(0, 42 * s, 40 * s, 8, 0x000000, 0.2));
 
         // Big bat wings (behind body)
-        // Left wing
         this.spriteContainer.add(scene.add.rectangle(-32 * s, -8 * s, 14 * s, 28 * s, 0xAA2244));
         this.spriteContainer.add(scene.add.rectangle(-42 * s, -16 * s, 12 * s, 22 * s, 0xBB3355));
         this.spriteContainer.add(scene.add.rectangle(-50 * s, -24 * s, 10 * s, 18 * s, 0xCC4466));
         this.spriteContainer.add(scene.add.rectangle(-30 * s, 4 * s, 10 * s, 18 * s, 0x882233));
-        // Right wing
         this.spriteContainer.add(scene.add.rectangle(32 * s, -8 * s, 14 * s, 28 * s, 0xAA2244));
         this.spriteContainer.add(scene.add.rectangle(42 * s, -16 * s, 12 * s, 22 * s, 0xBB3355));
         this.spriteContainer.add(scene.add.rectangle(50 * s, -24 * s, 10 * s, 18 * s, 0xCC4466));
@@ -593,63 +639,75 @@ class Enemy extends Phaser.GameObjects.Container {
         // Spiky tail
         this.spriteContainer.add(scene.add.rectangle(14 * s, 28 * s, 18 * s, 8 * s, 0xBB3344));
         this.spriteContainer.add(scene.add.rectangle(26 * s, 26 * s, 14 * s, 7 * s, 0xCC4455));
-        this.spriteContainer.add(scene.add.rectangle(36 * s, 24 * s, 12 * s, 8 * s, 0x661122)); // tail tip spike
+        this.spriteContainer.add(scene.add.rectangle(36 * s, 24 * s, 12 * s, 8 * s, 0x661122));
 
-        // Muscular legs
-        this.spriteContainer.add(scene.add.rectangle(-8 * s, 30 * s, 12 * s, 18 * s, 0xBB3344));
-        this.spriteContainer.add(scene.add.rectangle(8 * s, 30 * s, 12 * s, 18 * s, 0xBB3344));
-        // Hooves
-        this.spriteContainer.add(scene.add.rectangle(-9 * s, 40 * s, 14 * s, 6 * s, 0x441122));
-        this.spriteContainer.add(scene.add.rectangle(9 * s, 40 * s, 14 * s, 6 * s, 0x441122));
+        // Animated muscular legs
+        this.bodyParts.leftLeg = scene.add.container(-8 * s, 30 * s);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 12 * s, 18 * s, 0xBB3344));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1 * s, 10 * s, 14 * s, 6 * s, 0x441122)); // hoof
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(8 * s, 30 * s);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 12 * s, 18 * s, 0xBB3344));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1 * s, 10 * s, 14 * s, 6 * s, 0x441122)); // hoof
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container (torso)
+        this.bodyParts.torso = scene.add.container(0, 0);
 
         // Muscular body
         const body = scene.add.rectangle(0, 6 * s, 30 * s, 34 * s, 0xCC3344);
-        this.spriteContainer.add(body);
-        this.spriteContainer.add(scene.add.rectangle(0, 8 * s, 26 * s, 28 * s, 0xDD4455)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-12 * s, 6 * s, 6 * s, 30 * s, 0xAA2233)); // shade
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 8 * s, 26 * s, 28 * s, 0xDD4455));
+        this.bodyParts.torso.add(scene.add.rectangle(-12 * s, 6 * s, 6 * s, 30 * s, 0xAA2233));
 
         // Abs and chest
-        this.spriteContainer.add(scene.add.rectangle(-5 * s, 4 * s, 10 * s, 10 * s, 0xEE5566)); // left pec
-        this.spriteContainer.add(scene.add.rectangle(5 * s, 4 * s, 10 * s, 10 * s, 0xEE5566)); // right pec
-        this.spriteContainer.add(scene.add.rectangle(0, 16 * s, 8 * s, 6 * s, 0xDD4455)); // abs
+        this.bodyParts.torso.add(scene.add.rectangle(-5 * s, 4 * s, 10 * s, 10 * s, 0xEE5566));
+        this.bodyParts.torso.add(scene.add.rectangle(5 * s, 4 * s, 10 * s, 10 * s, 0xEE5566));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 16 * s, 8 * s, 6 * s, 0xDD4455));
 
-        // Muscular arms
-        this.spriteContainer.add(scene.add.rectangle(-20 * s, 6 * s, 12 * s, 24 * s, 0xCC3344));
-        this.spriteContainer.add(scene.add.rectangle(20 * s, 6 * s, 12 * s, 24 * s, 0xCC3344));
-        // Clawed hands
-        this.spriteContainer.add(scene.add.rectangle(-22 * s, 22 * s, 10 * s, 8 * s, 0xDD4455));
-        this.spriteContainer.add(scene.add.rectangle(-26 * s, 28 * s, 5 * s, 8 * s, 0x441122)); // claw
-        this.spriteContainer.add(scene.add.rectangle(-18 * s, 28 * s, 5 * s, 8 * s, 0x441122)); // claw
-        this.spriteContainer.add(scene.add.rectangle(22 * s, 22 * s, 10 * s, 8 * s, 0xDD4455));
-        this.spriteContainer.add(scene.add.rectangle(26 * s, 28 * s, 5 * s, 8 * s, 0x441122));
-        this.spriteContainer.add(scene.add.rectangle(18 * s, 28 * s, 5 * s, 8 * s, 0x441122));
+        // Animated muscular arms with claws
+        this.bodyParts.leftArm = scene.add.container(-20 * s, 6 * s);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 12 * s, 24 * s, 0xCC3344));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-2 * s, 16 * s, 10 * s, 8 * s, 0xDD4455));
+        this.bodyParts.leftArm.add(scene.add.rectangle(-6 * s, 22 * s, 5 * s, 8 * s, 0x441122));
+        this.bodyParts.leftArm.add(scene.add.rectangle(2 * s, 22 * s, 5 * s, 8 * s, 0x441122));
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
+
+        this.bodyParts.rightArm = scene.add.container(20 * s, 6 * s);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 12 * s, 24 * s, 0xCC3344));
+        this.bodyParts.rightArm.add(scene.add.rectangle(2 * s, 16 * s, 10 * s, 8 * s, 0xDD4455));
+        this.bodyParts.rightArm.add(scene.add.rectangle(6 * s, 22 * s, 5 * s, 8 * s, 0x441122));
+        this.bodyParts.rightArm.add(scene.add.rectangle(-2 * s, 22 * s, 5 * s, 8 * s, 0x441122));
+        this.bodyParts.torso.add(this.bodyParts.rightArm);
 
         // Scary head
         const head = scene.add.rectangle(0, -18 * s, 28 * s, 26 * s, 0xCC3344);
-        this.spriteContainer.add(head);
-        this.spriteContainer.add(scene.add.rectangle(0, -16 * s, 24 * s, 20 * s, 0xDD4455)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-10 * s, -18 * s, 6 * s, 22 * s, 0xAA2233)); // shade
+        this.bodyParts.torso.add(head);
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16 * s, 24 * s, 20 * s, 0xDD4455));
+        this.bodyParts.torso.add(scene.add.rectangle(-10 * s, -18 * s, 6 * s, 22 * s, 0xAA2233));
 
         // BIG curvy horns
-        this.spriteContainer.add(scene.add.rectangle(-12 * s, -32 * s, 8 * s, 14 * s, 0x441122));
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, -42 * s, 7 * s, 12 * s, 0x552233));
-        this.spriteContainer.add(scene.add.rectangle(-16 * s, -50 * s, 6 * s, 10 * s, 0x663344));
-        this.spriteContainer.add(scene.add.rectangle(12 * s, -32 * s, 8 * s, 14 * s, 0x441122));
-        this.spriteContainer.add(scene.add.rectangle(14 * s, -42 * s, 7 * s, 12 * s, 0x552233));
-        this.spriteContainer.add(scene.add.rectangle(16 * s, -50 * s, 6 * s, 10 * s, 0x663344));
+        this.bodyParts.torso.add(scene.add.rectangle(-12 * s, -32 * s, 8 * s, 14 * s, 0x441122));
+        this.bodyParts.torso.add(scene.add.rectangle(-14 * s, -42 * s, 7 * s, 12 * s, 0x552233));
+        this.bodyParts.torso.add(scene.add.rectangle(-16 * s, -50 * s, 6 * s, 10 * s, 0x663344));
+        this.bodyParts.torso.add(scene.add.rectangle(12 * s, -32 * s, 8 * s, 14 * s, 0x441122));
+        this.bodyParts.torso.add(scene.add.rectangle(14 * s, -42 * s, 7 * s, 12 * s, 0x552233));
+        this.bodyParts.torso.add(scene.add.rectangle(16 * s, -50 * s, 6 * s, 10 * s, 0x663344));
 
         // Glowing evil eyes
-        this.spriteContainer.add(scene.add.rectangle(-7 * s, -20 * s, 10 * s, 10 * s, 0xFFFF44)); // left eye
-        this.spriteContainer.add(scene.add.rectangle(7 * s, -20 * s, 10 * s, 10 * s, 0xFFFF44)); // right eye
-        this.spriteContainer.add(scene.add.rectangle(-6 * s, -19 * s, 5 * s, 7 * s, 0x000000)); // left pupil
-        this.spriteContainer.add(scene.add.rectangle(8 * s, -19 * s, 5 * s, 7 * s, 0x000000));
-        this.spriteContainer.add(scene.add.rectangle(-8 * s, -22 * s, 3 * s, 3 * s, 0xFFFFAA)); // shine
+        this.bodyParts.torso.add(scene.add.rectangle(-7 * s, -20 * s, 10 * s, 10 * s, 0xFFFF44));
+        this.bodyParts.torso.add(scene.add.rectangle(7 * s, -20 * s, 10 * s, 10 * s, 0xFFFF44));
+        this.bodyParts.torso.add(scene.add.rectangle(-6 * s, -19 * s, 5 * s, 7 * s, 0x000000));
+        this.bodyParts.torso.add(scene.add.rectangle(8 * s, -19 * s, 5 * s, 7 * s, 0x000000));
+        this.bodyParts.torso.add(scene.add.rectangle(-8 * s, -22 * s, 3 * s, 3 * s, 0xFFFFAA));
 
         // Evil grin with fangs
-        this.spriteContainer.add(scene.add.rectangle(0, -8 * s, 16 * s, 8 * s, 0x661122)); // mouth
-        this.spriteContainer.add(scene.add.rectangle(-6 * s, -6 * s, 4 * s, 8 * s, 0xFFFFFF)); // fang
-        this.spriteContainer.add(scene.add.rectangle(6 * s, -6 * s, 4 * s, 8 * s, 0xFFFFFF)); // fang
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8 * s, 16 * s, 8 * s, 0x661122));
+        this.bodyParts.torso.add(scene.add.rectangle(-6 * s, -6 * s, 4 * s, 8 * s, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(6 * s, -6 * s, 4 * s, 8 * s, 0xFFFFFF));
 
+        this.spriteContainer.add(this.bodyParts.torso);
         this.mainSprite = body;
     }
 
