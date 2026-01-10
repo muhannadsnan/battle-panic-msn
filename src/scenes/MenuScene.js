@@ -600,36 +600,28 @@ class MenuScene extends Phaser.Scene {
             (x, y, s) => this.createMenuWizard(x, y, s, true)
         ];
 
-        // Shuffle and pick unique enemies (3)
+        // Shuffle and pick unique enemies (2 per side, well spaced)
         const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
-        const enemyCount = 3;
-        const enemyYPositions = this.getSpacedPositions(enemyCount, 200, 520);
+        const enemyCount = 2;
+        // Fixed Y positions: top area and bottom area, no overlap
+        const enemyYPositions = [200, 450];
         for (let i = 0; i < enemyCount; i++) {
-            const x = Phaser.Math.Between(80, 180);
+            const x = Phaser.Math.Between(60, 150);
             const y = enemyYPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.3, 1.6);
+            const scale = Phaser.Math.FloatBetween(1.4, 1.7);
             shuffledEnemies[i](x, y, scale);
         }
 
-        // Shuffle and pick unique units (3)
+        // Shuffle and pick unique units (2 per side, well spaced)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
-        const unitCount = 3;
-        const unitYPositions = this.getSpacedPositions(unitCount, 200, 520);
+        const unitCount = 2;
+        const unitYPositions = [200, 450];
         for (let i = 0; i < unitCount; i++) {
-            const x = Phaser.Math.Between(GAME_WIDTH - 180, GAME_WIDTH - 80);
+            const x = Phaser.Math.Between(GAME_WIDTH - 150, GAME_WIDTH - 60);
             const y = unitYPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.3, 1.6);
+            const scale = Phaser.Math.FloatBetween(1.4, 1.7);
             shuffledUnits[i](x, y, scale);
         }
-    }
-
-    getSpacedPositions(count, minY, maxY) {
-        const positions = [];
-        const spacing = (maxY - minY) / (count + 1);
-        for (let i = 0; i < count; i++) {
-            positions.push(minY + spacing * (i + 1) + Phaser.Math.Between(-20, 20));
-        }
-        return positions;
     }
 
     // Menu enemy sprites (exact copy from Enemy.js, static version)
