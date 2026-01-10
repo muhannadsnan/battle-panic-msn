@@ -604,7 +604,7 @@ class MenuScene extends Phaser.Scene {
         const shuffledEnemies = Phaser.Utils.Array.Shuffle([...enemyTypes]);
         const enemyCount = 2;
         // Fixed Y positions: top area and bottom area, no overlap
-        const enemyYPositions = [200, 450];
+        const enemyYPositions = [160, 400];
         for (let i = 0; i < enemyCount; i++) {
             const x = Phaser.Math.Between(60, 150);
             const y = enemyYPositions[i];
@@ -615,7 +615,7 @@ class MenuScene extends Phaser.Scene {
         // Shuffle and pick unique units (2 per side, well spaced)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
         const unitCount = 2;
-        const unitYPositions = [200, 450];
+        const unitYPositions = [160, 400];
         for (let i = 0; i < unitCount; i++) {
             const x = Phaser.Math.Between(GAME_WIDTH - 150, GAME_WIDTH - 60);
             const y = unitYPositions[i];
