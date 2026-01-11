@@ -1462,11 +1462,12 @@ Lv.${level + 1}`;
             const typeKey = type.toLowerCase();
 
             // Cost increases with promotion level
-            // Gold tier (4+) spawns 2 units for the price of 1 (bonus!)
+            // Gold tier (4+) spawns 2 units - cost reflects both units!
             const promotionLevel = this.getPromotionLevel(type);
             const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
-            let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
-            let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+            const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
+            let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
+            let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
 
             // Apply research cost for first spawn (rank 4+ only)
             const isFirstSpawn = !this.firstSpawnDone[typeKey];
@@ -1478,11 +1479,11 @@ Lv.${level + 1}`;
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
 
-            // Update displayed costs based on promotion (normal cost, double spawn is bonus)
+            // Update displayed costs based on promotion (includes double spawn cost)
             button.updateCosts(totalGoldCost, totalWoodCost);
 
-            // Update affordable count display
-            button.updateAffordableCount(this.gold, this.wood, costMultiplier);
+            // Update affordable count display (costs already include multiplier)
+            button.updateAffordableCount(this.gold, this.wood, 1);
 
             // Update hover-to-spawn progress
             button.updateSpawnProgress(delta);
@@ -1520,11 +1521,11 @@ Lv.${level + 1}`;
         const promotionBonus = this.getPromotionBonus(promotionLevel);
 
         // Cost increases with promotion level
-        // Gold tier (4+) spawns 2 units for the price of 1 (bonus!)
+        // Gold tier (4+) spawns 2 units - cost reflects both units!
         const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
         const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-        let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
-        let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+        let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
+        let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
 
         // Research cost: first unit of each type costs double for rank 4+ (Knight and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
@@ -1537,7 +1538,7 @@ Lv.${level + 1}`;
             totalWoodCost *= 2;
         }
 
-        // Check costs (normal cost, double spawn is bonus)
+        // Check costs (includes double spawn cost)
         if (this.gold < totalGoldCost) {
             this.showMessage('Not enough gold!', '#ff4444');
             return;

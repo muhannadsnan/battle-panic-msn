@@ -89,15 +89,17 @@ Units have animated body parts stored in `this.bodyParts`:
 Units get promoted based on how many of that type have been spawned in the current game.
 
 **Promotion Levels:**
-| Level | Spawns | Badge | Stat Bonus | Cost |
-|-------|--------|-------|------------|------|
-| 0 | 0-9 | None | +0% | 100%
-| 1 | 10-19 | ▲ Silver | +10% | 133%
-| 2 | 20-29 | ▲▲ Silver | +30% | 166%
-| 3 | 30-49 | ▲▲▲ Silver | +60% | 200%
-| 4 | 50-79 | ▲ Gold | +100% | 266%
-| 5 | 80-119 | ▲▲ Gold | +150% | 333%
-| 6 | 120+ | ▲▲▲ Gold | +200% | 400%
+| Level | Spawns | Badge | Stat Bonus | Cost | Units |
+|-------|--------|-------|------------|------|-------|
+| 0 | 0-9 | None | +0% | 100% | 1 |
+| 1 | 10-19 | ▲ Silver | +10% | 133% | 1 |
+| 2 | 20-29 | ▲▲ Silver | +30% | 166% | 1 |
+| 3 | 30-49 | ▲▲▲ Silver | +60% | 200% | 1 |
+| 4 | 50-79 | ▲ Gold | +100% | 534% | 2 |
+| 5 | 80-119 | ▲▲ Gold | +150% | 668% | 2 |
+| 6 | 120+ | ▲▲▲ Gold | +200% | 802% | 2 |
+
+*Gold tier costs include payment for both spawned units (no free units!)*
 
 **Bonuses apply to:**
 - HP (multiplied by bonus)
@@ -114,7 +116,7 @@ At gold tier (level 4+), units **spawn 2 at a time** and **transform into elite 
 | Archer | **Robinhood** | 2x attack speed, 15% damage reduction |
 | Horseman | **Lancelot** | +25% speed, +20% damage, enhanced armor (50% melee, 30% ranged) |
 
-Max promotion (level 6) gives **3x stats** (cost 4x).
+Max promotion (level 6) gives **3x stats** (cost ~8x for 2 units).
 Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**
