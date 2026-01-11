@@ -16,6 +16,7 @@ const UNIT_TYPES = {
         speed: 88,      // 10% faster than orcs (55)
         attackSpeed: 1000,
         range: 30,
+        knightArmor: 0.25,  // Gold tier (lvl 4+) becomes Knight with 25% damage reduction
         color: 0x8B4513,
         description: 'Cheap melee fighter'
     },

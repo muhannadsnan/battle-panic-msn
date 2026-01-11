@@ -55,6 +55,11 @@ class CombatSystem {
                 finalDamage = Math.floor(damage * (1 - reduction));
             }
         }
+        // Knight armor: gold tier peasants (lvl 4+) get 25% damage reduction
+        else if (target.unitType === 'PEASANT' && target.promotionLevel >= 4) {
+            const reduction = UNIT_TYPES.PEASANT.knightArmor || 0;
+            finalDamage = Math.floor(damage * (1 - reduction));
+        }
 
         target.takeDamage(finalDamage);
 
