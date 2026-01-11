@@ -614,15 +614,14 @@ class MenuScene extends Phaser.Scene {
             shuffledEnemies[i](pos.x, pos.y, scale);
         }
 
-        // Shuffle and pick unique units (4 per side, staggered, above buttons)
+        // Shuffle and pick unique units (3 per side, staggered, above buttons)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
-        const unitCount = 4;
+        const unitCount = 3;
         // More spacing, closer to middle horizontally
         const unitPositions = [
-            { x: GAME_WIDTH - 180, y: 175 },
-            { x: GAME_WIDTH - 100, y: 270 },
-            { x: GAME_WIDTH - 200, y: 365 },
-            { x: GAME_WIDTH - 90, y: 460 }
+            { x: GAME_WIDTH - 180, y: 200 },
+            { x: GAME_WIDTH - 100, y: 310 },
+            { x: GAME_WIDTH - 200, y: 420 }
         ];
         for (let i = 0; i < unitCount; i++) {
             const pos = unitPositions[i];
