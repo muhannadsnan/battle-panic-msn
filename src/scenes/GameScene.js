@@ -1090,20 +1090,22 @@ Lv.${level + 1}`;
             case 'HORSEMAN':
                 // Horse body (brown)
                 container.add(this.add.rectangle(0, 6, 14, 8, 0x8B4513));
-                container.add(this.add.rectangle(-4, 12, 3, 6, 0x6B3503)); // front leg
-                container.add(this.add.rectangle(4, 12, 3, 6, 0x6B3503)); // back leg
-                // Horse head
-                container.add(this.add.rectangle(-8, 2, 6, 5, 0x9B5523));
-                container.add(this.add.rectangle(-10, 0, 3, 3, 0x8B4513)); // ear
+                container.add(this.add.rectangle(-4, 12, 3, 6, 0x6B3503)); // back leg
+                container.add(this.add.rectangle(4, 12, 3, 6, 0x6B3503)); // front leg
+                // Horse tail (LEFT - horse faces right)
+                container.add(this.add.rectangle(-8, 8, 4, 6, 0x3B2503));
+                // Horse head (RIGHT - facing toward enemies)
+                container.add(this.add.rectangle(8, 2, 6, 5, 0x9B5523));
+                container.add(this.add.rectangle(10, 0, 3, 3, 0x8B4513)); // ear
                 // Rider torso
                 container.add(this.add.rectangle(0, -2, 8, 8, 0x4169E1));
                 // Rider head
                 container.add(this.add.rectangle(0, -8, 6, 6, 0xFFCBA4));
                 // Rider helmet
                 container.add(this.add.rectangle(0, -10, 7, 4, 0x708090));
-                // Lance
-                container.add(this.add.rectangle(6, -6, 2, 16, 0x8B4513));
-                container.add(this.add.rectangle(6, -14, 3, 4, 0xC0C0C0)); // tip
+                // Lance (pointing forward/right)
+                container.add(this.add.rectangle(10, -4, 16, 2, 0x8B4513)); // horizontal shaft
+                container.add(this.add.rectangle(18, -4, 4, 3, 0xC0C0C0)); // tip
                 break;
         }
     }

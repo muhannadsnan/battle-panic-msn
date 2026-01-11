@@ -325,46 +325,50 @@ class UnitButton extends Phaser.GameObjects.Container {
     }
 
     createHorsemanIcon(scene, scale) {
-        // EXPRESSIVE HORSEMAN - Mounted cavalry with lance
+        // EXPRESSIVE HORSEMAN - Mounted cavalry charging RIGHT
         const s = scale;
 
-        // Horse body (brown)
-        this.iconContainer.add(scene.add.rectangle(0, 14 * s, 28 * s, 14 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(0, 12 * s, 24 * s, 10 * s, 0x9B5523)); // highlight
-        this.iconContainer.add(scene.add.rectangle(-10 * s, 14 * s, 6 * s, 10 * s, 0x7B3503)); // shade
+        // Horse body (brown stallion)
+        this.iconContainer.add(scene.add.rectangle(0, 12 * s, 28 * s, 16 * s, 0x8B4513));
+        this.iconContainer.add(scene.add.rectangle(2 * s, 10 * s, 24 * s, 12 * s, 0x9B5523)); // highlight
         // Horse legs
-        this.iconContainer.add(scene.add.rectangle(-8 * s, 24 * s, 5 * s, 10 * s, 0x6B3503));
-        this.iconContainer.add(scene.add.rectangle(8 * s, 24 * s, 5 * s, 10 * s, 0x6B3503));
-        // Horse tail
-        this.iconContainer.add(scene.add.rectangle(16 * s, 18 * s, 6 * s, 10 * s, 0x3B2503));
+        this.iconContainer.add(scene.add.rectangle(-8 * s, 24 * s, 5 * s, 12 * s, 0x6B3503)); // back
+        this.iconContainer.add(scene.add.rectangle(8 * s, 24 * s, 5 * s, 12 * s, 0x7B4513)); // front
+        // Horse tail (left/back)
+        this.iconContainer.add(scene.add.rectangle(-16 * s, 14 * s, 5 * s, 10 * s, 0x3B2503));
+        this.iconContainer.add(scene.add.rectangle(-18 * s, 18 * s, 4 * s, 8 * s, 0x2B1503));
 
-        // Horse head
-        this.iconContainer.add(scene.add.rectangle(-16 * s, 6 * s, 10 * s, 12 * s, 0x9B5523));
-        this.iconContainer.add(scene.add.rectangle(-20 * s, 4 * s, 6 * s, 8 * s, 0x8B4513)); // snout
-        this.iconContainer.add(scene.add.rectangle(-14 * s, 0, 4 * s, 5 * s, 0x7B3503)); // ear
-        this.iconContainer.add(scene.add.rectangle(-18 * s, 4 * s, 3 * s, 3 * s, 0x000000)); // eye
+        // Horse head and neck (right/front - facing enemies!)
+        this.iconContainer.add(scene.add.rectangle(16 * s, 4 * s, 10 * s, 14 * s, 0x8B4513)); // neck
+        this.iconContainer.add(scene.add.rectangle(22 * s, 0, 12 * s, 10 * s, 0x9B5523)); // head
+        this.iconContainer.add(scene.add.rectangle(28 * s, 2 * s, 6 * s, 6 * s, 0x8B4513)); // snout
+        this.iconContainer.add(scene.add.rectangle(18 * s, -6 * s, 4 * s, 6 * s, 0x7B3503)); // ear
+        this.iconContainer.add(scene.add.rectangle(20 * s, 0, 3 * s, 3 * s, 0x000000)); // eye
+        // Mane
+        this.iconContainer.add(scene.add.rectangle(12 * s, -2 * s, 5 * s, 10 * s, 0x3B2503));
+
+        // Saddle
+        this.iconContainer.add(scene.add.rectangle(0, 2 * s, 14 * s, 8 * s, 0x5B3020));
 
         // Rider torso (blue tunic)
-        this.iconContainer.add(scene.add.rectangle(0, -2 * s, 14 * s, 16 * s, 0x4169E1));
-        this.iconContainer.add(scene.add.rectangle(0, -1 * s, 12 * s, 12 * s, 0x5179F1)); // highlight
+        this.iconContainer.add(scene.add.rectangle(0, -8 * s, 14 * s, 16 * s, 0x4169E1));
+        this.iconContainer.add(scene.add.rectangle(2 * s, -6 * s, 10 * s, 12 * s, 0x5179F1)); // highlight
 
         // Rider head
-        this.iconContainer.add(scene.add.rectangle(0, -14 * s, 12 * s, 12 * s, 0xFFCBA4));
-        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 8 * s, 8 * s, 0xFFDDBB)); // highlight
-        // Eyes
-        this.iconContainer.add(scene.add.rectangle(-3 * s, -14 * s, 3 * s, 3 * s, 0x000000));
-        this.iconContainer.add(scene.add.rectangle(3 * s, -14 * s, 3 * s, 3 * s, 0x000000));
+        this.iconContainer.add(scene.add.rectangle(2 * s, -20 * s, 12 * s, 12 * s, 0xFFCBA4));
         // Helmet
-        this.iconContainer.add(scene.add.rectangle(0, -20 * s, 14 * s, 8 * s, 0x708090));
-        this.iconContainer.add(scene.add.rectangle(0, -18 * s, 10 * s, 4 * s, 0x808890)); // shine
+        this.iconContainer.add(scene.add.rectangle(2 * s, -26 * s, 14 * s, 8 * s, 0x708090));
+        this.iconContainer.add(scene.add.rectangle(8 * s, -22 * s, 4 * s, 6 * s, 0x606070)); // nose guard
+        // Eyes
+        this.iconContainer.add(scene.add.rectangle(0, -20 * s, 3 * s, 3 * s, 0x000000));
+        this.iconContainer.add(scene.add.rectangle(6 * s, -20 * s, 3 * s, 3 * s, 0x000000));
 
-        // Lance
-        this.iconContainer.add(scene.add.rectangle(14 * s, -8 * s, 4 * s, 40 * s, 0x8B5A33)); // shaft
-        this.iconContainer.add(scene.add.rectangle(14 * s, -28 * s, 6 * s, 8 * s, 0xC0C0C0)); // tip
-        this.iconContainer.add(scene.add.rectangle(14 * s, -26 * s, 4 * s, 4 * s, 0xE0E0E0)); // tip shine
-        // Pennant
-        this.iconContainer.add(scene.add.rectangle(18 * s, -22 * s, 8 * s, 6 * s, 0xFF4444));
-        this.iconContainer.add(scene.add.rectangle(20 * s, -22 * s, 4 * s, 4 * s, 0xFF6666));
+        // Lance (pointing right at enemies!)
+        this.iconContainer.add(scene.add.rectangle(24 * s, -12 * s, 36 * s, 3 * s, 0x8B5A33)); // shaft
+        this.iconContainer.add(scene.add.rectangle(44 * s, -12 * s, 8 * s, 5 * s, 0xC0C0C0)); // tip
+        // Pennant (behind)
+        this.iconContainer.add(scene.add.rectangle(4 * s, -14 * s, 10 * s, 7 * s, 0xFF4444));
+        this.iconContainer.add(scene.add.rectangle(0, -13 * s, 6 * s, 5 * s, 0xFF6666));
     }
 
     onClick() {

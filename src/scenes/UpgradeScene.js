@@ -498,7 +498,7 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createHorsemanIcon(container, scale, alpha) {
-        // Horseman - mounted cavalry with lance
+        // Horseman - mounted cavalry with lance (facing RIGHT toward enemies)
         const s = scale;
 
         // Shadow (larger for horse)
@@ -521,25 +521,25 @@ class UpgradeScene extends Phaser.Scene {
         const horseHighlight = this.add.rectangle(0, 12 * s, 32 * s, 14 * s, 0x9B5523);
         horseHighlight.setAlpha(alpha);
         container.add(horseHighlight);
-        // Horse tail
-        const tail = this.add.rectangle(20 * s, 18 * s, 8 * s, 12 * s, 0x3B2503);
+        // Horse tail (LEFT side - horse faces right)
+        const tail = this.add.rectangle(-20 * s, 18 * s, 8 * s, 12 * s, 0x3B2503);
         tail.setAlpha(alpha);
         container.add(tail);
 
-        // Horse head and neck
-        const neck = this.add.rectangle(-20 * s, 8 * s, 10 * s, 16 * s, 0x8B4513);
+        // Horse head and neck (RIGHT side - facing toward enemies)
+        const neck = this.add.rectangle(20 * s, 8 * s, 10 * s, 16 * s, 0x8B4513);
         neck.setAlpha(alpha);
         container.add(neck);
-        const head = this.add.rectangle(-26 * s, 4 * s, 14 * s, 12 * s, 0x9B5523);
+        const head = this.add.rectangle(26 * s, 4 * s, 14 * s, 12 * s, 0x9B5523);
         head.setAlpha(alpha);
         container.add(head);
-        const snout = this.add.rectangle(-30 * s, 2 * s, 6 * s, 6 * s, 0x8B4513);
+        const snout = this.add.rectangle(30 * s, 2 * s, 6 * s, 6 * s, 0x8B4513);
         snout.setAlpha(alpha);
         container.add(snout);
-        const ear = this.add.rectangle(-24 * s, -2 * s, 4 * s, 6 * s, 0x7B3503);
+        const ear = this.add.rectangle(24 * s, -2 * s, 4 * s, 6 * s, 0x7B3503);
         ear.setAlpha(alpha);
         container.add(ear);
-        const eye = this.add.rectangle(-28 * s, 4 * s, 3 * s, 3 * s, 0x000000);
+        const eye = this.add.rectangle(28 * s, 4 * s, 3 * s, 3 * s, 0x000000);
         eye.setAlpha(alpha);
         container.add(eye);
 
@@ -567,15 +567,15 @@ class UpgradeScene extends Phaser.Scene {
         eyeR.setAlpha(alpha);
         container.add(eyeR);
 
-        // Lance
-        const lanceShaft = this.add.rectangle(16 * s, -12 * s, 4 * s, 48 * s, 0x8B5A33);
+        // Lance (pointing forward/right)
+        const lanceShaft = this.add.rectangle(24 * s, -4 * s, 48 * s, 4 * s, 0x8B5A33);
         lanceShaft.setAlpha(alpha);
         container.add(lanceShaft);
-        const lanceTip = this.add.rectangle(16 * s, -38 * s, 6 * s, 10 * s, 0xC0C0C0);
+        const lanceTip = this.add.rectangle(50 * s, -4 * s, 10 * s, 6 * s, 0xC0C0C0);
         lanceTip.setAlpha(alpha);
         container.add(lanceTip);
-        // Pennant
-        const pennant = this.add.rectangle(20 * s, -30 * s, 10 * s, 8 * s, 0xFF4444);
+        // Pennant (behind the tip)
+        const pennant = this.add.rectangle(42 * s, -10 * s, 10 * s, 8 * s, 0xFF4444);
         pennant.setAlpha(alpha);
         container.add(pennant);
     }

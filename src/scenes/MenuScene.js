@@ -1109,14 +1109,14 @@ class MenuScene extends Phaser.Scene {
         // Horse body
         container.add(this.add.rectangle(0, 14, 36, 18, 0x8B4513));
         container.add(this.add.rectangle(0, 12, 32, 14, 0x9B5523));
-        // Horse tail
-        container.add(this.add.rectangle(20, 18, 8, 12, 0x3B2503));
-        // Horse head and neck
-        container.add(this.add.rectangle(-20, 8, 10, 16, 0x8B4513));
-        container.add(this.add.rectangle(-26, 4, 14, 12, 0x9B5523));
-        container.add(this.add.rectangle(-30, 2, 6, 6, 0x8B4513));
-        container.add(this.add.rectangle(-24, -2, 4, 6, 0x7B3503));
-        container.add(this.add.rectangle(-28, 4, 3, 3, 0x000000));
+        // Horse tail (LEFT side - horse faces right)
+        container.add(this.add.rectangle(-20, 18, 8, 12, 0x3B2503));
+        // Horse head and neck (RIGHT side - facing toward enemies)
+        container.add(this.add.rectangle(20, 8, 10, 16, 0x8B4513));  // neck
+        container.add(this.add.rectangle(26, 4, 14, 12, 0x9B5523));  // head
+        container.add(this.add.rectangle(30, 2, 6, 6, 0x8B4513));    // snout
+        container.add(this.add.rectangle(24, -2, 4, 6, 0x7B3503));   // ear
+        container.add(this.add.rectangle(28, 4, 3, 3, 0x000000));    // eye
         // Rider torso
         container.add(this.add.rectangle(0, -6, 16, 18, 0x4169E1));
         container.add(this.add.rectangle(0, -4, 12, 14, 0x5179F1));
@@ -1125,11 +1125,11 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(0, -26, 16, 10, 0x708090));
         container.add(this.add.rectangle(-3, -20, 4, 4, 0x000000));
         container.add(this.add.rectangle(3, -20, 4, 4, 0x000000));
-        // Lance
-        container.add(this.add.rectangle(16, -12, 4, 48, 0x8B5A33));
-        container.add(this.add.rectangle(16, -38, 6, 10, 0xC0C0C0));
-        // Pennant
-        container.add(this.add.rectangle(20, -30, 10, 8, 0xFF4444));
+        // Lance (pointing forward/right)
+        container.add(this.add.rectangle(24, -4, 48, 4, 0x8B5A33));     // horizontal shaft
+        container.add(this.add.rectangle(50, -4, 10, 6, 0xC0C0C0));    // lance tip
+        // Pennant (behind the tip)
+        container.add(this.add.rectangle(42, -10, 10, 8, 0xFF4444));
 
         return container;
     }
