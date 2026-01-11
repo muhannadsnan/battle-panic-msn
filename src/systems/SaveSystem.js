@@ -328,15 +328,15 @@ class SaveSystem {
     }
 
     // Get XP divisor based on player rank - easier for new players, harder for veterans
-    // Recruit: wave/3, Soldier: wave/6, ... Immortal: wave/31
+    // Dopamine club: Recruit (2), Soldier (3), Warrior (3) for newcomer boost!
     getXPDivisorForRank(data) {
         const rankInfo = this.getRankInfo(data);
         const rankName = rankInfo.rank.name;
 
         const divisors = {
-            'Recruit': 3,
-            'Soldier': 6,
-            'Warrior': 9,
+            'Recruit': 2,   // Dopamine boost: 1 XP per 2 waves
+            'Soldier': 3,   // Dopamine club: 1 XP per 3 waves
+            'Warrior': 3,   // Dopamine club: 1 XP per 3 waves
             'Knight': 12,
             'Captain': 15,
             'Commander': 18,

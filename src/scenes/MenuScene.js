@@ -1552,7 +1552,7 @@ class MenuScene extends Phaser.Scene {
                 title: 'XP & RANKINGS',
                 tips: [
                     { icon: '✨', text: 'Earn XP by reaching wave milestones (max 3/game)' },
-                    { icon: '📊', text: 'Recruit earns XP every 3 waves' },
+                    { icon: '📊', text: 'Recruit: 2 waves/XP, Soldier/Warrior: 3 waves/XP' },
                     { icon: '📈', text: 'Higher ranks need more waves per XP' },
                     { icon: '🎖️', text: 'Ranks: Recruit → Soldier → Warrior → Knight → ...' },
                     { icon: '👑', text: 'Each rank has 3 grades (I, II, III)' }
