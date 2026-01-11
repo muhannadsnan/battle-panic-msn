@@ -214,8 +214,6 @@ Each unit has a procedural icon:
 - `createPeasantIcon()` - Farmer with pitchfork
 - `createArcherIcon()` - Hooded figure with bow
 - `createKnightIcon()` - Armored knight with sword
-- `createWizardIcon()` - Wizard with hat and staff
-- `createGiantIcon()` - Large brute with club
 
 ---
 

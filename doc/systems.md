@@ -35,7 +35,7 @@ Applies damage to target:
 3. Shows floating damage number
 
 **`dealSplashDamage(attacker, centerX, centerY, damage, radius, targets)`**
-AoE damage for Wizard attacks:
+AoE damage for area attacks:
 - Hits all targets within radius
 - Damage falls off with distance: `damage * (1 - distance/radius * 0.5)`
 - Plays magic sound effect
@@ -191,9 +191,7 @@ Handles localStorage persistence for game progress.
         unitsSpawned: {          // Per-unit-type counts
             peasant: 0,
             archer: 0,
-            knight: 0,
-            wizard: 0,
-            giant: 0
+            knight: 0
         },
         totalGoldCollected: 0,   // Total gold mined
         totalWoodCollected: 0,   // Total wood collected
@@ -203,9 +201,7 @@ Handles localStorage persistence for game progress.
     upgrades: {
         peasant: { level: 1, unlocked: true },
         archer: { level: 1, unlocked: true },
-        knight: { level: 1, unlocked: false },
-        wizard: { level: 1, unlocked: false },
-        giant: { level: 1, unlocked: false }
+        knight: { level: 1, unlocked: false }
     },
     castleUpgrades: {
         health: 1,               // +20 HP per level (permanent) + unlocks +20 HP/wave at L2+
@@ -276,7 +272,7 @@ Returns XP divisor based on player rank (easier for new players, harder for vete
 **`calculateSpentXP(data)`**
 Calculates total XP invested in upgrades:
 - Unit levels: `sum(1 to level-1)` per unit
-- Unlock costs: Knight=2, Wizard=3, Giant=5
+- Unlock costs: Knight=2
 - Castle upgrades: Same formula
 
 **`resetUpgrades()`**

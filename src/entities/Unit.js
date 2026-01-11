@@ -58,7 +58,7 @@ class Unit extends Phaser.GameObjects.Container {
 
         // Assign defense position based on unit type
         // Ranged units (archers) stay behind melee units
-        // Melee units (peasants, knights, giants) form the front line
+        // Melee units (peasants, knights) form the front line
         this.assignDefensePosition();
 
         // Create the unit sprite based on type
@@ -106,7 +106,7 @@ class Unit extends Phaser.GameObjects.Container {
         const type = this.unitType.toUpperCase();
 
         if (this.isRanged) {
-            // Ranged units: Archers and Wizards stay behind
+            // Ranged units: Archers stay behind
             // Position them 30-60px behind the defense line
             this.defenseX = baseX - Phaser.Math.Between(30, 60);
             this.defenseY = Phaser.Math.Between(minY, maxY);
@@ -117,11 +117,6 @@ class Unit extends Phaser.GameObjects.Container {
                     // Knights are tanks - front and center
                     this.defenseX = baseX + Phaser.Math.Between(40, 70);
                     this.defenseY = Phaser.Math.Between(minY + 20, maxY - 20);
-                    break;
-                case 'GIANT':
-                    // Giants are very tanky - at the very front
-                    this.defenseX = baseX + Phaser.Math.Between(60, 90);
-                    this.defenseY = Phaser.Math.Between(minY, maxY);
                     break;
                 case 'PEASANT':
                 default:
@@ -145,9 +140,6 @@ class Unit extends Phaser.GameObjects.Container {
                 break;
             case 'KNIGHT':
                 this.createKnight(scene);
-                break;
-            case 'GIANT':
-                this.createGiant(scene);
                 break;
             default:
                 this.createPeasant(scene);
@@ -375,93 +367,6 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts.weapon.add(scene.add.rectangle(0, 18, 14, 6, 0xC49A4A)); // crossguard
         this.bodyParts.weapon.add(scene.add.rectangle(0, 18, 10, 4, 0xD4AA5A)); // highlight
         this.bodyParts.weapon.add(scene.add.rectangle(0, 24, 6, 6, 0xFFD700)); // pommel
-        this.bodyParts.torso.add(this.bodyParts.weapon);
-
-        this.spriteContainer.add(this.bodyParts.torso);
-        this.mainSprite = body;
-    }
-
-    createGiant(scene) {
-        // CARTOONY GIANT - big friendly (but fierce) warrior! WITH ANIMATIONS
-        const s = 1.5; // scale
-
-        // Big shadow
-        this.spriteContainer.add(scene.add.rectangle(0, 48 * s, 40 * s, 8, 0x000000, 0.2));
-
-        // Animated chunky legs
-        this.bodyParts.leftLeg = scene.add.container(-10 * s, 32 * s);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 14 * s, 20 * s, 0x7B5040));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(-1 * s, 12 * s, 16 * s, 8 * s, 0x6B4030)); // foot
-        this.spriteContainer.add(this.bodyParts.leftLeg);
-
-        this.bodyParts.rightLeg = scene.add.container(10 * s, 32 * s);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 14 * s, 20 * s, 0x7B5040));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(1 * s, 12 * s, 16 * s, 8 * s, 0x6B4030)); // foot
-        this.spriteContainer.add(this.bodyParts.rightLeg);
-
-        // Body container
-        this.bodyParts.torso = scene.add.container(0, 0);
-
-        // MASSIVE body
-        const body = scene.add.rectangle(0, 10 * s, 36 * s, 32 * s, 0xBB4444);
-        this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(0, 12 * s, 30 * s, 26 * s, 0xCC5555));
-        this.bodyParts.torso.add(scene.add.rectangle(-14 * s, 10 * s, 6 * s, 28 * s, 0x993333));
-
-        // Friendly belly
-        this.bodyParts.torso.add(scene.add.rectangle(0, 16 * s, 24 * s, 18 * s, 0xDD7766));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 14 * s, 18 * s, 12 * s, 0xEE8877));
-
-        // Cool belt
-        this.bodyParts.torso.add(scene.add.rectangle(0, 24 * s, 38 * s, 6 * s, 0x5A4030));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 24 * s, 10 * s, 8 * s, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 24 * s, 6 * s, 4 * s, 0xFFEE66));
-
-        // Animated huge arms
-        this.bodyParts.leftArm = scene.add.container(-22 * s, 10 * s);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 12 * s, 28 * s, 0xDD9966));
-        this.bodyParts.leftArm.add(scene.add.rectangle(2 * s, 0, 6 * s, 24 * s, 0xEEAA77));
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 16 * s, 14 * s, 12 * s, 0xEEAA77)); // fist
-        this.bodyParts.torso.add(this.bodyParts.leftArm);
-
-        this.bodyParts.rightArm = scene.add.container(22 * s, 10 * s);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 12 * s, 28 * s, 0xDD9966));
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 16 * s, 14 * s, 12 * s, 0xEEAA77)); // fist
-        this.bodyParts.torso.add(this.bodyParts.rightArm);
-
-        // Big lovable head
-        this.bodyParts.torso.add(scene.add.rectangle(0, -16 * s, 28 * s, 24 * s, 0xDD9966));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -14 * s, 24 * s, 18 * s, 0xEEAA77));
-        this.bodyParts.torso.add(scene.add.rectangle(-10 * s, -16 * s, 6 * s, 20 * s, 0xCC8855));
-
-        // Friendly but fierce eyes
-        this.bodyParts.torso.add(scene.add.rectangle(-7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-6 * s, -17 * s, 6 * s, 8 * s, 0x664422));
-        this.bodyParts.torso.add(scene.add.rectangle(8 * s, -17 * s, 6 * s, 8 * s, 0x664422));
-        this.bodyParts.torso.add(scene.add.rectangle(-8 * s, -19 * s, 3 * s, 3 * s, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(6 * s, -19 * s, 3 * s, 3 * s, 0xFFFFFF));
-
-        // Determined eyebrows
-        this.bodyParts.torso.add(scene.add.rectangle(-7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020));
-        this.bodyParts.torso.add(scene.add.rectangle(7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020));
-
-        // Big smile with teeth
-        this.bodyParts.torso.add(scene.add.rectangle(0, -6 * s, 16 * s, 8 * s, 0xAA4040));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -8 * s, 12 * s, 4 * s, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE));
-        this.bodyParts.torso.add(scene.add.rectangle(5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE));
-
-        // EPIC spiked club (animated weapon)
-        this.bodyParts.weapon = scene.add.container(34 * s, 4 * s);
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 10 * s, 50 * s, 0x6B5030));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 2 * s, 6 * s, 46 * s, 0x7B6040));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -30 * s, 20 * s, 24 * s, 0x5A4030));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -30 * s, 16 * s, 20 * s, 0x6B5040));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -46 * s, 6 * s, 12 * s, 0x888888));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -48 * s, 4 * s, 8 * s, 0xAAAAAA));
-        this.bodyParts.weapon.add(scene.add.rectangle(12 * s, -32 * s, 10 * s, 5 * s, 0x888888));
-        this.bodyParts.weapon.add(scene.add.rectangle(-12 * s, -32 * s, 10 * s, 5 * s, 0x888888));
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);

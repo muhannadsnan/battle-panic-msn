@@ -54,9 +54,9 @@ class UpgradeScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
-        const startX = 145;
-        const spacing = 200;
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+        const startX = 195;
+        const spacing = 250;
         const y = 265;
 
         this.upgradeCards = [];
@@ -229,9 +229,6 @@ class UpgradeScene extends Phaser.Scene {
                 break;
             case 'KNIGHT':
                 this.createKnightIcon(container, scale, alpha);
-                break;
-            case 'GIANT':
-                this.createGiantIcon(container, scale, alpha);
                 break;
         }
     }
@@ -618,156 +615,6 @@ class UpgradeScene extends Phaser.Scene {
         container.add(pommel);
     }
 
-    createGiantIcon(container, scale, alpha) {
-        // EXACT copy of Unit.js createGiant - cartoony big friendly fierce warrior
-        const s = scale * 0.85; // Slightly smaller to fit in card
-
-        // Big shadow
-        const shadow = this.add.rectangle(0, 48 * s, 40 * s, 8 * s, 0x000000, 0.2);
-        shadow.setAlpha(alpha);
-        container.add(shadow);
-
-        // Chunky legs
-        const leftLeg = this.add.rectangle(-10 * s, 32 * s, 14 * s, 20 * s, 0x7B5040);
-        leftLeg.setAlpha(alpha);
-        container.add(leftLeg);
-        const leftFoot = this.add.rectangle(-11 * s, 44 * s, 16 * s, 8 * s, 0x6B4030);
-        leftFoot.setAlpha(alpha);
-        container.add(leftFoot);
-        const rightLeg = this.add.rectangle(10 * s, 32 * s, 14 * s, 20 * s, 0x7B5040);
-        rightLeg.setAlpha(alpha);
-        container.add(rightLeg);
-        const rightFoot = this.add.rectangle(11 * s, 44 * s, 16 * s, 8 * s, 0x6B4030);
-        rightFoot.setAlpha(alpha);
-        container.add(rightFoot);
-
-        // MASSIVE body
-        const body = this.add.rectangle(0, 10 * s, 36 * s, 32 * s, 0xBB4444);
-        body.setAlpha(alpha);
-        container.add(body);
-        const bodyHighlight = this.add.rectangle(0, 12 * s, 30 * s, 26 * s, 0xCC5555);
-        bodyHighlight.setAlpha(alpha);
-        container.add(bodyHighlight);
-        const bodyShade = this.add.rectangle(-14 * s, 10 * s, 6 * s, 28 * s, 0x993333);
-        bodyShade.setAlpha(alpha);
-        container.add(bodyShade);
-
-        // Friendly belly
-        const belly = this.add.rectangle(0, 16 * s, 24 * s, 18 * s, 0xDD7766);
-        belly.setAlpha(alpha);
-        container.add(belly);
-        const bellyInner = this.add.rectangle(0, 14 * s, 18 * s, 12 * s, 0xEE8877);
-        bellyInner.setAlpha(alpha);
-        container.add(bellyInner);
-
-        // Cool belt
-        const belt = this.add.rectangle(0, 24 * s, 38 * s, 6 * s, 0x5A4030);
-        belt.setAlpha(alpha);
-        container.add(belt);
-        const buckle = this.add.rectangle(0, 24 * s, 10 * s, 8 * s, 0xFFD700);
-        buckle.setAlpha(alpha);
-        container.add(buckle);
-        const buckleShine = this.add.rectangle(0, 24 * s, 6 * s, 4 * s, 0xFFEE66);
-        buckleShine.setAlpha(alpha);
-        container.add(buckleShine);
-
-        // Huge arms
-        const leftArm = this.add.rectangle(-22 * s, 10 * s, 12 * s, 28 * s, 0xDD9966);
-        leftArm.setAlpha(alpha);
-        container.add(leftArm);
-        const leftArmHighlight = this.add.rectangle(-20 * s, 10 * s, 6 * s, 24 * s, 0xEEAA77);
-        leftArmHighlight.setAlpha(alpha);
-        container.add(leftArmHighlight);
-        const leftFist = this.add.rectangle(-22 * s, 26 * s, 14 * s, 12 * s, 0xEEAA77);
-        leftFist.setAlpha(alpha);
-        container.add(leftFist);
-        const rightArm = this.add.rectangle(22 * s, 10 * s, 12 * s, 28 * s, 0xDD9966);
-        rightArm.setAlpha(alpha);
-        container.add(rightArm);
-        const rightFist = this.add.rectangle(22 * s, 26 * s, 14 * s, 12 * s, 0xEEAA77);
-        rightFist.setAlpha(alpha);
-        container.add(rightFist);
-
-        // Big lovable head
-        const head = this.add.rectangle(0, -16 * s, 28 * s, 24 * s, 0xDD9966);
-        head.setAlpha(alpha);
-        container.add(head);
-        const headHighlight = this.add.rectangle(0, -14 * s, 24 * s, 18 * s, 0xEEAA77);
-        headHighlight.setAlpha(alpha);
-        container.add(headHighlight);
-        const headShade = this.add.rectangle(-10 * s, -16 * s, 6 * s, 20 * s, 0xCC8855);
-        headShade.setAlpha(alpha);
-        container.add(headShade);
-
-        // Friendly but fierce eyes
-        const eyeWhiteL = this.add.rectangle(-7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF);
-        eyeWhiteL.setAlpha(alpha);
-        container.add(eyeWhiteL);
-        const eyeWhiteR = this.add.rectangle(7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF);
-        eyeWhiteR.setAlpha(alpha);
-        container.add(eyeWhiteR);
-        const pupilL = this.add.rectangle(-6 * s, -17 * s, 6 * s, 8 * s, 0x664422);
-        pupilL.setAlpha(alpha);
-        container.add(pupilL);
-        const pupilR = this.add.rectangle(8 * s, -17 * s, 6 * s, 8 * s, 0x664422);
-        pupilR.setAlpha(alpha);
-        container.add(pupilR);
-        const shineL = this.add.rectangle(-8 * s, -19 * s, 3 * s, 3 * s, 0xFFFFFF);
-        shineL.setAlpha(alpha);
-        container.add(shineL);
-        const shineR = this.add.rectangle(6 * s, -19 * s, 3 * s, 3 * s, 0xFFFFFF);
-        shineR.setAlpha(alpha);
-        container.add(shineR);
-
-        // Determined eyebrows
-        const browL = this.add.rectangle(-7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020);
-        browL.setAlpha(alpha);
-        container.add(browL);
-        const browR = this.add.rectangle(7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020);
-        browR.setAlpha(alpha);
-        container.add(browR);
-
-        // Big smile with teeth
-        const mouth = this.add.rectangle(0, -6 * s, 16 * s, 8 * s, 0xAA4040);
-        mouth.setAlpha(alpha);
-        container.add(mouth);
-        const teeth = this.add.rectangle(0, -8 * s, 12 * s, 4 * s, 0xFFFFFF);
-        teeth.setAlpha(alpha);
-        container.add(teeth);
-        const toothL = this.add.rectangle(-5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE);
-        toothL.setAlpha(alpha);
-        container.add(toothL);
-        const toothR = this.add.rectangle(5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE);
-        toothR.setAlpha(alpha);
-        container.add(toothR);
-
-        // EPIC spiked club
-        const clubHandle = this.add.rectangle(34 * s, 4 * s, 10 * s, 50 * s, 0x6B5030);
-        clubHandle.setAlpha(alpha);
-        container.add(clubHandle);
-        const clubHighlight = this.add.rectangle(34 * s, 6 * s, 6 * s, 46 * s, 0x7B6040);
-        clubHighlight.setAlpha(alpha);
-        container.add(clubHighlight);
-        const clubHead = this.add.rectangle(34 * s, -26 * s, 20 * s, 24 * s, 0x5A4030);
-        clubHead.setAlpha(alpha);
-        container.add(clubHead);
-        const clubHeadInner = this.add.rectangle(34 * s, -26 * s, 16 * s, 20 * s, 0x6B5040);
-        clubHeadInner.setAlpha(alpha);
-        container.add(clubHeadInner);
-        const spike1 = this.add.rectangle(34 * s, -42 * s, 6 * s, 12 * s, 0x888888);
-        spike1.setAlpha(alpha);
-        container.add(spike1);
-        const spike2 = this.add.rectangle(34 * s, -44 * s, 4 * s, 8 * s, 0xAAAAAA);
-        spike2.setAlpha(alpha);
-        container.add(spike2);
-        const spike3 = this.add.rectangle(46 * s, -28 * s, 10 * s, 5 * s, 0x888888);
-        spike3.setAlpha(alpha);
-        container.add(spike3);
-        const spike4 = this.add.rectangle(22 * s, -28 * s, 10 * s, 5 * s, 0x888888);
-        spike4.setAlpha(alpha);
-        container.add(spike4);
-    }
-
     createCastleUpgrades() {
         this.add.text(GAME_WIDTH / 2, 400, 'CASTLE UPGRADES', {
             fontSize: '22px',
@@ -995,8 +842,7 @@ class UpgradeScene extends Phaser.Scene {
     getUnlockCost(unitKey) {
         // XP costs for unlocking units
         const costs = {
-            knight: 2,
-            giant: 3
+            knight: 2
         };
         return costs[unitKey] || 1;
     }

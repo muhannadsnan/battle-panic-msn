@@ -595,9 +595,7 @@ class MenuScene extends Phaser.Scene {
         const unitTypes = [
             (x, y, s) => this.createMenuPeasant(x, y, s, true),
             (x, y, s) => this.createMenuArcher(x, y, s, true),
-            (x, y, s) => this.createMenuKnight(x, y, s, true),
-            (x, y, s) => this.createMenuGiant(x, y, s, true),
-            (x, y, s) => this.createMenuWizard(x, y, s, true)
+            (x, y, s) => this.createMenuKnight(x, y, s, true)
         ];
 
         // Shuffle and pick unique enemies (4 per side, staggered, above buttons)
@@ -1143,121 +1141,6 @@ class MenuScene extends Phaser.Scene {
         return container;
     }
 
-    createMenuGiant(x, y, scale, flipX = false) {
-        const container = this.add.container(x, y);
-        container.setScale(flipX ? -scale : scale, scale);
-        const s = 1.5;
-
-        // Shadow
-        container.add(this.add.rectangle(0, 48 * s, 40 * s, 8, 0x000000, 0.2));
-        // Legs
-        container.add(this.add.rectangle(-10 * s, 32 * s, 14 * s, 20 * s, 0x7B5040));
-        container.add(this.add.rectangle(10 * s, 32 * s, 14 * s, 20 * s, 0x7B5040));
-        container.add(this.add.rectangle(-11 * s, 44 * s, 16 * s, 8 * s, 0x6B4030));
-        container.add(this.add.rectangle(11 * s, 44 * s, 16 * s, 8 * s, 0x6B4030));
-        // Body
-        container.add(this.add.rectangle(0, 10 * s, 36 * s, 32 * s, 0xBB4444));
-        container.add(this.add.rectangle(0, 12 * s, 30 * s, 26 * s, 0xCC5555));
-        container.add(this.add.rectangle(-14 * s, 10 * s, 6 * s, 28 * s, 0x993333));
-        container.add(this.add.rectangle(0, 16 * s, 24 * s, 18 * s, 0xDD7766));
-        container.add(this.add.rectangle(0, 14 * s, 18 * s, 12 * s, 0xEE8877));
-        // Belt
-        container.add(this.add.rectangle(0, 24 * s, 38 * s, 6 * s, 0x5A4030));
-        container.add(this.add.rectangle(0, 24 * s, 10 * s, 8 * s, 0xFFD700));
-        // Arms
-        container.add(this.add.rectangle(-22 * s, 10 * s, 12 * s, 28 * s, 0xDD9966));
-        container.add(this.add.rectangle(22 * s, 10 * s, 12 * s, 28 * s, 0xDD9966));
-        container.add(this.add.rectangle(-20 * s, 10 * s, 6 * s, 24 * s, 0xEEAA77));
-        container.add(this.add.rectangle(-22 * s, 26 * s, 14 * s, 12 * s, 0xEEAA77));
-        container.add(this.add.rectangle(22 * s, 26 * s, 14 * s, 12 * s, 0xEEAA77));
-        // Head
-        container.add(this.add.rectangle(0, -16 * s, 28 * s, 24 * s, 0xDD9966));
-        container.add(this.add.rectangle(0, -14 * s, 24 * s, 18 * s, 0xEEAA77));
-        container.add(this.add.rectangle(-10 * s, -16 * s, 6 * s, 20 * s, 0xCC8855));
-        // Eyes
-        container.add(this.add.rectangle(-7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF));
-        container.add(this.add.rectangle(7 * s, -18 * s, 10 * s, 10 * s, 0xFFFFFF));
-        container.add(this.add.rectangle(-6 * s, -17 * s, 6 * s, 8 * s, 0x664422));
-        container.add(this.add.rectangle(8 * s, -17 * s, 6 * s, 8 * s, 0x664422));
-        // Brows
-        container.add(this.add.rectangle(-7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020));
-        container.add(this.add.rectangle(7 * s, -24 * s, 10 * s, 4 * s, 0x5A3020));
-        // Mouth
-        container.add(this.add.rectangle(0, -6 * s, 16 * s, 8 * s, 0xAA4040));
-        container.add(this.add.rectangle(0, -8 * s, 12 * s, 4 * s, 0xFFFFFF));
-        container.add(this.add.rectangle(-5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE));
-        container.add(this.add.rectangle(5 * s, -3 * s, 4 * s, 6 * s, 0xFFFFEE));
-        // Club
-        container.add(this.add.rectangle(34 * s, 4 * s, 10 * s, 50 * s, 0x6B5030));
-        container.add(this.add.rectangle(34 * s, 6 * s, 6 * s, 46 * s, 0x7B6040));
-        container.add(this.add.rectangle(34 * s, -26 * s, 20 * s, 24 * s, 0x5A4030));
-        container.add(this.add.rectangle(34 * s, -26 * s, 16 * s, 20 * s, 0x6B5040));
-        container.add(this.add.rectangle(34 * s, -42 * s, 6 * s, 12 * s, 0x888888));
-
-        return container;
-    }
-
-    createMenuWizard(x, y, scale, flipX = false) {
-        const container = this.add.container(x, y);
-        container.setScale(flipX ? -scale : scale, scale);
-
-        // Shadow
-        container.add(this.add.rectangle(0, 30, 26, 6, 0x000000, 0.2));
-        // Robe bottom
-        container.add(this.add.rectangle(0, 22, 26, 16, 0x8844CC));
-        container.add(this.add.rectangle(0, 24, 22, 12, 0x9955DD));
-        container.add(this.add.rectangle(-10, 22, 5, 14, 0x6633AA));
-        // Robe body
-        container.add(this.add.rectangle(0, 6, 22, 20, 0xAA55EE));
-        container.add(this.add.rectangle(0, 8, 18, 14, 0xBB66FF));
-        container.add(this.add.rectangle(-8, 6, 4, 16, 0x8844CC));
-        // Gold trim
-        container.add(this.add.rectangle(0, 28, 28, 4, 0xFFD700));
-        container.add(this.add.rectangle(-8, 28, 4, 3, 0xFFEE66));
-        container.add(this.add.rectangle(8, 28, 4, 3, 0xFFEE66));
-        // Arms
-        container.add(this.add.rectangle(-14, 6, 8, 14, 0xAA55EE));
-        container.add(this.add.rectangle(14, 6, 8, 14, 0xAA55EE));
-        container.add(this.add.rectangle(-14, 14, 8, 6, 0xFFCBA4));
-        container.add(this.add.rectangle(14, 14, 8, 6, 0xFFCBA4));
-        // Face
-        container.add(this.add.rectangle(0, -8, 18, 16, 0xFFCBA4));
-        container.add(this.add.rectangle(0, -6, 14, 12, 0xFFDDBB));
-        // Beard
-        container.add(this.add.rectangle(0, 4, 14, 14, 0xEEEEEE));
-        container.add(this.add.rectangle(0, 10, 12, 10, 0xFFFFFF));
-        container.add(this.add.rectangle(-4, 14, 6, 8, 0xDDDDDD));
-        container.add(this.add.rectangle(4, 14, 6, 8, 0xDDDDDD));
-        container.add(this.add.rectangle(0, 18, 4, 6, 0xFFFFFF));
-        // Eyes
-        container.add(this.add.rectangle(-4, -10, 8, 8, 0x00DDFF));
-        container.add(this.add.rectangle(4, -10, 8, 8, 0x00DDFF));
-        container.add(this.add.rectangle(-4, -10, 4, 4, 0xAAFFFF));
-        container.add(this.add.rectangle(4, -10, 4, 4, 0xAAFFFF));
-        // Eyebrows
-        container.add(this.add.rectangle(-5, -15, 8, 3, 0xCCCCCC));
-        container.add(this.add.rectangle(5, -15, 8, 3, 0xCCCCCC));
-        // Hat
-        container.add(this.add.rectangle(0, -18, 24, 8, 0x8844CC));
-        container.add(this.add.rectangle(0, -26, 18, 12, 0x9955DD));
-        container.add(this.add.rectangle(0, -34, 14, 10, 0xAA66EE));
-        container.add(this.add.rectangle(0, -42, 10, 10, 0xBB77FF));
-        container.add(this.add.rectangle(4, -48, 8, 8, 0xCC88FF));
-        // Stars on hat
-        container.add(this.add.rectangle(-4, -30, 5, 5, 0xFFD700));
-        container.add(this.add.rectangle(4, -38, 4, 4, 0xFFEE88));
-        // Staff
-        container.add(this.add.rectangle(22, 4, 6, 44, 0x8B5A33));
-        container.add(this.add.rectangle(22, 6, 4, 40, 0x9B6A43));
-        // Crystal orb
-        container.add(this.add.rectangle(22, -22, 16, 16, 0x00BBCC));
-        container.add(this.add.rectangle(22, -22, 12, 12, 0x00DDEE));
-        container.add(this.add.rectangle(22, -22, 6, 6, 0x66FFFF));
-        container.add(this.add.rectangle(19, -25, 4, 4, 0xFFFFFF));
-
-        return container;
-    }
-
     showSettingsPanel() {
         const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 
@@ -1505,7 +1388,7 @@ class MenuScene extends Phaser.Scene {
                     { icon: '⚔️', text: 'Spawn units using gold and wood resources' },
                     { icon: '💰', text: 'Earn resources by killing enemies and completing waves' },
                     { icon: '🎯', text: 'Units automatically attack nearby enemies' },
-                    { icon: '🛡️', text: 'Position tanks (Knights, Giants) in front to protect ranged units' }
+                    { icon: '🛡️', text: 'Position Knights in front to protect ranged units' }
                 ]
             },
             {
@@ -1562,7 +1445,7 @@ class MenuScene extends Phaser.Scene {
                 title: 'UPGRADES & XP',
                 tips: [
                     { icon: '⬆️', text: 'Spend XP in Upgrades menu for permanent boosts' },
-                    { icon: '🔓', text: 'Unlock Knight (2 XP), Wizard (3 XP), Giant (5 XP)' },
+                    { icon: '🔓', text: 'Unlock Knight (2 XP) for tankier frontline defense' },
                     { icon: '💪', text: 'Unit upgrades increase base HP and damage' },
                     { icon: '🔄', text: 'Reset upgrades costs 2 XP fee (refunds spent XP)' },
                     { icon: '⛏️', text: 'Mining Speed upgrade increases rate by 10%/level' }

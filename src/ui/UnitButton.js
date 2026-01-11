@@ -239,9 +239,6 @@ class UnitButton extends Phaser.GameObjects.Container {
             case 'KNIGHT':
                 this.createKnightIcon(scene, scale);
                 break;
-            case 'GIANT':
-                this.createGiantIcon(scene, scale);
-                break;
         }
     }
 
@@ -370,58 +367,6 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.iconContainer.add(scene.add.rectangle(16 * s, 14 * s, 4 * s, 8 * s, 0x8B4513)); // hilt
     }
 
-    createGiantIcon(scene, scale) {
-        // EXPRESSIVE GIANT - Powerful but friendly ogre
-        const s = scale * 0.8;
-
-        // Massive body (orange/brown)
-        this.iconContainer.add(scene.add.rectangle(0, 10 * s, 28 * s, 34 * s, 0xCD853F));
-        this.iconContainer.add(scene.add.rectangle(0, 11 * s, 26 * s, 30 * s, 0xDEB887));
-        this.iconContainer.add(scene.add.rectangle(-9 * s, 12 * s, 8 * s, 28 * s, 0xBB7733)); // shade
-        // Belly
-        this.iconContainer.add(scene.add.rectangle(0, 16 * s, 18 * s, 16 * s, 0xE8C99A));
-        // Belt
-        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 28 * s, 6 * s, 0x5D4037));
-        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 8 * s, 8 * s, 0x808080)); // buckle
-
-        // Big round head
-        this.iconContainer.add(scene.add.rectangle(0, -18 * s, 26 * s, 24 * s, 0xCD853F));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, -19 * s, 20 * s, 18 * s, 0xDEB887));
-
-        // Big friendly eyes
-        this.iconContainer.add(scene.add.rectangle(-7 * s, -18 * s, 10 * s, 12 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(-6 * s, -17 * s, 7 * s, 9 * s, 0x5D4037));
-        this.iconContainer.add(scene.add.rectangle(-7 * s, -20 * s, 4 * s, 4 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(7 * s, -18 * s, 10 * s, 12 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(8 * s, -17 * s, 7 * s, 9 * s, 0x5D4037));
-        this.iconContainer.add(scene.add.rectangle(7 * s, -20 * s, 4 * s, 4 * s, 0xFFFFFF));
-        // Heavy brow
-        this.iconContainer.add(scene.add.rectangle(0, -26 * s, 24 * s, 6 * s, 0xBB7733));
-
-        // Big nose
-        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 8 * s, 8 * s, 0xBB8855));
-
-        // Big toothy grin
-        this.iconContainer.add(scene.add.rectangle(0, -4 * s, 16 * s, 8 * s, 0xDD8877));
-        this.iconContainer.add(scene.add.rectangle(-6 * s, -5 * s, 5 * s, 6 * s, 0xFFFFFF)); // tooth
-        this.iconContainer.add(scene.add.rectangle(6 * s, -5 * s, 5 * s, 6 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(0, -6 * s, 4 * s, 4 * s, 0xFFFFFF));
-
-        // Wild hair
-        this.iconContainer.add(scene.add.rectangle(-8 * s, -32 * s, 8 * s, 10 * s, 0x5D4037));
-        this.iconContainer.add(scene.add.rectangle(0, -34 * s, 10 * s, 14 * s, 0x6B4423));
-        this.iconContainer.add(scene.add.rectangle(8 * s, -32 * s, 8 * s, 10 * s, 0x5D4037));
-
-        // MASSIVE CLUB
-        this.iconContainer.add(scene.add.rectangle(22 * s, 8 * s, 8 * s, 40 * s, 0x6B4423)); // handle
-        this.iconContainer.add(scene.add.rectangle(22 * s, -18 * s, 16 * s, 22 * s, 0x5D4037)); // head
-        this.iconContainer.add(scene.add.rectangle(22 * s, -17 * s, 14 * s, 18 * s, 0x6B4423)); // inner
-        // Spikes/studs on club
-        this.iconContainer.add(scene.add.rectangle(14 * s, -22 * s, 6 * s, 6 * s, 0x808080));
-        this.iconContainer.add(scene.add.rectangle(30 * s, -22 * s, 6 * s, 6 * s, 0x808080));
-        this.iconContainer.add(scene.add.rectangle(22 * s, -28 * s, 6 * s, 6 * s, 0x808080));
-    }
-
     onClick() {
         if (this.scene.spawnUnit) {
             this.scene.spawnUnit(this.unitType);
@@ -531,8 +476,7 @@ class UnitButton extends Phaser.GameObjects.Container {
         const xpCosts = {
             'PEASANT': 0,   // Already unlocked
             'ARCHER': 0,    // Already unlocked
-            'KNIGHT': 2,
-            'GIANT': 3
+            'KNIGHT': 2
         };
         const xpNeeded = xpCosts[unitType.toUpperCase()] || 1;
         // 1 XP per 10 waves, so wave needed = XP * 10

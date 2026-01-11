@@ -166,8 +166,7 @@ class CombatSystem {
 
     calculateUnlockCost(unitKey) {
         const costs = {
-            knight: 150,
-            giant: 300
+            knight: 150
         };
         return costs[unitKey] || 100;
     }

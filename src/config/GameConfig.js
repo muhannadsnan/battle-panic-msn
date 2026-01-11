@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.8.0';
+const GAME_VERSION = 'v1.8.1';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -45,19 +45,6 @@ const UNIT_TYPES = {
         range: 35,
         color: 0x4169E1,
         description: 'Tough armored warrior'
-    },
-    GIANT: {
-        key: 'giant',
-        name: 'Giant',
-        goldCost: 120,
-        woodCost: 80,
-        health: 86,
-        damage: 20,
-        speed: 61,      // 10% faster than orcs
-        attackSpeed: 2000,
-        range: 45,
-        color: 0x8B0000,
-        description: 'Massive tank unit'
     }
 };
 

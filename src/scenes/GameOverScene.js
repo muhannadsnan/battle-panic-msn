@@ -65,9 +65,8 @@ class GameOverScene extends Phaser.Scene {
         const tips = [
             'Tip: Reach wave 10 to earn 1 XP for upgrades!',
             'Tip: Knights are great tanks for protecting archers!',
-            'Tip: Wizards deal splash damage to groups!',
             'Tip: Use XP in the Upgrades menu to unlock units!',
-            'Tip: Giants can soak up a lot of damage!'
+            'Tip: Higher promotion levels spawn TWO units at once!'
         ];
         const randomTip = tips[Math.floor(Math.random() * tips.length)];
 

@@ -40,14 +40,12 @@ Located in `UNIT_TYPES` object. Each unit has:
 | Peasant | 10 | 10 | 14 | 4 | 88 | 1000ms | 30 | Melee |
 | Archer | 25 | 20 | 18 | 6 | 66 | 1500ms | 200 | Ranged |
 | Knight | 60 | 40 | 43 | 11 | 61 | 1200ms | 35 | Melee |
-| Giant | 120 | 80 | 86 | 20 | 61 | 2000ms | 45 | Melee |
 
 ### Unit Roles
 
 - **Peasant**: Cheap frontline, fast to spawn, expendable
 - **Archer**: Back-line DPS, stays behind melee units
 - **Knight**: Tank, forms front line, high survivability
-- **Giant**: Heavy tank, slow but powerful
 
 ---
 
@@ -172,7 +170,6 @@ const UPGRADE_CONFIG = {
 
 ### Unit Unlock Costs (XP)
 - Knight: 2 XP
-- Giant: 3 XP
 
 ### Exponential Stats System
 Upgrades now use **exponential growth** - each level doubles the previous bonus!

@@ -243,8 +243,8 @@ Tips appear before challenging waves to help players prepare:
 |------|--------|-----|
 | 6 | Skeleton Archers | Ranged enemies, position tanks in front |
 | 8 | Trolls | One-shot peasants, use Knights |
-| 10 | Dragon Boss | Use Giants to tank |
-| 12 | Dark Knights | High damage, use Wizards for splash |
+| 10 | Dragon Boss | Use Knights to tank, mix ranged DPS |
+| 12 | Dark Knights | High damage, use multiple Archers |
 | 18 | Demons | Need balanced army |
 | 20, 30 | Scaled Dragons | Max promotion units needed |
 

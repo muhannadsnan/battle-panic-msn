@@ -50,9 +50,9 @@ Main update loop:
 
 **`assignDefensePosition()`**
 Assigns where unit stands when idle:
-- Ranged units (Archer, Wizard): Behind defense line
+- Ranged units (Archer): Behind defense line
 - Melee units (Peasant): Middle ground
-- Tanks (Knight, Giant): Front line
+- Tanks (Knight): Front line
 
 **`attack(time)`**
 Performs attack:
@@ -72,8 +72,6 @@ Each unit type has a detailed sprite made of rectangles:
 - `createPeasant()` - Farmer with pitchfork
 - `createArcher()` - Hooded ranger with bow
 - `createKnight()` - Armored warrior with sword/shield
-- `createWizard()` - Robed mage with glowing staff
-- `createGiant()` - Large brute with spiked club
 
 #### Animation System
 Units have animated body parts stored in `this.bodyParts`:
@@ -343,10 +341,6 @@ new Projectile(scene, x, y, target, options)
 **Arrow** (Archer, Castle)
 - Simple pointed shaft with feathers
 - Fast, single target
-
-**Magic** (Wizard)
-- Glowing orb with particle trail
-- Can have splash damage
 
 **Fireball** (Dragon Boss)
 - Large flaming sphere

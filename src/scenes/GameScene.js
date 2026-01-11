@@ -45,8 +45,7 @@ class GameScene extends Phaser.Scene {
         this.unitCounts = {
             peasant: 0,
             archer: 0,
-            knight: 0,
-            giant: 0
+            knight: 0
         };
 
         // Unit promotion levels (calculated from spawn counts)
@@ -54,8 +53,14 @@ class GameScene extends Phaser.Scene {
         this.unitPromotionLevels = {
             peasant: 0,
             archer: 0,
-            knight: 0,
-            giant: 0
+            knight: 0
+        };
+
+        // Track first spawn of each unit type this battle (for research cost)
+        this.firstSpawnDone = {
+            peasant: false,
+            archer: false,
+            knight: false
         };
 
         // Resource tracking
@@ -1011,12 +1016,11 @@ Lv.${level + 1}`;
 
         // Unit count texts for each type - horizontal with mini icons
         this.unitCountTexts = {};
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
         const colorHex = {
             PEASANT: '#E8C87A',
             ARCHER: '#4CC053',
-            KNIGHT: '#55AAEE',
-            GIANT: '#EE9955'
+            KNIGHT: '#55AAEE'
         };
 
         unitTypes.forEach((type, index) => {
@@ -1103,30 +1107,6 @@ Lv.${level + 1}`;
                 // Sword
                 container.add(this.add.rectangle(7, -4, 3, 14, 0xC0C0C0));
                 break;
-            case 'GIANT':
-                // Massive body with belly
-                container.add(this.add.rectangle(0, 5, 14, 16, 0xDEB887));
-                container.add(this.add.rectangle(0, 8, 9, 8, 0xE8C99A)); // belly
-                container.add(this.add.rectangle(0, 1, 14, 3, 0x5D4037)); // belt
-                // Big head
-                container.add(this.add.rectangle(0, -9, 13, 12, 0xDEB887));
-                // Heavy brow
-                container.add(this.add.rectangle(0, -14, 12, 3, 0xBB7733));
-                // Big friendly eyes
-                container.add(this.add.rectangle(-3, -9, 5, 5, 0xFFFFFF));
-                container.add(this.add.rectangle(-3, -8, 3, 4, 0x5D4037));
-                container.add(this.add.rectangle(3, -9, 5, 5, 0xFFFFFF));
-                container.add(this.add.rectangle(3, -8, 3, 4, 0x5D4037));
-                // Toothy grin
-                container.add(this.add.rectangle(0, -3, 8, 4, 0xDD8877));
-                container.add(this.add.rectangle(-3, -3, 3, 3, 0xFFFFFF)); // tooth
-                container.add(this.add.rectangle(3, -3, 3, 3, 0xFFFFFF));
-                // Club with studs
-                container.add(this.add.rectangle(10, 0, 4, 18, 0x6B4423));
-                container.add(this.add.rectangle(10, -10, 8, 10, 0x5D4037));
-                container.add(this.add.rectangle(7, -12, 3, 3, 0x808080)); // stud
-                container.add(this.add.rectangle(13, -12, 3, 3, 0x808080));
-                break;
         }
     }
 
@@ -1142,8 +1122,7 @@ Lv.${level + 1}`;
         const counts = {
             PEASANT: 0,
             ARCHER: 0,
-            KNIGHT: 0,
-            GIANT: 0
+            KNIGHT: 0
         };
 
         // Count each unit type
@@ -1173,8 +1152,8 @@ Lv.${level + 1}`;
         // Unit buttons - vertical layout, no panel boxes
         const startY = 60;  // Full height bar
         const spacing = 120;  // No margins between buttons
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
-        const hotkeys = ['1', '2', '3', '4'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+        const hotkeys = ['1', '2', '3'];
 
         unitTypes.forEach((type, index) => {
             const typeKey = type.toLowerCase();
@@ -1504,18 +1483,30 @@ Lv.${level + 1}`;
     }
 
     updateUnitButtons(delta) {
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+
+        // Check if research cost applies (rank 4+: Knight and above)
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        const isAdvancedRank = ['Knight', 'Commander', 'General', 'Champion', 'Legend'].includes(rankInfo.rank.name);
 
         this.unitButtons.forEach((button, index) => {
             const type = unitTypes[index];
             const stats = UNIT_TYPES[type];
+            const typeKey = type.toLowerCase();
 
             // Cost increases with promotion level
             // Gold tier (4+) spawns 2 units for the price of 1 (bonus!)
             const promotionLevel = this.getPromotionLevel(type);
             const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
-            const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
-            const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+            let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
+            let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+
+            // Apply research cost for first spawn (rank 4+ only)
+            const isFirstSpawn = !this.firstSpawnDone[typeKey];
+            if (isAdvancedRank && isFirstSpawn) {
+                totalGoldCost *= 2;
+                totalWoodCost *= 2;
+            }
 
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
@@ -1565,8 +1556,19 @@ Lv.${level + 1}`;
         // Gold tier (4+) spawns 2 units for the price of 1 (bonus!)
         const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
         const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-        const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
-        const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+        let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
+        let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
+
+        // Research cost: first unit of each type costs double for rank 4+ (Knight and above)
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        const isAdvancedRank = ['Knight', 'Commander', 'General', 'Champion', 'Legend'].includes(rankInfo.rank.name);
+        const isFirstSpawn = !this.firstSpawnDone[typeKey];
+        const applyResearchCost = isAdvancedRank && isFirstSpawn;
+
+        if (applyResearchCost) {
+            totalGoldCost *= 2;
+            totalWoodCost *= 2;
+        }
 
         // Check costs (normal cost, double spawn is bonus)
         if (this.gold < totalGoldCost) {
@@ -1585,6 +1587,16 @@ Lv.${level + 1}`;
         this.woodSpentThisRun += totalWoodCost;
         this.resourceDisplay.subtractGold(totalGoldCost);
         this.resourceDisplay.subtractWood(totalWoodCost);
+
+        // Show research cost tip on first spawn
+        if (applyResearchCost) {
+            this.firstSpawnDone[typeKey] = true;
+            const tips = [
+                'Research cost paid! Future spawns are cheaper.',
+                'First unit deployed! R&D costs covered.'
+            ];
+            this.showMessage(tips[Math.floor(Math.random() * tips.length)], '#ffaa00');
+        }
 
         // Play spawn sound
         if (typeof audioManager !== 'undefined') {
@@ -1710,13 +1722,13 @@ Lv.${level + 1}`;
                 icon: '🐉',
                 title: 'BOSS WAVE!',
                 message: 'A DRAGON is coming!\nExtremely high damage, ranged attacks.',
-                suggestion: 'Consider: Giants to tank, mix ranged DPS'
+                suggestion: 'Consider: Knights to tank, mix ranged DPS'
             },
             12: {
                 icon: '⚫',
                 title: 'DARK KNIGHTS!',
                 message: 'Armored enemies with high damage!\nThey will shred weak units.',
-                suggestion: 'Consider: Wizards for splash damage'
+                suggestion: 'Consider: Multiple Archers for ranged damage'
             },
             18: {
                 icon: '😈',
@@ -1728,7 +1740,7 @@ Lv.${level + 1}`;
                 icon: '🐉',
                 title: 'SECOND DRAGON!',
                 message: 'Another Dragon boss!\nEnemies are much stronger now.',
-                suggestion: 'Consider: Multiple Giants, strong ranged'
+                suggestion: 'Consider: Multiple Knights, strong ranged'
             },
             30: {
                 icon: '🐉',
@@ -2364,7 +2376,7 @@ Lv.${level + 1}`;
     updateUnitButtonBadge(unitType, level) {
         // Find the unit button and update its badge
         const typeKey = unitType.toLowerCase();
-        const buttonIndex = ['peasant', 'archer', 'knight', 'giant'].indexOf(typeKey);
+        const buttonIndex = ['peasant', 'archer', 'knight'].indexOf(typeKey);
         if (buttonIndex >= 0 && this.unitButtons && this.unitButtons[buttonIndex]) {
             this.unitButtons[buttonIndex].setPromotionLevel(level);
         }
