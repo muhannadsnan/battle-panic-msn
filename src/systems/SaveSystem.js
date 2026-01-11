@@ -99,6 +99,17 @@ class SaveSystem {
         const defaults = this.getDefaultData();
         const savedStats = saved.stats || {};
         const savedLegacy = saved.legacy || {};
+
+        // Migration: rename knight -> horseman (v1.8.2)
+        if (saved.upgrades && saved.upgrades.knight && !saved.upgrades.horseman) {
+            saved.upgrades.horseman = saved.upgrades.knight;
+            delete saved.upgrades.knight;
+        }
+        if (savedStats.unitsSpawned && savedStats.unitsSpawned.knight !== undefined && savedStats.unitsSpawned.horseman === undefined) {
+            savedStats.unitsSpawned.horseman = savedStats.unitsSpawned.knight;
+            delete savedStats.unitsSpawned.knight;
+        }
+
         return {
             ...defaults,
             ...saved,
