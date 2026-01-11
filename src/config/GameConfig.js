@@ -44,8 +44,9 @@ const UNIT_TYPES = {
         attackSpeed: 1400,
         range: 40,
         infantryDamageReduction: 0.4,  // Takes 40% less damage from melee (armor + shield)
+        rangedDamageReduction: 0.2,    // Takes 20% less damage from ranged (helmet + speed)
         color: 0x8B4513,
-        description: 'Fast cavalry, armored vs melee'
+        description: 'Fast cavalry, armored'
     }
 };
 

@@ -43,10 +43,17 @@ class CombatSystem {
 
         let finalDamage = damage;
 
-        // Horseman armor: takes reduced damage from melee (infantry) attackers
-        if (target.unitType === 'HORSEMAN' && !attacker.isRanged) {
-            const reduction = UNIT_TYPES.HORSEMAN.infantryDamageReduction || 0;
-            finalDamage = Math.floor(damage * (1 - reduction));
+        // Horseman armor: takes reduced damage from all attackers
+        if (target.unitType === 'HORSEMAN') {
+            if (attacker.isRanged) {
+                // 20% reduction from ranged (helmet + speed)
+                const reduction = UNIT_TYPES.HORSEMAN.rangedDamageReduction || 0;
+                finalDamage = Math.floor(damage * (1 - reduction));
+            } else {
+                // 40% reduction from melee (armor + shield)
+                const reduction = UNIT_TYPES.HORSEMAN.infantryDamageReduction || 0;
+                finalDamage = Math.floor(damage * (1 - reduction));
+            }
         }
 
         target.takeDamage(finalDamage);
