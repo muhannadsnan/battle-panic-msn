@@ -567,17 +567,22 @@ class UpgradeScene extends Phaser.Scene {
         eyeR.setAlpha(alpha);
         container.add(eyeR);
 
-        // Lance (pointing forward/right)
-        const lanceShaft = this.add.rectangle(24 * s, -4 * s, 48 * s, 4 * s, 0x8B5A33);
-        lanceShaft.setAlpha(alpha);
-        container.add(lanceShaft);
-        const lanceTip = this.add.rectangle(50 * s, -4 * s, 10 * s, 6 * s, 0xC0C0C0);
-        lanceTip.setAlpha(alpha);
-        container.add(lanceTip);
-        // Pennant (behind the tip)
-        const pennant = this.add.rectangle(42 * s, -10 * s, 10 * s, 8 * s, 0xFF4444);
-        pennant.setAlpha(alpha);
-        container.add(pennant);
+        // Sword (raised and ready!)
+        const blade = this.add.rectangle(16 * s, -16 * s, 5 * s, 24 * s, 0xC0C0C0);
+        blade.setAlpha(alpha);
+        container.add(blade);
+        const bladeShine = this.add.rectangle(17 * s, -16 * s, 2 * s, 20 * s, 0xE0E0E0);
+        bladeShine.setAlpha(alpha);
+        container.add(bladeShine);
+        const swordTip = this.add.rectangle(16 * s, -30 * s, 4 * s, 6 * s, 0xD0D0D0);
+        swordTip.setAlpha(alpha);
+        container.add(swordTip);
+        const crossguard = this.add.rectangle(16 * s, -3 * s, 12 * s, 4 * s, 0xFFD700);
+        crossguard.setAlpha(alpha);
+        container.add(crossguard);
+        const handle = this.add.rectangle(16 * s, 3 * s, 4 * s, 8 * s, 0x8B4513);
+        handle.setAlpha(alpha);
+        container.add(handle);
     }
 
     createCastleUpgrades() {

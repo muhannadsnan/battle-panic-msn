@@ -1125,11 +1125,12 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(0, -26, 16, 10, 0x708090));
         container.add(this.add.rectangle(-3, -20, 4, 4, 0x000000));
         container.add(this.add.rectangle(3, -20, 4, 4, 0x000000));
-        // Lance (pointing forward/right)
-        container.add(this.add.rectangle(24, -4, 48, 4, 0x8B5A33));     // horizontal shaft
-        container.add(this.add.rectangle(50, -4, 10, 6, 0xC0C0C0));    // lance tip
-        // Pennant (behind the tip)
-        container.add(this.add.rectangle(42, -10, 10, 8, 0xFF4444));
+        // Sword (raised and ready!)
+        container.add(this.add.rectangle(16, -16, 5, 24, 0xC0C0C0));    // blade
+        container.add(this.add.rectangle(17, -16, 2, 20, 0xE0E0E0));   // shine
+        container.add(this.add.rectangle(16, -30, 4, 6, 0xD0D0D0));    // tip
+        container.add(this.add.rectangle(16, -3, 12, 4, 0xFFD700));    // crossguard
+        container.add(this.add.rectangle(16, 3, 4, 8, 0x8B4513));      // handle
 
         return container;
     }

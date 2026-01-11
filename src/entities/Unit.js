@@ -394,19 +394,19 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts.torso.add(scene.add.rectangle(0, -28, 4, 4, 0x000000));
         this.bodyParts.torso.add(scene.add.rectangle(6, -28, 4, 4, 0x000000));
 
-        // LANCE (weapon) - pointing forward/right at enemies!
-        this.bodyParts.weapon = scene.add.container(20, -20);
-        // Lance shaft (angled forward)
-        this.bodyParts.weapon.add(scene.add.rectangle(16, 8, 50, 4, 0x8B5A33));
-        this.bodyParts.weapon.add(scene.add.rectangle(18, 8, 46, 3, 0x9B6A43)); // highlight
-        // Lance tip (deadly point)
-        this.bodyParts.weapon.add(scene.add.rectangle(44, 8, 12, 6, 0xC0C0C0));
-        this.bodyParts.weapon.add(scene.add.rectangle(48, 8, 8, 4, 0xE0E0E0)); // shine
-        // Hand guard
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 8, 8, 8, 0x5B3020));
-        // Pennant (fluttering behind)
-        this.bodyParts.weapon.add(scene.add.rectangle(-8, 4, 14, 10, 0xFF4444));
-        this.bodyParts.weapon.add(scene.add.rectangle(-12, 6, 10, 6, 0xFF6666));
+        // SWORD (weapon) - raised and ready to strike!
+        this.bodyParts.weapon = scene.add.container(14, -14);
+        // Sword blade (angled forward/up)
+        this.bodyParts.weapon.add(scene.add.rectangle(12, -8, 6, 28, 0xC0C0C0));
+        this.bodyParts.weapon.add(scene.add.rectangle(13, -8, 3, 24, 0xE0E0E0)); // shine
+        // Sword tip
+        this.bodyParts.weapon.add(scene.add.rectangle(12, -24, 5, 6, 0xD0D0D0));
+        // Cross guard (gold)
+        this.bodyParts.weapon.add(scene.add.rectangle(12, 6, 14, 4, 0xFFD700));
+        // Handle
+        this.bodyParts.weapon.add(scene.add.rectangle(12, 12, 5, 10, 0x8B4513));
+        // Pommel
+        this.bodyParts.weapon.add(scene.add.rectangle(12, 18, 6, 4, 0xFFD700));
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);

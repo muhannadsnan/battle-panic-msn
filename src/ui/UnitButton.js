@@ -363,12 +363,12 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.iconContainer.add(scene.add.rectangle(0, -20 * s, 3 * s, 3 * s, 0x000000));
         this.iconContainer.add(scene.add.rectangle(6 * s, -20 * s, 3 * s, 3 * s, 0x000000));
 
-        // Lance (pointing right at enemies!)
-        this.iconContainer.add(scene.add.rectangle(24 * s, -12 * s, 36 * s, 3 * s, 0x8B5A33)); // shaft
-        this.iconContainer.add(scene.add.rectangle(44 * s, -12 * s, 8 * s, 5 * s, 0xC0C0C0)); // tip
-        // Pennant (behind)
-        this.iconContainer.add(scene.add.rectangle(4 * s, -14 * s, 10 * s, 7 * s, 0xFF4444));
-        this.iconContainer.add(scene.add.rectangle(0, -13 * s, 6 * s, 5 * s, 0xFF6666));
+        // Sword (raised and ready!)
+        this.iconContainer.add(scene.add.rectangle(14 * s, -20 * s, 5 * s, 22 * s, 0xC0C0C0)); // blade
+        this.iconContainer.add(scene.add.rectangle(15 * s, -20 * s, 2 * s, 18 * s, 0xE0E0E0)); // shine
+        this.iconContainer.add(scene.add.rectangle(14 * s, -32 * s, 4 * s, 5 * s, 0xD0D0D0)); // tip
+        this.iconContainer.add(scene.add.rectangle(14 * s, -8 * s, 12 * s, 3 * s, 0xFFD700)); // crossguard
+        this.iconContainer.add(scene.add.rectangle(14 * s, -4 * s, 4 * s, 8 * s, 0x8B4513)); // handle
     }
 
     onClick() {

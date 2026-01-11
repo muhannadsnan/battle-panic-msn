@@ -1103,9 +1103,9 @@ Lv.${level + 1}`;
                 container.add(this.add.rectangle(0, -8, 6, 6, 0xFFCBA4));
                 // Rider helmet
                 container.add(this.add.rectangle(0, -10, 7, 4, 0x708090));
-                // Lance (pointing forward/right)
-                container.add(this.add.rectangle(10, -4, 16, 2, 0x8B4513)); // horizontal shaft
-                container.add(this.add.rectangle(18, -4, 4, 3, 0xC0C0C0)); // tip
+                // Sword (raised)
+                container.add(this.add.rectangle(8, -8, 3, 12, 0xC0C0C0)); // blade
+                container.add(this.add.rectangle(8, -2, 6, 2, 0xFFD700)); // crossguard
                 break;
         }
     }
