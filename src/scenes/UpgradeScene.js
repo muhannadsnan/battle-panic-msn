@@ -54,9 +54,9 @@ class UpgradeScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
-        const startX = 105;
-        const spacing = 172;
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
+        const startX = 145;
+        const spacing = 200;
         const y = 265;
 
         this.upgradeCards = [];
@@ -229,9 +229,6 @@ class UpgradeScene extends Phaser.Scene {
                 break;
             case 'KNIGHT':
                 this.createKnightIcon(container, scale, alpha);
-                break;
-            case 'WIZARD':
-                this.createWizardIcon(container, scale, alpha);
                 break;
             case 'GIANT':
                 this.createGiantIcon(container, scale, alpha);
@@ -621,156 +618,6 @@ class UpgradeScene extends Phaser.Scene {
         container.add(pommel);
     }
 
-    createWizardIcon(container, scale, alpha) {
-        // EXACT copy of Unit.js createWizard - cartoony magical mysterious wizard
-        const s = scale;
-
-        // Shadow
-        const shadow = this.add.rectangle(0, 30 * s, 26 * s, 6 * s, 0x000000, 0.2);
-        shadow.setAlpha(alpha);
-        container.add(shadow);
-
-        // Robe legs
-        const leftRobe = this.add.rectangle(-5 * s, 22 * s, 12 * s, 16 * s, 0x8844CC);
-        leftRobe.setAlpha(alpha);
-        container.add(leftRobe);
-        const leftRobeHighlight = this.add.rectangle(-5 * s, 24 * s, 10 * s, 12 * s, 0x9955DD);
-        leftRobeHighlight.setAlpha(alpha);
-        container.add(leftRobeHighlight);
-        const rightRobe = this.add.rectangle(5 * s, 22 * s, 12 * s, 16 * s, 0x8844CC);
-        rightRobe.setAlpha(alpha);
-        container.add(rightRobe);
-        const rightRobeHighlight = this.add.rectangle(5 * s, 24 * s, 10 * s, 12 * s, 0x9955DD);
-        rightRobeHighlight.setAlpha(alpha);
-        container.add(rightRobeHighlight);
-
-        // Robe body
-        const robe = this.add.rectangle(0, 6 * s, 22 * s, 20 * s, 0xAA55EE);
-        robe.setAlpha(alpha);
-        container.add(robe);
-        const robeHighlight = this.add.rectangle(0, 8 * s, 18 * s, 14 * s, 0xBB66FF);
-        robeHighlight.setAlpha(alpha);
-        container.add(robeHighlight);
-        const robeShade = this.add.rectangle(-8 * s, 6 * s, 4 * s, 16 * s, 0x8844CC);
-        robeShade.setAlpha(alpha);
-        container.add(robeShade);
-
-        // Gold trim
-        const trimBottom = this.add.rectangle(0, 28 * s, 28 * s, 4 * s, 0xFFD700);
-        trimBottom.setAlpha(alpha);
-        container.add(trimBottom);
-        const trimL = this.add.rectangle(-8 * s, 28 * s, 4 * s, 3 * s, 0xFFEE66);
-        trimL.setAlpha(alpha);
-        container.add(trimL);
-        const trimR = this.add.rectangle(8 * s, 28 * s, 4 * s, 3 * s, 0xFFEE66);
-        trimR.setAlpha(alpha);
-        container.add(trimR);
-
-        // Arms with sleeves
-        const leftArm = this.add.rectangle(-14 * s, 6 * s, 8 * s, 14 * s, 0xAA55EE);
-        leftArm.setAlpha(alpha);
-        container.add(leftArm);
-        const leftHand = this.add.rectangle(-14 * s, 14 * s, 8 * s, 6 * s, 0xFFCBA4);
-        leftHand.setAlpha(alpha);
-        container.add(leftHand);
-        const rightArm = this.add.rectangle(14 * s, 6 * s, 8 * s, 14 * s, 0xAA55EE);
-        rightArm.setAlpha(alpha);
-        container.add(rightArm);
-        const rightHand = this.add.rectangle(14 * s, 14 * s, 8 * s, 6 * s, 0xFFCBA4);
-        rightHand.setAlpha(alpha);
-        container.add(rightHand);
-
-        // Wise old face
-        const face = this.add.rectangle(0, -8 * s, 18 * s, 16 * s, 0xFFCBA4);
-        face.setAlpha(alpha);
-        container.add(face);
-        const faceHighlight = this.add.rectangle(0, -6 * s, 14 * s, 12 * s, 0xFFDDBB);
-        faceHighlight.setAlpha(alpha);
-        container.add(faceHighlight);
-
-        // Magnificent beard
-        const beard1 = this.add.rectangle(0, 4 * s, 14 * s, 14 * s, 0xEEEEEE);
-        beard1.setAlpha(alpha);
-        container.add(beard1);
-        const beard2 = this.add.rectangle(0, 10 * s, 12 * s, 10 * s, 0xFFFFFF);
-        beard2.setAlpha(alpha);
-        container.add(beard2);
-        const beardL = this.add.rectangle(-4 * s, 14 * s, 6 * s, 8 * s, 0xDDDDDD);
-        beardL.setAlpha(alpha);
-        container.add(beardL);
-        const beardR = this.add.rectangle(4 * s, 14 * s, 6 * s, 8 * s, 0xDDDDDD);
-        beardR.setAlpha(alpha);
-        container.add(beardR);
-        const beardTip = this.add.rectangle(0, 18 * s, 4 * s, 6 * s, 0xFFFFFF);
-        beardTip.setAlpha(alpha);
-        container.add(beardTip);
-
-        // Magical glowing eyes
-        const eyeL = this.add.rectangle(-4 * s, -10 * s, 8 * s, 8 * s, 0x00DDFF);
-        eyeL.setAlpha(alpha);
-        container.add(eyeL);
-        const eyeR = this.add.rectangle(4 * s, -10 * s, 8 * s, 8 * s, 0x00DDFF);
-        eyeR.setAlpha(alpha);
-        container.add(eyeR);
-        const eyeLInner = this.add.rectangle(-4 * s, -10 * s, 4 * s, 4 * s, 0xAAFFFF);
-        eyeLInner.setAlpha(alpha);
-        container.add(eyeLInner);
-        const eyeRInner = this.add.rectangle(4 * s, -10 * s, 4 * s, 4 * s, 0xAAFFFF);
-        eyeRInner.setAlpha(alpha);
-        container.add(eyeRInner);
-
-        // Bushy eyebrows
-        const browL = this.add.rectangle(-5 * s, -15 * s, 8 * s, 3 * s, 0xCCCCCC);
-        browL.setAlpha(alpha);
-        container.add(browL);
-        const browR = this.add.rectangle(5 * s, -15 * s, 8 * s, 3 * s, 0xCCCCCC);
-        browR.setAlpha(alpha);
-        container.add(browR);
-
-        // MAGICAL Wizard hat
-        const hatBase = this.add.rectangle(0, -18 * s, 24 * s, 8 * s, 0x8844CC);
-        hatBase.setAlpha(alpha);
-        container.add(hatBase);
-        const hatMid = this.add.rectangle(0, -26 * s, 18 * s, 12 * s, 0x9955DD);
-        hatMid.setAlpha(alpha);
-        container.add(hatMid);
-        const hatTop = this.add.rectangle(0, -34 * s, 14 * s, 10 * s, 0xAA66EE);
-        hatTop.setAlpha(alpha);
-        container.add(hatTop);
-        const hatTip = this.add.rectangle(0, -42 * s, 10 * s, 10 * s, 0xBB77FF);
-        hatTip.setAlpha(alpha);
-        container.add(hatTip);
-        const hatPeak = this.add.rectangle(4 * s, -48 * s, 8 * s, 8 * s, 0xCC88FF);
-        hatPeak.setAlpha(alpha);
-        container.add(hatPeak);
-        const star1 = this.add.rectangle(-4 * s, -30 * s, 5 * s, 5 * s, 0xFFD700);
-        star1.setAlpha(alpha);
-        container.add(star1);
-        const star2 = this.add.rectangle(4 * s, -38 * s, 4 * s, 4 * s, 0xFFEE88);
-        star2.setAlpha(alpha);
-        container.add(star2);
-
-        // MAGICAL Staff
-        const staff = this.add.rectangle(22 * s, 4 * s, 6 * s, 44 * s, 0x8B5A33);
-        staff.setAlpha(alpha);
-        container.add(staff);
-        const staffHighlight = this.add.rectangle(22 * s, 6 * s, 4 * s, 40 * s, 0x9B6A43);
-        staffHighlight.setAlpha(alpha);
-        container.add(staffHighlight);
-        const orb = this.add.rectangle(22 * s, -22 * s, 16 * s, 16 * s, 0x00BBCC);
-        orb.setAlpha(alpha);
-        container.add(orb);
-        const orbMid = this.add.rectangle(22 * s, -22 * s, 12 * s, 12 * s, 0x00DDEE);
-        orbMid.setAlpha(alpha);
-        container.add(orbMid);
-        const orbInner = this.add.rectangle(22 * s, -22 * s, 6 * s, 6 * s, 0x66FFFF);
-        orbInner.setAlpha(alpha);
-        container.add(orbInner);
-        const orbShine = this.add.rectangle(19 * s, -25 * s, 4 * s, 4 * s, 0xFFFFFF);
-        orbShine.setAlpha(alpha);
-        container.add(orbShine);
-    }
-
     createGiantIcon(container, scale, alpha) {
         // EXACT copy of Unit.js createGiant - cartoony big friendly fierce warrior
         const s = scale * 0.85; // Slightly smaller to fit in card
@@ -1149,8 +996,7 @@ class UpgradeScene extends Phaser.Scene {
         // XP costs for unlocking units
         const costs = {
             knight: 2,
-            wizard: 3,
-            giant: 5
+            giant: 3
         };
         return costs[unitKey] || 1;
     }

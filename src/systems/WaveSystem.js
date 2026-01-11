@@ -131,6 +131,14 @@ class WaveSystem {
     }
 
     spawnNextEnemy() {
+        // Don't spawn if game is paused - reschedule instead
+        if (this.scene.isPaused) {
+            this.spawnTimer = this.scene.time.delayedCall(100, () => {
+                this.spawnNextEnemy();
+            });
+            return;
+        }
+
         if (!this.isSpawning || this.enemiesToSpawn.length === 0) {
             this.isSpawning = false;
             return;

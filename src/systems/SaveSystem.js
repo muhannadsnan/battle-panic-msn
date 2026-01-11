@@ -35,7 +35,6 @@ class SaveSystem {
                     peasant: 0,
                     archer: 0,
                     knight: 0,
-                    wizard: 0,
                     giant: 0
                 },
                 // Resource totals
@@ -58,7 +57,6 @@ class SaveSystem {
                 peasant: { level: 1, unlocked: true },
                 archer: { level: 1, unlocked: true },
                 knight: { level: 1, unlocked: false },
-                wizard: { level: 1, unlocked: false },
                 giant: { level: 1, unlocked: false }
             },
             castleUpgrades: {
@@ -273,7 +271,7 @@ class SaveSystem {
             }
             // Unlock costs
             if (data.upgrades[key].unlocked && !defaults.upgrades[key].unlocked) {
-                const unlockCosts = { knight: 2, wizard: 3, giant: 5 };
+                const unlockCosts = { knight: 2, giant: 3 };
                 spent += unlockCosts[key] || 0;
             }
         }

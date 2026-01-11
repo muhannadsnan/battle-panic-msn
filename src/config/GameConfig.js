@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.7.28';
+const GAME_VERSION = 'v1.8.0';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -45,22 +45,6 @@ const UNIT_TYPES = {
         range: 35,
         color: 0x4169E1,
         description: 'Tough armored warrior'
-    },
-    WIZARD: {
-        key: 'wizard',
-        name: 'Wizard',
-        goldCost: 80,
-        woodCost: 50,
-        health: 22,
-        damage: 14,
-        speed: 61,      // 10% faster than orcs
-        attackSpeed: 2000,
-        range: 180,
-        isRanged: true,
-        splashDamage: true,
-        splashRadius: 50,
-        color: 0x9932CC,
-        description: 'Splash damage mage'
     },
     GIANT: {
         key: 'giant',

@@ -46,7 +46,6 @@ class GameScene extends Phaser.Scene {
             peasant: 0,
             archer: 0,
             knight: 0,
-            wizard: 0,
             giant: 0
         };
 
@@ -56,7 +55,6 @@ class GameScene extends Phaser.Scene {
             peasant: 0,
             archer: 0,
             knight: 0,
-            wizard: 0,
             giant: 0
         };
 
@@ -1013,12 +1011,11 @@ Lv.${level + 1}`;
 
         // Unit count texts for each type - horizontal with mini icons
         this.unitCountTexts = {};
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
         const colorHex = {
             PEASANT: '#E8C87A',
             ARCHER: '#4CC053',
             KNIGHT: '#55AAEE',
-            WIZARD: '#BB66FF',
             GIANT: '#EE9955'
         };
 
@@ -1106,32 +1103,6 @@ Lv.${level + 1}`;
                 // Sword
                 container.add(this.add.rectangle(7, -4, 3, 14, 0xC0C0C0));
                 break;
-            case 'WIZARD':
-                // Purple robe with trim
-                container.add(this.add.rectangle(0, 6, 11, 12, 0x7B1FA2));
-                container.add(this.add.rectangle(0, 0, 8, 6, 0x8E24AA));
-                container.add(this.add.rectangle(0, 10, 12, 2, 0xFFD700)); // gold trim
-                // Face
-                container.add(this.add.rectangle(0, -5, 8, 7, 0xFFCBA4));
-                // Mystical eyes
-                container.add(this.add.rectangle(-2, -5, 3, 3, 0xFFFFFF));
-                container.add(this.add.rectangle(-2, -5, 2, 2, 0x7B1FA2));
-                container.add(this.add.rectangle(2, -5, 3, 3, 0xFFFFFF));
-                container.add(this.add.rectangle(2, -5, 2, 2, 0x7B1FA2));
-                // Beard
-                container.add(this.add.rectangle(0, 0, 6, 4, 0xDDDDDD));
-                container.add(this.add.rectangle(0, 4, 4, 4, 0xEEEEEE));
-                // Tall hat
-                container.add(this.add.rectangle(0, -10, 10, 3, 0x7B1FA2));
-                container.add(this.add.rectangle(0, -14, 7, 5, 0x8E24AA));
-                container.add(this.add.rectangle(0, -18, 4, 5, 0x9C27B0));
-                container.add(this.add.rectangle(0, -21, 2, 4, 0xAB47BC));
-                container.add(this.add.rectangle(0, -15, 3, 2, 0xFFD700)); // star
-                // Staff with orb
-                container.add(this.add.rectangle(8, 2, 2, 16, 0x6B4423));
-                container.add(this.add.rectangle(8, -8, 6, 6, 0x00FFFF));
-                container.add(this.add.rectangle(7, -9, 3, 3, 0xAAFFFF)); // shine
-                break;
             case 'GIANT':
                 // Massive body with belly
                 container.add(this.add.rectangle(0, 5, 14, 16, 0xDEB887));
@@ -1172,7 +1143,6 @@ Lv.${level + 1}`;
             PEASANT: 0,
             ARCHER: 0,
             KNIGHT: 0,
-            WIZARD: 0,
             GIANT: 0
         };
 
@@ -1203,8 +1173,8 @@ Lv.${level + 1}`;
         // Unit buttons - vertical layout, no panel boxes
         const startY = 60;  // Full height bar
         const spacing = 120;  // No margins between buttons
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
-        const hotkeys = ['1', '2', '3', '4', '5'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
+        const hotkeys = ['1', '2', '3', '4'];
 
         unitTypes.forEach((type, index) => {
             const typeKey = type.toLowerCase();
@@ -1534,7 +1504,7 @@ Lv.${level + 1}`;
     }
 
     updateUnitButtons(delta) {
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'WIZARD', 'GIANT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT', 'GIANT'];
 
         this.unitButtons.forEach((button, index) => {
             const type = unitTypes[index];
@@ -2394,7 +2364,7 @@ Lv.${level + 1}`;
     updateUnitButtonBadge(unitType, level) {
         // Find the unit button and update its badge
         const typeKey = unitType.toLowerCase();
-        const buttonIndex = ['peasant', 'archer', 'knight', 'wizard', 'giant'].indexOf(typeKey);
+        const buttonIndex = ['peasant', 'archer', 'knight', 'giant'].indexOf(typeKey);
         if (buttonIndex >= 0 && this.unitButtons && this.unitButtons[buttonIndex]) {
             this.unitButtons[buttonIndex].setPromotionLevel(level);
         }

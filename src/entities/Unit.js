@@ -57,7 +57,7 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts = {}; // Store references to animated parts
 
         // Assign defense position based on unit type
-        // Ranged units (archers, wizards) stay behind melee units
+        // Ranged units (archers) stay behind melee units
         // Melee units (peasants, knights, giants) form the front line
         this.assignDefensePosition();
 
@@ -145,9 +145,6 @@ class Unit extends Phaser.GameObjects.Container {
                 break;
             case 'KNIGHT':
                 this.createKnight(scene);
-                break;
-            case 'WIZARD':
-                this.createWizard(scene);
                 break;
             case 'GIANT':
                 this.createGiant(scene);
@@ -382,104 +379,6 @@ class Unit extends Phaser.GameObjects.Container {
 
         this.spriteContainer.add(this.bodyParts.torso);
         this.mainSprite = body;
-    }
-
-    createWizard(scene) {
-        // CARTOONY WIZARD - magical and mysterious! WITH ANIMATIONS
-        // Shadow
-        this.spriteContainer.add(scene.add.rectangle(0, 30, 26, 6, 0x000000, 0.2));
-
-        // Animated robe bottom (acts like legs)
-        this.bodyParts.leftLeg = scene.add.container(-5, 22);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 12, 16, 0x8844CC));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 2, 10, 12, 0x9955DD));
-        this.spriteContainer.add(this.bodyParts.leftLeg);
-
-        this.bodyParts.rightLeg = scene.add.container(5, 22);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 12, 16, 0x8844CC));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 2, 10, 12, 0x9955DD));
-        this.spriteContainer.add(this.bodyParts.rightLeg);
-
-        // Body container
-        this.bodyParts.torso = scene.add.container(0, 0);
-
-        // Robe body
-        const robe = scene.add.rectangle(0, 6, 22, 20, 0xAA55EE);
-        this.bodyParts.torso.add(robe);
-        this.bodyParts.torso.add(scene.add.rectangle(0, 8, 18, 14, 0xBB66FF));
-        this.bodyParts.torso.add(scene.add.rectangle(-8, 6, 4, 16, 0x8844CC));
-
-        // Gold trim
-        this.bodyParts.torso.add(scene.add.rectangle(0, 28, 28, 4, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(-8, 28, 4, 3, 0xFFEE66));
-        this.bodyParts.torso.add(scene.add.rectangle(8, 28, 4, 3, 0xFFEE66));
-
-        // Animated arms with sleeves
-        this.bodyParts.leftArm = scene.add.container(-14, 6);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 8, 14, 0xAA55EE));
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 8, 8, 6, 0xFFCBA4)); // hand
-        this.bodyParts.torso.add(this.bodyParts.leftArm);
-
-        this.bodyParts.rightArm = scene.add.container(14, 6);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 8, 14, 0xAA55EE));
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 8, 8, 6, 0xFFCBA4)); // hand
-        this.bodyParts.torso.add(this.bodyParts.rightArm);
-
-        // Wise old face
-        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 18, 16, 0xFFCBA4));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -6, 14, 12, 0xFFDDBB));
-
-        // Magnificent beard
-        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 14, 14, 0xEEEEEE));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 12, 10, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-4, 14, 6, 8, 0xDDDDDD));
-        this.bodyParts.torso.add(scene.add.rectangle(4, 14, 6, 8, 0xDDDDDD));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 18, 4, 6, 0xFFFFFF));
-
-        // Magical glowing eyes
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -10, 8, 8, 0x00DDFF));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -10, 8, 8, 0x00DDFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -10, 4, 4, 0xAAFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -10, 4, 4, 0xAAFFFF));
-
-        // Bushy eyebrows
-        this.bodyParts.torso.add(scene.add.rectangle(-5, -15, 8, 3, 0xCCCCCC));
-        this.bodyParts.torso.add(scene.add.rectangle(5, -15, 8, 3, 0xCCCCCC));
-
-        // MAGICAL Wizard hat
-        this.bodyParts.torso.add(scene.add.rectangle(0, -18, 24, 8, 0x8844CC));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -26, 18, 12, 0x9955DD));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -34, 14, 10, 0xAA66EE));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -42, 10, 10, 0xBB77FF));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -48, 8, 8, 0xCC88FF));
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -30, 5, 5, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -38, 4, 4, 0xFFEE88));
-
-        // MAGICAL Staff (animated weapon)
-        this.bodyParts.weapon = scene.add.container(22, 4);
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 6, 44, 0x8B5A33));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 2, 4, 40, 0x9B6A43));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -26, 16, 16, 0x00BBCC)); // orb
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -26, 12, 12, 0x00DDEE));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -26, 6, 6, 0x66FFFF));
-        this.bodyParts.weapon.add(scene.add.rectangle(-3, -29, 4, 4, 0xFFFFFF));
-        this.bodyParts.torso.add(this.bodyParts.weapon);
-
-        // Animated magic glow
-        const glow = scene.add.rectangle(22, -22, 20, 20, 0x00FFFF, 0.3);
-        this.bodyParts.torso.add(glow);
-        scene.tweens.add({
-            targets: glow,
-            alpha: 0.6,
-            scaleX: 1.4,
-            scaleY: 1.4,
-            duration: 800,
-            yoyo: true,
-            repeat: -1
-        });
-
-        this.spriteContainer.add(this.bodyParts.torso);
-        this.mainSprite = robe;
     }
 
     createGiant(scene) {
@@ -759,7 +658,7 @@ class Unit extends Phaser.GameObjects.Container {
                     isPlayerProjectile: true,
                     splashDamage: this.splashDamage,
                     splashRadius: this.splashRadius,
-                    projectileType: this.unitType.toUpperCase() === 'WIZARD' ? 'magic' : 'arrow',
+                    projectileType: 'arrow',
                     maxDistance: this.range + 100 // Arrow travels slightly past attack range
                 }
             );

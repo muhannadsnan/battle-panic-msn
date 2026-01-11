@@ -37,18 +37,16 @@ Located in `UNIT_TYPES` object. Each unit has:
 
 | Unit | Gold | Wood | HP | DMG | Speed | Atk Speed | Range | Type |
 |------|------|------|-----|-----|-------|-----------|-------|------|
-| Peasant | 10 | 10 | 22 | 4 | 80 | 1000ms | 30 | Melee |
-| Archer | 25 | 20 | 18 | 6 | 60 | 1500ms | 200 | Ranged |
-| Knight | 60 | 40 | 54 | 11 | 50 | 1200ms | 35 | Melee |
-| Wizard | 80 | 50 | 27 | 14 | 40 | 2000ms | 180 | Ranged+Splash |
-| Giant | 120 | 80 | 108 | 20 | 30 | 2000ms | 45 | Melee |
+| Peasant | 10 | 10 | 14 | 4 | 88 | 1000ms | 30 | Melee |
+| Archer | 25 | 20 | 18 | 6 | 66 | 1500ms | 200 | Ranged |
+| Knight | 60 | 40 | 43 | 11 | 61 | 1200ms | 35 | Melee |
+| Giant | 120 | 80 | 86 | 20 | 61 | 2000ms | 45 | Melee |
 
 ### Unit Roles
 
 - **Peasant**: Cheap frontline, fast to spawn, expendable
 - **Archer**: Back-line DPS, stays behind melee units
 - **Knight**: Tank, forms front line, high survivability
-- **Wizard**: AoE damage dealer, 50px splash radius
 - **Giant**: Heavy tank, slow but powerful
 
 ---
@@ -174,8 +172,7 @@ const UPGRADE_CONFIG = {
 
 ### Unit Unlock Costs (XP)
 - Knight: 2 XP
-- Wizard: 3 XP
-- Giant: 5 XP
+- Giant: 3 XP
 
 ### Exponential Stats System
 Upgrades now use **exponential growth** - each level doubles the previous bonus!

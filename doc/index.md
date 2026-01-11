@@ -23,7 +23,7 @@ battle-panic-msn/
 │   ├── config/
 │   │   └── GameConfig.js    # All game constants and balance values
 │   ├── entities/
-│   │   ├── Unit.js          # Player units (Peasant, Archer, Knight, Wizard, Giant)
+│   │   ├── Unit.js          # Player units (Peasant, Archer, Knight, Giant)
 │   │   ├── Enemy.js         # Enemy units (Goblin, Orc, Skeleton, Dragon, etc.)
 │   │   ├── Castle.js        # Player's castle with health
 │   │   └── Projectile.js    # Arrows, magic bolts, fireballs
@@ -93,7 +93,6 @@ BootScene → PreloadScene → MenuScene
 | Peasant | 10g/10w | Cheap melee | Fast spawn |
 | Archer | 25g/20w | Ranged DPS | Stays behind |
 | Knight | 60g/40w | Tank | High HP, front line |
-| Wizard | 80g/50w | Ranged AoE | Splash damage |
 | Giant | 120g/80w | Heavy tank | Highest HP/damage |
 
 ### Enemies
@@ -110,7 +109,7 @@ BootScene → PreloadScene → MenuScene
 ### Upgrades (Permanent)
 - Unit upgrades: Increase HP and damage per level
 - Castle upgrades: Health, Armor, Gold Income
-- Unlock new units: Knight (2 XP), Wizard (3 XP), Giant (5 XP)
+- Unlock new units: Knight (2 XP), Giant (3 XP)
 - Reset upgrades costs 2 XP + 25% of current XP (refunds spent XP minus fee)
 
 ---

@@ -239,9 +239,6 @@ class UnitButton extends Phaser.GameObjects.Container {
             case 'KNIGHT':
                 this.createKnightIcon(scene, scale);
                 break;
-            case 'WIZARD':
-                this.createWizardIcon(scene, scale);
-                break;
             case 'GIANT':
                 this.createGiantIcon(scene, scale);
                 break;
@@ -371,55 +368,6 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.iconContainer.add(scene.add.rectangle(16 * s, -22 * s, 4 * s, 6 * s, 0xE8E8E8)); // tip
         this.iconContainer.add(scene.add.rectangle(16 * s, 8 * s, 12 * s, 4 * s, 0xDAA520)); // guard
         this.iconContainer.add(scene.add.rectangle(16 * s, 14 * s, 4 * s, 8 * s, 0x8B4513)); // hilt
-    }
-
-    createWizardIcon(scene, scale) {
-        // EXPRESSIVE WIZARD - Wise sage with glowing magic
-        const s = scale;
-
-        // Robe (mystical purple, flowing)
-        this.iconContainer.add(scene.add.rectangle(0, 14 * s, 22 * s, 20 * s, 0x6A1B9A));
-        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 18 * s, 14 * s, 0x7B1FA2));
-        this.iconContainer.add(scene.add.rectangle(0, 2 * s, 14 * s, 10 * s, 0x8E24AA));
-        // Robe trim
-        this.iconContainer.add(scene.add.rectangle(0, 22 * s, 24 * s, 4 * s, 0xFFD700));
-        this.iconContainer.add(scene.add.rectangle(-8 * s, 10 * s, 3 * s, 16 * s, 0xFFD700));
-        this.iconContainer.add(scene.add.rectangle(8 * s, 10 * s, 3 * s, 16 * s, 0xFFD700));
-
-        // Wise face
-        this.iconContainer.add(scene.add.rectangle(0, -10 * s, 16 * s, 14 * s, 0xFFCBA4));
-        this.iconContainer.add(scene.add.rectangle(-1 * s, -11 * s, 12 * s, 10 * s, 0xFFDDB8));
-
-        // Mystical eyes (glowing)
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -10 * s, 6 * s, 7 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(-3 * s, -9 * s, 4 * s, 5 * s, 0x7B1FA2));
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -11 * s, 2 * s, 2 * s, 0x55FFFF)); // magic glow
-        this.iconContainer.add(scene.add.rectangle(4 * s, -10 * s, 6 * s, 7 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(5 * s, -9 * s, 4 * s, 5 * s, 0x7B1FA2));
-        this.iconContainer.add(scene.add.rectangle(4 * s, -11 * s, 2 * s, 2 * s, 0x55FFFF));
-
-        // Long beard
-        this.iconContainer.add(scene.add.rectangle(0, -3 * s, 12 * s, 8 * s, 0xCCCCCC));
-        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 10 * s, 8 * s, 0xDDDDDD));
-        this.iconContainer.add(scene.add.rectangle(0, 11 * s, 8 * s, 8 * s, 0xEEEEEE));
-        this.iconContainer.add(scene.add.rectangle(0, 17 * s, 6 * s, 6 * s, 0xFFFFFF));
-
-        // WIZARD HAT (tall and mystical)
-        this.iconContainer.add(scene.add.rectangle(0, -19 * s, 20 * s, 6 * s, 0x6A1B9A));
-        this.iconContainer.add(scene.add.rectangle(0, -25 * s, 16 * s, 8 * s, 0x7B1FA2));
-        this.iconContainer.add(scene.add.rectangle(0, -32 * s, 12 * s, 10 * s, 0x8E24AA));
-        this.iconContainer.add(scene.add.rectangle(0, -40 * s, 8 * s, 12 * s, 0x9C27B0));
-        this.iconContainer.add(scene.add.rectangle(0, -46 * s, 4 * s, 8 * s, 0xAB47BC));
-        // Stars on hat
-        this.iconContainer.add(scene.add.rectangle(-5 * s, -28 * s, 4 * s, 4 * s, 0xFFD700));
-        this.iconContainer.add(scene.add.rectangle(4 * s, -36 * s, 3 * s, 3 * s, 0xFFD700));
-        this.iconContainer.add(scene.add.rectangle(0, -42 * s, 5 * s, 5 * s, 0xFFE855));
-
-        // STAFF with orb
-        this.iconContainer.add(scene.add.rectangle(16 * s, 6 * s, 4 * s, 36 * s, 0x6B4423)); // wood
-        this.iconContainer.add(scene.add.rectangle(16 * s, -14 * s, 12 * s, 12 * s, 0x00FFFF)); // orb
-        this.iconContainer.add(scene.add.rectangle(14 * s, -16 * s, 6 * s, 6 * s, 0xAAFFFF)); // shine
-        this.iconContainer.add(scene.add.rectangle(18 * s, -12 * s, 4 * s, 4 * s, 0xFFFFFF)); // sparkle
     }
 
     createGiantIcon(scene, scale) {
@@ -584,8 +532,7 @@ class UnitButton extends Phaser.GameObjects.Container {
             'PEASANT': 0,   // Already unlocked
             'ARCHER': 0,    // Already unlocked
             'KNIGHT': 2,
-            'WIZARD': 3,
-            'GIANT': 5
+            'GIANT': 3
         };
         const xpNeeded = xpCosts[unitType.toUpperCase()] || 1;
         // 1 XP per 10 waves, so wave needed = XP * 10
