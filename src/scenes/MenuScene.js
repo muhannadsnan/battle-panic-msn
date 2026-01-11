@@ -1381,7 +1381,7 @@ class MenuScene extends Phaser.Scene {
                     { icon: '⚔️', text: 'Spawn units using gold and wood resources' },
                     { icon: '💰', text: 'Earn resources by killing enemies and completing waves' },
                     { icon: '🎯', text: 'Units automatically attack nearby enemies' },
-                    { icon: '🐴', text: 'Horsemen are fast cavalry - use them to flank enemies' }
+                    { icon: '🐴', text: 'Horsemen are 2x faster and armored vs melee attacks!' }
                 ]
             },
             {
@@ -1438,7 +1438,7 @@ class MenuScene extends Phaser.Scene {
                 title: 'UPGRADES & XP',
                 tips: [
                     { icon: '⬆️', text: 'Spend XP in Upgrades menu for permanent boosts' },
-                    { icon: '🔓', text: 'Unlock Horseman (2 XP) for fast cavalry charges' },
+                    { icon: '🔓', text: 'Unlock Horseman (2 XP) - 2x speed, 40% melee armor' },
                     { icon: '💪', text: 'Unit upgrades increase base HP and damage' },
                     { icon: '🔄', text: 'Reset upgrades costs 2 XP fee (refunds spent XP)' },
                     { icon: '⛏️', text: 'Mining Speed upgrade increases rate by 10%/level' }

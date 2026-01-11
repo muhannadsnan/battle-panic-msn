@@ -41,7 +41,15 @@ class CombatSystem {
     dealDamage(attacker, target, damage) {
         if (!target || target.isDead) return false;
 
-        target.takeDamage(damage);
+        let finalDamage = damage;
+
+        // Horseman armor: takes reduced damage from melee (infantry) attackers
+        if (target.unitType === 'HORSEMAN' && !attacker.isRanged) {
+            const reduction = UNIT_TYPES.HORSEMAN.infantryDamageReduction || 0;
+            finalDamage = Math.floor(damage * (1 - reduction));
+        }
+
+        target.takeDamage(finalDamage);
 
         // Play hit sound based on attacker type
         if (typeof audioManager !== 'undefined') {

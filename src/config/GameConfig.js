@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.8.2';
+const GAME_VERSION = 'v1.8.3';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -40,11 +40,12 @@ const UNIT_TYPES = {
         woodCost: 40,
         health: 35,
         damage: 14,
-        speed: 110,     // Fast cavalry
+        speed: 176,     // 2x faster than peasants (cavalry charge!)
         attackSpeed: 1400,
         range: 40,
+        infantryDamageReduction: 0.4,  // Takes 40% less damage from melee (armor + shield)
         color: 0x8B4513,
-        description: 'Fast mounted cavalry'
+        description: 'Fast cavalry, armored vs melee'
     }
 };
 
