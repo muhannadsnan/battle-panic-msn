@@ -591,11 +591,14 @@ class MenuScene extends Phaser.Scene {
             (x, y, s) => this.createMenuSpearMonster(x, y, s)
         ];
 
-        // All unit creation functions (same as in-game)
+        // All unit creation functions - base AND elite versions!
         const unitTypes = [
             (x, y, s) => this.createMenuPeasant(x, y, s, true),
             (x, y, s) => this.createMenuArcher(x, y, s, true),
-            (x, y, s) => this.createMenuHorseman(x, y, s, true)
+            (x, y, s) => this.createMenuHorseman(x, y, s, true),
+            (x, y, s) => this.createMenuKnight(x, y, s, true),
+            (x, y, s) => this.createMenuRobinhood(x, y, s, true),
+            (x, y, s) => this.createMenuLancelot(x, y, s, true)
         ];
 
         // Shuffle and pick unique enemies (4 per side, staggered, above buttons)
@@ -614,18 +617,20 @@ class MenuScene extends Phaser.Scene {
             shuffledEnemies[i](pos.x, pos.y, scale);
         }
 
-        // Shuffle and pick unique units (3 per side, staggered, above buttons)
+        // Shuffle and pick unique units (6 types - base + elite, show 5)
         const shuffledUnits = Phaser.Utils.Array.Shuffle([...unitTypes]);
-        const unitCount = 3;
-        // More spacing, closer to middle horizontally
+        const unitCount = 5;
+        // More spacing to show variety
         const unitPositions = [
-            { x: GAME_WIDTH - 180, y: 200 },
-            { x: GAME_WIDTH - 100, y: 310 },
-            { x: GAME_WIDTH - 200, y: 420 }
+            { x: GAME_WIDTH - 160, y: 175 },
+            { x: GAME_WIDTH - 90, y: 260 },
+            { x: GAME_WIDTH - 180, y: 340 },
+            { x: GAME_WIDTH - 100, y: 420 },
+            { x: GAME_WIDTH - 190, y: 500 }
         ];
         for (let i = 0; i < unitCount; i++) {
             const pos = unitPositions[i];
-            const scale = Phaser.Math.FloatBetween(1.2, 1.4);
+            const scale = Phaser.Math.FloatBetween(1.1, 1.3);
             shuffledUnits[i](pos.x, pos.y, scale);
         }
     }
@@ -1131,6 +1136,197 @@ class MenuScene extends Phaser.Scene {
         container.add(this.add.rectangle(16, -30, 4, 6, 0xD0D0D0));    // tip
         container.add(this.add.rectangle(16, -3, 12, 4, 0xFFD700));    // crossguard
         container.add(this.add.rectangle(16, 3, 4, 8, 0x8B4513));      // handle
+
+        return container;
+    }
+
+    // ELITE UNIT SPRITES (Gold tier versions)
+    createMenuKnight(x, y, scale, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+
+        // Shadow
+        container.add(this.add.rectangle(0, 32, 28, 6, 0x000000, 0.2));
+        // Legs - blue armor
+        container.add(this.add.rectangle(-6, 22, 10, 16, 0x5080C0));
+        container.add(this.add.rectangle(-6, 22, 6, 12, 0x60A0E0)); // highlight
+        container.add(this.add.rectangle(-7, 30, 12, 6, 0x4070B0)); // boot
+        container.add(this.add.rectangle(6, 22, 10, 16, 0x5080C0));
+        container.add(this.add.rectangle(7, 30, 12, 6, 0x4070B0)); // boot
+        // Body - heroic blue armor
+        container.add(this.add.rectangle(0, 4, 24, 24, 0x4488DD));
+        container.add(this.add.rectangle(0, 6, 20, 18, 0x55AAEE)); // highlight
+        container.add(this.add.rectangle(-9, 4, 5, 20, 0x3366AA)); // shade
+        // Golden chest emblem
+        container.add(this.add.rectangle(0, 4, 10, 10, 0xFFD700));
+        container.add(this.add.rectangle(0, 4, 6, 6, 0xFFEE44)); // inner shine
+        // Shield arm
+        container.add(this.add.rectangle(-18, 6, 14, 26, 0x4488DD)); // shield
+        container.add(this.add.rectangle(-18, 6, 12, 22, 0x55AAEE)); // highlight
+        container.add(this.add.rectangle(-18, 4, 8, 8, 0xFFD700)); // emblem
+        container.add(this.add.rectangle(-18, 4, 4, 4, 0xFFEE66)); // shine
+        // Sword arm
+        container.add(this.add.rectangle(13, 8, 6, 14, 0x5080C0));
+        // AWESOME Helmet
+        container.add(this.add.rectangle(0, -14, 22, 18, 0x6090D0));
+        container.add(this.add.rectangle(0, -12, 18, 14, 0x70A0E0)); // highlight
+        // Visor
+        container.add(this.add.rectangle(0, -12, 16, 8, 0x303030));
+        container.add(this.add.rectangle(-4, -12, 6, 5, 0x4488FF)); // left eye glow
+        container.add(this.add.rectangle(4, -12, 6, 5, 0x4488FF)); // right eye glow
+        container.add(this.add.rectangle(-4, -13, 3, 2, 0xAADDFF)); // shine
+        container.add(this.add.rectangle(4, -13, 3, 2, 0xAADDFF));
+        // Epic red plume
+        container.add(this.add.rectangle(0, -24, 6, 12, 0xFF4444));
+        container.add(this.add.rectangle(0, -30, 5, 8, 0xFF6666));
+        container.add(this.add.rectangle(0, -34, 4, 6, 0xFF8888)); // tip
+        // SHINY Sword
+        container.add(this.add.rectangle(20, -8, 6, 32, 0xDDDDDD)); // blade
+        container.add(this.add.rectangle(20, -6, 4, 28, 0xFFFFFF)); // shine
+        container.add(this.add.rectangle(20, 10, 14, 6, 0xC49A4A)); // crossguard
+        container.add(this.add.rectangle(20, 16, 6, 6, 0xFFD700)); // pommel
+
+        return container;
+    }
+
+    createMenuRobinhood(x, y, scale, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+
+        // Shadow
+        container.add(this.add.rectangle(0, 30, 24, 5, 0x000000, 0.2));
+        // Legs with leather boots
+        container.add(this.add.rectangle(-5, 20, 8, 14, 0x2E4A2E));
+        container.add(this.add.rectangle(-5, 28, 10, 6, 0x4A3020)); // boot
+        container.add(this.add.rectangle(5, 20, 8, 14, 0x2E4A2E));
+        container.add(this.add.rectangle(5, 28, 10, 6, 0x4A3020)); // boot
+        // Flowing cloak (behind)
+        container.add(this.add.rectangle(-6, 8, 20, 24, 0x1A3A1A));
+        container.add(this.add.rectangle(-8, 14, 16, 18, 0x0A2A0A));
+        // Body - dark green tunic
+        container.add(this.add.rectangle(0, 4, 18, 20, 0x2E5A2E));
+        container.add(this.add.rectangle(0, 6, 14, 14, 0x3E6A3E)); // highlight
+        container.add(this.add.rectangle(-6, 4, 4, 16, 0x1E4A1E)); // shade
+        // Leather belt with golden buckle
+        container.add(this.add.rectangle(0, 12, 20, 4, 0x5A3A20));
+        container.add(this.add.rectangle(0, 12, 6, 5, 0xFFD700));
+        // Quiver on back (more arrows!)
+        container.add(this.add.rectangle(-14, 2, 10, 22, 0x5A3A20));
+        container.add(this.add.rectangle(-14, -10, 4, 6, 0xFF4444)); // red fletching
+        container.add(this.add.rectangle(-12, -10, 4, 6, 0x44FF44)); // green
+        container.add(this.add.rectangle(-16, -10, 4, 6, 0xFFFF44)); // yellow
+        // Arms
+        container.add(this.add.rectangle(-12, 2, 6, 12, 0xFFCBA4));
+        container.add(this.add.rectangle(12, 2, 6, 12, 0xFFCBA4));
+        // Hood (iconic Robinhood look)
+        container.add(this.add.rectangle(0, -6, 24, 16, 0x1A4A1A));
+        container.add(this.add.rectangle(0, -12, 22, 12, 0x1A4A1A));
+        container.add(this.add.rectangle(0, -18, 18, 10, 0x2A5A2A));
+        container.add(this.add.rectangle(0, -24, 12, 8, 0x2A5A2A));
+        // Hood point
+        container.add(this.add.rectangle(0, -30, 6, 8, 0x3A6A3A));
+        // Face under hood (confident smirk)
+        container.add(this.add.rectangle(0, -8, 16, 14, 0xFFCBA4));
+        container.add(this.add.rectangle(0, -6, 14, 10, 0xFFDDBB));
+        // Determined eyes
+        container.add(this.add.rectangle(-4, -10, 8, 6, 0xFFFFFF));
+        container.add(this.add.rectangle(4, -10, 8, 6, 0xFFFFFF));
+        container.add(this.add.rectangle(-3, -9, 4, 5, 0x228B22));
+        container.add(this.add.rectangle(5, -9, 4, 5, 0x228B22));
+        // Smirk
+        container.add(this.add.rectangle(2, -3, 6, 2, 0xCC8888));
+        // Feather in cap!
+        container.add(this.add.rectangle(10, -22, 4, 16, 0xFF4444));
+        container.add(this.add.rectangle(12, -28, 3, 10, 0xFF6666));
+        // LEGENDARY BOW (golden trim)
+        container.add(this.add.rectangle(20, -14, 6, 10, 0x6B4423));
+        container.add(this.add.rectangle(22, -8, 6, 8, 0x7B5433));
+        container.add(this.add.rectangle(24, 0, 6, 10, 0x7B5433));
+        container.add(this.add.rectangle(22, 8, 6, 8, 0x7B5433));
+        container.add(this.add.rectangle(20, 14, 6, 10, 0x6B4423));
+        // Golden accents on bow
+        container.add(this.add.rectangle(20, -16, 4, 4, 0xFFD700));
+        container.add(this.add.rectangle(20, 16, 4, 4, 0xFFD700));
+        // Bowstring
+        container.add(this.add.rectangle(18, 0, 2, 32, 0xEEEEEE));
+
+        return container;
+    }
+
+    createMenuLancelot(x, y, scale, flipX = false) {
+        const container = this.add.container(x, y);
+        container.setScale(flipX ? -scale : scale, scale);
+
+        // Shadow (larger for armored horse)
+        container.add(this.add.rectangle(0, 38, 48, 8, 0x000000, 0.2));
+        // Horse back legs (WHITE STALLION!)
+        container.add(this.add.rectangle(-12, 30, 7, 18, 0xDDDDDD));
+        container.add(this.add.rectangle(-12, 38, 6, 6, 0xCCCCCC)); // hoof
+        // Horse front legs
+        container.add(this.add.rectangle(12, 30, 7, 18, 0xEEEEEE));
+        container.add(this.add.rectangle(12, 38, 6, 6, 0xDDDDDD)); // hoof
+        // Royal cape (flowing behind)
+        container.add(this.add.rectangle(-10, -6, 24, 32, 0x8B0000));
+        container.add(this.add.rectangle(-14, 0, 20, 28, 0xAA2222));
+        // Horse body - WHITE STALLION
+        container.add(this.add.rectangle(0, 14, 44, 22, 0xEEEEEE));
+        container.add(this.add.rectangle(2, 12, 38, 18, 0xFFFFFF)); // highlight
+        container.add(this.add.rectangle(-18, 14, 8, 18, 0xDDDDDD)); // rear shade
+        // Horse armor (golden barding)
+        container.add(this.add.rectangle(0, 10, 32, 8, 0xFFD700));
+        container.add(this.add.rectangle(0, 10, 28, 6, 0xFFEE44));
+        // Horse tail (flowing white)
+        container.add(this.add.rectangle(-24, 16, 6, 16, 0xCCCCCC));
+        container.add(this.add.rectangle(-28, 20, 5, 14, 0xDDDDDD));
+        container.add(this.add.rectangle(-30, 24, 4, 10, 0xEEEEEE));
+        // Horse head and neck (right side - charging!)
+        // Neck
+        container.add(this.add.rectangle(24, 6, 14, 20, 0xEEEEEE));
+        container.add(this.add.rectangle(26, 4, 10, 16, 0xFFFFFF)); // highlight
+        // Head
+        container.add(this.add.rectangle(36, -2, 18, 14, 0xFFFFFF));
+        container.add(this.add.rectangle(38, -4, 14, 10, 0xFFFFFF)); // face
+        // Snout
+        container.add(this.add.rectangle(44, 0, 10, 8, 0xEEEEEE));
+        container.add(this.add.rectangle(46, 2, 4, 3, 0xCCCCCC)); // nostril
+        // Golden face armor
+        container.add(this.add.rectangle(34, -2, 16, 4, 0xFFD700));
+        // Ears
+        container.add(this.add.rectangle(30, -12, 5, 10, 0xEEEEEE));
+        container.add(this.add.rectangle(36, -12, 5, 10, 0xEEEEEE));
+        // Eye
+        container.add(this.add.rectangle(32, -2, 5, 5, 0x000000));
+        // Mane (white flowing)
+        container.add(this.add.rectangle(22, -6, 8, 16, 0xDDDDDD));
+        container.add(this.add.rectangle(26, -8, 6, 12, 0xEEEEEE));
+        // Golden saddle
+        container.add(this.add.rectangle(0, 2, 20, 12, 0xFFD700));
+        container.add(this.add.rectangle(0, 0, 16, 8, 0xFFEE44)); // seat
+        // Lancelot - GOLDEN ARMOR!
+        container.add(this.add.rectangle(0, -14, 20, 22, 0xFFD700));
+        container.add(this.add.rectangle(2, -12, 16, 18, 0xFFEE44)); // highlight
+        container.add(this.add.rectangle(-8, -14, 4, 18, 0xDDAA00)); // shade
+        // Chest emblem (royal crest)
+        container.add(this.add.rectangle(0, -10, 10, 10, 0x4169E1));
+        container.add(this.add.rectangle(0, -10, 6, 6, 0x5179F1));
+        // Golden helmet
+        container.add(this.add.rectangle(0, -30, 18, 16, 0xFFD700));
+        container.add(this.add.rectangle(0, -28, 14, 12, 0xFFEE44));
+        // Visor
+        container.add(this.add.rectangle(0, -28, 14, 6, 0x303030));
+        container.add(this.add.rectangle(-3, -28, 5, 4, 0xFFFFFF)); // left eye
+        container.add(this.add.rectangle(3, -28, 5, 4, 0xFFFFFF)); // right eye
+        // Crown-like crest on helmet
+        container.add(this.add.rectangle(-6, -40, 4, 10, 0xFFD700));
+        container.add(this.add.rectangle(0, -42, 4, 12, 0xFFEE44));
+        container.add(this.add.rectangle(6, -40, 4, 10, 0xFFD700));
+        // EXCALIBUR! (legendary sword)
+        container.add(this.add.rectangle(18, -24, 6, 36, 0xFFFFFF)); // blade
+        container.add(this.add.rectangle(18, -22, 4, 32, 0xFFFFEE)); // shine
+        container.add(this.add.rectangle(18, -40, 4, 8, 0xFFFFFF)); // tip
+        container.add(this.add.rectangle(18, -5, 16, 6, 0xFFD700)); // crossguard
+        container.add(this.add.rectangle(18, 4, 6, 10, 0x8B0000)); // handle
+        container.add(this.add.rectangle(18, 10, 8, 6, 0xFFD700)); // pommel
 
         return container;
     }
