@@ -729,9 +729,9 @@ class GameScene extends Phaser.Scene {
         const currentLevel = this.castleLevel || 1;
         const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
 
-        // At max level, allow repair instead of upgrade
+        // At max level, allow cheap repair instead of upgrade
         const cost = isMaxLevel
-            ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)  // Same cost as level 10 upgrade
+            ? { gold: 50, wood: 30 }  // Cheap flat repair cost at max level
             : this.getCastleUpgradeCost(currentLevel);
         const canAfford = this.gold >= cost.gold && this.wood >= cost.wood;
 
