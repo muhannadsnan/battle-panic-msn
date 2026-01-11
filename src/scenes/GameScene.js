@@ -45,7 +45,7 @@ class GameScene extends Phaser.Scene {
         this.unitCounts = {
             peasant: 0,
             archer: 0,
-            knight: 0
+            horseman: 0
         };
 
         // Unit promotion levels (calculated from spawn counts)
@@ -53,14 +53,14 @@ class GameScene extends Phaser.Scene {
         this.unitPromotionLevels = {
             peasant: 0,
             archer: 0,
-            knight: 0
+            horseman: 0
         };
 
         // Track first spawn of each unit type this battle (for research cost)
         this.firstSpawnDone = {
             peasant: false,
             archer: false,
-            knight: false
+            horseman: false
         };
 
         // Resource tracking
@@ -1016,11 +1016,11 @@ Lv.${level + 1}`;
 
         // Unit count texts for each type - horizontal with mini icons
         this.unitCountTexts = {};
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
         const colorHex = {
             PEASANT: '#E8C87A',
             ARCHER: '#4CC053',
-            KNIGHT: '#55AAEE'
+            HORSEMAN: '#8B6914'
         };
 
         unitTypes.forEach((type, index) => {
@@ -1087,25 +1087,23 @@ Lv.${level + 1}`;
                 container.add(this.add.rectangle(7, 5, 2, 8, 0x8B4513));
                 container.add(this.add.rectangle(5, 0, 10, 2, 0x8B4513)); // arrow
                 break;
-            case 'KNIGHT':
-                // Shining armor
-                container.add(this.add.rectangle(0, 4, 10, 14, 0x5B8DEE));
-                container.add(this.add.rectangle(-2, 4, 4, 12, 0x7BA3FF)); // shine
-                // Helmet
-                container.add(this.add.rectangle(0, -6, 9, 9, 0x8899AA));
-                container.add(this.add.rectangle(-1, -7, 4, 5, 0x99AABB)); // shine
-                // Plume
-                container.add(this.add.rectangle(0, -12, 4, 4, 0xEE4444));
-                container.add(this.add.rectangle(0, -15, 3, 4, 0xFF5555));
-                // Visor with glowing eyes
-                container.add(this.add.rectangle(0, -5, 7, 3, 0x222222));
-                container.add(this.add.rectangle(-2, -5, 2, 2, 0x55DDFF));
-                container.add(this.add.rectangle(2, -5, 2, 2, 0x55DDFF));
-                // Shield
-                container.add(this.add.rectangle(-6, 3, 5, 8, 0x5B8DEE));
-                container.add(this.add.rectangle(-6, 3, 3, 5, 0xFFD700)); // emblem
-                // Sword
-                container.add(this.add.rectangle(7, -4, 3, 14, 0xC0C0C0));
+            case 'HORSEMAN':
+                // Horse body (brown)
+                container.add(this.add.rectangle(0, 6, 14, 8, 0x8B4513));
+                container.add(this.add.rectangle(-4, 12, 3, 6, 0x6B3503)); // front leg
+                container.add(this.add.rectangle(4, 12, 3, 6, 0x6B3503)); // back leg
+                // Horse head
+                container.add(this.add.rectangle(-8, 2, 6, 5, 0x9B5523));
+                container.add(this.add.rectangle(-10, 0, 3, 3, 0x8B4513)); // ear
+                // Rider torso
+                container.add(this.add.rectangle(0, -2, 8, 8, 0x4169E1));
+                // Rider head
+                container.add(this.add.rectangle(0, -8, 6, 6, 0xFFCBA4));
+                // Rider helmet
+                container.add(this.add.rectangle(0, -10, 7, 4, 0x708090));
+                // Lance
+                container.add(this.add.rectangle(6, -6, 2, 16, 0x8B4513));
+                container.add(this.add.rectangle(6, -14, 3, 4, 0xC0C0C0)); // tip
                 break;
         }
     }
@@ -1122,7 +1120,7 @@ Lv.${level + 1}`;
         const counts = {
             PEASANT: 0,
             ARCHER: 0,
-            KNIGHT: 0
+            HORSEMAN: 0
         };
 
         // Count each unit type
@@ -1152,7 +1150,7 @@ Lv.${level + 1}`;
         // Unit buttons - vertical layout, no panel boxes
         const startY = 60;  // Full height bar
         const spacing = 120;  // No margins between buttons
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
         const hotkeys = ['1', '2', '3'];
 
         unitTypes.forEach((type, index) => {
@@ -1483,9 +1481,9 @@ Lv.${level + 1}`;
     }
 
     updateUnitButtons(delta) {
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
 
-        // Check if research cost applies (rank 4+: Knight and above)
+        // Check if research cost applies (rank 4+: Knight rank and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
         const isAdvancedRank = ['Knight', 'Commander', 'General', 'Champion', 'Legend'].includes(rankInfo.rank.name);
 
@@ -1710,19 +1708,19 @@ Lv.${level + 1}`;
                 icon: '🏹',
                 title: 'RANGED ENEMIES!',
                 message: 'Skeleton Archers are coming!\nPosition tanks in front to protect your ranged units.',
-                suggestion: 'Consider: Knights as frontline'
+                suggestion: 'Consider: Horsemen as fast frontline'
             },
             8: {
                 icon: '🧌',
                 title: 'TROLLS INCOMING!',
                 message: 'Trolls hit HARD and have high HP!\nPeasants will die in one hit.',
-                suggestion: 'Consider: Knights can survive multiple hits'
+                suggestion: 'Consider: Horsemen can charge and survive'
             },
             10: {
                 icon: '🐉',
                 title: 'BOSS WAVE!',
                 message: 'A DRAGON is coming!\nExtremely high damage, ranged attacks.',
-                suggestion: 'Consider: Knights to tank, mix ranged DPS'
+                suggestion: 'Consider: Horsemen to tank, mix ranged DPS'
             },
             12: {
                 icon: '⚫',
@@ -1734,13 +1732,13 @@ Lv.${level + 1}`;
                 icon: '😈',
                 title: 'DEMONS APPROACH!',
                 message: 'Demons are brutal! High HP and damage.\nYou need a balanced army.',
-                suggestion: 'Consider: Mix tanks, ranged, and splash'
+                suggestion: 'Consider: Mix Horsemen, Archers, promoted units'
             },
             20: {
                 icon: '🐉',
                 title: 'SECOND DRAGON!',
                 message: 'Another Dragon boss!\nEnemies are much stronger now.',
-                suggestion: 'Consider: Multiple Knights, strong ranged'
+                suggestion: 'Consider: Multiple Horsemen, strong ranged'
             },
             30: {
                 icon: '🐉',
@@ -2376,7 +2374,7 @@ Lv.${level + 1}`;
     updateUnitButtonBadge(unitType, level) {
         // Find the unit button and update its badge
         const typeKey = unitType.toLowerCase();
-        const buttonIndex = ['peasant', 'archer', 'knight'].indexOf(typeKey);
+        const buttonIndex = ['peasant', 'archer', 'horseman'].indexOf(typeKey);
         if (buttonIndex >= 0 && this.unitButtons && this.unitButtons[buttonIndex]) {
             this.unitButtons[buttonIndex].setPromotionLevel(level);
         }

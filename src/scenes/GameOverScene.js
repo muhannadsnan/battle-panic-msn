@@ -64,7 +64,7 @@ class GameOverScene extends Phaser.Scene {
         // Tip
         const tips = [
             'Tip: Reach wave 10 to earn 1 XP for upgrades!',
-            'Tip: Knights are great tanks for protecting archers!',
+            'Tip: Horsemen are fast cavalry for flanking enemies!',
             'Tip: Use XP in the Upgrades menu to unlock units!',
             'Tip: Higher promotion levels spawn TWO units at once!'
         ];

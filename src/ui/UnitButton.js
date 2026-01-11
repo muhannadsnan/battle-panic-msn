@@ -236,8 +236,8 @@ class UnitButton extends Phaser.GameObjects.Container {
             case 'ARCHER':
                 this.createArcherIcon(scene, scale);
                 break;
-            case 'KNIGHT':
-                this.createKnightIcon(scene, scale);
+            case 'HORSEMAN':
+                this.createHorsemanIcon(scene, scale);
                 break;
         }
     }
@@ -324,47 +324,47 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.iconContainer.add(scene.add.rectangle(-4 * s, 0, 8 * s, 5 * s, 0xA0A0B0)); // arrowhead
     }
 
-    createKnightIcon(scene, scale) {
-        // EXPRESSIVE KNIGHT - Noble warrior with shining armor
+    createHorsemanIcon(scene, scale) {
+        // EXPRESSIVE HORSEMAN - Mounted cavalry with lance
         const s = scale;
 
-        // Body (gleaming blue armor)
-        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 20 * s, 28 * s, 0x4169E1));
-        this.iconContainer.add(scene.add.rectangle(0, 9 * s, 18 * s, 24 * s, 0x5B8DEE));
-        this.iconContainer.add(scene.add.rectangle(-3 * s, 9 * s, 8 * s, 22 * s, 0x7BA3FF)); // shine
-        // Armor details
-        this.iconContainer.add(scene.add.rectangle(0, 4 * s, 16 * s, 4 * s, 0x3A59C1)); // chest plate line
-        this.iconContainer.add(scene.add.rectangle(0, 14 * s, 14 * s, 3 * s, 0x3A59C1));
+        // Horse body (brown)
+        this.iconContainer.add(scene.add.rectangle(0, 14 * s, 28 * s, 14 * s, 0x8B4513));
+        this.iconContainer.add(scene.add.rectangle(0, 12 * s, 24 * s, 10 * s, 0x9B5523)); // highlight
+        this.iconContainer.add(scene.add.rectangle(-10 * s, 14 * s, 6 * s, 10 * s, 0x7B3503)); // shade
+        // Horse legs
+        this.iconContainer.add(scene.add.rectangle(-8 * s, 24 * s, 5 * s, 10 * s, 0x6B3503));
+        this.iconContainer.add(scene.add.rectangle(8 * s, 24 * s, 5 * s, 10 * s, 0x6B3503));
+        // Horse tail
+        this.iconContainer.add(scene.add.rectangle(16 * s, 18 * s, 6 * s, 10 * s, 0x3B2503));
 
-        // Helmet (rounded top)
-        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 18 * s, 16 * s, 0x708090));
-        this.iconContainer.add(scene.add.rectangle(0, -11 * s, 16 * s, 12 * s, 0x8899AA));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, -13 * s, 8 * s, 8 * s, 0x99AABB)); // shine
-        this.iconContainer.add(scene.add.rectangle(0, -18 * s, 14 * s, 4 * s, 0x607080));
+        // Horse head
+        this.iconContainer.add(scene.add.rectangle(-16 * s, 6 * s, 10 * s, 12 * s, 0x9B5523));
+        this.iconContainer.add(scene.add.rectangle(-20 * s, 4 * s, 6 * s, 8 * s, 0x8B4513)); // snout
+        this.iconContainer.add(scene.add.rectangle(-14 * s, 0, 4 * s, 5 * s, 0x7B3503)); // ear
+        this.iconContainer.add(scene.add.rectangle(-18 * s, 4 * s, 3 * s, 3 * s, 0x000000)); // eye
 
-        // Majestic plume
-        this.iconContainer.add(scene.add.rectangle(0, -22 * s, 10 * s, 6 * s, 0xDD3333));
-        this.iconContainer.add(scene.add.rectangle(0, -27 * s, 8 * s, 8 * s, 0xEE4444));
-        this.iconContainer.add(scene.add.rectangle(0, -33 * s, 6 * s, 8 * s, 0xFF5555));
-        this.iconContainer.add(scene.add.rectangle(-1 * s, -30 * s, 3 * s, 10 * s, 0xFF7777)); // shine
+        // Rider torso (blue tunic)
+        this.iconContainer.add(scene.add.rectangle(0, -2 * s, 14 * s, 16 * s, 0x4169E1));
+        this.iconContainer.add(scene.add.rectangle(0, -1 * s, 12 * s, 12 * s, 0x5179F1)); // highlight
 
-        // Visor (glowing eyes)
-        this.iconContainer.add(scene.add.rectangle(0, -9 * s, 14 * s, 5 * s, 0x222222));
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -9 * s, 4 * s, 4 * s, 0x55DDFF)); // eye
-        this.iconContainer.add(scene.add.rectangle(4 * s, -9 * s, 4 * s, 4 * s, 0x55DDFF));
+        // Rider head
+        this.iconContainer.add(scene.add.rectangle(0, -14 * s, 12 * s, 12 * s, 0xFFCBA4));
+        this.iconContainer.add(scene.add.rectangle(0, -12 * s, 8 * s, 8 * s, 0xFFDDBB)); // highlight
+        // Eyes
+        this.iconContainer.add(scene.add.rectangle(-3 * s, -14 * s, 3 * s, 3 * s, 0x000000));
+        this.iconContainer.add(scene.add.rectangle(3 * s, -14 * s, 3 * s, 3 * s, 0x000000));
+        // Helmet
+        this.iconContainer.add(scene.add.rectangle(0, -20 * s, 14 * s, 8 * s, 0x708090));
+        this.iconContainer.add(scene.add.rectangle(0, -18 * s, 10 * s, 4 * s, 0x808890)); // shine
 
-        // SHIELD (emblazoned)
-        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 12 * s, 18 * s, 0x4169E1));
-        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 10 * s, 16 * s, 0x5B8DEE));
-        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 6 * s, 10 * s, 0xFFD700)); // lion emblem
-        this.iconContainer.add(scene.add.rectangle(-14 * s, 4 * s, 4 * s, 6 * s, 0xFFE855));
-
-        // SWORD (raised)
-        this.iconContainer.add(scene.add.rectangle(16 * s, -8 * s, 5 * s, 28 * s, 0xC0C0C0)); // blade
-        this.iconContainer.add(scene.add.rectangle(15 * s, -10 * s, 3 * s, 22 * s, 0xE0E0E0)); // shine
-        this.iconContainer.add(scene.add.rectangle(16 * s, -22 * s, 4 * s, 6 * s, 0xE8E8E8)); // tip
-        this.iconContainer.add(scene.add.rectangle(16 * s, 8 * s, 12 * s, 4 * s, 0xDAA520)); // guard
-        this.iconContainer.add(scene.add.rectangle(16 * s, 14 * s, 4 * s, 8 * s, 0x8B4513)); // hilt
+        // Lance
+        this.iconContainer.add(scene.add.rectangle(14 * s, -8 * s, 4 * s, 40 * s, 0x8B5A33)); // shaft
+        this.iconContainer.add(scene.add.rectangle(14 * s, -28 * s, 6 * s, 8 * s, 0xC0C0C0)); // tip
+        this.iconContainer.add(scene.add.rectangle(14 * s, -26 * s, 4 * s, 4 * s, 0xE0E0E0)); // tip shine
+        // Pennant
+        this.iconContainer.add(scene.add.rectangle(18 * s, -22 * s, 8 * s, 6 * s, 0xFF4444));
+        this.iconContainer.add(scene.add.rectangle(20 * s, -22 * s, 4 * s, 4 * s, 0xFF6666));
     }
 
     onClick() {
@@ -476,7 +476,7 @@ class UnitButton extends Phaser.GameObjects.Container {
         const xpCosts = {
             'PEASANT': 0,   // Already unlocked
             'ARCHER': 0,    // Already unlocked
-            'KNIGHT': 2
+            'HORSEMAN': 2
         };
         const xpNeeded = xpCosts[unitType.toUpperCase()] || 1;
         // 1 XP per 10 waves, so wave needed = XP * 10

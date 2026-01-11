@@ -54,7 +54,7 @@ class UpgradeScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        const unitTypes = ['PEASANT', 'ARCHER', 'KNIGHT'];
+        const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
         const startX = 195;
         const spacing = 250;
         const y = 265;
@@ -227,8 +227,8 @@ class UpgradeScene extends Phaser.Scene {
             case 'ARCHER':
                 this.createArcherIcon(container, scale, alpha);
                 break;
-            case 'KNIGHT':
-                this.createKnightIcon(container, scale, alpha);
+            case 'HORSEMAN':
+                this.createHorsemanIcon(container, scale, alpha);
                 break;
         }
     }
@@ -497,122 +497,87 @@ class UpgradeScene extends Phaser.Scene {
         container.add(bowstring);
     }
 
-    createKnightIcon(container, scale, alpha) {
-        // EXACT copy of Unit.js createKnight - cartoony heroic shiny knight
+    createHorsemanIcon(container, scale, alpha) {
+        // Horseman - mounted cavalry with lance
         const s = scale;
 
-        // Shadow
-        const shadow = this.add.rectangle(0, 32 * s, 28 * s, 6 * s, 0x000000, 0.2);
+        // Shadow (larger for horse)
+        const shadow = this.add.rectangle(0, 36 * s, 40 * s, 8 * s, 0x000000, 0.2);
         shadow.setAlpha(alpha);
         container.add(shadow);
 
-        // Legs
-        const leftLeg = this.add.rectangle(-6 * s, 22 * s, 10 * s, 16 * s, 0x5080C0);
-        leftLeg.setAlpha(alpha);
-        container.add(leftLeg);
-        const leftLegHighlight = this.add.rectangle(-5 * s, 22 * s, 6 * s, 12 * s, 0x60A0E0);
-        leftLegHighlight.setAlpha(alpha);
-        container.add(leftLegHighlight);
-        const leftBoot = this.add.rectangle(-7 * s, 30 * s, 12 * s, 6 * s, 0x4070B0);
-        leftBoot.setAlpha(alpha);
-        container.add(leftBoot);
-        const rightLeg = this.add.rectangle(6 * s, 22 * s, 10 * s, 16 * s, 0x5080C0);
-        rightLeg.setAlpha(alpha);
-        container.add(rightLeg);
-        const rightBoot = this.add.rectangle(7 * s, 30 * s, 12 * s, 6 * s, 0x4070B0);
-        rightBoot.setAlpha(alpha);
-        container.add(rightBoot);
+        // Horse legs
+        const frontLeg = this.add.rectangle(-10 * s, 30 * s, 6 * s, 16 * s, 0x6B3503);
+        frontLeg.setAlpha(alpha);
+        container.add(frontLeg);
+        const backLeg = this.add.rectangle(10 * s, 30 * s, 6 * s, 16 * s, 0x6B3503);
+        backLeg.setAlpha(alpha);
+        container.add(backLeg);
 
-        // Body - heroic blue armor
-        const body = this.add.rectangle(0, 4 * s, 24 * s, 24 * s, 0x4488DD);
-        body.setAlpha(alpha);
-        container.add(body);
-        const bodyHighlight = this.add.rectangle(0, 6 * s, 20 * s, 18 * s, 0x55AAEE);
-        bodyHighlight.setAlpha(alpha);
-        container.add(bodyHighlight);
-        const bodyShade = this.add.rectangle(-9 * s, 4 * s, 5 * s, 20 * s, 0x3366AA);
-        bodyShade.setAlpha(alpha);
-        container.add(bodyShade);
-        // Golden chest emblem
-        const emblem = this.add.rectangle(0, 4 * s, 10 * s, 10 * s, 0xFFD700);
-        emblem.setAlpha(alpha);
-        container.add(emblem);
-        const emblemShine = this.add.rectangle(0, 4 * s, 6 * s, 6 * s, 0xFFEE44);
-        emblemShine.setAlpha(alpha);
-        container.add(emblemShine);
+        // Horse body
+        const horseBody = this.add.rectangle(0, 14 * s, 36 * s, 18 * s, 0x8B4513);
+        horseBody.setAlpha(alpha);
+        container.add(horseBody);
+        const horseHighlight = this.add.rectangle(0, 12 * s, 32 * s, 14 * s, 0x9B5523);
+        horseHighlight.setAlpha(alpha);
+        container.add(horseHighlight);
+        // Horse tail
+        const tail = this.add.rectangle(20 * s, 18 * s, 8 * s, 12 * s, 0x3B2503);
+        tail.setAlpha(alpha);
+        container.add(tail);
 
-        // Shield arm
-        const shield = this.add.rectangle(-18 * s, 6 * s, 14 * s, 26 * s, 0x4488DD);
-        shield.setAlpha(alpha);
-        container.add(shield);
-        const shieldHighlight = this.add.rectangle(-18 * s, 6 * s, 12 * s, 22 * s, 0x55AAEE);
-        shieldHighlight.setAlpha(alpha);
-        container.add(shieldHighlight);
-        const shieldEmblem = this.add.rectangle(-18 * s, 4 * s, 8 * s, 8 * s, 0xFFD700);
-        shieldEmblem.setAlpha(alpha);
-        container.add(shieldEmblem);
-        const shieldShine = this.add.rectangle(-18 * s, 4 * s, 4 * s, 4 * s, 0xFFEE66);
-        shieldShine.setAlpha(alpha);
-        container.add(shieldShine);
+        // Horse head and neck
+        const neck = this.add.rectangle(-20 * s, 8 * s, 10 * s, 16 * s, 0x8B4513);
+        neck.setAlpha(alpha);
+        container.add(neck);
+        const head = this.add.rectangle(-26 * s, 4 * s, 14 * s, 12 * s, 0x9B5523);
+        head.setAlpha(alpha);
+        container.add(head);
+        const snout = this.add.rectangle(-30 * s, 2 * s, 6 * s, 6 * s, 0x8B4513);
+        snout.setAlpha(alpha);
+        container.add(snout);
+        const ear = this.add.rectangle(-24 * s, -2 * s, 4 * s, 6 * s, 0x7B3503);
+        ear.setAlpha(alpha);
+        container.add(ear);
+        const eye = this.add.rectangle(-28 * s, 4 * s, 3 * s, 3 * s, 0x000000);
+        eye.setAlpha(alpha);
+        container.add(eye);
 
-        // Sword arm
-        const rightArm = this.add.rectangle(13 * s, 8 * s, 6 * s, 14 * s, 0x5080C0);
-        rightArm.setAlpha(alpha);
-        container.add(rightArm);
+        // Rider torso
+        const riderBody = this.add.rectangle(0, -6 * s, 16 * s, 18 * s, 0x4169E1);
+        riderBody.setAlpha(alpha);
+        container.add(riderBody);
+        const riderHighlight = this.add.rectangle(0, -4 * s, 12 * s, 14 * s, 0x5179F1);
+        riderHighlight.setAlpha(alpha);
+        container.add(riderHighlight);
 
-        // AWESOME Helmet
-        const helmet = this.add.rectangle(0, -14 * s, 22 * s, 18 * s, 0x6090D0);
+        // Rider head
+        const riderHead = this.add.rectangle(0, -20 * s, 14 * s, 14 * s, 0xFFCBA4);
+        riderHead.setAlpha(alpha);
+        container.add(riderHead);
+        // Helmet
+        const helmet = this.add.rectangle(0, -26 * s, 16 * s, 10 * s, 0x708090);
         helmet.setAlpha(alpha);
         container.add(helmet);
-        const helmetHighlight = this.add.rectangle(0, -12 * s, 18 * s, 14 * s, 0x70A0E0);
-        helmetHighlight.setAlpha(alpha);
-        container.add(helmetHighlight);
-        // Visor
-        const visor = this.add.rectangle(0, -12 * s, 16 * s, 8 * s, 0x303030);
-        visor.setAlpha(alpha);
-        container.add(visor);
-        const eyeGlowL = this.add.rectangle(-4 * s, -12 * s, 6 * s, 5 * s, 0x4488FF);
-        eyeGlowL.setAlpha(alpha);
-        container.add(eyeGlowL);
-        const eyeGlowR = this.add.rectangle(4 * s, -12 * s, 6 * s, 5 * s, 0x4488FF);
-        eyeGlowR.setAlpha(alpha);
-        container.add(eyeGlowR);
-        const eyeShineL = this.add.rectangle(-4 * s, -13 * s, 3 * s, 2 * s, 0xAADDFF);
-        eyeShineL.setAlpha(alpha);
-        container.add(eyeShineL);
-        const eyeShineR = this.add.rectangle(4 * s, -13 * s, 3 * s, 2 * s, 0xAADDFF);
-        eyeShineR.setAlpha(alpha);
-        container.add(eyeShineR);
-        // Epic plume
-        const plume1 = this.add.rectangle(0, -24 * s, 6 * s, 12 * s, 0xFF4444);
-        plume1.setAlpha(alpha);
-        container.add(plume1);
-        const plume2 = this.add.rectangle(0, -30 * s, 5 * s, 8 * s, 0xFF6666);
-        plume2.setAlpha(alpha);
-        container.add(plume2);
-        const plume3 = this.add.rectangle(0, -34 * s, 4 * s, 6 * s, 0xFF8888);
-        plume3.setAlpha(alpha);
-        container.add(plume3);
+        // Eyes
+        const eyeL = this.add.rectangle(-3 * s, -20 * s, 4 * s, 4 * s, 0x000000);
+        eyeL.setAlpha(alpha);
+        container.add(eyeL);
+        const eyeR = this.add.rectangle(3 * s, -20 * s, 4 * s, 4 * s, 0x000000);
+        eyeR.setAlpha(alpha);
+        container.add(eyeR);
 
-        // SHINY Sword
-        const blade = this.add.rectangle(20 * s, -8 * s, 6 * s, 32 * s, 0xDDDDDD);
-        blade.setAlpha(alpha);
-        container.add(blade);
-        const bladeShine = this.add.rectangle(20 * s, -6 * s, 4 * s, 28 * s, 0xFFFFFF);
-        bladeShine.setAlpha(alpha);
-        container.add(bladeShine);
-        const bladeTip = this.add.rectangle(20 * s, -22 * s, 4 * s, 6 * s, 0xFFFFFF);
-        bladeTip.setAlpha(alpha);
-        container.add(bladeTip);
-        const crossguard = this.add.rectangle(20 * s, 10 * s, 14 * s, 6 * s, 0xC49A4A);
-        crossguard.setAlpha(alpha);
-        container.add(crossguard);
-        const crossguardHighlight = this.add.rectangle(20 * s, 10 * s, 10 * s, 4 * s, 0xD4AA5A);
-        crossguardHighlight.setAlpha(alpha);
-        container.add(crossguardHighlight);
-        const pommel = this.add.rectangle(20 * s, 16 * s, 6 * s, 6 * s, 0xFFD700);
-        pommel.setAlpha(alpha);
-        container.add(pommel);
+        // Lance
+        const lanceShaft = this.add.rectangle(16 * s, -12 * s, 4 * s, 48 * s, 0x8B5A33);
+        lanceShaft.setAlpha(alpha);
+        container.add(lanceShaft);
+        const lanceTip = this.add.rectangle(16 * s, -38 * s, 6 * s, 10 * s, 0xC0C0C0);
+        lanceTip.setAlpha(alpha);
+        container.add(lanceTip);
+        // Pennant
+        const pennant = this.add.rectangle(20 * s, -30 * s, 10 * s, 8 * s, 0xFF4444);
+        pennant.setAlpha(alpha);
+        container.add(pennant);
     }
 
     createCastleUpgrades() {
@@ -842,7 +807,7 @@ class UpgradeScene extends Phaser.Scene {
     getUnlockCost(unitKey) {
         // XP costs for unlocking units
         const costs = {
-            knight: 2
+            horseman: 2
         };
         return costs[unitKey] || 1;
     }

@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.8.1';
+const GAME_VERSION = 'v1.8.2';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -33,18 +33,18 @@ const UNIT_TYPES = {
         color: 0x228B22,
         description: 'Ranged, decent damage'
     },
-    KNIGHT: {
-        key: 'knight',
-        name: 'Knight',
+    HORSEMAN: {
+        key: 'horseman',
+        name: 'Horseman',
         goldCost: 60,
         woodCost: 40,
-        health: 43,
-        damage: 11,
-        speed: 61,      // 10% faster than orcs
-        attackSpeed: 1200,
-        range: 35,
-        color: 0x4169E1,
-        description: 'Tough armored warrior'
+        health: 35,
+        damage: 14,
+        speed: 110,     // Fast cavalry
+        attackSpeed: 1400,
+        range: 40,
+        color: 0x8B4513,
+        description: 'Fast mounted cavalry'
     }
 };
 

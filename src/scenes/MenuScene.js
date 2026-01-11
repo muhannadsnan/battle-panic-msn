@@ -595,7 +595,7 @@ class MenuScene extends Phaser.Scene {
         const unitTypes = [
             (x, y, s) => this.createMenuPeasant(x, y, s, true),
             (x, y, s) => this.createMenuArcher(x, y, s, true),
-            (x, y, s) => this.createMenuKnight(x, y, s, true)
+            (x, y, s) => this.createMenuHorseman(x, y, s, true)
         ];
 
         // Shuffle and pick unique enemies (4 per side, staggered, above buttons)
@@ -1097,45 +1097,39 @@ class MenuScene extends Phaser.Scene {
         return container;
     }
 
-    createMenuKnight(x, y, scale, flipX = false) {
+    createMenuHorseman(x, y, scale, flipX = false) {
         const container = this.add.container(x, y);
         container.setScale(flipX ? -scale : scale, scale);
 
-        // Shadow
-        container.add(this.add.rectangle(0, 32, 28, 6, 0x000000, 0.2));
-        // Legs
-        container.add(this.add.rectangle(-6, 22, 10, 16, 0x5080C0));
-        container.add(this.add.rectangle(-5, 22, 6, 12, 0x60A0E0));
-        container.add(this.add.rectangle(-7, 30, 12, 6, 0x4070B0));
-        container.add(this.add.rectangle(6, 22, 10, 16, 0x5080C0));
-        container.add(this.add.rectangle(7, 30, 12, 6, 0x4070B0));
-        // Body
-        container.add(this.add.rectangle(0, 4, 24, 24, 0x4488DD));
-        container.add(this.add.rectangle(0, 6, 20, 18, 0x55AAEE));
-        container.add(this.add.rectangle(-9, 4, 5, 20, 0x3366AA));
-        container.add(this.add.rectangle(0, 4, 10, 10, 0xFFD700));
-        container.add(this.add.rectangle(0, 4, 6, 6, 0xFFEE44));
-        // Shield
-        container.add(this.add.rectangle(-18, 6, 14, 26, 0x4488DD));
-        container.add(this.add.rectangle(-18, 6, 12, 22, 0x55AAEE));
-        container.add(this.add.rectangle(-18, 4, 8, 8, 0xFFD700));
-        // Arm
-        container.add(this.add.rectangle(13, 8, 6, 14, 0x5080C0));
-        // Helmet
-        container.add(this.add.rectangle(0, -14, 22, 18, 0x6090D0));
-        container.add(this.add.rectangle(0, -12, 18, 14, 0x70A0E0));
-        container.add(this.add.rectangle(0, -12, 16, 8, 0x303030));
-        container.add(this.add.rectangle(-4, -12, 6, 5, 0x4488FF));
-        container.add(this.add.rectangle(4, -12, 6, 5, 0x4488FF));
-        // Plume
-        container.add(this.add.rectangle(0, -24, 6, 12, 0xFF4444));
-        container.add(this.add.rectangle(0, -30, 5, 8, 0xFF6666));
-        container.add(this.add.rectangle(0, -34, 4, 6, 0xFF8888));
-        // Sword
-        container.add(this.add.rectangle(20, -8, 6, 32, 0xDDDDDD));
-        container.add(this.add.rectangle(20, -6, 4, 28, 0xFFFFFF));
-        container.add(this.add.rectangle(20, 10, 14, 6, 0xC49A4A));
-        container.add(this.add.rectangle(20, 16, 6, 6, 0xFFD700));
+        // Shadow (larger for horse)
+        container.add(this.add.rectangle(0, 36, 40, 8, 0x000000, 0.2));
+        // Horse legs
+        container.add(this.add.rectangle(-10, 30, 6, 16, 0x6B3503));
+        container.add(this.add.rectangle(10, 30, 6, 16, 0x6B3503));
+        // Horse body
+        container.add(this.add.rectangle(0, 14, 36, 18, 0x8B4513));
+        container.add(this.add.rectangle(0, 12, 32, 14, 0x9B5523));
+        // Horse tail
+        container.add(this.add.rectangle(20, 18, 8, 12, 0x3B2503));
+        // Horse head and neck
+        container.add(this.add.rectangle(-20, 8, 10, 16, 0x8B4513));
+        container.add(this.add.rectangle(-26, 4, 14, 12, 0x9B5523));
+        container.add(this.add.rectangle(-30, 2, 6, 6, 0x8B4513));
+        container.add(this.add.rectangle(-24, -2, 4, 6, 0x7B3503));
+        container.add(this.add.rectangle(-28, 4, 3, 3, 0x000000));
+        // Rider torso
+        container.add(this.add.rectangle(0, -6, 16, 18, 0x4169E1));
+        container.add(this.add.rectangle(0, -4, 12, 14, 0x5179F1));
+        // Rider head
+        container.add(this.add.rectangle(0, -20, 14, 14, 0xFFCBA4));
+        container.add(this.add.rectangle(0, -26, 16, 10, 0x708090));
+        container.add(this.add.rectangle(-3, -20, 4, 4, 0x000000));
+        container.add(this.add.rectangle(3, -20, 4, 4, 0x000000));
+        // Lance
+        container.add(this.add.rectangle(16, -12, 4, 48, 0x8B5A33));
+        container.add(this.add.rectangle(16, -38, 6, 10, 0xC0C0C0));
+        // Pennant
+        container.add(this.add.rectangle(20, -30, 10, 8, 0xFF4444));
 
         return container;
     }
@@ -1387,7 +1381,7 @@ class MenuScene extends Phaser.Scene {
                     { icon: '⚔️', text: 'Spawn units using gold and wood resources' },
                     { icon: '💰', text: 'Earn resources by killing enemies and completing waves' },
                     { icon: '🎯', text: 'Units automatically attack nearby enemies' },
-                    { icon: '🛡️', text: 'Position Knights in front to protect ranged units' }
+                    { icon: '🐴', text: 'Horsemen are fast cavalry - use them to flank enemies' }
                 ]
             },
             {
@@ -1444,7 +1438,7 @@ class MenuScene extends Phaser.Scene {
                 title: 'UPGRADES & XP',
                 tips: [
                     { icon: '⬆️', text: 'Spend XP in Upgrades menu for permanent boosts' },
-                    { icon: '🔓', text: 'Unlock Knight (2 XP) for tankier frontline defense' },
+                    { icon: '🔓', text: 'Unlock Horseman (2 XP) for fast cavalry charges' },
                     { icon: '💪', text: 'Unit upgrades increase base HP and damage' },
                     { icon: '🔄', text: 'Reset upgrades costs 2 XP fee (refunds spent XP)' },
                     { icon: '⛏️', text: 'Mining Speed upgrade increases rate by 10%/level' }

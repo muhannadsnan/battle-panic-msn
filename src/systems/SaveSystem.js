@@ -34,7 +34,7 @@ class SaveSystem {
                 unitsSpawned: {
                     peasant: 0,
                     archer: 0,
-                    knight: 0
+                    horseman: 0
                 },
                 // Resource totals
                 totalGoldCollected: 0,
@@ -55,7 +55,7 @@ class SaveSystem {
             upgrades: {
                 peasant: { level: 1, unlocked: true },
                 archer: { level: 1, unlocked: true },
-                knight: { level: 1, unlocked: false }
+                horseman: { level: 1, unlocked: false }
             },
             castleUpgrades: {
                 health: 1,
@@ -269,7 +269,7 @@ class SaveSystem {
             }
             // Unlock costs
             if (data.upgrades[key].unlocked && !defaults.upgrades[key].unlocked) {
-                const unlockCosts = { knight: 2 };
+                const unlockCosts = { horseman: 2 };
                 spent += unlockCosts[key] || 0;
             }
         }
