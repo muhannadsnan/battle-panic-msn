@@ -328,14 +328,14 @@ class SaveSystem {
     }
 
     // Get XP divisor based on player rank - easier for new players, harder for veterans
-    // Recruit: wave/2 (dopamine boost!), Soldier: wave/5, ... Immortal: wave/31
+    // Recruit: wave/3, Soldier: wave/6, ... Immortal: wave/31
     getXPDivisorForRank(data) {
         const rankInfo = this.getRankInfo(data);
         const rankName = rankInfo.rank.name;
 
         const divisors = {
-            'Recruit': 2,    // Newcomer dopamine: 1 XP every 2 waves!
-            'Soldier': 5,
+            'Recruit': 3,
+            'Soldier': 6,
             'Warrior': 9,
             'Knight': 12,
             'Captain': 15,
