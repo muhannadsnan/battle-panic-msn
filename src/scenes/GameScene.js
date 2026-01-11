@@ -1462,12 +1462,14 @@ Lv.${level + 1}`;
             const typeKey = type.toLowerCase();
 
             // Cost increases with promotion level
-            // Gold tier (4+) spawns 2 units - cost reflects both units!
+            // Gold tier (4+) spawns 2 units - cost reflects both units (unless Elite Mastery unlocked)
             const promotionLevel = this.getPromotionLevel(type);
             const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
             const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-            let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
-            let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
+            const hasEliteDiscount = this.saveData.specialUpgrades?.eliteDiscount || false;
+            const costUnits = (hasEliteDiscount && unitsToSpawn === 2) ? 1 : unitsToSpawn;
+            let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * costUnits);
+            let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * costUnits);
 
             // Apply research cost for first spawn (rank 4+ only)
             const isFirstSpawn = !this.firstSpawnDone[typeKey];
@@ -1521,11 +1523,13 @@ Lv.${level + 1}`;
         const promotionBonus = this.getPromotionBonus(promotionLevel);
 
         // Cost increases with promotion level
-        // Gold tier (4+) spawns 2 units - cost reflects both units!
+        // Gold tier (4+) spawns 2 units - cost reflects both units (unless Elite Mastery unlocked)
         const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
         const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-        let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
-        let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
+        const hasEliteDiscount = this.saveData.specialUpgrades?.eliteDiscount || false;
+        const costUnits = (hasEliteDiscount && unitsToSpawn === 2) ? 1 : unitsToSpawn;
+        let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * costUnits);
+        let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * costUnits);
 
         // Research cost: first unit of each type costs double for rank 4+ (Knight and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);

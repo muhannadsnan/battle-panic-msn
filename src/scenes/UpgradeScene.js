@@ -41,6 +41,7 @@ class UpgradeScene extends Phaser.Scene {
         // Create upgrade panels
         this.createUnitUpgrades();
         this.createCastleUpgrades();
+        this.createSpecialUpgrades();
 
         // Back button
         this.createBackButton();
@@ -495,6 +496,90 @@ class UpgradeScene extends Phaser.Scene {
                 fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(maxText);
+        }
+    }
+
+    createSpecialUpgrades() {
+        // Special upgrades section - rare powerful upgrades
+        const y = 580;
+
+        // Check if already unlocked
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const hasEliteDiscount = specialUpgrades.eliteDiscount || false;
+
+        // Check requirements: all units must be level 5+
+        const peasantLevel = this.saveData.upgrades.peasant.level;
+        const archerLevel = this.saveData.upgrades.archer.level;
+        const horsemanLevel = this.saveData.upgrades.horseman.level;
+        const horsemanUnlocked = this.saveData.upgrades.horseman.unlocked;
+        const allUnitsLevel5 = peasantLevel >= 5 && archerLevel >= 5 && horsemanUnlocked && horsemanLevel >= 5;
+
+        const xp = this.saveData.xp || 0;
+        const eliteDiscountCost = 15; // High XP cost
+
+        // Create the elite discount card
+        const card = this.add.container(GAME_WIDTH / 2, y);
+
+        // Special golden background
+        const bg = this.add.rectangle(0, 0, 400, 80, hasEliteDiscount ? 0x2a4a2a : 0x3a3a2a);
+        bg.setStrokeStyle(3, hasEliteDiscount ? 0x88ff88 : 0xffd700);
+        card.add(bg);
+
+        // Crown icon and title
+        const title = this.add.text(0, -22, '👑 ELITE MASTERY', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#ffd700',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        card.add(title);
+
+        // Description
+        const desc = this.add.text(0, 0, 'Gold tier units spawn 2 for the cost of 1!', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        if (hasEliteDiscount) {
+            // Already unlocked
+            const unlockedText = this.add.text(0, 22, '✓ UNLOCKED', {
+                fontSize: '16px',
+                fontFamily: 'Arial',
+                color: '#88ff88',
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(unlockedText);
+        } else if (!allUnitsLevel5) {
+            // Requirements not met
+            const reqText = this.add.text(0, 22, `Requires: All units at Level 5 (Peasant L${peasantLevel}, Archer L${archerLevel}, Horseman ${horsemanUnlocked ? 'L' + horsemanLevel : '🔒'})`, {
+                fontSize: '12px',
+                fontFamily: 'Arial',
+                color: '#ff8888'
+            }).setOrigin(0.5);
+            card.add(reqText);
+        } else {
+            // Can purchase
+            const canAfford = xp >= eliteDiscountCost;
+            const btn = this.createCardButton(0, 24, `${eliteDiscountCost} XP`, () => {
+                this.purchaseEliteDiscount(eliteDiscountCost);
+            }, canAfford, 80, 26);
+            card.add(btn);
+        }
+    }
+
+    purchaseEliteDiscount(cost) {
+        if (this.saveData.xp >= cost) {
+            this.saveData.xp -= cost;
+            if (!this.saveData.specialUpgrades) {
+                this.saveData.specialUpgrades = {};
+            }
+            this.saveData.specialUpgrades.eliteDiscount = true;
+            saveSystem.save(this.saveData);
+
+            // Refresh scene
+            this.scene.restart();
         }
     }
 

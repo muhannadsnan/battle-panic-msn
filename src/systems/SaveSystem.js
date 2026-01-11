@@ -57,6 +57,10 @@ class SaveSystem {
                 archer: { level: 1, unlocked: true },
                 horseman: { level: 1, unlocked: false }
             },
+            // Special upgrades
+            specialUpgrades: {
+                eliteDiscount: false  // Gold tier spawns 2 units for the cost of 1
+            },
             castleUpgrades: {
                 health: 1,
                 armor: 1,
