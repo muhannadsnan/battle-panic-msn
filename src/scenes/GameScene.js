@@ -705,6 +705,33 @@ class GameScene extends Phaser.Scene {
         };
     }
 
+    getRepairCost() {
+        // Tiered repair cost based on damage state (at max level)
+        const castle = this.playerCastle;
+        if (!castle) return { gold: 30, wood: 50 };
+
+        const castleHP = castle.currentHealth;
+        const fenceHP = castle.fenceCurrentHealth || 0;
+        const fenceMax = castle.fenceMaxHealth || 0;
+        const fenceDestroyed = fenceMax > 0 && fenceHP <= 0;
+        const fenceDamaged = fenceMax > 0 && fenceHP < fenceMax && fenceHP > 0;
+
+        // Castle HP under 50 → expensive repair
+        if (castleHP < 50) {
+            return { gold: 200, wood: 150 };
+        }
+        // Fence destroyed → medium repair
+        if (fenceDestroyed) {
+            return { gold: 100, wood: 100 };
+        }
+        // Only fence damaged → cheap repair
+        if (fenceDamaged) {
+            return { gold: 30, wood: 50 };
+        }
+        // Everything full - still allow repair at minimal cost
+        return { gold: 30, wood: 50 };
+    }
+
     updateCastleSpinnerPosition() {
         // Calculate castle scale based on level (matches Castle.setLevel logic)
         const level = this.castleLevel || 1;
@@ -729,9 +756,9 @@ class GameScene extends Phaser.Scene {
         const currentLevel = this.castleLevel || 1;
         const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
 
-        // At max level, allow cheap repair instead of upgrade
+        // At max level, allow repair with tiered cost based on damage
         const cost = isMaxLevel
-            ? { gold: 50, wood: 30 }  // Cheap flat repair cost at max level
+            ? this.getRepairCost()
             : this.getCastleUpgradeCost(currentLevel);
         const canAfford = this.gold >= cost.gold && this.wood >= cost.wood;
 
