@@ -6,6 +6,8 @@ class UpgradeScene extends Phaser.Scene {
 
     create() {
         this.saveData = saveSystem.load();
+        this.currentPage = 0;
+        this.totalPages = 2;
 
         // Hide default cursor and create sword cursor
         this.input.setDefaultCursor('none');
@@ -38,22 +40,113 @@ class UpgradeScene extends Phaser.Scene {
             color: '#888888'
         }).setOrigin(0.5);
 
-        // Create upgrade panels
-        this.createUnitUpgrades();
-        this.createCastleUpgrades();
-        this.createSpecialUpgrades();
+        // Create page containers
+        this.pages = [];
+
+        // Page 1: Unit and Castle upgrades
+        this.pages[0] = this.add.container(0, 0);
+        this.createUnitUpgrades(this.pages[0]);
+        this.createCastleUpgrades(this.pages[0]);
+
+        // Page 2: Special upgrades
+        this.pages[1] = this.add.container(0, 0);
+        this.createSpecialUpgrades(this.pages[1]);
+        this.pages[1].setVisible(false);
+
+        // Navigation arrows
+        this.createPageNavigation();
 
         // Back button
         this.createBackButton();
     }
 
-    createUnitUpgrades() {
-        this.add.text(GAME_WIDTH / 2, 135, 'UNIT UPGRADES', {
+    createPageNavigation() {
+        // Page indicator
+        this.pageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 30, '', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        this.updatePageIndicator();
+
+        // Left arrow (previous page)
+        this.prevArrow = this.add.container(GAME_WIDTH / 2 - 100, GAME_HEIGHT - 30);
+        const prevBg = this.add.rectangle(0, 0, 50, 30, 0x444455);
+        prevBg.setStrokeStyle(2, 0x666688);
+        this.prevArrow.add(prevBg);
+        const prevText = this.add.text(0, 0, '◀', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#cccccc'
+        }).setOrigin(0.5);
+        this.prevArrow.add(prevText);
+
+        prevBg.setInteractive({ useHandCursor: true });
+        prevBg.on('pointerover', () => {
+            prevBg.setFillStyle(0x555566);
+            prevText.setColor('#ffffff');
+        });
+        prevBg.on('pointerout', () => {
+            prevBg.setFillStyle(0x444455);
+            prevText.setColor('#cccccc');
+        });
+        prevBg.on('pointerdown', () => this.changePage(-1));
+
+        // Right arrow (next page)
+        this.nextArrow = this.add.container(GAME_WIDTH / 2 + 100, GAME_HEIGHT - 30);
+        const nextBg = this.add.rectangle(0, 0, 50, 30, 0x444455);
+        nextBg.setStrokeStyle(2, 0x666688);
+        this.nextArrow.add(nextBg);
+        const nextText = this.add.text(0, 0, '▶', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#cccccc'
+        }).setOrigin(0.5);
+        this.nextArrow.add(nextText);
+
+        nextBg.setInteractive({ useHandCursor: true });
+        nextBg.on('pointerover', () => {
+            nextBg.setFillStyle(0x555566);
+            nextText.setColor('#ffffff');
+        });
+        nextBg.on('pointerout', () => {
+            nextBg.setFillStyle(0x444455);
+            nextText.setColor('#cccccc');
+        });
+        nextBg.on('pointerdown', () => this.changePage(1));
+
+        this.updateArrowVisibility();
+    }
+
+    changePage(direction) {
+        const newPage = this.currentPage + direction;
+        if (newPage >= 0 && newPage < this.totalPages) {
+            this.pages[this.currentPage].setVisible(false);
+            this.currentPage = newPage;
+            this.pages[this.currentPage].setVisible(true);
+            this.updatePageIndicator();
+            this.updateArrowVisibility();
+        }
+    }
+
+    updatePageIndicator() {
+        const pageNames = ['Units & Castle', 'Special'];
+        this.pageText.setText(`${pageNames[this.currentPage]} (${this.currentPage + 1}/${this.totalPages})`);
+    }
+
+    updateArrowVisibility() {
+        this.prevArrow.setAlpha(this.currentPage > 0 ? 1 : 0.3);
+        this.nextArrow.setAlpha(this.currentPage < this.totalPages - 1 ? 1 : 0.3);
+    }
+
+    createUnitUpgrades(pageContainer) {
+        const title = this.add.text(GAME_WIDTH / 2, 135, 'UNIT UPGRADES', {
             fontSize: '22px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
         }).setOrigin(0.5);
+        pageContainer.add(title);
 
         const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
         const startX = 195;
@@ -65,6 +158,7 @@ class UpgradeScene extends Phaser.Scene {
         unitTypes.forEach((type, index) => {
             const card = this.createUnitCard(startX + (index * spacing), y, type);
             this.upgradeCards.push(card);
+            pageContainer.add(card);
         });
     }
 
@@ -398,13 +492,14 @@ class UpgradeScene extends Phaser.Scene {
         container.add(bridle2);
     }
 
-    createCastleUpgrades() {
-        this.add.text(GAME_WIDTH / 2, 400, 'CASTLE UPGRADES', {
+    createCastleUpgrades(pageContainer) {
+        const title = this.add.text(GAME_WIDTH / 2, 400, 'CASTLE UPGRADES', {
             fontSize: '22px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
         }).setOrigin(0.5);
+        pageContainer.add(title);
 
         const upgrades = [
             { key: 'health', name: 'Castle Health', desc: '+20 HP, +20/wave at L2+', icon: '❤️' },
@@ -417,7 +512,8 @@ class UpgradeScene extends Phaser.Scene {
         const y = 500;
 
         upgrades.forEach((upgrade, index) => {
-            this.createCastleUpgradeCard(startX + (index * spacing), y, upgrade);
+            const card = this.createCastleUpgradeCard(startX + (index * spacing), y, upgrade);
+            pageContainer.add(card);
         });
     }
 
@@ -497,11 +593,29 @@ class UpgradeScene extends Phaser.Scene {
             }).setOrigin(0.5);
             card.add(maxText);
         }
+
+        return card;
     }
 
-    createSpecialUpgrades() {
+    createSpecialUpgrades(pageContainer) {
         // Special upgrades section - rare powerful upgrades
-        const y = 580;
+        // Title for page 2
+        const title = this.add.text(GAME_WIDTH / 2, 140, 'SPECIAL UPGRADES', {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            color: '#ffd700',
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        pageContainer.add(title);
+
+        const subtitle = this.add.text(GAME_WIDTH / 2, 175, 'Rare powerful upgrades with special requirements', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        pageContainer.add(subtitle);
 
         // Check if already unlocked
         const specialUpgrades = this.saveData.specialUpgrades || {};
@@ -517,56 +631,99 @@ class UpgradeScene extends Phaser.Scene {
         const xp = this.saveData.xp || 0;
         const eliteDiscountCost = 15; // High XP cost
 
-        // Create the elite discount card
-        const card = this.add.container(GAME_WIDTH / 2, y);
+        // Create the elite discount card - centered on the page
+        const card = this.add.container(GAME_WIDTH / 2, 300);
 
-        // Special golden background
-        const bg = this.add.rectangle(0, 0, 400, 80, hasEliteDiscount ? 0x2a4a2a : 0x3a3a2a);
-        bg.setStrokeStyle(3, hasEliteDiscount ? 0x88ff88 : 0xffd700);
+        // Special golden background - larger for featured upgrade
+        const bg = this.add.rectangle(0, 0, 500, 180, hasEliteDiscount ? 0x2a4a2a : 0x2a2a3a);
+        bg.setStrokeStyle(4, hasEliteDiscount ? 0x88ff88 : 0xffd700);
         card.add(bg);
 
-        // Crown icon and title
-        const title = this.add.text(0, -22, '👑 ELITE MASTERY', {
-            fontSize: '20px',
+        // Crown icon and title - bigger
+        const cardTitle = this.add.text(0, -60, '👑 ELITE MASTERY', {
+            fontSize: '32px',
             fontFamily: 'Arial',
             color: '#ffd700',
-            fontStyle: 'bold'
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 2
         }).setOrigin(0.5);
-        card.add(title);
+        card.add(cardTitle);
 
-        // Description
-        const desc = this.add.text(0, 0, 'Gold tier units spawn 2 for the cost of 1!', {
-            fontSize: '14px',
+        // Description - more prominent
+        const desc = this.add.text(0, -20, 'Gold tier units spawn 2 for the cost of 1!', {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#ffffff'
         }).setOrigin(0.5);
         card.add(desc);
 
+        // Flavor text
+        const flavor = this.add.text(0, 5, 'Master the art of elite unit production', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#aaaaaa',
+            fontStyle: 'italic'
+        }).setOrigin(0.5);
+        card.add(flavor);
+
         if (hasEliteDiscount) {
-            // Already unlocked
-            const unlockedText = this.add.text(0, 22, '✓ UNLOCKED', {
-                fontSize: '16px',
+            // Already unlocked - show big checkmark
+            const unlockedText = this.add.text(0, 50, '✓ UNLOCKED', {
+                fontSize: '24px',
                 fontFamily: 'Arial',
                 color: '#88ff88',
                 fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(unlockedText);
         } else if (!allUnitsLevel5) {
-            // Requirements not met
-            const reqText = this.add.text(0, 22, `Requires: All units at Level 5 (Peasant L${peasantLevel}, Archer L${archerLevel}, Horseman ${horsemanUnlocked ? 'L' + horsemanLevel : '🔒'})`, {
-                fontSize: '12px',
+            // Requirements not met - show detailed progress
+            const reqTitle = this.add.text(0, 35, 'Requirements:', {
+                fontSize: '14px',
                 fontFamily: 'Arial',
-                color: '#ff8888'
+                color: '#ffaa00',
+                fontStyle: 'bold'
             }).setOrigin(0.5);
-            card.add(reqText);
+            card.add(reqTitle);
+
+            const peasantStatus = peasantLevel >= 5 ? '✓' : '✗';
+            const archerStatus = archerLevel >= 5 ? '✓' : '✗';
+            const horsemanStatus = (horsemanUnlocked && horsemanLevel >= 5) ? '✓' : '✗';
+            const peasantColor = peasantLevel >= 5 ? '#88ff88' : '#ff8888';
+            const archerColor = archerLevel >= 5 ? '#88ff88' : '#ff8888';
+            const horsemanColor = (horsemanUnlocked && horsemanLevel >= 5) ? '#88ff88' : '#ff8888';
+
+            const req1 = this.add.text(-120, 58, `${peasantStatus} Peasant L${peasantLevel}/5`, {
+                fontSize: '13px', fontFamily: 'Arial', color: peasantColor
+            }).setOrigin(0.5);
+            const req2 = this.add.text(0, 58, `${archerStatus} Archer L${archerLevel}/5`, {
+                fontSize: '13px', fontFamily: 'Arial', color: archerColor
+            }).setOrigin(0.5);
+            const req3 = this.add.text(120, 58, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/5' : '🔒'}`, {
+                fontSize: '13px', fontFamily: 'Arial', color: horsemanColor
+            }).setOrigin(0.5);
+            card.add(req1);
+            card.add(req2);
+            card.add(req3);
         } else {
-            // Can purchase
+            // Can purchase - show big buy button
             const canAfford = xp >= eliteDiscountCost;
-            const btn = this.createCardButton(0, 24, `${eliteDiscountCost} XP`, () => {
+            const btn = this.createCardButton(0, 50, `Unlock: ${eliteDiscountCost} XP`, () => {
                 this.purchaseEliteDiscount(eliteDiscountCost);
-            }, canAfford, 80, 26);
+            }, canAfford, 140, 36);
             card.add(btn);
         }
+
+        pageContainer.add(card);
+
+        // "More coming soon" teaser
+        const comingSoon = this.add.text(GAME_WIDTH / 2, 450, '🔮 More special upgrades coming soon...', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#666666',
+            fontStyle: 'italic'
+        }).setOrigin(0.5);
+        pageContainer.add(comingSoon);
     }
 
     purchaseEliteDiscount(cost) {
