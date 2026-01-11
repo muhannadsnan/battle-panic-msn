@@ -1047,65 +1047,32 @@ Lv.${level + 1}`;
     }
 
     createMiniUnitIcon(container, unitType) {
-        // Expressive mini icons matching unit bar style
+        // Simple iconic mini icons
         switch (unitType) {
             case 'PEASANT':
-                // Body with belt
-                container.add(this.add.rectangle(0, 4, 9, 12, 0xD4A57A));
-                container.add(this.add.rectangle(0, 1, 9, 2, 0x6B4423)); // belt
-                // Head
-                container.add(this.add.rectangle(0, -6, 10, 9, 0xFFCBA4));
-                // Hair + headband
-                container.add(this.add.rectangle(0, -11, 9, 4, 0x5D4037));
-                container.add(this.add.rectangle(0, -9, 10, 2, 0xCC4444)); // red headband
-                // Eyes
-                container.add(this.add.rectangle(-2, -6, 3, 3, 0xFFFFFF));
-                container.add(this.add.rectangle(-2, -5, 2, 2, 0x4A3020));
-                container.add(this.add.rectangle(2, -6, 3, 3, 0xFFFFFF));
-                container.add(this.add.rectangle(2, -5, 2, 2, 0x4A3020));
-                // Pickaxe
-                container.add(this.add.rectangle(7, 0, 2, 14, 0x8B6B4A));
-                container.add(this.add.rectangle(7, -7, 10, 3, 0x708090));
+                // Simple sword icon
+                container.add(this.add.rectangle(0, -2, 4, 16, 0xC0C0C0)); // blade
+                container.add(this.add.rectangle(0, -10, 3, 4, 0xD0D0D0)); // tip
+                container.add(this.add.rectangle(0, 6, 10, 3, 0xFFD700)); // crossguard
+                container.add(this.add.rectangle(0, 10, 3, 6, 0x8B4513)); // handle
                 break;
             case 'ARCHER':
-                // Body with strap
-                container.add(this.add.rectangle(0, 4, 8, 12, 0x388E3C));
-                container.add(this.add.rectangle(-2, 2, 2, 10, 0x6B4423)); // strap
-                // Hood layers
-                container.add(this.add.rectangle(0, -5, 10, 7, 0x1B5E20));
-                container.add(this.add.rectangle(0, -10, 7, 5, 0x2E7D32));
-                container.add(this.add.rectangle(0, -13, 4, 3, 0x4CAF50));
-                // Face
-                container.add(this.add.rectangle(0, -3, 7, 5, 0xFFCBA4));
-                // Focused eyes
-                container.add(this.add.rectangle(-2, -3, 3, 2, 0xFFFFFF));
-                container.add(this.add.rectangle(-2, -3, 2, 2, 0x1B5E20));
-                container.add(this.add.rectangle(2, -3, 3, 2, 0xFFFFFF));
-                container.add(this.add.rectangle(2, -3, 2, 2, 0x1B5E20));
-                // Bow + arrow
-                container.add(this.add.rectangle(7, -5, 2, 8, 0x8B4513));
-                container.add(this.add.rectangle(7, 5, 2, 8, 0x8B4513));
-                container.add(this.add.rectangle(5, 0, 10, 2, 0x8B4513)); // arrow
+                // Simple bow icon
+                container.add(this.add.rectangle(4, -6, 3, 8, 0x8B4513)); // top bow
+                container.add(this.add.rectangle(5, 0, 3, 6, 0x9B5523)); // mid
+                container.add(this.add.rectangle(4, 6, 3, 8, 0x8B4513)); // bottom bow
+                container.add(this.add.rectangle(0, 0, 2, 16, 0xEEDDCC)); // string
+                container.add(this.add.rectangle(-4, 0, 10, 2, 0x8B6B4A)); // arrow
+                container.add(this.add.rectangle(-10, 0, 4, 3, 0xA0A0B0)); // arrowhead
                 break;
             case 'HORSEMAN':
-                // Horse body (brown)
-                container.add(this.add.rectangle(0, 6, 14, 8, 0x8B4513));
-                container.add(this.add.rectangle(-4, 12, 3, 6, 0x6B3503)); // back leg
-                container.add(this.add.rectangle(4, 12, 3, 6, 0x6B3503)); // front leg
-                // Horse tail (LEFT - horse faces right)
-                container.add(this.add.rectangle(-8, 8, 4, 6, 0x3B2503));
-                // Horse head (RIGHT - facing toward enemies)
-                container.add(this.add.rectangle(8, 2, 6, 5, 0x9B5523));
-                container.add(this.add.rectangle(10, 0, 3, 3, 0x8B4513)); // ear
-                // Rider torso
-                container.add(this.add.rectangle(0, -2, 8, 8, 0x4169E1));
-                // Rider head
-                container.add(this.add.rectangle(0, -8, 6, 6, 0xFFCBA4));
-                // Rider helmet
-                container.add(this.add.rectangle(0, -10, 7, 4, 0x708090));
-                // Sword (raised)
-                container.add(this.add.rectangle(8, -8, 3, 12, 0xC0C0C0)); // blade
-                container.add(this.add.rectangle(8, -2, 6, 2, 0xFFD700)); // crossguard
+                // Simple horse head icon (facing right)
+                container.add(this.add.rectangle(-2, 6, 8, 10, 0x8B4513)); // neck
+                container.add(this.add.rectangle(4, 0, 10, 8, 0x9B5523)); // head
+                container.add(this.add.rectangle(10, 2, 6, 5, 0x8B4513)); // snout
+                container.add(this.add.rectangle(2, -6, 4, 6, 0x7B3503)); // ear
+                container.add(this.add.rectangle(3, 0, 3, 3, 0x000000)); // eye
+                container.add(this.add.rectangle(-6, 0, 5, 8, 0x3B2503)); // mane
                 break;
         }
     }
