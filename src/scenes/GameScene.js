@@ -1540,22 +1540,21 @@ Lv.${level + 1}`;
             const type = unitTypes[index];
             const stats = UNIT_TYPES[type];
 
-            // Cost increases with promotion level to balance spam
-            // Gold tier (4+) spawns 2 units, so cost is doubled
+            // Cost increases with promotion level
+            // Gold tier (4+) spawns 2 units for the price of 1 (bonus!)
             const promotionLevel = this.getPromotionLevel(type);
             const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
-            const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-            const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
-            const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
+            const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
+            const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
 
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
 
-            // Update displayed costs based on promotion
+            // Update displayed costs based on promotion (normal cost, double spawn is bonus)
             button.updateCosts(totalGoldCost, totalWoodCost);
 
-            // Update affordable count display (pass multiplier for accurate count)
-            button.updateAffordableCount(this.gold, this.wood, costMultiplier * unitsToSpawn);
+            // Update affordable count display
+            button.updateAffordableCount(this.gold, this.wood, costMultiplier);
 
             // Update hover-to-spawn progress
             button.updateSpawnProgress(delta);
@@ -1592,13 +1591,14 @@ Lv.${level + 1}`;
         const promotionLevel = this.getPromotionLevel(unitType);
         const promotionBonus = this.getPromotionBonus(promotionLevel);
 
-        // Cost increases with promotion level, at gold tier (level 4+) spawn 2 units
+        // Cost increases with promotion level
+        // Gold tier (4+) spawns 2 units for the price of 1 (bonus!)
         const costMultiplier = this.getPromotionCostMultiplier(promotionLevel);
         const unitsToSpawn = promotionLevel >= 4 ? 2 : 1;
-        const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * unitsToSpawn);
-        const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * unitsToSpawn);
+        const totalGoldCost = Math.ceil(stats.goldCost * costMultiplier);
+        const totalWoodCost = Math.ceil(stats.woodCost * costMultiplier);
 
-        // Check costs (including double cost for max promotion)
+        // Check costs (normal cost, double spawn is bonus)
         if (this.gold < totalGoldCost) {
             this.showMessage('Not enough gold!', '#ff4444');
             return;
