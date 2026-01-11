@@ -23,7 +23,7 @@ battle-panic-msn/
 │   ├── config/
 │   │   └── GameConfig.js    # All game constants and balance values
 │   ├── entities/
-│   │   ├── Unit.js          # Player units (Peasant, Archer, Knight)
+│   │   ├── Unit.js          # Player units (Peasant, Archer, Horseman + elite forms)
 │   │   ├── Enemy.js         # Enemy units (Goblin, Orc, Skeleton, Dragon, etc.)
 │   │   ├── Castle.js        # Player's castle with health
 │   │   └── Projectile.js    # Arrows, magic bolts, fireballs
@@ -90,9 +90,9 @@ BootScene → PreloadScene → MenuScene
 ### Units (Player)
 | Unit | Cost | Role | Special |
 |------|------|------|---------|
-| Peasant | 10g/10w | Cheap melee | Fast spawn |
-| Archer | 25g/20w | Ranged DPS | Stays behind |
-| Knight | 60g/40w | Tank | High HP, front line |
+| Peasant | 10g/10w | Cheap melee | → Knight at gold tier (25% armor) |
+| Archer | 25g/20w | Ranged DPS | → Robinhood at gold tier (2x attack speed, 15% armor) |
+| Horseman | 60g/40w | Fast cavalry | 2x speed, armored → Lancelot at gold tier |
 
 ### Enemies
 - **Goblin** (Wave 1+) - Fast, weak
@@ -108,7 +108,7 @@ BootScene → PreloadScene → MenuScene
 ### Upgrades (Permanent)
 - Unit upgrades: Increase HP and damage per level
 - Castle upgrades: Health, Armor, Gold Income
-- Unlock new units: Knight (2 XP)
+- Unlock new units: Horseman (2 XP)
 - Reset upgrades costs 2 XP + 25% of current XP (refunds spent XP minus fee)
 
 ---
@@ -139,4 +139,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2025*
+*Last updated: January 2026 (v1.9.0)*

@@ -20,7 +20,7 @@ new Unit(scene, x, y, unitType, upgradeLevel = 1)
 #### Properties
 | Property | Type | Description |
 |----------|------|-------------|
-| `unitType` | string | PEASANT, ARCHER, KNIGHT, WIZARD, GIANT |
+| `unitType` | string | PEASANT, ARCHER, HORSEMAN |
 | `upgradeLevel` | number | Current upgrade level (1-5) |
 | `maxHealth` | number | Maximum HP |
 | `currentHealth` | number | Current HP |
@@ -50,9 +50,9 @@ Main update loop:
 
 **`assignDefensePosition()`**
 Assigns where unit stands when idle:
-- Ranged units (Archer): Behind defense line
-- Melee units (Peasant): Middle ground
-- Tanks (Knight): Front line
+- Ranged units (Archer/Robinhood): Behind defense line
+- Melee units (Peasant/Knight): Middle ground
+- Cavalry (Horseman/Lancelot): Front line, charging position
 
 **`attack(time)`**
 Performs attack:
@@ -71,7 +71,12 @@ Reduces health, updates health bar, plays hit sound, triggers death if HP <= 0
 Each unit type has a detailed sprite made of rectangles:
 - `createPeasant()` - Farmer with pitchfork
 - `createArcher()` - Hooded ranger with bow
-- `createKnight()` - Armored warrior with sword/shield
+- `createHorseman()` - Mounted cavalry with sword
+
+#### Elite Unit Sprites (Gold Tier Level 4+)
+- `createKnightVisual()` - Blue armored warrior with shield and epic plume (Peasant → Knight)
+- `createRobinhoodVisual()` - Dark green hood, feathered cap, golden bow (Archer → Robinhood)
+- `createLancelotVisual()` - White stallion, golden armor, red cape, Excalibur (Horseman → Lancelot)
 
 #### Animation System
 Units have animated body parts stored in `this.bodyParts`:
@@ -100,7 +105,16 @@ Units get promoted based on how many of that type have been spawned in the curre
 - Attack Speed (faster by bonus)
 - Range (Archers only: +10% per promotion level)
 
-At gold tier (level 4+), units **spawn 2 at a time**! Max promotion (level 6) gives **3x stats** (cost 4x).
+At gold tier (level 4+), units **spawn 2 at a time** and **transform into elite versions**!
+
+**Elite Transformations:**
+| Base Unit | Elite Form | Bonuses |
+|-----------|------------|---------|
+| Peasant | **Knight** | 25% damage reduction from all attacks |
+| Archer | **Robinhood** | 2x attack speed, 15% damage reduction |
+| Horseman | **Lancelot** | +25% speed, +20% damage, enhanced armor (50% melee, 30% ranged) |
+
+Max promotion (level 6) gives **3x stats** (cost 4x).
 Archers at max promotion get **+60% range**.
 
 **Visual Indicators:**

@@ -35,17 +35,27 @@ Located in `UNIT_TYPES` object. Each unit has:
 
 ### Unit Stats Table
 
-| Unit | Gold | Wood | HP | DMG | Speed | Atk Speed | Range | Type |
-|------|------|------|-----|-----|-------|-----------|-------|------|
-| Peasant | 10 | 10 | 14 | 4 | 88 | 1000ms | 30 | Melee |
-| Archer | 25 | 20 | 18 | 6 | 66 | 1500ms | 200 | Ranged |
-| Knight | 60 | 40 | 43 | 11 | 61 | 1200ms | 35 | Melee |
+| Unit | Gold | Wood | HP | DMG | Speed | Atk Speed | Range | Type | Armor |
+|------|------|------|-----|-----|-------|-----------|-------|------|-------|
+| Peasant | 10 | 10 | 14 | 4 | 88 | 1000ms | 30 | Melee | - |
+| Archer | 25 | 20 | 18 | 6 | 66 | 1500ms | 200 | Ranged | - |
+| Horseman | 60 | 40 | 35 | 14 | 176 | 1400ms | 40 | Melee | -40% melee, -20% ranged |
+
+### Elite Units (Gold Tier, Level 4+)
+
+At gold tier promotion, units transform into elite versions with bonus abilities:
+
+| Elite | Base | Atk Speed | Speed | Damage | Armor | Visual |
+|-------|------|-----------|-------|--------|-------|--------|
+| **Knight** | Peasant | same | same | same | **-25% all** | Blue armor, shield, plume |
+| **Robinhood** | Archer | **2x faster** | same | same | **-15% all** | Green hood, feathered cap, golden bow |
+| **Lancelot** | Horseman | same | **+25%** | **+20%** | **-50% melee, -30% ranged** | White stallion, gold armor, Excalibur |
 
 ### Unit Roles
 
-- **Peasant**: Cheap frontline, fast to spawn, expendable
-- **Archer**: Back-line DPS, stays behind melee units
-- **Knight**: Tank, forms front line, high survivability
+- **Peasant/Knight**: Cheap frontline, fast to spawn, expendable → armored warrior at gold tier
+- **Archer/Robinhood**: Back-line DPS, stays behind melee units → rapid-fire master at gold tier
+- **Horseman/Lancelot**: Fast cavalry, charges enemies, armored → legendary knight at gold tier
 
 ---
 
@@ -169,7 +179,7 @@ const UPGRADE_CONFIG = {
 - ... continues to level 10
 
 ### Unit Unlock Costs (XP)
-- Knight: 2 XP
+- Horseman: 2 XP
 
 ### Exponential Stats System
 Upgrades now use **exponential growth** - each level doubles the previous bonus!
