@@ -99,16 +99,26 @@ class Enemy extends Phaser.GameObjects.Container {
         const finalScale = Math.min(uncappedScale, 5.0);  // Cap at 500%
         this.currentScale = finalScale;
 
-        // Spawn effect
+        // Spawn effect - health bar stays fixed size by counter-scaling
         this.setAlpha(0);
         this.setScale(0.3);
+        // Pre-scale health bar to counter the initial 0.3 scale
+        if (this.healthBar) {
+            this.healthBar.setScale(1 / 0.3);
+        }
         scene.tweens.add({
             targets: this,
             alpha: 1,
             scaleX: finalScale,
             scaleY: finalScale,
             duration: 300,
-            ease: 'Back.easeOut'
+            ease: 'Back.easeOut',
+            onUpdate: () => {
+                // Keep health bar at consistent size during scale animation
+                if (this.healthBar && this.scaleX > 0) {
+                    this.healthBar.setScale(1 / this.scaleX);
+                }
+            }
         });
     }
 
