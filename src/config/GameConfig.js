@@ -31,6 +31,9 @@ const UNIT_TYPES = {
         attackSpeed: 1500,
         range: 200,
         isRanged: true,
+        // Gold tier (lvl 4+) becomes Robinhood
+        robinhoodAttackSpeedMultiplier: 0.5,  // Attacks 2x faster
+        robinhoodArmor: 0.15,                  // 15% damage reduction (thick cloak)
         color: 0x228B22,
         description: 'Ranged, decent damage'
     },
@@ -46,6 +49,11 @@ const UNIT_TYPES = {
         range: 40,
         infantryDamageReduction: 0.4,  // Takes 40% less damage from melee (armor + shield)
         rangedDamageReduction: 0.2,    // Takes 20% less damage from ranged (helmet + speed)
+        // Gold tier (lvl 4+) becomes Lancelot (legendary knight)
+        lancelotSpeedBonus: 1.25,             // 25% faster
+        lancelotDamageBonus: 1.2,             // 20% more damage
+        lancelotMeleeArmor: 0.5,              // 50% melee reduction (up from 40%)
+        lancelotRangedArmor: 0.3,             // 30% ranged reduction (up from 20%)
         color: 0x8B4513,
         description: 'Fast cavalry, armored'
     }

@@ -43,21 +43,29 @@ class CombatSystem {
 
         let finalDamage = damage;
 
-        // Horseman armor: takes reduced damage from all attackers
+        // Horseman/Lancelot armor
         if (target.unitType === 'HORSEMAN') {
+            const isLancelot = target.promotionLevel >= 4;
             if (attacker.isRanged) {
-                // 20% reduction from ranged (helmet + speed)
-                const reduction = UNIT_TYPES.HORSEMAN.rangedDamageReduction || 0;
+                const reduction = isLancelot
+                    ? (UNIT_TYPES.HORSEMAN.lancelotRangedArmor || 0.3)
+                    : (UNIT_TYPES.HORSEMAN.rangedDamageReduction || 0);
                 finalDamage = Math.floor(damage * (1 - reduction));
             } else {
-                // 40% reduction from melee (armor + shield)
-                const reduction = UNIT_TYPES.HORSEMAN.infantryDamageReduction || 0;
+                const reduction = isLancelot
+                    ? (UNIT_TYPES.HORSEMAN.lancelotMeleeArmor || 0.5)
+                    : (UNIT_TYPES.HORSEMAN.infantryDamageReduction || 0);
                 finalDamage = Math.floor(damage * (1 - reduction));
             }
         }
         // Knight armor: gold tier peasants (lvl 4+) get 25% damage reduction
         else if (target.unitType === 'PEASANT' && target.promotionLevel >= 4) {
             const reduction = UNIT_TYPES.PEASANT.knightArmor || 0;
+            finalDamage = Math.floor(damage * (1 - reduction));
+        }
+        // Robinhood armor: gold tier archers (lvl 4+) get 15% damage reduction
+        else if (target.unitType === 'ARCHER' && target.promotionLevel >= 4) {
+            const reduction = UNIT_TYPES.ARCHER.robinhoodArmor || 0;
             finalDamage = Math.floor(damage * (1 - reduction));
         }
 
