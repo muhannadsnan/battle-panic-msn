@@ -133,7 +133,12 @@ class Unit extends Phaser.GameObjects.Container {
 
         switch (unitType.toUpperCase()) {
             case 'PEASANT':
-                this.createPeasant(scene);
+                // Gold tier peasants (level 4+) become knights visually!
+                if (this.promotionLevel >= 4) {
+                    this.createKnightVisual(scene);
+                } else {
+                    this.createPeasant(scene);
+                }
                 break;
             case 'ARCHER':
                 this.createArcher(scene);
@@ -371,6 +376,76 @@ class Unit extends Phaser.GameObjects.Container {
         // Pennant
         this.bodyParts.weapon.add(scene.add.rectangle(4, -18, 10, 8, 0xFF4444));
         this.bodyParts.weapon.add(scene.add.rectangle(6, -18, 6, 6, 0xFF6666));
+        this.bodyParts.torso.add(this.bodyParts.weapon);
+
+        this.spriteContainer.add(this.bodyParts.torso);
+        this.mainSprite = body;
+    }
+
+    createKnightVisual(scene) {
+        // PROMOTED PEASANT becomes KNIGHT - heroic armored warrior!
+        // Shadow
+        this.spriteContainer.add(scene.add.rectangle(0, 32, 28, 6, 0x000000, 0.2));
+
+        // Animated legs
+        this.bodyParts.leftLeg = scene.add.container(-6, 22);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 10, 16, 0x5080C0));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(1, 0, 6, 12, 0x60A0E0)); // highlight
+        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 8, 12, 6, 0x4070B0)); // boot
+        this.spriteContainer.add(this.bodyParts.leftLeg);
+
+        this.bodyParts.rightLeg = scene.add.container(6, 22);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 10, 16, 0x5080C0));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 8, 12, 6, 0x4070B0)); // boot
+        this.spriteContainer.add(this.bodyParts.rightLeg);
+
+        // Body container
+        this.bodyParts.torso = scene.add.container(0, 0);
+
+        // Body - heroic blue armor
+        const body = scene.add.rectangle(0, 4, 24, 24, 0x4488DD);
+        this.bodyParts.torso.add(body);
+        this.bodyParts.torso.add(scene.add.rectangle(0, 6, 20, 18, 0x55AAEE)); // highlight
+        this.bodyParts.torso.add(scene.add.rectangle(-9, 4, 5, 20, 0x3366AA)); // shade
+        // Golden chest emblem
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 10, 10, 0xFFD700));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 6, 6, 0xFFEE44)); // inner shine
+
+        // Shield arm (animated)
+        this.bodyParts.leftArm = scene.add.container(-18, 6);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 14, 26, 0x4488DD)); // shield
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 12, 22, 0x55AAEE)); // highlight
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, -2, 8, 8, 0xFFD700)); // emblem
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, -2, 4, 4, 0xFFEE66)); // shine
+        this.bodyParts.torso.add(this.bodyParts.leftArm);
+
+        // Sword arm (animated)
+        this.bodyParts.rightArm = scene.add.container(13, 8);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 6, 14, 0x5080C0)); // arm
+        this.bodyParts.torso.add(this.bodyParts.rightArm);
+
+        // AWESOME Helmet
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 22, 18, 0x6090D0));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 18, 14, 0x70A0E0)); // highlight
+        // Visor (shows brave eyes inside)
+        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 16, 8, 0x303030));
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -12, 6, 5, 0x4488FF)); // left eye glow
+        this.bodyParts.torso.add(scene.add.rectangle(4, -12, 6, 5, 0x4488FF)); // right eye glow
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -13, 3, 2, 0xAADDFF)); // shine
+        this.bodyParts.torso.add(scene.add.rectangle(4, -13, 3, 2, 0xAADDFF));
+        // Epic plume
+        this.bodyParts.torso.add(scene.add.rectangle(0, -24, 6, 12, 0xFF4444));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -30, 5, 8, 0xFF6666));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -34, 4, 6, 0xFF8888)); // tip
+
+        // SHINY Sword (in weapon container)
+        this.bodyParts.weapon = scene.add.container(20, -8);
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 6, 32, 0xDDDDDD)); // blade
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 2, 4, 28, 0xFFFFFF)); // shine
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -14, 4, 6, 0xFFFFFF)); // tip shine
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 18, 14, 6, 0xC49A4A)); // crossguard
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 18, 10, 4, 0xD4AA5A)); // highlight
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 24, 6, 6, 0xFFD700)); // pommel
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);
