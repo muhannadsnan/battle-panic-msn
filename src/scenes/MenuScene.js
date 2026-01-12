@@ -56,10 +56,10 @@ class MenuScene extends Phaser.Scene {
         });
 
         // Subtitle
-        this.add.text(width / 2, 170, 'Defend Your Castle!', {
-            fontSize: '24px',
+        this.add.text(width / 2, 170, 'A Battle Panic MSn game, built with Phaser 3', {
+            fontSize: '18px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#aaaaaa'
         }).setOrigin(0.5);
 
         // Load save data for stats display
@@ -115,8 +115,8 @@ class MenuScene extends Phaser.Scene {
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
 
-        // Login/Profile button (top right corner)
-        this.createLoginButton(width - 50, 50);
+        // Login/Profile button (under gear, left side)
+        this.createLoginButton(40, 110);
     }
 
     createButton(x, y, text, callback) {
@@ -1400,12 +1400,12 @@ class MenuScene extends Phaser.Scene {
         dialog.add(overlay);
 
         // Panel background
-        const panel = this.add.rectangle(0, 0, 320, 280, 0x2a2a3e);
+        const panel = this.add.rectangle(0, 0, 320, 220, 0x2a2a3e);
         panel.setStrokeStyle(3, 0x4169E1);
         dialog.add(panel);
 
         // Title
-        const title = this.add.text(0, -100, 'ACCOUNT', {
+        const title = this.add.text(0, -80, 'ACCOUNT', {
             fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -1416,36 +1416,22 @@ class MenuScene extends Phaser.Scene {
         dialog.add(title);
 
         // User status
-        const statusText = this.add.text(0, -60, 'Guest Account', {
+        const isLoggedIn = supabaseClient && supabaseClient.isLoggedIn();
+        const statusText = this.add.text(0, -40, isLoggedIn ? supabaseClient.getDisplayName() : 'Guest Account', {
             fontSize: '16px',
             fontFamily: 'Arial',
-            color: '#888888'
+            color: isLoggedIn ? '#4ade80' : '#888888'
         }).setOrigin(0.5);
         dialog.add(statusText);
 
-        // Logout button (placeholder - greyed out)
-        const logoutBtn = this.createSettingsButton(0, -15, 'Sign In / Sign Up', 0x333333, () => {
-            // Placeholder - will be implemented with auth
-        }, true); // disabled
-        dialog.add(logoutBtn);
-
-        // Coming soon label for sign in
-        const comingSoon = this.add.text(0, -35, 'Coming Soon', {
-            fontSize: '12px',
-            fontFamily: 'Arial',
-            fontStyle: 'italic',
-            color: '#ffaa00'
-        }).setOrigin(0.5);
-        dialog.add(comingSoon);
-
         // Delete Account / Reset Progress button
-        const deleteBtn = this.createSettingsButton(0, 45, 'Delete Account', 0x8B0000, () => {
+        const deleteBtn = this.createSettingsButton(0, -5, 'Delete Account', 0x8B0000, () => {
             this.confirmDeleteAccount(dialog);
         }, false);
         dialog.add(deleteBtn);
 
         // Warning text
-        const warning = this.add.text(0, 80, 'Resets all progress to Rank 0', {
+        const warning = this.add.text(0, 30, 'Resets all progress to Rank 0', {
             fontSize: '12px',
             fontFamily: 'Arial',
             color: '#ff6666'
@@ -1453,7 +1439,7 @@ class MenuScene extends Phaser.Scene {
         dialog.add(warning);
 
         // Close button
-        const closeBtn = this.add.text(0, 115, 'Close', {
+        const closeBtn = this.add.text(0, 70, 'Close', {
             fontSize: '18px',
             fontFamily: 'Arial',
             color: '#888888',
