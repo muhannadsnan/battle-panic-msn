@@ -1024,7 +1024,7 @@ Lv.${level + 1}`;
         };
 
         unitTypes.forEach((type, index) => {
-            const x = index * 70; // More space between counts
+            const x = index * 95; // Spread out more
 
             // Mini unit icon (offset down a bit since icons extend upward) - x2 scale
             const iconContainer = this.add.container(x, 8);
@@ -1033,7 +1033,7 @@ Lv.${level + 1}`;
             this.unitCountContainer.add(iconContainer);
 
             // Count text next to icon
-            const countText = this.add.text(x + 22, 0, '0', {
+            const countText = this.add.text(x + 24, 0, '0', {
                 fontSize: '26px',  // Same as resources
                 fontFamily: 'Arial',
                 fontStyle: 'bold',

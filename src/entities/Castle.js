@@ -72,21 +72,21 @@ class Castle extends Phaser.GameObjects.Container {
     createLevelBadge(scene) {
         const badge = scene.add.container(0, 0);  // Center of castle
 
-        // Badge background
-        const bg = scene.add.rectangle(0, 0, 28, 28, 0x2a2a4e);
+        // Badge background (larger)
+        const bg = scene.add.rectangle(0, 0, 40, 40, 0x2a2a4e);
         badge.add(bg);
 
         // Inner color
-        const inner = scene.add.rectangle(0, 0, 24, 24, 0x4a4a8e);
+        const inner = scene.add.rectangle(0, 0, 34, 34, 0x4a4a8e);
         badge.add(inner);
 
-        // Level text (x2 bigger)
+        // Level text (larger)
         this.levelText = scene.add.text(0, 0, `${this.level}`, {
-            fontSize: '28px',
+            fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700'
-        }).setOrigin(0.5).setAlpha(0.7);
+        }).setOrigin(0.5).setAlpha(0.8);
         badge.add(this.levelText);
 
         return badge;
@@ -862,7 +862,7 @@ class Castle extends Phaser.GameObjects.Container {
             this.target,
             {
                 damage: this.arrowDamage,
-                speed: 1000,  // 2x faster arrows
+                speed: 2000,  // Fast castle arrows
                 color: 0xFFAA00,
                 isPlayerProjectile: true,
                 projectileType: 'arrow'
