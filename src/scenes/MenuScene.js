@@ -36,8 +36,15 @@ class MenuScene extends Phaser.Scene {
             });
         }
 
+        // Subtitle at very top
+        this.add.text(width / 2, 20, 'A Battle Panic MSn game, built with Phaser 3', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#666666'
+        }).setOrigin(0.5);
+
         // Title
-        const title = this.add.text(width / 2, 100, 'BATTLE PANIC', {
+        const title = this.add.text(width / 2, 85, 'BATTLE PANIC', {
             fontSize: '64px',
             fontFamily: 'Arial',
             color: '#ff6b6b',
@@ -48,34 +55,26 @@ class MenuScene extends Phaser.Scene {
         // Animate title
         this.tweens.add({
             targets: title,
-            y: 110,
+            y: 95,
             duration: 2000,
             ease: 'Sine.easeInOut',
             yoyo: true,
             repeat: -1
         });
 
-        // Subtitle
-        this.add.text(width / 2, 170, 'A Battle Panic MSn game, built with Phaser 3', {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            color: '#888888'
-        }).setOrigin(0.5);
-
         // Load save data for stats display
         const saveData = saveSystem.load();
         const rankInfo = saveSystem.getRankInfo(saveData);
 
-        // Rank display
-        this.createRankDisplay(width / 2, 250, rankInfo);
-
-        // Stats display - under subtitle in white, larger for mobile
-        this.add.text(width / 2, 200, `Highest Wave: ${saveData.highestWave}`, {
-            fontSize: '24px',
+        // Stats display - Highest Wave
+        this.add.text(width / 2, 165, `Highest Wave: ${saveData.highestWave}`, {
+            fontSize: '22px',
             fontFamily: 'Arial',
-            fontStyle: 'bold',
             color: '#ffffff'
         }).setOrigin(0.5);
+
+        // Rank display - with more spacing below stats
+        this.createRankDisplay(width / 2, 240, rankInfo);
 
         // Play button - larger spacing for touch
         this.createButton(width / 2, 355, 'PLAY', () => {
@@ -605,11 +604,12 @@ class MenuScene extends Phaser.Scene {
             container.add(statusDot);
         }
 
-        // Label below - larger
-        const label = this.add.text(0, 38, isLoggedIn ? 'Profile' : 'Login', {
-            fontSize: '14px',
+        // Label below - show name if logged in, otherwise "Login"
+        const labelText = isLoggedIn ? supabaseClient.getDisplayName() : 'Login';
+        const label = this.add.text(0, 38, labelText, {
+            fontSize: '12px',
             fontFamily: 'Arial',
-            color: '#888888'
+            color: isLoggedIn ? '#4ade80' : '#888888'
         }).setOrigin(0.5);
         container.add(label);
 
@@ -626,7 +626,7 @@ class MenuScene extends Phaser.Scene {
 
         hitArea.on('pointerout', () => {
             bg.setFillStyle(isLoggedIn ? 0x4ade80 : 0x4a4a8e);
-            label.setColor('#888888');
+            label.setColor(isLoggedIn ? '#4ade80' : '#888888');
         });
 
         hitArea.on('pointerdown', () => {
@@ -1439,18 +1439,17 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         dialog.add(warning);
 
-        // Close button
-        const closeBtn = this.add.text(0, 70, 'Close', {
-            fontSize: '18px',
+        // Close button (X in top-right corner)
+        const closeBtn = this.add.text(145, -95, '✕', {
+            fontSize: '24px',
             fontFamily: 'Arial',
-            color: '#888888',
-            stroke: '#000000',
-            strokeThickness: 2
+            fontStyle: 'bold',
+            color: '#888888'
         }).setOrigin(0.5);
         closeBtn.setInteractive({ useHandCursor: true });
         dialog.add(closeBtn);
 
-        closeBtn.on('pointerover', () => closeBtn.setColor('#ffffff'));
+        closeBtn.on('pointerover', () => closeBtn.setColor('#ff6666'));
         closeBtn.on('pointerout', () => closeBtn.setColor('#888888'));
         closeBtn.on('pointerdown', () => dialog.destroy());
 

@@ -213,13 +213,26 @@ class AuthScene extends Phaser.Scene {
         const user = supabaseClient.getUser();
         const displayName = supabaseClient.getDisplayName();
 
-        // Panel background - more compact
-        const panelBg = this.add.rectangle(0, 0, 350, 250, 0x1a1a2e);
+        // Panel background
+        const panelBg = this.add.rectangle(0, 0, 380, 300, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
-        // Title with user icon
-        const title = this.add.text(0, -95, '👤 Profile', {
+        // Close button (X in top-right corner)
+        const closeBtn = this.add.text(175, -135, '✕', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#888888'
+        }).setOrigin(0.5);
+        closeBtn.setInteractive({ useHandCursor: true });
+        this.panelContainer.add(closeBtn);
+        closeBtn.on('pointerover', () => closeBtn.setColor('#ff6666'));
+        closeBtn.on('pointerout', () => closeBtn.setColor('#888888'));
+        closeBtn.on('pointerdown', () => this.goBack());
+
+        // Title
+        const title = this.add.text(0, -115, '👤 Profile', {
             fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -227,48 +240,161 @@ class AuthScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.panelContainer.add(title);
 
-        // Display name - inlined
-        const nameRow = this.add.text(0, -50, `Name: ${displayName}`, {
+        // Display name row with edit button
+        const nameLabel = this.add.text(-80, -70, 'Name:', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0, 0.5);
+        this.panelContainer.add(nameLabel);
+
+        this.displayNameText = this.add.text(80, -70, displayName, {
             fontSize: '18px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffd700'
-        }).setOrigin(0.5);
-        this.panelContainer.add(nameRow);
+        }).setOrigin(1, 0.5);
+        this.panelContainer.add(this.displayNameText);
 
-        // Email - inlined
-        const emailRow = this.add.text(0, -20, `Email: ${user?.email || 'Unknown'}`, {
+        // Edit name button
+        const editBtn = this.add.text(110, -70, '✏️', {
+            fontSize: '18px'
+        }).setOrigin(0, 0.5);
+        editBtn.setInteractive({ useHandCursor: true });
+        this.panelContainer.add(editBtn);
+        editBtn.on('pointerdown', () => this.showEditNameDialog());
+
+        // Email row
+        const emailLabel = this.add.text(-80, -35, 'Email:', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0, 0.5);
+        this.panelContainer.add(emailLabel);
+
+        const emailText = this.add.text(110, -35, user?.email || 'Unknown', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
-        }).setOrigin(0.5);
-        this.panelContainer.add(emailRow);
+        }).setOrigin(1, 0.5);
+        this.panelContainer.add(emailText);
 
         // Cloud sync status
-        this.syncStatusText = this.add.text(0, 15, '☁️ Cloud Save: Ready', {
+        this.syncStatusText = this.add.text(0, 5, '☁️ Cloud Save: Ready', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#4ade80'
         }).setOrigin(0.5);
         this.panelContainer.add(this.syncStatusText);
 
-        // Buttons row - horizontal layout
-        // Back button (left) - arrow icon only
-        const backBtn = this.createIconButton(-110, 70, '◀', () => {
-            this.goBack();
-        }, 0x555555);
-        this.panelContainer.add(backBtn);
-
-        // Sync button (center) - cloud sync icon
-        const syncBtn = this.createIconButton(0, 70, '☁️', async () => {
+        // Buttons with clear labels
+        // Sync button
+        const syncBtn = this.createButton(-90, 55, '↻ Sync', async () => {
             await this.syncSaveData();
-        }, 0x3498db);
+        }, 0x3498db, 100, 40);
         this.panelContainer.add(syncBtn);
 
-        // Logout button (right) - compact
-        const logoutBtn = this.createButton(95, 70, '🚪', async () => {
+        // Logout button
+        const logoutBtn = this.createButton(90, 55, 'Logout', async () => {
             await this.logout();
-        }, 0xc0392b, 50, 40);
+        }, 0x666666, 100, 40);
         this.panelContainer.add(logoutBtn);
+
+        // Back button at bottom
+        const backBtn = this.createButton(0, 110, '← Back to Menu', () => {
+            this.goBack();
+        }, 0x444444, 180, 40);
+        this.panelContainer.add(backBtn);
+    }
+
+    showEditNameDialog() {
+        // Create overlay
+        const overlay = this.add.rectangle(0, 0, 400, 320, 0x000000, 0.9);
+        overlay.setInteractive();
+        this.panelContainer.add(overlay);
+
+        const editPanel = this.add.container(0, 0);
+        this.panelContainer.add(editPanel);
+
+        // Panel background
+        const bg = this.add.rectangle(0, 0, 300, 150, 0x2a2a3e);
+        bg.setStrokeStyle(2, 0x4ade80);
+        editPanel.add(bg);
+
+        // Title
+        const title = this.add.text(0, -50, 'Edit Display Name', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+        editPanel.add(title);
+
+        // Create HTML input
+        this.createNameInput();
+
+        // Save button
+        const saveBtn = this.createButton(-60, 40, 'Save', async () => {
+            const newName = this.nameInput?.value?.trim();
+            if (newName && newName.length > 0) {
+                const result = await supabaseClient.updateDisplayName(newName);
+                if (result.success) {
+                    this.displayNameText.setText(newName);
+                    this.showMessage('Name updated!', '#4ade80');
+                } else {
+                    this.showMessage('Failed to update name', '#ff6b6b');
+                }
+            }
+            this.removeNameInput();
+            overlay.destroy();
+            editPanel.destroy();
+        }, 0x4ade80, 80, 35);
+        editPanel.add(saveBtn);
+
+        // Cancel button
+        const cancelBtn = this.createButton(60, 40, 'Cancel', () => {
+            this.removeNameInput();
+            overlay.destroy();
+            editPanel.destroy();
+        }, 0x666666, 80, 35);
+        editPanel.add(cancelBtn);
+    }
+
+    createNameInput() {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'name-input';
+        input.value = supabaseClient.getDisplayName() || '';
+        input.maxLength = 20;
+        input.style.cssText = `
+            position: absolute;
+            width: 220px;
+            height: 30px;
+            font-size: 16px;
+            padding: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #333333;
+            text-align: center;
+        `;
+
+        const canvas = this.game.canvas;
+        const rect = canvas.getBoundingClientRect();
+        input.style.left = `${rect.left + rect.width / 2 - 120}px`;
+        input.style.top = `${rect.top + rect.height / 2 - 15}px`;
+
+        document.body.appendChild(input);
+        this.nameInput = input;
+        input.focus();
+        input.select();
+    }
+
+    removeNameInput() {
+        if (this.nameInput) {
+            this.nameInput.remove();
+            this.nameInput = null;
+        }
     }
 
     createButton(x, y, text, callback, bgColor = 0x4169E1, width = 200, height = 45) {
