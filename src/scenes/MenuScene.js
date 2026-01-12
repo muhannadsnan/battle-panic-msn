@@ -87,13 +87,8 @@ class MenuScene extends Phaser.Scene {
         });
 
         // Tips button
-        this.createSmallButton(width / 2, 475, 'TIPS & INFO', () => {
+        this.createSmallButton(width / 2, 480, 'TIPS & INFO', () => {
             this.showTipsPanel();
-        });
-
-        // Reset upgrades button (at bottom)
-        this.createSmallButton(width / 2, 525, 'Reset Upgrades (2 XP)', () => {
-            this.confirmResetUpgrades();
         });
 
         // Buy XP button (bottom left)
@@ -228,8 +223,11 @@ class MenuScene extends Phaser.Scene {
     createUpgradesButton(x, y, xpAmount, callback) {
         const container = this.add.container(x, y);
 
-        // Main button text
-        const label = this.add.text(0, 0, 'UPGRADES', {
+        // Main button text with XP in parentheses
+        const mainText = 'UPGRADES';
+        const xpText = xpAmount > 0 ? ` (${xpAmount})` : '';
+
+        const label = this.add.text(0, 0, mainText, {
             fontSize: '38px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -240,34 +238,17 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(label);
 
-        // XP notification badge (if has XP)
+        // XP count in different color (yellow/gold) after the text
         if (xpAmount > 0) {
-            const badgeX = label.width / 2 + 10;
-            const badgeY = -label.height / 2 + 5;
-
-            // Red notification dot with XP count
-            const badge = this.add.circle(badgeX, badgeY, 18, 0xff4444);
-            badge.setStrokeStyle(2, 0xffffff);
-            container.add(badge);
-
-            const badgeText = this.add.text(badgeX, badgeY, `${xpAmount}`, {
-                fontSize: '16px',
+            const xpLabel = this.add.text(label.width / 2 + 5, 0, `(${xpAmount})`, {
+                fontSize: '32px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
-                color: '#ffffff'
-            }).setOrigin(0.5);
-            container.add(badgeText);
-
-            // Pulse animation on badge
-            this.tweens.add({
-                targets: badge,
-                scaleX: 1.15,
-                scaleY: 1.15,
-                duration: 600,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1
-            });
+                color: '#ffd700',
+                stroke: '#000000',
+                strokeThickness: 3
+            }).setOrigin(0, 0.5);
+            container.add(xpLabel);
         }
 
         // Make the whole container interactive
@@ -1591,14 +1572,14 @@ class MenuScene extends Phaser.Scene {
         overlay.setInteractive(); // Block clicks behind
         dialog.add(overlay);
 
-        // Panel background
-        const panel = this.add.rectangle(0, 0, 320, 220, 0x2a2a3e);
+        // Panel background - taller to fit more buttons
+        const panel = this.add.rectangle(0, 0, 360, 300, 0x2a2a3e);
         panel.setStrokeStyle(3, 0x4169E1);
         dialog.add(panel);
 
-        // Title
-        const title = this.add.text(0, -80, 'ACCOUNT', {
-            fontSize: '28px',
+        // Title - renamed to SETTINGS
+        const title = this.add.text(0, -120, 'SETTINGS', {
+            fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#4169E1',
@@ -1609,40 +1590,57 @@ class MenuScene extends Phaser.Scene {
 
         // User status
         const isLoggedIn = supabaseClient && supabaseClient.isLoggedIn();
-        const statusText = this.add.text(0, -40, isLoggedIn ? supabaseClient.getDisplayName() : 'Guest Account', {
-            fontSize: '16px',
+        const statusText = this.add.text(0, -75, isLoggedIn ? `Account: ${supabaseClient.getDisplayName()}` : 'Guest Account', {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: isLoggedIn ? '#4ade80' : '#888888'
         }).setOrigin(0.5);
         dialog.add(statusText);
 
+        // Reset Upgrades button (moved here from main menu)
+        const resetUpgradesBtn = this.createSettingsButton(0, -30, 'Reset Upgrades (2 XP)', 0x665500, () => {
+            dialog.destroy();
+            this.confirmResetUpgrades();
+        }, false);
+        dialog.add(resetUpgradesBtn);
+
         // Delete Account / Reset Progress button
-        const deleteBtn = this.createSettingsButton(0, -5, 'Delete Account', 0x8B0000, () => {
+        const deleteBtn = this.createSettingsButton(0, 25, 'Delete Account', 0x8B0000, () => {
             this.confirmDeleteAccount(dialog);
         }, false);
         dialog.add(deleteBtn);
 
         // Warning text
-        const warning = this.add.text(0, 30, 'Resets all progress to Rank 0', {
-            fontSize: '12px',
+        const warning = this.add.text(0, 65, 'Delete resets all progress to Rank 0', {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ff6666'
         }).setOrigin(0.5);
         dialog.add(warning);
 
-        // Close button (X in top-right corner)
-        const closeBtn = this.add.text(145, -95, '✕', {
-            fontSize: '24px',
+        // Close button (X in top-right corner) - larger touch target
+        const closeBtnBg = this.add.rectangle(165, -135, 50, 50, 0x442222, 0.8);
+        closeBtnBg.setStrokeStyle(2, 0x664444);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        dialog.add(closeBtnBg);
+
+        const closeBtn = this.add.text(165, -135, '✕', {
+            fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#888888'
+            color: '#ff6666'
         }).setOrigin(0.5);
-        closeBtn.setInteractive({ useHandCursor: true });
         dialog.add(closeBtn);
 
-        closeBtn.on('pointerover', () => closeBtn.setColor('#ff6666'));
-        closeBtn.on('pointerout', () => closeBtn.setColor('#888888'));
-        closeBtn.on('pointerdown', () => dialog.destroy());
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtn.setColor('#ff8888');
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtn.setColor('#ff6666');
+        });
+        closeBtnBg.on('pointerdown', () => dialog.destroy());
 
         dialog.setDepth(1000);
         this.settingsDialog = dialog;
@@ -1651,12 +1649,13 @@ class MenuScene extends Phaser.Scene {
     createSettingsButton(x, y, text, bgColor, callback, disabled = false) {
         const container = this.add.container(x, y);
 
-        const bg = this.add.rectangle(0, 0, 200, 40, bgColor);
+        // Larger button for mobile
+        const bg = this.add.rectangle(0, 0, 280, 50, bgColor);
         bg.setStrokeStyle(2, disabled ? 0x444444 : 0x666666);
         container.add(bg);
 
         const label = this.add.text(0, 0, text, {
-            fontSize: '16px',
+            fontSize: '20px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: disabled ? '#555555' : '#ffffff'
