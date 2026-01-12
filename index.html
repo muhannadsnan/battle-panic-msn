@@ -37,6 +37,9 @@
     <!-- Phaser 3 from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
 
+    <!-- Supabase JS from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Game Configuration -->
     <script src="src/config/GameConfig.js"></script>
 
@@ -45,6 +48,25 @@
     <script src="src/systems/WaveSystem.js"></script>
     <script src="src/systems/CombatSystem.js"></script>
     <script src="src/systems/AudioManager.js"></script>
+    <script src="src/systems/SupabaseClient.js"></script>
+
+    <!-- Supabase Configuration - ADD YOUR CREDENTIALS HERE -->
+    <script>
+        // Initialize Supabase with your project credentials
+        // Get these from: https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api
+        const SUPABASE_URL = 'https://mswxeapzslsqzewrnjbs.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zd3hlYXB6c2xzcXpld3JuamJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMzIxODksImV4cCI6MjA4MzgwODE4OX0.5zHRscPaYeSiBd_gD0d01T4W_1KSA03zxOdsepoabnU';
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+                supabaseClient.init(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase initialized');
+            } else {
+                console.log('Supabase not configured - login disabled');
+            }
+        });
+    </script>
 
     <!-- Entities -->
     <script src="src/entities/Unit.js"></script>
@@ -61,6 +83,7 @@
     <script src="src/scenes/BootScene.js"></script>
     <script src="src/scenes/PreloadScene.js"></script>
     <script src="src/scenes/MenuScene.js"></script>
+    <script src="src/scenes/AuthScene.js"></script>
     <script src="src/scenes/GameScene.js"></script>
     <script src="src/scenes/UpgradeScene.js"></script>
     <script src="src/scenes/GameOverScene.js"></script>

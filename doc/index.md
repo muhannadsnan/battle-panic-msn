@@ -30,12 +30,14 @@ battle-panic-msn/
 │   ├── systems/
 │   │   ├── WaveSystem.js    # Wave generation and enemy spawning
 │   │   ├── CombatSystem.js  # Damage, targeting, combat logic
-│   │   ├── SaveSystem.js    # localStorage persistence, XP, upgrades
-│   │   └── AudioManager.js  # Sound effects and music
+│   │   ├── SaveSystem.js    # localStorage persistence, XP, upgrades, cloud sync
+│   │   ├── AudioManager.js  # Sound effects and music
+│   │   └── SupabaseClient.js # Authentication and cloud saves
 │   ├── scenes/
 │   │   ├── BootScene.js     # Initial boot
 │   │   ├── PreloadScene.js  # Asset loading
 │   │   ├── MenuScene.js     # Main menu, donations, buy XP
+│   │   ├── AuthScene.js     # Login/profile UI
 │   │   ├── GameScene.js     # Main gameplay
 │   │   ├── UpgradeScene.js  # Unit and castle upgrades
 │   │   └── GameOverScene.js # End screen with stats
@@ -57,7 +59,7 @@ battle-panic-msn/
 | [systems.md](systems.md) | Combat, waves, saving, audio - core game systems |
 | [scenes.md](scenes.md) | Menu, gameplay, upgrades, game over - scene flow |
 | [ui.md](ui.md) | UI components - displays, buttons, health bars |
-| [auth.md](auth.md) | Authentication system (planned) - magic link email, cloud saves |
+| [auth.md](auth.md) | Authentication system - Supabase magic link, cloud saves, leaderboard |
 
 ---
 
@@ -66,11 +68,11 @@ battle-panic-msn/
 ```
 BootScene → PreloadScene → MenuScene
                               ↓
-                    ┌─────────┴─────────┐
-                    ↓                   ↓
-              UpgradeScene         GameScene
-                    ↓                   ↓
-                    └───────────→ GameOverScene
+                    ┌─────────┼─────────┐
+                    ↓         ↓         ↓
+              UpgradeScene AuthScene GameScene
+                    ↓         ↓         ↓
+                    └─────────┴──→ GameOverScene
                                        ↓
                                   MenuScene
 ```
@@ -121,11 +123,19 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
+## Recent Updates (v1.20.0)
+
+- Supabase authentication with magic link (passwordless email)
+- Cloud save sync for logged-in users
+- Guest mode with separate local save
+- Leaderboard integration
+- Login/Profile UI (AuthScene)
+
 ## Future Plans
 
-- Netlify hosting
-- Database for user accounts and cloud saves
 - Payment webhook integration for automatic XP crediting
+- Public leaderboard display
+- Social features
 
 ---
 
@@ -135,8 +145,10 @@ BootScene → PreloadScene → MenuScene
 - **Rendering:** WebGL with Canvas fallback
 - **Physics:** Arcade physics (no gravity)
 - **Resolution:** 1024x600, auto-scales to fit
-- **Save System:** localStorage
+- **Local Save:** localStorage (guest/user separation)
+- **Cloud Backend:** Supabase (PostgreSQL + Auth)
+- **Authentication:** Magic link (passwordless email)
 
 ---
 
-*Last updated: January 2026 (v1.9.0)*
+*Last updated: January 2026 (v1.20.0)*

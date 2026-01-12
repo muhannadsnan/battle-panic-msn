@@ -1,302 +1,339 @@
-# Authentication System (Planned)
+# Authentication System
 
-Magic link email authentication for cloud saves and leaderboards.
+Magic link email authentication with Supabase for cloud saves and leaderboards.
 
 ---
 
 ## Overview
 
-- **Method**: Magic link (passwordless email)
-- **Storage**: JWT token in localStorage
-- **Benefits**: No passwords, verified email, simple UX
+- **Backend**: Supabase (hosted PostgreSQL + Auth)
+- **Method**: Magic link (passwordless email via OTP)
+- **Storage**: Session managed by Supabase JS client
+- **Benefits**: No passwords, verified email, automatic session refresh
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     GAME (Client Side)                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ AuthScene.js │  │SupabaseClient│  │ SaveSystem   │          │
+│  │  (Login UI)  │  │   .js        │  │   .js        │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              │ Supabase JS SDK
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      SUPABASE                                    │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │     Auth     │  │    saves     │  │  leaderboard │          │
+│  │   (Magic     │  │   (table)    │  │   (table)    │          │
+│  │    Link)     │  │              │  │              │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `src/systems/SupabaseClient.js` | Supabase SDK wrapper, auth, cloud saves |
+| `src/scenes/AuthScene.js` | Login/Profile UI |
+| `src/systems/SaveSystem.js` | Local saves with guest/user separation |
 
 ---
 
 ## Authentication Flow
 
+### 1. Magic Link Login
+
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     GAME (Client Side)                          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-       1. User clicks "Login" │
-                              ▼
-         ┌─────────────────────────────────────┐
-         │   Email Input Panel (in-game UI)    │
-         │   ┌─────────────────────────────┐   │
-         │   │  Enter your email:          │   │
-         │   │  [_____________________]    │   │
-         │   │  [   Send Magic Link   ]    │   │
-         │   └─────────────────────────────┘   │
-         └─────────────────────────────────────┘
-                              │
-       2. POST /api/auth/send │ { email: "user@email.com" }
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      SERVER                                      │
-│  - Generate random token (UUID)                                  │
-│  - Store: { token, email, expires: 15min }                       │
-│  - Send email with link: game.com/auth?token=abc123              │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-       3. User clicks link    │
-          in email            ▼
-         ┌─────────────────────────────────────┐
-         │  game.com/auth?token=abc123         │
-         │  - Validates token                  │
-         │  - Creates/gets user by email       │
-         │  - Returns JWT auth token           │
-         │  - Redirects to game with token     │
-         └─────────────────────────────────────┘
-                              │
-       4. Game receives       │
-          JWT token           ▼
-         ┌─────────────────────────────────────┐
-         │  localStorage.authToken = jwt       │
-         │  localStorage.user = {              │
-         │    id: "uuid",                      │
-         │    email: "user@email.com",         │
-         │    displayName: "Player123"         │
-         │  }                                  │
-         └─────────────────────────────────────┘
+User clicks "Login" in MenuScene
+         │
+         ▼
+┌─────────────────────────────────────┐
+│   AuthScene - Email Input Panel     │
+│   ┌─────────────────────────────┐   │
+│   │  Enter your email:          │   │
+│   │  [_____________________]    │   │
+│   │  [   Send Magic Link   ]    │   │
+│   └─────────────────────────────┘   │
+└─────────────────────────────────────┘
+         │
+         │ supabaseClient.sendMagicLink(email)
+         ▼
+┌─────────────────────────────────────┐
+│   Supabase sends email with link    │
+│   game.com/?token=xxx               │
+└─────────────────────────────────────┘
+         │
+         │ User clicks email link
+         ▼
+┌─────────────────────────────────────┐
+│   Supabase validates token          │
+│   Creates/gets user session         │
+│   Redirects to game                 │
+└─────────────────────────────────────┘
+         │
+         │ onAuthStateChange fires
+         ▼
+┌─────────────────────────────────────┐
+│   Game receives auth state change   │
+│   - saveSystem.setUserSaveKey(id)   │
+│   - Load cloud data if exists       │
+│   - Show profile panel              │
+└─────────────────────────────────────┘
+```
+
+### 2. Session Persistence
+
+On game load:
+1. `supabaseClient.checkSession()` checks for existing session
+2. If valid session exists, user is automatically logged in
+3. `saveSystem.setUserSaveKey(userId)` switches to user-specific save
+
+---
+
+## Save System Integration
+
+### Save Keys
+
+| State | Save Key | Description |
+|-------|----------|-------------|
+| Guest (not logged in) | `battlePanicSave_guest` | Local-only save |
+| Logged in | `battlePanicSave_{userId}` | User-specific local save |
+| Legacy (pre-auth) | `battlePanicSave` | Migrated to guest on first load |
+
+### Data Flow
+
+```
+Guest Mode:
+  localStorage (battlePanicSave_guest) ←→ Game
+
+Logged In Mode:
+  localStorage (battlePanicSave_{id}) ←→ Game
+                     │
+                     │ Sync Now / Auto-sync
+                     ▼
+              Supabase (saves table)
+```
+
+### Merge Strategy (on login)
+
+When a user logs in with existing cloud data:
+- **Stats**: Take maximum values (kills, waves, XP, etc.)
+- **Upgrades**: Take highest level for each upgrade
+- **Legacy stats**: Take highest, preserve earliest `firstPlayedAt`
+
+---
+
+## SupabaseClient API
+
+### Class: `SupabaseClient`
+
+**File:** `src/systems/SupabaseClient.js`
+
+#### Initialization
+
+```javascript
+supabaseClient.init(SUPABASE_URL, SUPABASE_ANON_KEY)
+```
+
+Called in `index.html` on DOMContentLoaded.
+
+#### Auth Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `sendMagicLink(email)` | `{success, message/error}` | Send login email |
+| `checkSession()` | `user \| null` | Check for existing session |
+| `logout()` | `{success, error?}` | Sign out user |
+| `isLoggedIn()` | `boolean` | Check login status |
+| `getUser()` | `user \| null` | Get current user object |
+| `getDisplayName()` | `string \| null` | Get display name (metadata or email prefix) |
+| `updateDisplayName(name)` | `{success, error?}` | Update user's display name |
+
+#### Cloud Save Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `saveToCloud(saveData)` | `{success, updatedAt?, error?}` | Upload save to Supabase |
+| `loadFromCloud()` | `{success, saveData?, updatedAt?, error?}` | Download save from Supabase |
+
+#### Leaderboard Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `getLeaderboard(limit=100)` | `{success, leaderboard?, error?}` | Get top players |
+| `updateLeaderboard(wave, kills)` | `{success, error?}` | Update user's leaderboard entry |
+
+#### Events
+
+```javascript
+window.addEventListener('authStateChanged', (event) => {
+    const { user } = event.detail;
+    // user is null if logged out, user object if logged in
+});
 ```
 
 ---
 
-## Data Structures
+## AuthScene UI
 
-### Client Storage (localStorage)
+### Class: `AuthScene`
 
-```javascript
-{
-    authToken: "jwt.token.here",
-    user: {
-        id: "uuid-123",
-        email: "player@email.com",
-        displayName: "CoolPlayer42"  // User can change this
-    },
-    // ... existing save data synced with server
-}
-```
+**File:** `src/scenes/AuthScene.js`
 
-### Server Database
+#### Login Panel (not logged in)
 
-**Users Table:**
-```javascript
-{
-    id: "uuid-123",
-    email: "player@email.com",
-    displayName: "CoolPlayer42",
-    createdAt: "2024-01-01",
-    lastLogin: "2024-01-15"
-}
-```
-
-**Saves Table:**
-```javascript
-{
-    userId: "uuid-123",
-    saveData: { /* all game stats, upgrades, killStats, etc */ },
-    updatedAt: "2024-01-15"
-}
-```
-
-**Magic Links Table:**
-```javascript
-{
-    token: "abc123-random-uuid",
-    email: "player@email.com",
-    expiresAt: "2024-01-15T12:15:00Z",  // 15 minutes
-    used: false
-}
-```
-
----
-
-## API Endpoints
-
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/api/auth/send` | POST | No | Send magic link to email |
-| `/api/auth/verify` | GET | No | Verify token, return JWT |
-| `/api/auth/me` | GET | Yes | Get current user info |
-| `/api/user/displayname` | PUT | Yes | Update display name |
-| `/api/save` | GET | Yes | Load cloud save |
-| `/api/save` | POST | Yes | Save to cloud |
-| `/api/leaderboard` | GET | No | Get rankings |
-| `/api/leaderboard/me` | GET | Yes | Get user's rank |
-
----
-
-## API Request/Response Examples
-
-### Send Magic Link
-```javascript
-// POST /api/auth/send
-// Request:
-{ "email": "player@email.com" }
-
-// Response:
-{ "success": true, "message": "Check your email!" }
-```
-
-### Verify Token
-```javascript
-// GET /api/auth/verify?token=abc123
-// Response:
-{
-    "token": "jwt.auth.token",
-    "user": {
-        "id": "uuid-123",
-        "email": "player@email.com",
-        "displayName": "Player123"
-    }
-}
-```
-
-### Save Data (with auth)
-```javascript
-// POST /api/save
-// Headers: { Authorization: "Bearer jwt.token.here" }
-// Request:
-{
-    "saveData": {
-        "xp": 50,
-        "highestWave": 25,
-        "killStats": { "goblin": 100, "orc": 50, ... },
-        "stats": { "totalGamesPlayed": 10, ... },
-        "upgrades": { ... }
-    }
-}
-
-// Response:
-{ "success": true, "updatedAt": "2024-01-15T12:00:00Z" }
-```
-
-### Load Data (with auth)
-```javascript
-// GET /api/save
-// Headers: { Authorization: "Bearer jwt.token.here" }
-// Response:
-{
-    "saveData": { ... },
-    "updatedAt": "2024-01-15T12:00:00Z"
-}
-```
-
----
-
-## In-Game UI
-
-### Login Panel (not logged in)
 ```
 ┌──────────────────────────────────┐
-│         📧 Login                 │
+│            Login                 │
+│              📧                  │
 │                                  │
-│  Enter your email:               │
+│  Enter your email to receive     │
+│  a magic login link:             │
+│                                  │
 │  ┌────────────────────────────┐  │
-│  │                            │  │
+│  │    your@email.com          │  │
 │  └────────────────────────────┘  │
 │                                  │
 │  [    Send Magic Link    ]       │
 │                                  │
-│  A login link will be sent       │
-│  to your email address.          │
+│  [    Back to Menu    ]          │
 └──────────────────────────────────┘
 ```
 
-### After Sending Link
+#### Check Email Panel (after sending)
+
 ```
 ┌──────────────────────────────────┐
-│         📧 Check Your Email!     │
+│       Check Your Email!          │
+│              ✉️                   │
 │                                  │
 │  We sent a login link to:        │
 │  player@email.com                │
 │                                  │
-│  Click the link to login.        │
-│  Link expires in 15 minutes.     │
+│  Click the link in your email    │
+│  to login. Link expires in       │
+│  15 minutes.                     │
 │                                  │
-│  [  Resend  ]  [  Cancel  ]      │
+│  [  Resend  ]    [  Back  ]      │
 └──────────────────────────────────┘
 ```
 
-### Profile Panel (logged in)
+#### Profile Panel (logged in)
+
 ```
 ┌──────────────────────────────────┐
-│  👤 CoolPlayer42                 │
-│  📧 player@email.com             │
+│            Profile               │
+│              👤                  │
 │                                  │
 │  Display Name:                   │
-│  ┌────────────────────────────┐  │
-│  │ CoolPlayer42               │  │
-│  └────────────────────────────┘  │
-│  [    Save Name    ]             │
+│         CoolPlayer42             │
 │                                  │
-│  ☁️ Cloud Save: Synced           │
-│  Last sync: 2 minutes ago        │
+│  Email:                          │
+│      player@email.com            │
 │                                  │
-│  [    Logout    ]                │
+│  ☁️ Cloud Save: Ready            │
+│                                  │
+│  [      Sync Now      ]          │
+│  [       Logout       ]          │
+│  [    Back to Menu    ]          │
 └──────────────────────────────────┘
 ```
 
 ---
 
-## Sync Strategy
+## Supabase Database Schema
 
-### On Game Load:
-1. Check if `authToken` exists in localStorage
-2. If yes, validate token with `/api/auth/me`
-3. If valid, load cloud save with `/api/save`
-4. Compare cloud save with local save
-5. Use whichever has higher `highestWave` (or merge stats)
+### `saves` Table
 
-### On Game Over:
-1. Update local save
-2. If logged in, sync to cloud via `/api/save`
+```sql
+CREATE TABLE saves (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id),
+    save_data JSONB NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-### Conflict Resolution:
-- Stats (kills, games played): Take maximum of each
-- Upgrades: Take highest level of each
-- highestWave: Take maximum
+-- Row Level Security
+ALTER TABLE saves ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own save"
+    ON saves FOR SELECT
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own save"
+    ON saves FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own save"
+    ON saves FOR UPDATE
+    USING (auth.uid() = user_id);
+```
+
+### `leaderboard` Table
+
+```sql
+CREATE TABLE leaderboard (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id),
+    display_name TEXT NOT NULL,
+    highest_wave INTEGER DEFAULT 0,
+    total_kills INTEGER DEFAULT 0,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Row Level Security
+ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read leaderboard"
+    ON leaderboard FOR SELECT
+    TO authenticated, anon
+    USING (true);
+
+CREATE POLICY "Users can upsert own entry"
+    ON leaderboard FOR ALL
+    USING (auth.uid() = user_id);
+```
 
 ---
 
-## Implementation Checklist
+## Configuration
 
-### Backend:
-- [ ] Set up Node.js/Express server (or serverless)
-- [ ] Database setup (PostgreSQL/MongoDB)
-- [ ] Email service integration (Resend/SendGrid)
-- [ ] JWT token generation/validation
-- [ ] API endpoints implementation
-- [ ] Rate limiting for magic link requests
+### index.html Setup
 
-### Frontend:
-- [ ] Login button in menu
-- [ ] Email input panel UI
-- [ ] "Check your email" confirmation UI
-- [ ] Profile panel UI
-- [ ] Display name editor
-- [ ] Cloud sync status indicator
-- [ ] Logout functionality
+```html
+<!-- Supabase JS from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-### Game Integration:
-- [ ] Modify SaveSystem to sync with server
-- [ ] Add auth token to API requests
-- [ ] Handle offline mode gracefully
-- [ ] Merge local/cloud saves on login
+<!-- Initialize Supabase -->
+<script>
+    const SUPABASE_URL = 'https://your-project.supabase.co';
+    const SUPABASE_ANON_KEY = 'your-anon-key';
+
+    window.addEventListener('DOMContentLoaded', () => {
+        supabaseClient.init(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
+</script>
+```
+
+Get credentials from: `https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api`
 
 ---
 
-## Security Considerations
+## Security
 
-1. **Magic links expire** after 15 minutes
+1. **Magic links expire** after 15 minutes (Supabase default)
 2. **One-time use** - links invalidated after click
-3. **Rate limit** magic link requests (max 3 per hour per email)
-4. **JWT expiration** - tokens valid for 30 days
-5. **HTTPS only** - all API calls over secure connection
-6. **No sensitive data** in JWT payload (just user ID)
+3. **Rate limiting** - handled by Supabase
+4. **Row Level Security** - users can only access their own data
+5. **Anon key** is safe to expose (only allows authenticated operations via RLS)
 
 ---
 
-*Status: PLANNED - Not yet implemented*
+*Status: IMPLEMENTED (v1.20.0)*

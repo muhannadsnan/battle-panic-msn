@@ -16,6 +16,7 @@ const config = {
         BootScene,
         PreloadScene,
         MenuScene,
+        AuthScene,
         GameScene,
         UpgradeScene,
         GameOverScene

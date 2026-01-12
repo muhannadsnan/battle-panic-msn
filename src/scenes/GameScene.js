@@ -1914,6 +1914,15 @@ Lv.${level + 1}`;
         );
         const xpEarned = saveResult.xpEarned || 0;
 
+        // Auto-sync to cloud if logged in (runs in background)
+        if (supabaseClient && supabaseClient.isLoggedIn()) {
+            saveSystem.uploadToCloud().then(result => {
+                if (result.success) {
+                    console.log('Auto-synced to cloud after battle');
+                }
+            }).catch(err => console.warn('Cloud sync failed:', err));
+        }
+
         // Show game over text
         const gameOverText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50, 'CASTLE DESTROYED!', {
             fontSize: '48px',

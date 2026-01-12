@@ -114,6 +114,9 @@ class MenuScene extends Phaser.Scene {
 
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
+
+        // Login/Profile button (top right corner)
+        this.createLoginButton(width - 50, 50);
     }
 
     createButton(x, y, text, callback) {
@@ -573,6 +576,63 @@ class MenuScene extends Phaser.Scene {
 
         hitArea.on('pointerdown', () => {
             this.showSettingsPanel();
+        });
+
+        return container;
+    }
+
+    createLoginButton(x, y) {
+        const container = this.add.container(x, y);
+
+        // Check if logged in
+        const isLoggedIn = supabaseClient && supabaseClient.isLoggedIn();
+
+        // Background circle
+        const bg = this.add.circle(0, 0, 22, isLoggedIn ? 0x4ade80 : 0x4a4a8e);
+        container.add(bg);
+
+        // User icon
+        const icon = this.add.text(0, 0, isLoggedIn ? '👤' : '🔑', {
+            fontSize: '22px'
+        }).setOrigin(0.5);
+        container.add(icon);
+
+        // Status indicator if logged in
+        if (isLoggedIn) {
+            const statusDot = this.add.circle(14, -14, 6, 0x4ade80);
+            statusDot.setStrokeStyle(2, 0xffffff);
+            container.add(statusDot);
+        }
+
+        // Label below
+        const label = this.add.text(0, 32, isLoggedIn ? 'Profile' : 'Login', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        container.add(label);
+
+        // Hit area
+        const hitArea = this.add.circle(0, 0, 28, 0x000000, 0);
+        hitArea.setInteractive({ useHandCursor: true });
+        container.add(hitArea);
+
+        // Hover effects
+        hitArea.on('pointerover', () => {
+            bg.setFillStyle(isLoggedIn ? 0x6be88a : 0x6a6aae);
+            label.setColor('#ffffff');
+        });
+
+        hitArea.on('pointerout', () => {
+            bg.setFillStyle(isLoggedIn ? 0x4ade80 : 0x4a4a8e);
+            label.setColor('#888888');
+        });
+
+        hitArea.on('pointerdown', () => {
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playClick();
+            }
+            this.scene.start('AuthScene');
         });
 
         return container;

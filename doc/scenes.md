@@ -9,14 +9,14 @@ Phaser scenes that control different game states and screens.
 ```
 BootScene → PreloadScene → MenuScene ←──────────────┐
                               │                      │
-                    ┌─────────┴─────────┐           │
-                    ↓                   ↓           │
-              UpgradeScene         GameScene        │
-                    │                   │           │
-                    │                   ↓           │
-                    │            GameOverScene ─────┘
-                    │                   │
-                    └───────────────────┘
+                    ┌─────────┼─────────┐           │
+                    ↓         ↓         ↓           │
+              UpgradeScene AuthScene GameScene      │
+                    │         │         │           │
+                    │         │         ↓           │
+                    │         │  GameOverScene ─────┘
+                    │         │         │
+                    └─────────┴─────────┘
 ```
 
 ---
@@ -140,6 +140,86 @@ Reset confirmation dialog:
 - Shows fee (2 XP)
 - Shows refund amount
 - RESET / CANCEL buttons
+
+---
+
+## AuthScene
+
+**File:** `src/scenes/AuthScene.js`
+
+Login and profile management scene accessed from MenuScene.
+
+### Purpose
+- Magic link email authentication via Supabase
+- Display user profile when logged in
+- Cloud save sync controls
+
+### UI States
+
+**Not Logged In → Login Panel:**
+- Email input field (HTML overlay)
+- "Send Magic Link" button
+- Back to menu button
+
+**After Sending → Check Email Panel:**
+- Confirmation message with email
+- Resend button
+- Back button
+
+**Logged In → Profile Panel:**
+- Display name
+- Email address
+- Cloud sync status
+- Sync Now button
+- Logout button
+- Back to menu button
+
+### Methods
+
+**`showLoginPanel()`**
+Displays email input form with magic link button.
+
+**`showCheckEmailPanel(email)`**
+Shows confirmation that email was sent.
+
+**`showProfilePanel()`**
+Shows user profile with sync controls.
+
+**`sendMagicLink(email?)`**
+Sends magic link via `supabaseClient.sendMagicLink()`:
+1. Validates email format
+2. Calls Supabase API
+3. Shows check email panel on success
+
+**`syncSaveData()`**
+Manual cloud sync:
+1. Gets local save from `saveSystem.load()`
+2. Uploads to cloud via `supabaseClient.saveToCloud()`
+3. Updates leaderboard
+4. Shows success/failure message
+
+**`logout()`**
+Signs out user via `supabaseClient.logout()`:
+1. Clears session
+2. Switches to login panel
+3. SaveSystem reverts to guest save key
+
+**`createEmailInput()`**
+Creates HTML input element positioned over canvas.
+
+**`removeEmailInput()`**
+Removes HTML input when leaving scene.
+
+### Auth State Listener
+
+Scene listens for `authStateChanged` events:
+```javascript
+window.addEventListener('authStateChanged', (event) => {
+    const { user } = event.detail;
+    // Update UI based on login state
+    // Load cloud data on login
+});
+```
 
 ---
 
@@ -384,6 +464,7 @@ scene: [
     BootScene,
     PreloadScene,
     MenuScene,
+    AuthScene,
     GameScene,
     UpgradeScene,
     GameOverScene

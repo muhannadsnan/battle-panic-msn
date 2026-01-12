@@ -159,9 +159,17 @@ Resets all wave state to initial values.
 
 **File:** `src/systems/SaveSystem.js`
 
-Handles localStorage persistence for game progress.
+Handles localStorage persistence for game progress with guest/user save separation and cloud sync support.
 
 ### Class: `SaveSystem`
+
+#### Save Keys
+
+| State | Key | Description |
+|-------|-----|-------------|
+| Guest | `battlePanicSave_guest` | Default for non-logged-in users |
+| User | `battlePanicSave_{userId}` | User-specific save when logged in |
+| Legacy | `battlePanicSave` | Old key, auto-migrated to guest |
 
 #### Save Data Structure
 ```javascript
@@ -191,7 +199,7 @@ Handles localStorage persistence for game progress.
         unitsSpawned: {          // Per-unit-type counts
             peasant: 0,
             archer: 0,
-            knight: 0
+            horseman: 0
         },
         totalGoldCollected: 0,   // Total gold mined
         totalWoodCollected: 0,   // Total wood collected
@@ -201,7 +209,7 @@ Handles localStorage persistence for game progress.
     upgrades: {
         peasant: { level: 1, unlocked: true },
         archer: { level: 1, unlocked: true },
-        knight: { level: 1, unlocked: false }
+        horseman: { level: 1, unlocked: false }
     },
     castleUpgrades: {
         health: 1,               // +20 HP per level (permanent) + unlocks +20 HP/wave at L2+
@@ -285,6 +293,63 @@ Resets upgrades and refunds XP:
 
 **`addXP(amount)`**
 Adds XP to save data (for purchases).
+
+#### Cloud Sync Methods
+
+**`setUserSaveKey(userId)`**
+Switches save key based on login state:
+- `userId` provided: Uses `battlePanicSave_{userId}`
+- `null`: Uses `battlePanicSave_guest`
+
+**`getSaveKey()`**
+Returns current save key string.
+
+**`isGuestSave()`**
+Returns `true` if using guest save key.
+
+**`syncWithCloud()`**
+Full bidirectional sync with Supabase:
+1. Loads local save
+2. Loads cloud save (if exists)
+3. Merges taking highest values
+4. Saves merged data locally and to cloud
+5. Returns `{success, action: 'uploaded'|'merged', data}`
+
+**`mergeCloudData(local, cloud)`**
+Merges two save objects, taking maximum values for:
+- `highestWave`, `totalGoldEarned`, `totalEnemiesKilled`, `xp`
+- All `killStats` per enemy type
+- All `stats` fields
+- Upgrade levels (highest) and unlock states (OR)
+- Castle upgrade levels (highest)
+- Legacy stats (highest, earliest `firstPlayedAt`)
+
+**`uploadToCloud()`**
+Uploads current local save to Supabase.
+Returns `{success, error?}`.
+
+---
+
+## SupabaseClient
+
+**File:** `src/systems/SupabaseClient.js`
+
+Handles Supabase authentication, cloud saves, and leaderboard.
+
+See [auth.md](auth.md) for full documentation.
+
+### Quick Reference
+
+| Method | Description |
+|--------|-------------|
+| `init(url, key)` | Initialize Supabase client |
+| `sendMagicLink(email)` | Send login email |
+| `isLoggedIn()` | Check if user is logged in |
+| `getUser()` | Get current user object |
+| `logout()` | Sign out user |
+| `saveToCloud(data)` | Upload save data |
+| `loadFromCloud()` | Download save data |
+| `updateLeaderboard(wave, kills)` | Update leaderboard entry |
 
 ---
 

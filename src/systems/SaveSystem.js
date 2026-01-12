@@ -1,7 +1,45 @@
 // Save System - Handles localStorage persistence
 class SaveSystem {
     constructor() {
-        this.saveKey = 'battlePanicSave';
+        this.legacySaveKey = 'battlePanicSave'; // Old single save key
+        this.guestSaveKey = 'battlePanicSave_guest';
+        this.saveKey = this.guestSaveKey; // Default to guest
+
+        // Migrate old save to guest save on first load
+        this.migrateOldSave();
+    }
+
+    // Migrate old battlePanicSave to battlePanicSave_guest
+    migrateOldSave() {
+        const oldSave = localStorage.getItem(this.legacySaveKey);
+        const guestSave = localStorage.getItem(this.guestSaveKey);
+
+        if (oldSave && !guestSave) {
+            // Move old save to guest
+            localStorage.setItem(this.guestSaveKey, oldSave);
+            localStorage.removeItem(this.legacySaveKey);
+            console.log('SaveSystem: Migrated old save to guest save');
+        }
+    }
+
+    // Switch to user-specific save when logged in
+    setUserSaveKey(userId) {
+        if (userId) {
+            this.saveKey = `battlePanicSave_${userId}`;
+        } else {
+            this.saveKey = this.guestSaveKey;
+        }
+        console.log('SaveSystem: Using save key:', this.saveKey);
+    }
+
+    // Get current save key
+    getSaveKey() {
+        return this.saveKey;
+    }
+
+    // Check if currently using guest save
+    isGuestSave() {
+        return this.saveKey === this.guestSaveKey;
     }
 
     getDefaultData() {
@@ -394,6 +432,123 @@ class SaveSystem {
         score += (data.stats?.totalUnitsSpawned || 0) * 0.02;
 
         return Math.floor(score);
+    }
+
+    // Cloud sync: Compare and merge cloud data with local data
+    async syncWithCloud() {
+        if (!supabaseClient || !supabaseClient.isLoggedIn()) {
+            return { success: false, error: 'Not logged in' };
+        }
+
+        try {
+            const localData = this.load();
+            const cloudResult = await supabaseClient.loadFromCloud();
+
+            if (!cloudResult.success) {
+                // No cloud data, upload local
+                await supabaseClient.saveToCloud(localData);
+                return { success: true, action: 'uploaded', data: localData };
+            }
+
+            const cloudData = cloudResult.saveData;
+            if (!cloudData) {
+                // No cloud save exists, upload local
+                await supabaseClient.saveToCloud(localData);
+                return { success: true, action: 'uploaded', data: localData };
+            }
+
+            // Merge: take the better stats from each
+            const mergedData = this.mergeCloudData(localData, cloudData);
+
+            // Save merged data both locally and to cloud
+            this.save(mergedData);
+            await supabaseClient.saveToCloud(mergedData);
+
+            return { success: true, action: 'merged', data: mergedData };
+        } catch (error) {
+            console.error('Cloud sync error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Merge cloud data with local - takes highest values for stats
+    mergeCloudData(local, cloud) {
+        const merged = this.mergeWithDefaults(local);
+
+        // Take highest wave
+        if (cloud.highestWave > merged.highestWave) {
+            merged.highestWave = cloud.highestWave;
+        }
+
+        // Take highest totals
+        merged.totalGoldEarned = Math.max(local.totalGoldEarned || 0, cloud.totalGoldEarned || 0);
+        merged.totalEnemiesKilled = Math.max(local.totalEnemiesKilled || 0, cloud.totalEnemiesKilled || 0);
+
+        // Take higher XP
+        merged.xp = Math.max(local.xp || 0, cloud.xp || 0);
+
+        // Merge kill stats - take highest for each
+        if (cloud.killStats) {
+            for (const key in cloud.killStats) {
+                if (merged.killStats[key] !== undefined) {
+                    merged.killStats[key] = Math.max(merged.killStats[key] || 0, cloud.killStats[key] || 0);
+                }
+            }
+        }
+
+        // Merge stats - take highest for each
+        if (cloud.stats) {
+            merged.stats.totalBossesKilled = Math.max(merged.stats.totalBossesKilled || 0, cloud.stats.totalBossesKilled || 0);
+            merged.stats.totalGamesPlayed = Math.max(merged.stats.totalGamesPlayed || 0, cloud.stats.totalGamesPlayed || 0);
+            merged.stats.totalWavesCompleted = Math.max(merged.stats.totalWavesCompleted || 0, cloud.stats.totalWavesCompleted || 0);
+            merged.stats.longestSurvivalTime = Math.max(merged.stats.longestSurvivalTime || 0, cloud.stats.longestSurvivalTime || 0);
+            merged.stats.totalUnitsSpawned = Math.max(merged.stats.totalUnitsSpawned || 0, cloud.stats.totalUnitsSpawned || 0);
+            merged.stats.totalGoldCollected = Math.max(merged.stats.totalGoldCollected || 0, cloud.stats.totalGoldCollected || 0);
+            merged.stats.totalWoodCollected = Math.max(merged.stats.totalWoodCollected || 0, cloud.stats.totalWoodCollected || 0);
+        }
+
+        // Merge upgrades - take highest levels
+        if (cloud.upgrades) {
+            for (const key in cloud.upgrades) {
+                if (merged.upgrades[key]) {
+                    merged.upgrades[key].level = Math.max(merged.upgrades[key].level || 1, cloud.upgrades[key].level || 1);
+                    merged.upgrades[key].unlocked = merged.upgrades[key].unlocked || cloud.upgrades[key].unlocked;
+                }
+            }
+        }
+
+        // Merge castle upgrades - take highest levels
+        if (cloud.castleUpgrades) {
+            for (const key in cloud.castleUpgrades) {
+                if (merged.castleUpgrades[key] !== undefined) {
+                    merged.castleUpgrades[key] = Math.max(merged.castleUpgrades[key] || 1, cloud.castleUpgrades[key] || 1);
+                }
+            }
+        }
+
+        // Merge legacy stats - take highest
+        if (cloud.legacy) {
+            merged.legacy.highestWaveEver = Math.max(merged.legacy.highestWaveEver || 0, cloud.legacy.highestWaveEver || 0);
+            merged.legacy.totalGamesPlayedAllTime = Math.max(merged.legacy.totalGamesPlayedAllTime || 0, cloud.legacy.totalGamesPlayedAllTime || 0);
+            merged.legacy.totalEnemiesKilledAllTime = Math.max(merged.legacy.totalEnemiesKilledAllTime || 0, cloud.legacy.totalEnemiesKilledAllTime || 0);
+            merged.legacy.totalBossesKilledAllTime = Math.max(merged.legacy.totalBossesKilledAllTime || 0, cloud.legacy.totalBossesKilledAllTime || 0);
+            // Take earliest first played date
+            if (cloud.legacy.firstPlayedAt && (!merged.legacy.firstPlayedAt || cloud.legacy.firstPlayedAt < merged.legacy.firstPlayedAt)) {
+                merged.legacy.firstPlayedAt = cloud.legacy.firstPlayedAt;
+            }
+        }
+
+        return merged;
+    }
+
+    // Upload current save to cloud
+    async uploadToCloud() {
+        if (!supabaseClient || !supabaseClient.isLoggedIn()) {
+            return { success: false, error: 'Not logged in' };
+        }
+
+        const data = this.load();
+        return await supabaseClient.saveToCloud(data);
     }
 
     // Get rank info based on score - each rank has 3 grades (I, II, III)
