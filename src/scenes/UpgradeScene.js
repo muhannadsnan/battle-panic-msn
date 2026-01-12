@@ -367,85 +367,70 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createArcherIcon(container, scale, alpha) {
-        // STRESSED/DRAWN BOW ICON
+        // SIMPLE BOW & ARROW - clean iconic shape
         const s = scale;
 
-        // Bow body (curved wooden arc)
-        const bow1 = this.add.rectangle(10 * s, -16 * s, 6 * s, 14 * s, 0x8B4513);
+        // Curved bow (arc shape)
+        const bow1 = this.add.rectangle(10 * s, -18 * s, 6 * s, 12 * s, 0x8B4513);
+        bow1.setAngle(-20);
         bow1.setAlpha(alpha);
         container.add(bow1);
-        const bow2 = this.add.rectangle(14 * s, -6 * s, 6 * s, 12 * s, 0x9B5523);
+        const bow2 = this.add.rectangle(14 * s, -6 * s, 6 * s, 14 * s, 0x8B4513);
+        bow2.setAngle(-8);
         bow2.setAlpha(alpha);
         container.add(bow2);
-        const bow3 = this.add.rectangle(14 * s, 6 * s, 6 * s, 12 * s, 0x9B5523);
+        const bow3 = this.add.rectangle(16 * s, 0, 6 * s, 10 * s, 0x9B5523);
         bow3.setAlpha(alpha);
         container.add(bow3);
-        const bow4 = this.add.rectangle(10 * s, 16 * s, 6 * s, 14 * s, 0x8B4513);
+        const bow4 = this.add.rectangle(14 * s, 6 * s, 6 * s, 14 * s, 0x8B4513);
+        bow4.setAngle(8);
         bow4.setAlpha(alpha);
         container.add(bow4);
-        // Bow tips (nocks)
-        const nock1 = this.add.rectangle(8 * s, -24 * s, 4 * s, 6 * s, 0x6B3503);
-        nock1.setAlpha(alpha);
-        container.add(nock1);
-        const nock2 = this.add.rectangle(8 * s, 24 * s, 4 * s, 6 * s, 0x6B3503);
-        nock2.setAlpha(alpha);
-        container.add(nock2);
-        // Bowstring pulled back (diagonal lines to nock point)
-        const string1 = this.add.rectangle(-2 * s, -12 * s, 3 * s, 28 * s, 0xDDCCBB);
-        string1.setAngle(10);
-        string1.setAlpha(alpha);
-        container.add(string1);
-        const string2 = this.add.rectangle(-2 * s, 12 * s, 3 * s, 28 * s, 0xDDCCBB);
-        string2.setAngle(-10);
-        string2.setAlpha(alpha);
-        container.add(string2);
-        // Arrow nocked and drawn back
-        const arrowShaft = this.add.rectangle(-10 * s, 0, 32 * s, 4 * s, 0x8B6B4A);
-        arrowShaft.setAlpha(alpha);
-        container.add(arrowShaft);
-        const arrowhead = this.add.rectangle(-28 * s, 0, 10 * s, 6 * s, 0xA0A0B0);
+        const bow5 = this.add.rectangle(10 * s, 18 * s, 6 * s, 12 * s, 0x8B4513);
+        bow5.setAngle(20);
+        bow5.setAlpha(alpha);
+        container.add(bow5);
+        // Bowstring (taut, straight)
+        const bowstring = this.add.rectangle(4 * s, 0, 3 * s, 48 * s, 0xEEDDCC);
+        bowstring.setAlpha(alpha);
+        container.add(bowstring);
+        // Arrow (horizontal)
+        const arrow = this.add.rectangle(-8 * s, 0, 40 * s, 4 * s, 0x8B6B4A);
+        arrow.setAlpha(alpha);
+        container.add(arrow);
+        // Arrowhead (diamond)
+        const arrowhead = this.add.rectangle(-30 * s, 0, 10 * s, 10 * s, 0xC0C0C0);
+        arrowhead.setAngle(45);
         arrowhead.setAlpha(alpha);
         container.add(arrowhead);
-        // Fletching
-        const fletch1 = this.add.rectangle(8 * s, -3 * s, 6 * s, 3 * s, 0xFF4444);
-        fletch1.setAlpha(alpha);
-        container.add(fletch1);
-        const fletch2 = this.add.rectangle(8 * s, 3 * s, 6 * s, 3 * s, 0xFF4444);
-        fletch2.setAlpha(alpha);
-        container.add(fletch2);
     }
 
     createHorsemanIcon(container, scale, alpha) {
-        // ICONIC HORSE HEAD SILHOUETTE (facing right)
+        // MINIMAL HORSE HEAD - chess knight style silhouette
         const s = scale;
 
-        // Neck
-        const neck = this.add.rectangle(-4 * s, 12 * s, 14 * s, 22 * s, 0x8B4513);
+        // Head + neck as one angled shape
+        const neck = this.add.rectangle(0, 10 * s, 18 * s, 32 * s, 0x8B4513);
+        neck.setAngle(-15);
         neck.setAlpha(alpha);
         container.add(neck);
-        // Head
-        const head = this.add.rectangle(6 * s, -2 * s, 20 * s, 16 * s, 0x8B4513);
+        // Snout/face
+        const head = this.add.rectangle(12 * s, -8 * s, 20 * s, 14 * s, 0x8B4513);
         head.setAlpha(alpha);
         container.add(head);
-        // Snout
-        const snout = this.add.rectangle(18 * s, 4 * s, 12 * s, 10 * s, 0x7B3503);
-        snout.setAlpha(alpha);
-        container.add(snout);
-        // Eye (simple dot)
-        const eye = this.add.rectangle(4 * s, -4 * s, 5 * s, 5 * s, 0x000000);
-        eye.setAlpha(alpha);
-        container.add(eye);
-        // Single ear
-        const ear = this.add.rectangle(0, -16 * s, 6 * s, 14 * s, 0x7B3503);
+        // Ear (pointed, alert)
+        const ear = this.add.rectangle(-2 * s, -24 * s, 10 * s, 18 * s, 0x7B3503);
+        ear.setAngle(-10);
         ear.setAlpha(alpha);
         container.add(ear);
-        // Mane (simple)
-        const mane1 = this.add.rectangle(-12 * s, -4 * s, 8 * s, 18 * s, 0x3B2503);
-        mane1.setAlpha(alpha);
-        container.add(mane1);
-        const mane2 = this.add.rectangle(-14 * s, 6 * s, 6 * s, 14 * s, 0x2B1503);
-        mane2.setAlpha(alpha);
-        container.add(mane2);
+        // Eye
+        const eye = this.add.rectangle(8 * s, -6 * s, 5 * s, 5 * s, 0x000000);
+        eye.setAlpha(alpha);
+        container.add(eye);
+        // Mane (simple flowing shape)
+        const mane = this.add.rectangle(-12 * s, -6 * s, 12 * s, 28 * s, 0x3B2503);
+        mane.setAlpha(alpha);
+        container.add(mane);
     }
 
     createCastleUpgrades(pageContainer) {

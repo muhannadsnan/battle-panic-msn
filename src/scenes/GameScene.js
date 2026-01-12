@@ -1057,25 +1057,21 @@ Lv.${level + 1}`;
                 container.add(this.add.rectangle(0, 10, 3, 6, 0x8B4513)); // handle
                 break;
             case 'ARCHER':
-                // Stressed/drawn bow icon
-                container.add(this.add.rectangle(5, -7, 3, 8, 0x8B4513)); // top bow
-                container.add(this.add.rectangle(6, 0, 3, 5, 0x9B5523)); // mid grip
-                container.add(this.add.rectangle(5, 7, 3, 8, 0x8B4513)); // bottom bow
-                // Bowstring pulled back (diagonal)
-                container.add(this.add.rectangle(-1, -5, 2, 12, 0xDDCCBB).setAngle(8)); // top string
-                container.add(this.add.rectangle(-1, 5, 2, 12, 0xDDCCBB).setAngle(-8)); // bottom string
-                // Arrow nocked and drawn
-                container.add(this.add.rectangle(-4, 0, 12, 2, 0x8B6B4A)); // arrow shaft
-                container.add(this.add.rectangle(-10, 0, 4, 3, 0xA0A0B0)); // arrowhead
+                // Simple bow & arrow
+                container.add(this.add.rectangle(5, -8, 3, 6, 0x8B4513).setAngle(-15)); // top bow
+                container.add(this.add.rectangle(7, 0, 3, 8, 0x9B5523)); // mid bow
+                container.add(this.add.rectangle(5, 8, 3, 6, 0x8B4513).setAngle(15)); // bottom bow
+                container.add(this.add.rectangle(2, 0, 2, 20, 0xEEDDCC)); // bowstring
+                container.add(this.add.rectangle(-4, 0, 16, 2, 0x8B6B4A)); // arrow
+                container.add(this.add.rectangle(-12, 0, 4, 4, 0xC0C0C0).setAngle(45)); // arrowhead
                 break;
             case 'HORSEMAN':
-                // Iconic horse head silhouette (facing right)
-                container.add(this.add.rectangle(-2, 6, 7, 11, 0x8B4513)); // neck
-                container.add(this.add.rectangle(3, 0, 10, 8, 0x8B4513)); // head
-                container.add(this.add.rectangle(9, 2, 6, 5, 0x7B3503)); // snout
-                container.add(this.add.rectangle(2, 0, 2, 2, 0x000000)); // eye
-                container.add(this.add.rectangle(0, -6, 3, 7, 0x7B3503)); // ear
-                container.add(this.add.rectangle(-6, -1, 4, 9, 0x3B2503)); // mane
+                // Minimal horse head - chess knight style
+                container.add(this.add.rectangle(0, 4, 8, 14, 0x8B4513).setAngle(-12)); // neck
+                container.add(this.add.rectangle(5, -4, 10, 6, 0x8B4513)); // head/snout
+                container.add(this.add.rectangle(-1, -10, 4, 8, 0x7B3503).setAngle(-8)); // ear
+                container.add(this.add.rectangle(3, -3, 2, 2, 0x000000)); // eye
+                container.add(this.add.rectangle(-5, -2, 5, 12, 0x3B2503)); // mane
                 break;
         }
     }

@@ -270,46 +270,37 @@ class UnitButton extends Phaser.GameObjects.Container {
     }
 
     createArcherIcon(scene, scale) {
-        // DRAWN BOW ICON - stressed/pulled back
+        // SIMPLE BOW & ARROW - clean iconic shape
         const s = scale;
 
-        // Bow body (curved, stressed shape)
-        this.iconContainer.add(scene.add.rectangle(8 * s, -20 * s, 5 * s, 12 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(12 * s, -12 * s, 5 * s, 10 * s, 0x9B5523));
-        this.iconContainer.add(scene.add.rectangle(14 * s, 0, 5 * s, 14 * s, 0x9B5523));
-        this.iconContainer.add(scene.add.rectangle(12 * s, 12 * s, 5 * s, 10 * s, 0x9B5523));
-        this.iconContainer.add(scene.add.rectangle(8 * s, 20 * s, 5 * s, 12 * s, 0x8B4513));
-        // Bow tips
-        this.iconContainer.add(scene.add.rectangle(6 * s, -26 * s, 4 * s, 5 * s, 0x6B3503));
-        this.iconContainer.add(scene.add.rectangle(6 * s, 26 * s, 4 * s, 5 * s, 0x6B3503));
-        // Bowstring - pulled back (diagonal lines to nock point)
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -13 * s, 2 * s, 28 * s, 0xDDCCBB).setAngle(10));
-        this.iconContainer.add(scene.add.rectangle(-4 * s, 13 * s, 2 * s, 28 * s, 0xDDCCBB).setAngle(-10));
-        // Arrow nocked and ready
-        this.iconContainer.add(scene.add.rectangle(-10 * s, 0, 32 * s, 3 * s, 0x8B6B4A)); // shaft
-        this.iconContainer.add(scene.add.rectangle(-28 * s, 0, 10 * s, 5 * s, 0xA0A0B0)); // arrowhead
-        // Fletching
-        this.iconContainer.add(scene.add.rectangle(6 * s, -2 * s, 5 * s, 2 * s, 0xFF4444));
-        this.iconContainer.add(scene.add.rectangle(6 * s, 2 * s, 5 * s, 2 * s, 0xFF4444));
+        // Single curved bow (arc shape using rotated rectangles)
+        this.iconContainer.add(scene.add.rectangle(10 * s, -18 * s, 6 * s, 10 * s, 0x8B4513).setAngle(-20));
+        this.iconContainer.add(scene.add.rectangle(14 * s, -8 * s, 6 * s, 12 * s, 0x8B4513).setAngle(-10));
+        this.iconContainer.add(scene.add.rectangle(16 * s, 0, 6 * s, 10 * s, 0x9B5523));
+        this.iconContainer.add(scene.add.rectangle(14 * s, 8 * s, 6 * s, 12 * s, 0x8B4513).setAngle(10));
+        this.iconContainer.add(scene.add.rectangle(10 * s, 18 * s, 6 * s, 10 * s, 0x8B4513).setAngle(20));
+        // Bowstring (taut, straight)
+        this.iconContainer.add(scene.add.rectangle(4 * s, 0, 3 * s, 44 * s, 0xEEDDCC));
+        // Arrow (horizontal, pointing left)
+        this.iconContainer.add(scene.add.rectangle(-8 * s, 0, 36 * s, 4 * s, 0x8B6B4A));
+        // Arrowhead (triangle-ish)
+        this.iconContainer.add(scene.add.rectangle(-28 * s, 0, 8 * s, 8 * s, 0xC0C0C0).setAngle(45));
     }
 
     createHorsemanIcon(scene, scale) {
-        // ICONIC HORSE HEAD - simple silhouette
+        // MINIMAL HORSE HEAD - chess knight style silhouette
         const s = scale;
 
-        // Neck (angled)
-        this.iconContainer.add(scene.add.rectangle(-4 * s, 12 * s, 14 * s, 22 * s, 0x8B4513));
-        // Head
-        this.iconContainer.add(scene.add.rectangle(6 * s, -2 * s, 20 * s, 16 * s, 0x8B4513));
-        // Snout
-        this.iconContainer.add(scene.add.rectangle(18 * s, 4 * s, 12 * s, 10 * s, 0x7B3503));
-        // Eye (simple)
-        this.iconContainer.add(scene.add.rectangle(4 * s, -4 * s, 5 * s, 5 * s, 0x000000));
-        // Ear (single, alert)
-        this.iconContainer.add(scene.add.rectangle(0, -16 * s, 6 * s, 14 * s, 0x7B3503));
-        // Mane (flowing)
-        this.iconContainer.add(scene.add.rectangle(-12 * s, -4 * s, 8 * s, 18 * s, 0x3B2503));
-        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 6 * s, 14 * s, 0x2B1503));
+        // Head + neck as one angled shape
+        this.iconContainer.add(scene.add.rectangle(0, 8 * s, 16 * s, 28 * s, 0x8B4513).setAngle(-15));
+        // Snout/face
+        this.iconContainer.add(scene.add.rectangle(10 * s, -8 * s, 18 * s, 12 * s, 0x8B4513));
+        // Ear (pointed, alert)
+        this.iconContainer.add(scene.add.rectangle(-2 * s, -22 * s, 8 * s, 16 * s, 0x7B3503).setAngle(-10));
+        // Eye
+        this.iconContainer.add(scene.add.rectangle(6 * s, -6 * s, 4 * s, 4 * s, 0x000000));
+        // Mane (simple flowing shape)
+        this.iconContainer.add(scene.add.rectangle(-10 * s, -6 * s, 10 * s, 24 * s, 0x3B2503));
     }
 
     onClick() {
