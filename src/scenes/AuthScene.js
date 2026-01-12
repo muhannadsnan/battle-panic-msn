@@ -53,15 +53,18 @@ class AuthScene extends Phaser.Scene {
         this.showMessage('Loading your data...', '#ffd700');
         const cloudResult = await supabaseClient.loadFromCloud();
 
+        console.log('Cloud load result:', cloudResult);
+
         if (cloudResult.success && cloudResult.saveData) {
             // Cloud data exists - use it
+            console.log('Cloud data found:', cloudResult.saveData);
             const mergedData = saveSystem.mergeWithDefaults(cloudResult.saveData);
             saveSystem.save(mergedData);
             this.showMessage('Data loaded from cloud!', '#4ade80');
-            console.log('Loaded cloud save for user');
+            console.log('Saved merged cloud data locally');
         } else if (guestData) {
             // First-time sign-in: migrate guest data to new account
-            console.log('First-time sign-in: migrating guest data');
+            console.log('First-time sign-in: migrating guest data', guestData);
             saveSystem.save(guestData);
 
             // Upload to cloud
@@ -72,7 +75,13 @@ class AuthScene extends Phaser.Scene {
             } else {
                 this.showMessage('Progress saved locally', '#ffd700');
             }
+        } else {
+            console.log('No cloud data and no guest data');
         }
+
+        // Refresh profile panel to show updated data
+        this.clearPanel();
+        this.showProfilePanel();
     }
 
     showLoginPanel() {
