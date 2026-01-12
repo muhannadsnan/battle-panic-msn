@@ -848,7 +848,7 @@ Lv.${currentLevel + 1}`;
 
         // Cost depends on whether upgrading or repairing
         const cost = isMaxLevel
-            ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)
+            ? this.getRepairCost()
             : this.getCastleUpgradeCost(currentLevel);
 
         // Spend gold and wood
@@ -1057,22 +1057,25 @@ Lv.${level + 1}`;
                 container.add(this.add.rectangle(0, 10, 3, 6, 0x8B4513)); // handle
                 break;
             case 'ARCHER':
-                // Simple bow icon
-                container.add(this.add.rectangle(4, -6, 3, 8, 0x8B4513)); // top bow
-                container.add(this.add.rectangle(5, 0, 3, 6, 0x9B5523)); // mid
-                container.add(this.add.rectangle(4, 6, 3, 8, 0x8B4513)); // bottom bow
-                container.add(this.add.rectangle(0, 0, 2, 16, 0xEEDDCC)); // string
-                container.add(this.add.rectangle(-4, 0, 10, 2, 0x8B6B4A)); // arrow
+                // Stressed/drawn bow icon
+                container.add(this.add.rectangle(5, -7, 3, 8, 0x8B4513)); // top bow
+                container.add(this.add.rectangle(6, 0, 3, 5, 0x9B5523)); // mid grip
+                container.add(this.add.rectangle(5, 7, 3, 8, 0x8B4513)); // bottom bow
+                // Bowstring pulled back (diagonal)
+                container.add(this.add.rectangle(-1, -5, 2, 12, 0xDDCCBB).setAngle(8)); // top string
+                container.add(this.add.rectangle(-1, 5, 2, 12, 0xDDCCBB).setAngle(-8)); // bottom string
+                // Arrow nocked and drawn
+                container.add(this.add.rectangle(-4, 0, 12, 2, 0x8B6B4A)); // arrow shaft
                 container.add(this.add.rectangle(-10, 0, 4, 3, 0xA0A0B0)); // arrowhead
                 break;
             case 'HORSEMAN':
-                // Simple horse head icon (facing right)
-                container.add(this.add.rectangle(-2, 6, 8, 10, 0x8B4513)); // neck
-                container.add(this.add.rectangle(4, 0, 10, 8, 0x9B5523)); // head
-                container.add(this.add.rectangle(10, 2, 6, 5, 0x8B4513)); // snout
-                container.add(this.add.rectangle(2, -6, 4, 6, 0x7B3503)); // ear
-                container.add(this.add.rectangle(3, 0, 3, 3, 0x000000)); // eye
-                container.add(this.add.rectangle(-6, 0, 5, 8, 0x3B2503)); // mane
+                // Iconic horse head silhouette (facing right)
+                container.add(this.add.rectangle(-2, 6, 7, 11, 0x8B4513)); // neck
+                container.add(this.add.rectangle(3, 0, 10, 8, 0x8B4513)); // head
+                container.add(this.add.rectangle(9, 2, 6, 5, 0x7B3503)); // snout
+                container.add(this.add.rectangle(2, 0, 2, 2, 0x000000)); // eye
+                container.add(this.add.rectangle(0, -6, 3, 7, 0x7B3503)); // ear
+                container.add(this.add.rectangle(-6, -1, 4, 9, 0x3B2503)); // mane
                 break;
         }
     }

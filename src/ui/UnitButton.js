@@ -120,7 +120,8 @@ class UnitButton extends Phaser.GameObjects.Container {
         // Make interactive
         this.background.setInteractive({});
 
-        this.background.on('pointerover', () => {
+        // Helper to start spawning (used by both hover and touch)
+        const startSpawning = () => {
             // Block if another interaction is active (prevents multi-touch on iPad)
             if (this.scene.activeInteraction && this.scene.activeInteraction !== this) return;
             if (this.isEnabled && this.isUnlocked) {
@@ -128,12 +129,12 @@ class UnitButton extends Phaser.GameObjects.Container {
                 this.isHovering = true;
                 this.hoverStartTime = Date.now(); // Record when hover started
                 this.innerBg.setFillStyle(0x4a6a8a, 0.85);
-                // this.percentText.setVisible(true);  // Hidden - spinner is enough
                 this.showTooltip();
             }
-        });
+        };
 
-        this.background.on('pointerout', () => {
+        // Helper to stop spawning (used by both hover and touch)
+        const stopSpawning = () => {
             this.isHovering = false;
             this.hoverStartTime = 0;
             this.innerBg.setFillStyle(0x3a4a5a, 0.7);
@@ -143,22 +144,28 @@ class UnitButton extends Phaser.GameObjects.Container {
             if (this.scene.activeInteraction === this) {
                 this.scene.activeInteraction = null;
             }
-        });
+        };
 
-        // Click still works for instant spawn (but blocked during other interactions)
+        // Desktop: hover to spawn
+        this.background.on('pointerover', startSpawning);
+        this.background.on('pointerout', stopSpawning);
+
+        // Touch/Mobile: hold to spawn (pointerdown starts, pointerup stops)
         this.background.on('pointerdown', () => {
             // Block if another interaction is active
             if (this.scene.activeInteraction && this.scene.activeInteraction !== this) return;
             if (this.isUnlocked) {
                 if (this.isEnabled) {
-                    audioManager.playClick();
-                    this.onClick();
+                    // Start spawning on touch hold
+                    startSpawning();
                 } else {
                     // Not enough resources - play warning
                     audioManager.playWarning();
                 }
             }
         });
+
+        this.background.on('pointerup', stopSpawning);
 
         scene.add.existing(this);
         this.setDepth(900);
@@ -263,63 +270,46 @@ class UnitButton extends Phaser.GameObjects.Container {
     }
 
     createArcherIcon(scene, scale) {
-        // SIMPLE BOW ICON
+        // DRAWN BOW ICON - stressed/pulled back
         const s = scale;
 
-        // Bow body (curved wooden arc)
-        // Top curve
-        this.iconContainer.add(scene.add.rectangle(6 * s, -18 * s, 6 * s, 14 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(10 * s, -10 * s, 6 * s, 10 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(12 * s, -2 * s, 6 * s, 8 * s, 0x9B5523));
-        // Bottom curve
-        this.iconContainer.add(scene.add.rectangle(12 * s, 6 * s, 6 * s, 8 * s, 0x9B5523));
-        this.iconContainer.add(scene.add.rectangle(10 * s, 14 * s, 6 * s, 10 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(6 * s, 22 * s, 6 * s, 14 * s, 0x8B4513));
-        // Bow tips (nocks)
-        this.iconContainer.add(scene.add.rectangle(4 * s, -26 * s, 4 * s, 6 * s, 0x6B3503));
-        this.iconContainer.add(scene.add.rectangle(4 * s, 28 * s, 4 * s, 6 * s, 0x6B3503));
-        // Bowstring
-        this.iconContainer.add(scene.add.rectangle(-2 * s, 0, 3 * s, 52 * s, 0xEEDDCC));
-        // Arrow
-        this.iconContainer.add(scene.add.rectangle(-8 * s, 0, 28 * s, 4 * s, 0x8B6B4A)); // shaft
-        this.iconContainer.add(scene.add.rectangle(-24 * s, 0, 10 * s, 6 * s, 0xA0A0B0)); // arrowhead
+        // Bow body (curved, stressed shape)
+        this.iconContainer.add(scene.add.rectangle(8 * s, -20 * s, 5 * s, 12 * s, 0x8B4513));
+        this.iconContainer.add(scene.add.rectangle(12 * s, -12 * s, 5 * s, 10 * s, 0x9B5523));
+        this.iconContainer.add(scene.add.rectangle(14 * s, 0, 5 * s, 14 * s, 0x9B5523));
+        this.iconContainer.add(scene.add.rectangle(12 * s, 12 * s, 5 * s, 10 * s, 0x9B5523));
+        this.iconContainer.add(scene.add.rectangle(8 * s, 20 * s, 5 * s, 12 * s, 0x8B4513));
+        // Bow tips
+        this.iconContainer.add(scene.add.rectangle(6 * s, -26 * s, 4 * s, 5 * s, 0x6B3503));
+        this.iconContainer.add(scene.add.rectangle(6 * s, 26 * s, 4 * s, 5 * s, 0x6B3503));
+        // Bowstring - pulled back (diagonal lines to nock point)
+        this.iconContainer.add(scene.add.rectangle(-4 * s, -13 * s, 2 * s, 28 * s, 0xDDCCBB).setAngle(10));
+        this.iconContainer.add(scene.add.rectangle(-4 * s, 13 * s, 2 * s, 28 * s, 0xDDCCBB).setAngle(-10));
+        // Arrow nocked and ready
+        this.iconContainer.add(scene.add.rectangle(-10 * s, 0, 32 * s, 3 * s, 0x8B6B4A)); // shaft
+        this.iconContainer.add(scene.add.rectangle(-28 * s, 0, 10 * s, 5 * s, 0xA0A0B0)); // arrowhead
         // Fletching
-        this.iconContainer.add(scene.add.rectangle(6 * s, -3 * s, 6 * s, 3 * s, 0xFF4444));
-        this.iconContainer.add(scene.add.rectangle(6 * s, 3 * s, 6 * s, 3 * s, 0xFF4444));
+        this.iconContainer.add(scene.add.rectangle(6 * s, -2 * s, 5 * s, 2 * s, 0xFF4444));
+        this.iconContainer.add(scene.add.rectangle(6 * s, 2 * s, 5 * s, 2 * s, 0xFF4444));
     }
 
     createHorsemanIcon(scene, scale) {
-        // SIMPLE HORSE HEAD ICON (facing right)
+        // ICONIC HORSE HEAD - simple silhouette
         const s = scale;
 
-        // Neck
-        this.iconContainer.add(scene.add.rectangle(-6 * s, 14 * s, 16 * s, 24 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(-4 * s, 12 * s, 12 * s, 20 * s, 0x9B5523)); // highlight
+        // Neck (angled)
+        this.iconContainer.add(scene.add.rectangle(-4 * s, 12 * s, 14 * s, 22 * s, 0x8B4513));
         // Head
-        this.iconContainer.add(scene.add.rectangle(6 * s, -4 * s, 22 * s, 18 * s, 0x9B5523));
-        this.iconContainer.add(scene.add.rectangle(8 * s, -6 * s, 18 * s, 14 * s, 0xAB6533)); // highlight
-        // Snout/nose
-        this.iconContainer.add(scene.add.rectangle(18 * s, 2 * s, 14 * s, 12 * s, 0x8B4513));
-        this.iconContainer.add(scene.add.rectangle(20 * s, 0, 10 * s, 8 * s, 0x9B5523));
-        // Nostrils
-        this.iconContainer.add(scene.add.rectangle(22 * s, 4 * s, 4 * s, 4 * s, 0x3B2503));
-        this.iconContainer.add(scene.add.rectangle(18 * s, 4 * s, 4 * s, 4 * s, 0x3B2503));
-        // Eye
-        this.iconContainer.add(scene.add.rectangle(4 * s, -6 * s, 8 * s, 8 * s, 0xFFFFFF));
-        this.iconContainer.add(scene.add.rectangle(5 * s, -5 * s, 5 * s, 6 * s, 0x000000));
-        this.iconContainer.add(scene.add.rectangle(3 * s, -7 * s, 2 * s, 2 * s, 0xFFFFFF)); // gleam
-        // Ears (perked)
-        this.iconContainer.add(scene.add.rectangle(-4 * s, -18 * s, 8 * s, 14 * s, 0x7B3503));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, -16 * s, 4 * s, 10 * s, 0xFFCBA4)); // inner
-        this.iconContainer.add(scene.add.rectangle(6 * s, -18 * s, 8 * s, 14 * s, 0x7B3503));
-        this.iconContainer.add(scene.add.rectangle(8 * s, -16 * s, 4 * s, 10 * s, 0xFFCBA4)); // inner
-        // Mane
-        this.iconContainer.add(scene.add.rectangle(-14 * s, -8 * s, 10 * s, 20 * s, 0x3B2503));
-        this.iconContainer.add(scene.add.rectangle(-16 * s, 0, 8 * s, 16 * s, 0x2B1503));
-        this.iconContainer.add(scene.add.rectangle(-18 * s, 8 * s, 6 * s, 12 * s, 0x3B2503));
-        // Bridle
-        this.iconContainer.add(scene.add.rectangle(6 * s, 4 * s, 24 * s, 3 * s, 0xC49A4A));
-        this.iconContainer.add(scene.add.rectangle(-2 * s, 10 * s, 3 * s, 14 * s, 0xC49A4A));
+        this.iconContainer.add(scene.add.rectangle(6 * s, -2 * s, 20 * s, 16 * s, 0x8B4513));
+        // Snout
+        this.iconContainer.add(scene.add.rectangle(18 * s, 4 * s, 12 * s, 10 * s, 0x7B3503));
+        // Eye (simple)
+        this.iconContainer.add(scene.add.rectangle(4 * s, -4 * s, 5 * s, 5 * s, 0x000000));
+        // Ear (single, alert)
+        this.iconContainer.add(scene.add.rectangle(0, -16 * s, 6 * s, 14 * s, 0x7B3503));
+        // Mane (flowing)
+        this.iconContainer.add(scene.add.rectangle(-12 * s, -4 * s, 8 * s, 18 * s, 0x3B2503));
+        this.iconContainer.add(scene.add.rectangle(-14 * s, 6 * s, 6 * s, 14 * s, 0x2B1503));
     }
 
     onClick() {
@@ -451,30 +441,36 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         // Determine badge appearance
         // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
-        // Military style: V-shaped chevrons stacked vertically
+        // Military style: V-shaped chevrons stacked vertically (matching unit badges)
         const isGold = level > 3;
         const numChevrons = isGold ? level - 3 : level;
         const color = isGold ? 0xffd700 : 0xc0c0c0;
-        const strokeColor = isGold ? 0xb8860b : 0x808080;
+        const borderColor = isGold ? 0x8b6914 : 0x606060;
 
-        // Draw stacked chevrons (V shapes pointing down, like military rank)
-        const chevronWidth = 10;
-        const chevronHeight = 4;
-        const spacing = 4;
+        // Draw stacked chevrons (open V shapes pointing down, like military rank)
+        // Scaled down from unit badges (unit uses 16/8/8, button uses 12/6/6)
+        const chevronWidth = 12;
+        const chevronHeight = 6;
+        const spacing = 6;
 
         for (let i = 0; i < numChevrons; i++) {
             const graphics = this.scene.add.graphics();
             const offsetY = -i * spacing; // Stack upward
 
-            // Draw V-shaped chevron pointing down
-            graphics.lineStyle(2, strokeColor, 1);
-            graphics.fillStyle(color, 1);
+            // Draw border first (thicker, darker) - matching unit style
+            graphics.lineStyle(4, borderColor, 1);
             graphics.beginPath();
-            graphics.moveTo(0, offsetY);                           // Top left
-            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight); // Bottom center (tip)
-            graphics.lineTo(chevronWidth, offsetY);                // Top right
-            graphics.closePath();
-            graphics.fillPath();
+            graphics.moveTo(0, offsetY);
+            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+            graphics.lineTo(chevronWidth, offsetY);
+            graphics.strokePath();
+
+            // Draw main chevron on top (thinner, brighter) - matching unit style
+            graphics.lineStyle(2, color, 1);
+            graphics.beginPath();
+            graphics.moveTo(0, offsetY);
+            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+            graphics.lineTo(chevronWidth, offsetY);
             graphics.strokePath();
 
             this.promotionBadgeContainer.add(graphics);

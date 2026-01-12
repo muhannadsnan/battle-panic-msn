@@ -175,14 +175,17 @@ new UnitButton(scene, x, y, unitType, hotkey, isUnlocked = true)
 
 #### Spawn Mechanics
 
-**Hover-to-Spawn:**
-1. Hover over button
-2. Progress fills at `spawnSpeed` (100/sec)
-3. When progress reaches 100: spawn unit
-4. Progress persists when not hovering
+**Hover/Hold-to-Spawn:**
+1. Hover (desktop) or hold (touch) over button
+2. 250ms delay before progress starts
+3. Progress fills at `spawnSpeed` (100/sec)
+4. When progress reaches 100: spawn unit
+5. Progress persists when not hovering/holding
 
-**Click-to-Spawn:**
-Clicking immediately attempts to spawn (traditional method).
+**Desktop:** Mouse hover triggers spawning
+**Mobile/Tablet:** Touch and hold triggers spawning (pointerdown/pointerup)
+
+**No instant click spawning** - prevents accidental spawns on touch devices.
 
 #### Methods
 
@@ -210,10 +213,17 @@ Shows/hides lock overlay.
 Shows unit stats on hover (displays upgraded HP/DMG based on XP upgrade level, not base stats).
 
 #### Unit Icons
-Each unit has a procedural icon:
-- `createPeasantIcon()` - Farmer with pitchfork
-- `createArcherIcon()` - Hooded figure with bow
-- `createKnightIcon()` - Armored knight with sword
+Each unit has a procedural icon (simplified, iconic style):
+- `createPeasantIcon()` - Simple sword with crossguard
+- `createArcherIcon()` - Stressed/drawn bow with arrow nocked
+- `createHorsemanIcon()` - Iconic horse head silhouette
+
+#### Promotion Badges
+Military-style open V-shaped chevrons matching the unit badges:
+- Silver chevrons (levels 1-3)
+- Gold chevrons (levels 4-6)
+- Border layer (darker, 4px) with main line on top (brighter, 2px)
+- Chevrons stack vertically
 
 ---
 

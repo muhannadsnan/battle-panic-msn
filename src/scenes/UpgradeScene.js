@@ -367,129 +367,85 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createArcherIcon(container, scale, alpha) {
-        // SIMPLE BOW ICON
+        // STRESSED/DRAWN BOW ICON
         const s = scale;
 
         // Bow body (curved wooden arc)
-        // Top curve
-        const bow1 = this.add.rectangle(6 * s, -18 * s, 6 * s, 14 * s, 0x8B4513);
+        const bow1 = this.add.rectangle(10 * s, -16 * s, 6 * s, 14 * s, 0x8B4513);
         bow1.setAlpha(alpha);
         container.add(bow1);
-        const bow2 = this.add.rectangle(10 * s, -10 * s, 6 * s, 10 * s, 0x8B4513);
+        const bow2 = this.add.rectangle(14 * s, -6 * s, 6 * s, 12 * s, 0x9B5523);
         bow2.setAlpha(alpha);
         container.add(bow2);
-        const bow3 = this.add.rectangle(12 * s, -2 * s, 6 * s, 8 * s, 0x9B5523);
+        const bow3 = this.add.rectangle(14 * s, 6 * s, 6 * s, 12 * s, 0x9B5523);
         bow3.setAlpha(alpha);
         container.add(bow3);
-        // Bottom curve
-        const bow4 = this.add.rectangle(12 * s, 6 * s, 6 * s, 8 * s, 0x9B5523);
+        const bow4 = this.add.rectangle(10 * s, 16 * s, 6 * s, 14 * s, 0x8B4513);
         bow4.setAlpha(alpha);
         container.add(bow4);
-        const bow5 = this.add.rectangle(10 * s, 14 * s, 6 * s, 10 * s, 0x8B4513);
-        bow5.setAlpha(alpha);
-        container.add(bow5);
-        const bow6 = this.add.rectangle(6 * s, 22 * s, 6 * s, 14 * s, 0x8B4513);
-        bow6.setAlpha(alpha);
-        container.add(bow6);
         // Bow tips (nocks)
-        const nock1 = this.add.rectangle(4 * s, -26 * s, 4 * s, 6 * s, 0x6B3503);
+        const nock1 = this.add.rectangle(8 * s, -24 * s, 4 * s, 6 * s, 0x6B3503);
         nock1.setAlpha(alpha);
         container.add(nock1);
-        const nock2 = this.add.rectangle(4 * s, 28 * s, 4 * s, 6 * s, 0x6B3503);
+        const nock2 = this.add.rectangle(8 * s, 24 * s, 4 * s, 6 * s, 0x6B3503);
         nock2.setAlpha(alpha);
         container.add(nock2);
-        // Bowstring
-        const bowstring = this.add.rectangle(-2 * s, 0, 3 * s, 52 * s, 0xEEDDCC);
-        bowstring.setAlpha(alpha);
-        container.add(bowstring);
-        // Arrow
-        const arrowShaft = this.add.rectangle(-8 * s, 0, 28 * s, 4 * s, 0x8B6B4A);
+        // Bowstring pulled back (diagonal lines to nock point)
+        const string1 = this.add.rectangle(-2 * s, -12 * s, 3 * s, 28 * s, 0xDDCCBB);
+        string1.setAngle(10);
+        string1.setAlpha(alpha);
+        container.add(string1);
+        const string2 = this.add.rectangle(-2 * s, 12 * s, 3 * s, 28 * s, 0xDDCCBB);
+        string2.setAngle(-10);
+        string2.setAlpha(alpha);
+        container.add(string2);
+        // Arrow nocked and drawn back
+        const arrowShaft = this.add.rectangle(-10 * s, 0, 32 * s, 4 * s, 0x8B6B4A);
         arrowShaft.setAlpha(alpha);
         container.add(arrowShaft);
-        const arrowhead = this.add.rectangle(-24 * s, 0, 10 * s, 6 * s, 0xA0A0B0);
+        const arrowhead = this.add.rectangle(-28 * s, 0, 10 * s, 6 * s, 0xA0A0B0);
         arrowhead.setAlpha(alpha);
         container.add(arrowhead);
         // Fletching
-        const fletch1 = this.add.rectangle(6 * s, -3 * s, 6 * s, 3 * s, 0xFF4444);
+        const fletch1 = this.add.rectangle(8 * s, -3 * s, 6 * s, 3 * s, 0xFF4444);
         fletch1.setAlpha(alpha);
         container.add(fletch1);
-        const fletch2 = this.add.rectangle(6 * s, 3 * s, 6 * s, 3 * s, 0xFF4444);
+        const fletch2 = this.add.rectangle(8 * s, 3 * s, 6 * s, 3 * s, 0xFF4444);
         fletch2.setAlpha(alpha);
         container.add(fletch2);
     }
 
     createHorsemanIcon(container, scale, alpha) {
-        // SIMPLE HORSE HEAD ICON (facing right)
+        // ICONIC HORSE HEAD SILHOUETTE (facing right)
         const s = scale;
 
         // Neck
-        const neck = this.add.rectangle(-6 * s, 14 * s, 16 * s, 24 * s, 0x8B4513);
+        const neck = this.add.rectangle(-4 * s, 12 * s, 14 * s, 22 * s, 0x8B4513);
         neck.setAlpha(alpha);
         container.add(neck);
-        const neckHighlight = this.add.rectangle(-4 * s, 12 * s, 12 * s, 20 * s, 0x9B5523);
-        neckHighlight.setAlpha(alpha);
-        container.add(neckHighlight);
         // Head
-        const head = this.add.rectangle(6 * s, -4 * s, 22 * s, 18 * s, 0x9B5523);
+        const head = this.add.rectangle(6 * s, -2 * s, 20 * s, 16 * s, 0x8B4513);
         head.setAlpha(alpha);
         container.add(head);
-        const headHighlight = this.add.rectangle(8 * s, -6 * s, 18 * s, 14 * s, 0xAB6533);
-        headHighlight.setAlpha(alpha);
-        container.add(headHighlight);
-        // Snout/nose
-        const snout = this.add.rectangle(18 * s, 2 * s, 14 * s, 12 * s, 0x8B4513);
+        // Snout
+        const snout = this.add.rectangle(18 * s, 4 * s, 12 * s, 10 * s, 0x7B3503);
         snout.setAlpha(alpha);
         container.add(snout);
-        const snoutHighlight = this.add.rectangle(20 * s, 0, 10 * s, 8 * s, 0x9B5523);
-        snoutHighlight.setAlpha(alpha);
-        container.add(snoutHighlight);
-        // Nostrils
-        const nostril1 = this.add.rectangle(22 * s, 4 * s, 4 * s, 4 * s, 0x3B2503);
-        nostril1.setAlpha(alpha);
-        container.add(nostril1);
-        const nostril2 = this.add.rectangle(18 * s, 4 * s, 4 * s, 4 * s, 0x3B2503);
-        nostril2.setAlpha(alpha);
-        container.add(nostril2);
-        // Eye
-        const eyeWhite = this.add.rectangle(4 * s, -6 * s, 8 * s, 8 * s, 0xFFFFFF);
-        eyeWhite.setAlpha(alpha);
-        container.add(eyeWhite);
-        const eyePupil = this.add.rectangle(5 * s, -5 * s, 5 * s, 6 * s, 0x000000);
-        eyePupil.setAlpha(alpha);
-        container.add(eyePupil);
-        const eyeGleam = this.add.rectangle(3 * s, -7 * s, 2 * s, 2 * s, 0xFFFFFF);
-        eyeGleam.setAlpha(alpha);
-        container.add(eyeGleam);
-        // Ears (perked)
-        const ear1 = this.add.rectangle(-4 * s, -18 * s, 8 * s, 14 * s, 0x7B3503);
-        ear1.setAlpha(alpha);
-        container.add(ear1);
-        const ear1Inner = this.add.rectangle(-2 * s, -16 * s, 4 * s, 10 * s, 0xFFCBA4);
-        ear1Inner.setAlpha(alpha);
-        container.add(ear1Inner);
-        const ear2 = this.add.rectangle(6 * s, -18 * s, 8 * s, 14 * s, 0x7B3503);
-        ear2.setAlpha(alpha);
-        container.add(ear2);
-        const ear2Inner = this.add.rectangle(8 * s, -16 * s, 4 * s, 10 * s, 0xFFCBA4);
-        ear2Inner.setAlpha(alpha);
-        container.add(ear2Inner);
-        // Mane
-        const mane1 = this.add.rectangle(-14 * s, -8 * s, 10 * s, 20 * s, 0x3B2503);
+        // Eye (simple dot)
+        const eye = this.add.rectangle(4 * s, -4 * s, 5 * s, 5 * s, 0x000000);
+        eye.setAlpha(alpha);
+        container.add(eye);
+        // Single ear
+        const ear = this.add.rectangle(0, -16 * s, 6 * s, 14 * s, 0x7B3503);
+        ear.setAlpha(alpha);
+        container.add(ear);
+        // Mane (simple)
+        const mane1 = this.add.rectangle(-12 * s, -4 * s, 8 * s, 18 * s, 0x3B2503);
         mane1.setAlpha(alpha);
         container.add(mane1);
-        const mane2 = this.add.rectangle(-16 * s, 0, 8 * s, 16 * s, 0x2B1503);
+        const mane2 = this.add.rectangle(-14 * s, 6 * s, 6 * s, 14 * s, 0x2B1503);
         mane2.setAlpha(alpha);
         container.add(mane2);
-        const mane3 = this.add.rectangle(-18 * s, 8 * s, 6 * s, 12 * s, 0x3B2503);
-        mane3.setAlpha(alpha);
-        container.add(mane3);
-        // Bridle
-        const bridle1 = this.add.rectangle(6 * s, 4 * s, 24 * s, 3 * s, 0xC49A4A);
-        bridle1.setAlpha(alpha);
-        container.add(bridle1);
-        const bridle2 = this.add.rectangle(-2 * s, 10 * s, 3 * s, 14 * s, 0xC49A4A);
-        bridle2.setAlpha(alpha);
-        container.add(bridle2);
     }
 
     createCastleUpgrades(pageContainer) {
