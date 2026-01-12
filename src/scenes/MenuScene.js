@@ -105,15 +105,15 @@ class MenuScene extends Phaser.Scene {
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
 
-        // Version (bottom left, under gear)
-        this.add.text(40, 80, GAME_VERSION, {
-            fontSize: '14px',
+        // Login/Profile button (top right corner)
+        this.createLoginButton(width - 50, 40);
+
+        // Version (bottom left, under Buy XP button)
+        this.add.text(100, height - 20, GAME_VERSION, {
+            fontSize: '12px',
             fontFamily: 'Arial',
             color: '#555555'
         }).setOrigin(0.5, 0);
-
-        // Login/Profile button (top right corner)
-        this.createLoginButton(width - 50, 40);
     }
 
     createButton(x, y, text, callback) {
