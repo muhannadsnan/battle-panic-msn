@@ -119,12 +119,12 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer = this.add.container(width / 2, height / 2);
 
         // Panel background
-        const panelBg = this.add.rectangle(0, 0, 400, 300, 0x1a1a2e);
+        const panelBg = this.add.rectangle(0, 0, 400, 320, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
         // Title
-        const title = this.add.text(0, -110, 'Check Your Email!', {
+        const title = this.add.text(0, -120, 'Check Your Email!', {
             fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -133,13 +133,13 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(title);
 
         // Email icon
-        const emailIcon = this.add.text(0, -60, '✉️', {
+        const emailIcon = this.add.text(0, -70, '✉️', {
             fontSize: '48px'
         }).setOrigin(0.5);
         this.panelContainer.add(emailIcon);
 
-        // Message
-        const message = this.add.text(0, 0, `We sent a login link to:\n${email}\n\nClick the link in your email to login.\nLink expires in 15 minutes.`, {
+        // Message - moved down to avoid overlap
+        const message = this.add.text(0, 20, `We sent a login link to:\n${email}\n\nClick the link in your email to login.\nLink expires in 15 minutes.`, {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#cccccc',
@@ -148,13 +148,22 @@ class AuthScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.panelContainer.add(message);
 
+        // Status text for resend feedback
+        this.checkEmailStatus = this.add.text(0, 85, '', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ffd700',
+            align: 'center'
+        }).setOrigin(0.5);
+        this.panelContainer.add(this.checkEmailStatus);
+
         // Buttons row
-        const resendBtn = this.createButton(-80, 90, 'Resend', () => {
-            this.sendMagicLink(email);
+        const resendBtn = this.createButton(-80, 115, 'Resend', () => {
+            this.resendMagicLink(email);
         }, 0x4a4a8e, 100, 35);
         this.panelContainer.add(resendBtn);
 
-        const cancelBtn = this.createButton(80, 90, 'Back', () => {
+        const cancelBtn = this.createButton(80, 115, 'Back', () => {
             this.clearPanel();
             this.showLoginPanel();
         }, 0x666666, 100, 35);
@@ -361,6 +370,25 @@ class AuthScene extends Phaser.Scene {
             this.showCheckEmailPanel(emailValue);
         } else {
             this.showStatus(result.error || 'Failed to send magic link', '#ff6b6b');
+        }
+    }
+
+    async resendMagicLink(email) {
+        if (this.checkEmailStatus) {
+            this.checkEmailStatus.setText('Sending...');
+            this.checkEmailStatus.setColor('#ffd700');
+        }
+
+        const result = await supabaseClient.sendMagicLink(email);
+
+        if (this.checkEmailStatus) {
+            if (result.success) {
+                this.checkEmailStatus.setText('New link sent! Check your email.');
+                this.checkEmailStatus.setColor('#4ade80');
+            } else {
+                this.checkEmailStatus.setText(result.error || 'Failed to resend');
+                this.checkEmailStatus.setColor('#ff6b6b');
+            }
         }
     }
 
