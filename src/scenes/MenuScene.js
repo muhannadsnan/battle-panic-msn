@@ -67,35 +67,35 @@ class MenuScene extends Phaser.Scene {
         const rankInfo = saveSystem.getRankInfo(saveData);
 
         // Stats display - Highest Wave - LARGER
-        this.add.text(width / 2, 160, `Highest Wave: ${saveData.highestWave}`, {
+        this.add.text(width / 2, 150, `Highest Wave: ${saveData.highestWave}`, {
             fontSize: '26px',
             fontFamily: 'Arial',
             color: '#ffffff'
         }).setOrigin(0.5);
 
-        // Rank display - with more spacing below stats
-        this.createRankDisplay(width / 2, 240, rankInfo);
+        // Rank display - PRESTIGIOUS with background panel
+        this.createRankDisplay(width / 2, 210, rankInfo);
 
-        // Play button - GOLD and BIGGER
-        this.createPlayButton(width / 2, 355, () => {
+        // Play button - GOLD and BIGGER (moved down for rank display)
+        this.createPlayButton(width / 2, 370, () => {
             this.scene.start('GameScene');
         });
 
         // Upgrades button with XP notification
-        this.createUpgradesButton(width / 2, 425, saveData.xp || 0, () => {
+        this.createUpgradesButton(width / 2, 440, saveData.xp || 0, () => {
             this.scene.start('UpgradeScene');
         });
 
         // Tips button
-        this.createSmallButton(width / 2, 480, 'TIPS & INFO', () => {
+        this.createSmallButton(width / 2, 500, 'TIPS & INFO', () => {
             this.showTipsPanel();
         });
 
         // Buy XP button (bottom left)
         this.createBuyXPButton(100, height - 60);
 
-        // Buy me a coffee button (bottom right - closer to edge)
-        this.createCoffeeButton(width - 80, height - 60);
+        // Buy me a coffee button (bottom right)
+        this.createCoffeeButton(width - 100, height - 60);
 
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
@@ -317,24 +317,24 @@ class MenuScene extends Phaser.Scene {
     createCoffeeButton(x, y) {
         const container = this.add.container(x, y);
 
-        // Background with warm coffee color
-        const bg = this.add.rectangle(0, 0, 180, 70, 0x8B4513);
+        // Background with warm coffee color - narrower width
+        const bg = this.add.rectangle(0, 0, 155, 70, 0x8B4513);
         bg.setStrokeStyle(3, 0xFFD700);
         container.add(bg);
 
-        // Coffee cup icon (made of shapes)
-        const cupBody = this.add.rectangle(-55, 5, 30, 35, 0xFFFFFF);
+        // Coffee cup icon (made of shapes) - moved closer to center
+        const cupBody = this.add.rectangle(-48, 5, 28, 32, 0xFFFFFF);
         container.add(cupBody);
-        const cupHandle = this.add.rectangle(-35, 5, 10, 15, 0x8B4513);
+        const cupHandle = this.add.rectangle(-30, 5, 8, 14, 0x8B4513);
         cupHandle.setStrokeStyle(3, 0xFFFFFF);
         container.add(cupHandle);
         // Coffee inside
-        const coffee = this.add.rectangle(-55, 10, 24, 20, 0x4A2C2A);
+        const coffee = this.add.rectangle(-48, 10, 22, 18, 0x4A2C2A);
         container.add(coffee);
         // Steam (three wavy lines represented as small rectangles)
-        const steam1 = this.add.rectangle(-60, -18, 3, 8, 0xFFFFFF, 0.6);
-        const steam2 = this.add.rectangle(-55, -20, 3, 10, 0xFFFFFF, 0.6);
-        const steam3 = this.add.rectangle(-50, -18, 3, 8, 0xFFFFFF, 0.6);
+        const steam1 = this.add.rectangle(-53, -16, 3, 8, 0xFFFFFF, 0.6);
+        const steam2 = this.add.rectangle(-48, -18, 3, 10, 0xFFFFFF, 0.6);
+        const steam3 = this.add.rectangle(-43, -16, 3, 8, 0xFFFFFF, 0.6);
         container.add(steam1);
         container.add(steam2);
         container.add(steam3);
@@ -350,15 +350,15 @@ class MenuScene extends Phaser.Scene {
             repeat: -1
         });
 
-        // Text
-        const text = this.add.text(15, -8, 'Buy me a', {
+        // Text - moved closer to cup
+        const text = this.add.text(22, -8, 'Buy me a', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#FFD700'
         }).setOrigin(0.5);
         container.add(text);
 
-        const text2 = this.add.text(15, 10, 'COFFEE', {
+        const text2 = this.add.text(22, 10, 'COFFEE', {
             fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -635,29 +635,34 @@ class MenuScene extends Phaser.Scene {
     createRankDisplay(x, y, rankInfo) {
         const container = this.add.container(x, y);
 
-        // Rank icon and full name with grade (e.g., "⚔️ Soldier II") - LARGER
+        // Prestigious background panel
+        const panelBg = this.add.rectangle(0, 40, 320, 130, 0x1a1a2e, 0.8);
+        panelBg.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color);
+        container.add(panelBg);
+
+        // Rank icon and full name with grade (e.g., "⚔️ Soldier II") - PRESTIGIOUS & LARGE
         const rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
-            fontSize: '28px',
+            fontSize: '38px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: rankInfo.rank.color,
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 4
         }).setOrigin(0.5);
         container.add(rankText);
 
         // Score display - LARGER
-        const scoreText = this.add.text(0, 28, `Score: ${rankInfo.score}`, {
-            fontSize: '18px',
+        const scoreText = this.add.text(0, 38, `Score: ${rankInfo.score}`, {
+            fontSize: '22px',
             fontFamily: 'Arial',
-            color: '#888888'
+            color: '#aaaaaa'
         }).setOrigin(0.5);
         container.add(scoreText);
 
         // Progress bar background - LARGER
-        const barWidth = 200;
-        const barHeight = 14;
-        const barBg = this.add.rectangle(0, 52, barWidth, barHeight, 0x333333);
+        const barWidth = 260;
+        const barHeight = 18;
+        const barBg = this.add.rectangle(0, 68, barWidth, barHeight, 0x333333);
         barBg.setStrokeStyle(2, 0x555555);
         container.add(barBg);
 
@@ -666,7 +671,7 @@ class MenuScene extends Phaser.Scene {
         if (fillWidth > 0) {
             const barFill = this.add.rectangle(
                 -barWidth / 2 + fillWidth / 2,
-                52,
+                68,
                 fillWidth,
                 barHeight - 2,
                 Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color
@@ -676,8 +681,8 @@ class MenuScene extends Phaser.Scene {
 
         // Progress text - shows next grade or next rank - LARGER
         if (rankInfo.isMaxGrade) {
-            const maxText = this.add.text(0, 72, '⚡ MAX RANK ⚡', {
-                fontSize: '18px',
+            const maxText = this.add.text(0, 95, '⚡ MAX RANK ⚡', {
+                fontSize: '20px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: '#ffd700'
@@ -688,10 +693,10 @@ class MenuScene extends Phaser.Scene {
             const nextLabel = rankInfo.rank.grade < 3
                 ? `${rankInfo.rank.name} ${['II', 'III'][rankInfo.rank.grade - 1]}`
                 : rankInfo.nextRank.name + ' I';
-            const progressText = this.add.text(0, 72, `${rankInfo.pointsToNext} pts to ${nextLabel}`, {
-                fontSize: '18px',
+            const progressText = this.add.text(0, 95, `${rankInfo.pointsToNext} pts to ${nextLabel}`, {
+                fontSize: '20px',
                 fontFamily: 'Arial',
-                color: '#666666'
+                color: '#888888'
             }).setOrigin(0.5);
             container.add(progressText);
         }
