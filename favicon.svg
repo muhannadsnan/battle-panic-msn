@@ -1,15 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="shield" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ff6b6b"/>
-      <stop offset="100%" style="stop-color:#c0392b"/>
+    <linearGradient id="tower" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6b7b8b"/>
+      <stop offset="100%" style="stop-color:#4a5a6a"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c0392b"/>
+      <stop offset="100%" style="stop-color:#8b0000"/>
     </linearGradient>
   </defs>
-  <!-- Shield shape -->
-  <path d="M16 2 L28 6 L28 14 C28 22 16 30 16 30 C16 30 4 22 4 14 L4 6 Z" 
-        fill="url(#shield)" stroke="#8b0000" stroke-width="1"/>
-  <!-- Sword -->
-  <rect x="14" y="8" width="4" height="14" fill="#c0c0c0" stroke="#808080" stroke-width="0.5"/>
-  <rect x="11" y="10" width="10" height="3" fill="#c0c0c0" stroke="#808080" stroke-width="0.5"/>
-  <rect x="13" y="22" width="6" height="2" fill="#8B4513"/>
+  <!-- Main tower body -->
+  <rect x="8" y="12" width="16" height="18" fill="url(#tower)" stroke="#3a4a5a" stroke-width="1"/>
+  <!-- Battlements (crenellations) -->
+  <rect x="6" y="8" width="5" height="6" fill="url(#tower)" stroke="#3a4a5a" stroke-width="1"/>
+  <rect x="13" y="8" width="6" height="6" fill="url(#tower)" stroke="#3a4a5a" stroke-width="1"/>
+  <rect x="21" y="8" width="5" height="6" fill="url(#tower)" stroke="#3a4a5a" stroke-width="1"/>
+  <!-- Tower peaks/roofs -->
+  <polygon points="8.5,8 6,4 11,4" fill="url(#roof)" stroke="#5a0000" stroke-width="0.5"/>
+  <polygon points="16,8 13,3 19,3" fill="url(#roof)" stroke="#5a0000" stroke-width="0.5"/>
+  <polygon points="23.5,8 21,4 26,4" fill="url(#roof)" stroke="#5a0000" stroke-width="0.5"/>
+  <!-- Window -->
+  <rect x="13" y="18" width="6" height="8" fill="#2a3a4a" rx="3" ry="3"/>
+  <!-- Window glow -->
+  <rect x="14" y="19" width="4" height="6" fill="#ffd700" opacity="0.6" rx="2" ry="2"/>
+  <!-- Door arch -->
+  <rect x="12" y="24" width="8" height="6" fill="#3a2a1a"/>
+  <ellipse cx="16" cy="24" rx="4" ry="2" fill="#3a2a1a"/>
 </svg>
