@@ -123,13 +123,15 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.20.0)
+## Recent Updates (v1.20.1)
 
 - Supabase authentication with magic link (passwordless email)
 - Cloud save sync for logged-in users
-- Guest mode with separate local save
+- Guest mode with separate local save (progress preserved on logout)
+- First-time sign-in migrates guest progress to account
 - Leaderboard integration
-- Login/Profile UI (AuthScene)
+- Login/Profile UI (AuthScene) with compact design
+- Profile panel: horizontal icon buttons (back, sync, logout)
 
 ## Future Plans
 
@@ -151,4 +153,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.20.0)*
+*Last updated: January 2026 (v1.20.1)*

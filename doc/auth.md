@@ -336,4 +336,4 @@ Get credentials from: `https://supabase.com/dashboard/project/YOUR_PROJECT/setti
 
 ---
 
-*Status: IMPLEMENTED (v1.20.0)*
+*Status: IMPLEMENTED (v1.20.1)*
