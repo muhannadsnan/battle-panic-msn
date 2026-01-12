@@ -19,51 +19,60 @@ class AuthScene extends Phaser.Scene {
 
         if (this.isLoggedIn) {
             this.showProfilePanel();
+            // Check for pending guest data migration (from magic link redirect)
+            this.checkFirstTimeMigration();
         } else {
             this.showLoginPanel();
         }
 
-        // Listen for auth state changes
+        // Listen for auth state changes (for login during this session)
         this.authListener = async (event) => {
             const { user, guestData } = event.detail;
             if (user && !this.isLoggedIn) {
-                // User just logged in
+                // User just logged in during this session
                 this.isLoggedIn = true;
                 this.clearPanel();
                 this.showProfilePanel();
                 this.showMessage('Login successful!', '#4ade80');
-
-                // Load cloud data for this user
-                this.showMessage('Loading your data...', '#ffd700');
-                const cloudResult = await supabaseClient.loadFromCloud();
-
-                if (cloudResult.success && cloudResult.saveData) {
-                    // Cloud data exists - use it
-                    const mergedData = saveSystem.mergeWithDefaults(cloudResult.saveData);
-                    saveSystem.save(mergedData);
-                    this.showMessage('Data loaded from cloud!', '#4ade80');
-                    console.log('Loaded cloud save for user');
-                } else if (guestData) {
-                    // First-time sign-in: migrate guest data to new account
-                    console.log('First-time sign-in: migrating guest data');
-                    saveSystem.save(guestData);
-
-                    // Upload to cloud
-                    const uploadResult = await supabaseClient.saveToCloud(guestData);
-                    if (uploadResult.success) {
-                        this.showMessage('Progress migrated to your account!', '#4ade80');
-                        console.log('Guest data migrated to cloud');
-                    } else {
-                        this.showMessage('Progress saved locally', '#ffd700');
-                    }
-                } else {
-                    // No cloud data and no guest data - fresh start
-                    this.showMessage('Welcome!', '#4ade80');
-                    console.log('No cloud save found, starting fresh');
-                }
+                await this.handleLoginMigration(guestData);
             }
         };
         window.addEventListener('authStateChanged', this.authListener);
+    }
+
+    async checkFirstTimeMigration() {
+        // Check if there's pending guest data from page reload (magic link)
+        const pendingGuestData = supabaseClient.getPendingGuestData();
+        if (pendingGuestData) {
+            await this.handleLoginMigration(pendingGuestData);
+        }
+    }
+
+    async handleLoginMigration(guestData) {
+        // Load cloud data for this user
+        this.showMessage('Loading your data...', '#ffd700');
+        const cloudResult = await supabaseClient.loadFromCloud();
+
+        if (cloudResult.success && cloudResult.saveData) {
+            // Cloud data exists - use it
+            const mergedData = saveSystem.mergeWithDefaults(cloudResult.saveData);
+            saveSystem.save(mergedData);
+            this.showMessage('Data loaded from cloud!', '#4ade80');
+            console.log('Loaded cloud save for user');
+        } else if (guestData) {
+            // First-time sign-in: migrate guest data to new account
+            console.log('First-time sign-in: migrating guest data');
+            saveSystem.save(guestData);
+
+            // Upload to cloud
+            const uploadResult = await supabaseClient.saveToCloud(guestData);
+            if (uploadResult.success) {
+                this.showMessage('Progress migrated to your account!', '#4ade80');
+                console.log('Guest data migrated to cloud');
+            } else {
+                this.showMessage('Progress saved locally', '#ffd700');
+            }
+        }
     }
 
     showLoginPanel() {
@@ -456,9 +465,8 @@ class AuthScene extends Phaser.Scene {
 
         if (result.success) {
             this.isLoggedIn = false;
-            this.clearPanel();
-            this.showLoginPanel();
-            this.showMessage('Logged out successfully', '#4ade80');
+            // Go back to main menu (now as guest)
+            this.scene.start('MenuScene');
         } else {
             this.showMessage('Logout failed: ' + result.error, '#ff6b6b');
         }

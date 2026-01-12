@@ -69,6 +69,12 @@ class SupabaseClient {
             this.session = session;
             this.user = session?.user || null;
 
+            // Capture guest data BEFORE switching (for first-time migration)
+            if (this.user && saveSystem.isGuestSave()) {
+                this.pendingGuestData = saveSystem.load();
+                console.log('checkSession: Captured guest data for migration');
+            }
+
             // Switch to user save key if logged in
             if (this.user) {
                 saveSystem.setUserSaveKey(this.user.id);
@@ -112,6 +118,13 @@ class SupabaseClient {
     // Check if logged in
     isLoggedIn() {
         return this.user !== null;
+    }
+
+    // Get and clear pending guest data (for first-time migration)
+    getPendingGuestData() {
+        const data = this.pendingGuestData;
+        this.pendingGuestData = null; // Clear after retrieval
+        return data;
     }
 
     // Get user display name (from metadata or email)
