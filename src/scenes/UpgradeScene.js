@@ -27,17 +27,10 @@ class UpgradeScene extends Phaser.Scene {
 
         // XP display (upgrades use XP, not gold) - larger for mobile
         const xp = this.saveData.xp || 0;
-        this.xpText = this.add.text(GAME_WIDTH / 2, 85, `⭐ XP: ${xp}`, {
-            fontSize: '28px',
+        this.xpText = this.add.text(GAME_WIDTH / 2, 80, `⭐ XP: ${xp}`, {
+            fontSize: '32px',
             fontFamily: 'Arial',
             color: '#44ddff'
-        }).setOrigin(0.5);
-
-        // Info text - updated with max 3 XP info
-        this.add.text(GAME_WIDTH / 2, 115, 'Earn XP per 10 waves (max 3 XP per match)', {
-            fontSize: '18px',
-            fontFamily: 'Arial',
-            color: '#888888'
         }).setOrigin(0.5);
 
         // Create page containers
@@ -140,7 +133,7 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createUnitUpgrades(pageContainer) {
-        const title = this.add.text(GAME_WIDTH / 2, 145, 'UNIT UPGRADES', {
+        const title = this.add.text(GAME_WIDTH / 2, 120, 'UNIT UPGRADES', {
             fontSize: '26px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -151,7 +144,7 @@ class UpgradeScene extends Phaser.Scene {
         const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
         const startX = 185;
         const spacing = 270;
-        const y = 280;
+        const y = 260;
 
         this.upgradeCards = [];
 
@@ -283,7 +276,7 @@ class UpgradeScene extends Phaser.Scene {
                 card.add(upgradeBtn);
             } else {
                 const maxText = this.add.text(0, 112, 'MAX LEVEL', {
-                    fontSize: '18px',
+                    fontSize: '22px',
                     fontFamily: 'Arial',
                     color: '#ffd700',
                     fontStyle: 'bold'
@@ -441,7 +434,7 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createCastleUpgrades(pageContainer) {
-        const title = this.add.text(GAME_WIDTH / 2, 430, 'CASTLE UPGRADES', {
+        const title = this.add.text(GAME_WIDTH / 2, 410, 'CASTLE UPGRADES', {
             fontSize: '26px',
             fontFamily: 'Arial',
             color: '#ffffff',
@@ -457,7 +450,7 @@ class UpgradeScene extends Phaser.Scene {
 
         const startX = 195;
         const spacing = 270;
-        const y = 520;
+        const y = 500;
 
         upgrades.forEach((upgrade, index) => {
             const card = this.createCastleUpgradeCard(startX + (index * spacing), y, upgrade);
@@ -530,11 +523,11 @@ class UpgradeScene extends Phaser.Scene {
             const cost = this.calculateCastleUpgradeCost(level, upgrade.key);
             const btn = this.createCardButton(0, 42, `${cost} XP`, () => {
                 this.purchaseCastleUpgrade(upgrade.key, cost);
-            }, xp >= cost, 100, 32);
+            }, xp >= cost, 130, 45);
             card.add(btn);
         } else {
             const maxText = this.add.text(0, 42, 'MAX', {
-                fontSize: '18px',
+                fontSize: '22px',
                 fontFamily: 'Arial',
                 color: '#ffd700',
                 fontStyle: 'bold'
@@ -688,7 +681,7 @@ class UpgradeScene extends Phaser.Scene {
         }
     }
 
-    createCardButton(x, y, text, callback, enabled, width = 130, height = 45) {
+    createCardButton(x, y, text, callback, enabled, width = 150, height = 55) {
         const container = this.add.container(x, y);
 
         // Enabled buttons are much brighter (green/gold) to show they're affordable
@@ -699,8 +692,9 @@ class UpgradeScene extends Phaser.Scene {
         container.add(bg);
 
         const label = this.add.text(0, 0, text, {
-            fontSize: '20px',
+            fontSize: '24px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: enabled ? '#ffffff' : '#666666',
             align: 'center'
         }).setOrigin(0.5);
