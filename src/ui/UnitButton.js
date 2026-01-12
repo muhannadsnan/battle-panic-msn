@@ -108,8 +108,9 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.add(this.unlockInfoText);
 
         // Promotion badge container (hidden by default, shows after 10 spawns)
+        // Positioned in the middle-right of the button
         this.promotionLevel = 0;
-        this.promotionBadgeContainer = scene.add.container(buttonWidth / 2 - 12, -buttonHeight / 2 + 10);
+        this.promotionBadgeContainer = scene.add.container(buttonWidth / 2 - 14, 0);
         this.promotionBadgeContainer.setVisible(false);
         this.add(this.promotionBadgeContainer);
 
