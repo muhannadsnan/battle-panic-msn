@@ -535,7 +535,7 @@ class UpgradeScene extends Phaser.Scene {
         // Upgrade button (uses XP)
         const xp = this.saveData.xp || 0;
         if (level < UPGRADE_CONFIG.maxLevel) {
-            const cost = this.calculateCastleUpgradeCost(level);
+            const cost = this.calculateCastleUpgradeCost(level, upgrade.key);
             const btn = this.createCardButton(0, 32, `${cost} XP`, () => {
                 this.purchaseCastleUpgrade(upgrade.key, cost);
             }, xp >= cost, 70, 22);
@@ -814,9 +814,16 @@ class UpgradeScene extends Phaser.Scene {
         return currentLevel;
     }
 
-    calculateCastleUpgradeCost(currentLevel) {
+    calculateCastleUpgradeCost(currentLevel, upgradeKey = null) {
         // XP costs: 1, 2, 3, 4, 5...
-        return currentLevel;
+        let cost = currentLevel;
+
+        // Mining speed costs 2x to slow early game progression
+        if (upgradeKey === 'goldIncome') {
+            cost = cost * 2;
+        }
+
+        return cost;
     }
 
     getUnlockCost(unitKey) {
