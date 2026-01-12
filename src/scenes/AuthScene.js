@@ -25,7 +25,7 @@ class AuthScene extends Phaser.Scene {
 
         // Listen for auth state changes
         this.authListener = async (event) => {
-            const { user } = event.detail;
+            const { user, guestData } = event.detail;
             if (user && !this.isLoggedIn) {
                 // User just logged in
                 this.isLoggedIn = true;
@@ -33,19 +33,33 @@ class AuthScene extends Phaser.Scene {
                 this.showProfilePanel();
                 this.showMessage('Login successful!', '#4ade80');
 
-                // Load cloud data for this user (separate from guest data)
+                // Load cloud data for this user
                 this.showMessage('Loading your data...', '#ffd700');
                 const cloudResult = await supabaseClient.loadFromCloud();
+
                 if (cloudResult.success && cloudResult.saveData) {
-                    // Cloud data exists - save it locally for this user
+                    // Cloud data exists - use it
                     const mergedData = saveSystem.mergeWithDefaults(cloudResult.saveData);
                     saveSystem.save(mergedData);
                     this.showMessage('Data loaded from cloud!', '#4ade80');
                     console.log('Loaded cloud save for user');
+                } else if (guestData) {
+                    // First-time sign-in: migrate guest data to new account
+                    console.log('First-time sign-in: migrating guest data');
+                    saveSystem.save(guestData);
+
+                    // Upload to cloud
+                    const uploadResult = await supabaseClient.saveToCloud(guestData);
+                    if (uploadResult.success) {
+                        this.showMessage('Progress migrated to your account!', '#4ade80');
+                        console.log('Guest data migrated to cloud');
+                    } else {
+                        this.showMessage('Progress saved locally', '#ffd700');
+                    }
                 } else {
-                    // No cloud data - user starts fresh (or keeps existing local user data)
+                    // No cloud data and no guest data - fresh start
                     this.showMessage('Welcome!', '#4ade80');
-                    console.log('No cloud save found, using local data');
+                    console.log('No cloud save found, starting fresh');
                 }
             }
         };

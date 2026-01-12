@@ -31,6 +31,13 @@ class SupabaseClient {
                 this.session = session;
                 this.user = session?.user || null;
 
+                // Capture guest data BEFORE switching save key (for first-time migration)
+                let guestData = null;
+                if (this.user && saveSystem.isGuestSave()) {
+                    guestData = saveSystem.load();
+                    console.log('Captured guest data for potential migration');
+                }
+
                 // Switch save key based on login status
                 if (this.user) {
                     saveSystem.setUserSaveKey(this.user.id);
@@ -38,9 +45,9 @@ class SupabaseClient {
                     saveSystem.setUserSaveKey(null); // Back to guest
                 }
 
-                // Dispatch custom event for game to react
+                // Dispatch custom event for game to react (include guest data for migration)
                 window.dispatchEvent(new CustomEvent('authStateChanged', {
-                    detail: { event, user: this.user }
+                    detail: { event, user: this.user, guestData }
                 }));
             });
 
