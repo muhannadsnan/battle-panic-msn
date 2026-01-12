@@ -102,21 +102,18 @@ class MenuScene extends Phaser.Scene {
         // Buy me a coffee button (bottom right)
         this.createCoffeeButton(width - 100, height - 60);
 
-        // Version (top right corner)
-        this.add.text(width - 10, 15, GAME_VERSION, {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#666666',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(1, 0);
-
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
 
-        // Login/Profile button (under gear, left side)
-        this.createLoginButton(40, 110);
+        // Version (bottom left, under gear)
+        this.add.text(40, 80, GAME_VERSION, {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#555555'
+        }).setOrigin(0.5, 0);
+
+        // Login/Profile button (top right corner)
+        this.createLoginButton(width - 50, 40);
     }
 
     createButton(x, y, text, callback) {

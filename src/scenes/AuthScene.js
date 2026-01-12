@@ -221,21 +221,21 @@ class AuthScene extends Phaser.Scene {
 
         // Buttons row - horizontal layout
         // Back button (left) - arrow icon only
-        const backBtn = this.createIconButton(-120, 70, '←', () => {
+        const backBtn = this.createIconButton(-110, 70, '◀', () => {
             this.goBack();
-        }, 0x666666);
+        }, 0x555555);
         this.panelContainer.add(backBtn);
 
-        // Sync button (center) - icon only
-        const syncBtn = this.createIconButton(0, 70, '🔄', async () => {
+        // Sync button (center) - cloud sync icon
+        const syncBtn = this.createIconButton(0, 70, '☁️', async () => {
             await this.syncSaveData();
-        }, 0x4a7aba);
+        }, 0x3498db);
         this.panelContainer.add(syncBtn);
 
-        // Logout button (right)
-        const logoutBtn = this.createButton(90, 70, 'Logout', async () => {
+        // Logout button (right) - compact
+        const logoutBtn = this.createButton(95, 70, '🚪', async () => {
             await this.logout();
-        }, 0xc0392b, 100, 40);
+        }, 0xc0392b, 50, 40);
         this.panelContainer.add(logoutBtn);
     }
 
