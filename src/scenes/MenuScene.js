@@ -57,9 +57,9 @@ class MenuScene extends Phaser.Scene {
 
         // Subtitle
         this.add.text(width / 2, 170, 'A Battle Panic MSn game, built with Phaser 3', {
-            fontSize: '18px',
+            fontSize: '16px',
             fontFamily: 'Arial',
-            color: '#aaaaaa'
+            color: '#888888'
         }).setOrigin(0.5);
 
         // Load save data for stats display
@@ -69,30 +69,31 @@ class MenuScene extends Phaser.Scene {
         // Rank display
         this.createRankDisplay(width / 2, 250, rankInfo);
 
-        // Stats display - under subtitle in white
+        // Stats display - under subtitle in white, larger for mobile
         this.add.text(width / 2, 200, `Highest Wave: ${saveData.highestWave}`, {
-            fontSize: '21px',
+            fontSize: '24px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffffff'
         }).setOrigin(0.5);
 
-        // Play button
-        this.createButton(width / 2, 360, 'PLAY', () => {
+        // Play button - larger spacing for touch
+        this.createButton(width / 2, 355, 'PLAY', () => {
             this.scene.start('GameScene');
         });
 
         // Upgrades button
-        this.createButton(width / 2, 430, 'UPGRADES', () => {
+        this.createButton(width / 2, 420, 'UPGRADES', () => {
             this.scene.start('UpgradeScene');
         });
 
         // Tips button
-        this.createSmallButton(width / 2, 480, 'TIPS & INFO', () => {
+        this.createSmallButton(width / 2, 475, 'TIPS & INFO', () => {
             this.showTipsPanel();
         });
 
         // Reset upgrades button (at bottom)
-        this.createSmallButton(width / 2, height - 15, 'Reset Upgrades (2 XP)', () => {
+        this.createSmallButton(width / 2, 525, 'Reset Upgrades (2 XP)', () => {
             this.confirmResetUpgrades();
         });
 
@@ -109,25 +110,27 @@ class MenuScene extends Phaser.Scene {
         this.createLoginButton(width - 50, 40);
 
         // Version (bottom left, under Buy XP button)
-        this.add.text(100, height - 20, GAME_VERSION, {
-            fontSize: '12px',
+        this.add.text(100, height - 18, GAME_VERSION, {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#555555'
         }).setOrigin(0.5, 0);
     }
 
     createButton(x, y, text, callback) {
-        // Text-only button, no boxes
+        // Text-only button with larger touch area for mobile
         const label = this.add.text(x, y, text, {
-            fontSize: '32px',
+            fontSize: '38px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#4169E1',
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 4,
+            padding: { x: 20, y: 10 }
         }).setOrigin(0.5);
 
-        label.setInteractive({});
+        // Larger hit area for touch
+        label.setInteractive({ useHandCursor: true });
 
         label.on('pointerover', () => {
             label.setColor('#6495ED');
@@ -164,16 +167,17 @@ class MenuScene extends Phaser.Scene {
     }
 
     createSmallButton(x, y, text, callback) {
-        // Text-only small button, no boxes
+        // Text-only small button with touch-friendly size
         const label = this.add.text(x, y, text, {
-            fontSize: '21px',
+            fontSize: '24px',
             fontFamily: 'Arial',
             color: '#888888',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 2,
+            padding: { x: 15, y: 8 }
         }).setOrigin(0.5);
 
-        label.setInteractive({});
+        label.setInteractive({ useHandCursor: true });
 
         label.on('pointerover', () => {
             label.setColor('#ffffff');
@@ -528,27 +532,27 @@ class MenuScene extends Phaser.Scene {
     createSettingsGear(x, y) {
         const container = this.add.container(x, y);
 
-        // Simple Minecraft-like 2D gear
+        // Simple Minecraft-like 2D gear - larger for mobile
         // Gear body - simple gray circle
-        const gearBody = this.add.circle(0, 0, 16, 0x888888);
+        const gearBody = this.add.circle(0, 0, 20, 0x888888);
         container.add(gearBody);
 
         // Simple square teeth - 8 teeth, no fancy effects
         for (let i = 0; i < 8; i++) {
             const angle = (i * 45) * Math.PI / 180;
-            const toothX = Math.cos(angle) * 18;
-            const toothY = Math.sin(angle) * 18;
-            const tooth = this.add.rectangle(toothX, toothY, 10, 8, 0x888888);
+            const toothX = Math.cos(angle) * 22;
+            const toothY = Math.sin(angle) * 22;
+            const tooth = this.add.rectangle(toothX, toothY, 12, 10, 0x888888);
             tooth.setAngle(i * 45);
             container.add(tooth);
         }
 
         // Center hole - simple dark circle
-        const hole = this.add.circle(0, 0, 6, 0x333333);
+        const hole = this.add.circle(0, 0, 7, 0x333333);
         container.add(hole);
 
-        // Hit area
-        const hitArea = this.add.circle(0, 0, 28, 0x000000, 0);
+        // Larger hit area for touch (48px diameter minimum)
+        const hitArea = this.add.circle(0, 0, 35, 0x000000, 0);
         hitArea.setInteractive({ useHandCursor: true });
         container.add(hitArea);
 
@@ -584,33 +588,33 @@ class MenuScene extends Phaser.Scene {
         // Check if logged in
         const isLoggedIn = supabaseClient && supabaseClient.isLoggedIn();
 
-        // Background circle
-        const bg = this.add.circle(0, 0, 22, isLoggedIn ? 0x4ade80 : 0x4a4a8e);
+        // Background circle - larger for mobile
+        const bg = this.add.circle(0, 0, 28, isLoggedIn ? 0x4ade80 : 0x4a4a8e);
         container.add(bg);
 
-        // User icon
+        // User icon - larger
         const icon = this.add.text(0, 0, isLoggedIn ? '👤' : '🔑', {
-            fontSize: '22px'
+            fontSize: '26px'
         }).setOrigin(0.5);
         container.add(icon);
 
         // Status indicator if logged in
         if (isLoggedIn) {
-            const statusDot = this.add.circle(14, -14, 6, 0x4ade80);
+            const statusDot = this.add.circle(18, -18, 7, 0x4ade80);
             statusDot.setStrokeStyle(2, 0xffffff);
             container.add(statusDot);
         }
 
-        // Label below
-        const label = this.add.text(0, 32, isLoggedIn ? 'Profile' : 'Login', {
-            fontSize: '12px',
+        // Label below - larger
+        const label = this.add.text(0, 38, isLoggedIn ? 'Profile' : 'Login', {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
         container.add(label);
 
-        // Hit area
-        const hitArea = this.add.circle(0, 0, 28, 0x000000, 0);
+        // Larger hit area for touch (48px+ diameter)
+        const hitArea = this.add.circle(0, 0, 38, 0x000000, 0);
         hitArea.setInteractive({ useHandCursor: true });
         container.add(hitArea);
 
