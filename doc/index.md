@@ -123,8 +123,13 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.20.2)
+## Recent Updates (v1.20.3)
 
+- PLAY button: Gold color, bigger (52px), pulsing animation
+- UPGRADES button: XP notification badge showing available XP
+- Profile name display: Larger font (18px) for mobile
+- Rank/score display: Larger fonts (18-28px) and progress bar
+- Reset upgrades dialog: 10 second safety countdown, larger buttons
 - Mobile-friendly UI redesign for Tips & Info dialog (larger fonts, touch-friendly buttons)
 - Complete Upgrades scene redesign for mobile (larger cards, buttons, and fonts)
 - Added "max 3 XP per match" info to XP display
@@ -156,4 +161,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.20.2)*
+*Last updated: January 2026 (v1.20.3)*

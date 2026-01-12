@@ -66,9 +66,9 @@ class MenuScene extends Phaser.Scene {
         const saveData = saveSystem.load();
         const rankInfo = saveSystem.getRankInfo(saveData);
 
-        // Stats display - Highest Wave
-        this.add.text(width / 2, 165, `Highest Wave: ${saveData.highestWave}`, {
-            fontSize: '22px',
+        // Stats display - Highest Wave - LARGER
+        this.add.text(width / 2, 160, `Highest Wave: ${saveData.highestWave}`, {
+            fontSize: '26px',
             fontFamily: 'Arial',
             color: '#ffffff'
         }).setOrigin(0.5);
@@ -76,13 +76,13 @@ class MenuScene extends Phaser.Scene {
         // Rank display - with more spacing below stats
         this.createRankDisplay(width / 2, 240, rankInfo);
 
-        // Play button - larger spacing for touch
-        this.createButton(width / 2, 355, 'PLAY', () => {
+        // Play button - GOLD and BIGGER
+        this.createPlayButton(width / 2, 355, () => {
             this.scene.start('GameScene');
         });
 
-        // Upgrades button
-        this.createButton(width / 2, 420, 'UPGRADES', () => {
+        // Upgrades button with XP notification
+        this.createUpgradesButton(width / 2, 425, saveData.xp || 0, () => {
             this.scene.start('UpgradeScene');
         });
 
@@ -99,8 +99,8 @@ class MenuScene extends Phaser.Scene {
         // Buy XP button (bottom left)
         this.createBuyXPButton(100, height - 60);
 
-        // Buy me a coffee button (bottom right)
-        this.createCoffeeButton(width - 100, height - 60);
+        // Buy me a coffee button (bottom right - closer to edge)
+        this.createCoffeeButton(width - 80, height - 60);
 
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
@@ -163,6 +163,148 @@ class MenuScene extends Phaser.Scene {
         });
 
         return label;
+    }
+
+    createPlayButton(x, y, callback) {
+        // Special GOLD and BIGGER play button
+        const label = this.add.text(x, y, 'PLAY', {
+            fontSize: '52px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffd700',
+            stroke: '#8B6914',
+            strokeThickness: 6,
+            padding: { x: 30, y: 15 }
+        }).setOrigin(0.5);
+
+        // Larger hit area for touch
+        label.setInteractive({ useHandCursor: true });
+
+        // Subtle glow animation
+        this.tweens.add({
+            targets: label,
+            alpha: 0.85,
+            duration: 800,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1
+        });
+
+        label.on('pointerover', () => {
+            label.setColor('#ffec8b');
+            label.setAlpha(1);
+            this.tweens.add({
+                targets: label,
+                scaleX: 1.1,
+                scaleY: 1.1,
+                duration: 100
+            });
+        });
+
+        label.on('pointerout', () => {
+            label.setColor('#ffd700');
+            this.tweens.add({
+                targets: label,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 100
+            });
+        });
+
+        label.on('pointerdown', () => {
+            this.tweens.add({
+                targets: label,
+                scaleX: 0.95,
+                scaleY: 0.95,
+                duration: 50,
+                yoyo: true,
+                onComplete: callback
+            });
+        });
+
+        return label;
+    }
+
+    createUpgradesButton(x, y, xpAmount, callback) {
+        const container = this.add.container(x, y);
+
+        // Main button text
+        const label = this.add.text(0, 0, 'UPGRADES', {
+            fontSize: '38px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4169E1',
+            stroke: '#000000',
+            strokeThickness: 4,
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5);
+        container.add(label);
+
+        // XP notification badge (if has XP)
+        if (xpAmount > 0) {
+            const badgeX = label.width / 2 + 10;
+            const badgeY = -label.height / 2 + 5;
+
+            // Red notification dot with XP count
+            const badge = this.add.circle(badgeX, badgeY, 18, 0xff4444);
+            badge.setStrokeStyle(2, 0xffffff);
+            container.add(badge);
+
+            const badgeText = this.add.text(badgeX, badgeY, `${xpAmount}`, {
+                fontSize: '16px',
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                color: '#ffffff'
+            }).setOrigin(0.5);
+            container.add(badgeText);
+
+            // Pulse animation on badge
+            this.tweens.add({
+                targets: badge,
+                scaleX: 1.15,
+                scaleY: 1.15,
+                duration: 600,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1
+            });
+        }
+
+        // Make the whole container interactive
+        label.setInteractive({ useHandCursor: true });
+
+        label.on('pointerover', () => {
+            label.setColor('#6495ED');
+            this.tweens.add({
+                targets: container,
+                scaleX: 1.1,
+                scaleY: 1.1,
+                duration: 100
+            });
+        });
+
+        label.on('pointerout', () => {
+            label.setColor('#4169E1');
+            this.tweens.add({
+                targets: container,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 100
+            });
+        });
+
+        label.on('pointerdown', () => {
+            this.tweens.add({
+                targets: container,
+                scaleX: 0.95,
+                scaleY: 0.95,
+                duration: 50,
+                yoyo: true,
+                onComplete: callback
+            });
+        });
+
+        return container;
     }
 
     createSmallButton(x, y, text, callback) {
@@ -387,71 +529,119 @@ class MenuScene extends Phaser.Scene {
 
         const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 
-        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.8);
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.85);
+        overlay.setInteractive(); // Block clicks behind
         dialog.add(overlay);
 
-        const title = this.add.text(0, -60, 'Reset Upgrades?', {
-            fontSize: '28px',
+        // Panel background
+        const panel = this.add.rectangle(0, 0, 500, 320, 0x1a1a2e);
+        panel.setStrokeStyle(3, 0xffaa00);
+        dialog.add(panel);
+
+        const title = this.add.text(0, -120, 'Reset Upgrades?', {
+            fontSize: '34px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffaa00',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 4
         }).setOrigin(0.5);
         dialog.add(title);
 
-        const info = this.add.text(0, -10, `This will reset all upgrades to default.\nYou have ${spentXP} XP in upgrades.\nCost: 2 XP fee\nYou'll get back: ${Math.max(0, spentXP - 2)} XP`, {
-            fontSize: '21px',
+        const info = this.add.text(0, -40, `This will reset all upgrades to default.\nYou have ${spentXP} XP in upgrades.\nCost: 2 XP fee\nYou'll get back: ${Math.max(0, spentXP - 2)} XP`, {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
             align: 'center',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 2,
+            lineSpacing: 6
         }).setOrigin(0.5);
         dialog.add(info);
 
         const canReset = totalXP >= 2;
 
-        // Yes button
-        const yesText = this.add.text(-60, 70, 'RESET', {
-            fontSize: '20px',
+        // 10 second countdown for safety
+        let countdown = 10;
+
+        // Reset button (initially disabled with countdown)
+        const resetBtnBg = this.add.rectangle(-100, 90, 160, 60, canReset ? 0x553300 : 0x333333);
+        resetBtnBg.setStrokeStyle(3, canReset ? 0x886600 : 0x555555);
+        dialog.add(resetBtnBg);
+
+        const resetBtnText = this.add.text(-100, 90, canReset ? `RESET (${countdown})` : 'RESET', {
+            fontSize: '24px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: canReset ? '#ffaa00' : '#666666',
-            stroke: '#000000',
-            strokeThickness: 3
+            color: canReset ? '#886600' : '#555555'
         }).setOrigin(0.5);
-        if (canReset) {
-            yesText.setInteractive({});
-            yesText.on('pointerdown', () => {
-                const result = saveSystem.resetUpgrades();
-                if (result.success) {
-                    dialog.destroy();
-                    this.scene.restart();
-                }
-            });
-        }
-        dialog.add(yesText);
+        dialog.add(resetBtnText);
 
-        // No button
-        const noText = this.add.text(60, 70, 'CANCEL', {
-            fontSize: '20px',
+        // Cancel button (always enabled)
+        const cancelBtnBg = this.add.rectangle(100, 90, 160, 60, 0x225522);
+        cancelBtnBg.setStrokeStyle(3, 0x44aa44);
+        cancelBtnBg.setInteractive({ useHandCursor: true });
+        dialog.add(cancelBtnBg);
+
+        const cancelBtnText = this.add.text(100, 90, 'CANCEL', {
+            fontSize: '24px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#44ff44',
-            stroke: '#000000',
-            strokeThickness: 3
+            color: '#44ff44'
         }).setOrigin(0.5);
-        noText.setInteractive({});
-        dialog.add(noText);
+        dialog.add(cancelBtnText);
 
-        noText.on('pointerdown', () => {
+        cancelBtnBg.on('pointerover', () => {
+            cancelBtnBg.setFillStyle(0x336633);
+        });
+        cancelBtnBg.on('pointerout', () => {
+            cancelBtnBg.setFillStyle(0x225522);
+        });
+        cancelBtnBg.on('pointerdown', () => {
+            if (this.resetCountdownTimer) {
+                this.resetCountdownTimer.remove();
+            }
             dialog.destroy();
         });
 
+        if (canReset) {
+            // Countdown timer - enable reset button after 10 seconds
+            this.resetCountdownTimer = this.time.addEvent({
+                delay: 1000,
+                repeat: 9,
+                callback: () => {
+                    countdown--;
+                    if (countdown > 0) {
+                        resetBtnText.setText(`RESET (${countdown})`);
+                    } else {
+                        // Enable reset button
+                        resetBtnText.setText('RESET');
+                        resetBtnText.setColor('#ffaa00');
+                        resetBtnBg.setFillStyle(0x664400);
+                        resetBtnBg.setStrokeStyle(3, 0xffaa00);
+                        resetBtnBg.setInteractive({ useHandCursor: true });
+
+                        resetBtnBg.on('pointerover', () => {
+                            resetBtnBg.setFillStyle(0x885500);
+                        });
+                        resetBtnBg.on('pointerout', () => {
+                            resetBtnBg.setFillStyle(0x664400);
+                        });
+                        resetBtnBg.on('pointerdown', () => {
+                            const result = saveSystem.resetUpgrades();
+                            if (result.success) {
+                                dialog.destroy();
+                                this.scene.restart();
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
         if (!canReset) {
-            const warning = this.add.text(0, 110, 'Need at least 2 XP total to reset!', {
-                fontSize: '14px',
+            const warning = this.add.text(0, 140, 'Need at least 2 XP total to reset!', {
+                fontSize: '18px',
                 fontFamily: 'Arial',
                 color: '#ff4444'
             }).setOrigin(0.5);
@@ -464,9 +654,9 @@ class MenuScene extends Phaser.Scene {
     createRankDisplay(x, y, rankInfo) {
         const container = this.add.container(x, y);
 
-        // Rank icon and full name with grade (e.g., "⚔️ Soldier II")
+        // Rank icon and full name with grade (e.g., "⚔️ Soldier II") - LARGER
         const rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
-            fontSize: '22px',
+            fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: rankInfo.rank.color,
@@ -475,19 +665,19 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(rankText);
 
-        // Score display
-        const scoreText = this.add.text(0, 20, `Score: ${rankInfo.score}`, {
-            fontSize: '13px',
+        // Score display - LARGER
+        const scoreText = this.add.text(0, 28, `Score: ${rankInfo.score}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
         container.add(scoreText);
 
-        // Progress bar background
-        const barWidth = 160;
-        const barHeight = 10;
-        const barBg = this.add.rectangle(0, 38, barWidth, barHeight, 0x333333);
-        barBg.setStrokeStyle(1, 0x555555);
+        // Progress bar background - LARGER
+        const barWidth = 200;
+        const barHeight = 14;
+        const barBg = this.add.rectangle(0, 52, barWidth, barHeight, 0x333333);
+        barBg.setStrokeStyle(2, 0x555555);
         container.add(barBg);
 
         // Progress bar fill
@@ -495,7 +685,7 @@ class MenuScene extends Phaser.Scene {
         if (fillWidth > 0) {
             const barFill = this.add.rectangle(
                 -barWidth / 2 + fillWidth / 2,
-                38,
+                52,
                 fillWidth,
                 barHeight - 2,
                 Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color
@@ -503,10 +693,10 @@ class MenuScene extends Phaser.Scene {
             container.add(barFill);
         }
 
-        // Progress text - shows next grade or next rank
+        // Progress text - shows next grade or next rank - LARGER
         if (rankInfo.isMaxGrade) {
-            const maxText = this.add.text(0, 54, '⚡ MAX RANK ⚡', {
-                fontSize: '13px',
+            const maxText = this.add.text(0, 72, '⚡ MAX RANK ⚡', {
+                fontSize: '18px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: '#ffd700'
@@ -517,8 +707,8 @@ class MenuScene extends Phaser.Scene {
             const nextLabel = rankInfo.rank.grade < 3
                 ? `${rankInfo.rank.name} ${['II', 'III'][rankInfo.rank.grade - 1]}`
                 : rankInfo.nextRank.name + ' I';
-            const progressText = this.add.text(0, 54, `${rankInfo.pointsToNext} pts to ${nextLabel}`, {
-                fontSize: '13px',
+            const progressText = this.add.text(0, 72, `${rankInfo.pointsToNext} pts to ${nextLabel}`, {
+                fontSize: '18px',
                 fontFamily: 'Arial',
                 color: '#666666'
             }).setOrigin(0.5);
@@ -604,11 +794,12 @@ class MenuScene extends Phaser.Scene {
             container.add(statusDot);
         }
 
-        // Label below - show name if logged in, otherwise "Login"
+        // Label below - show name if logged in, otherwise "Login" - LARGER for mobile
         const labelText = isLoggedIn ? supabaseClient.getDisplayName() : 'Login';
-        const label = this.add.text(0, 38, labelText, {
-            fontSize: '12px',
+        const label = this.add.text(0, 42, labelText, {
+            fontSize: '18px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: isLoggedIn ? '#4ade80' : '#888888'
         }).setOrigin(0.5);
         container.add(label);
