@@ -1589,14 +1589,14 @@ class MenuScene extends Phaser.Scene {
         overlay.setInteractive();
         dialog.add(overlay);
 
-        // Panel background
-        const panel = this.add.rectangle(0, 0, 700, 500, 0x1a1a2e);
+        // Panel background - larger for mobile
+        const panel = this.add.rectangle(0, 0, 800, 520, 0x1a1a2e);
         panel.setStrokeStyle(3, 0x4169E1);
         dialog.add(panel);
 
         // Title
-        const title = this.add.text(0, -220, 'TIPS & INFO', {
-            fontSize: '32px',
+        const title = this.add.text(0, -230, 'TIPS & INFO', {
+            fontSize: '36px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#4169E1',
@@ -1696,9 +1696,9 @@ class MenuScene extends Phaser.Scene {
         const pageContainer = this.add.container(0, 20);
         dialog.add(pageContainer);
 
-        // Page indicator
-        const pageIndicator = this.add.text(0, 210, '', {
-            fontSize: '16px',
+        // Page indicator - larger for mobile
+        const pageIndicator = this.add.text(0, 215, '', {
+            fontSize: '22px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
@@ -1710,9 +1710,9 @@ class MenuScene extends Phaser.Scene {
 
             const page = tipsPages[currentPage];
 
-            // Page title
-            const pageTitle = this.add.text(0, -160, page.title, {
-                fontSize: '24px',
+            // Page title - larger
+            const pageTitle = this.add.text(0, -170, page.title, {
+                fontSize: '28px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
                 color: '#ffd700',
@@ -1721,12 +1721,12 @@ class MenuScene extends Phaser.Scene {
             }).setOrigin(0.5);
             pageContainer.add(pageTitle);
 
-            // Tips list
+            // Tips list - larger font and better spacing
             page.tips.forEach((tip, index) => {
-                const y = -100 + index * 50;
+                const y = -105 + index * 55;
 
-                const tipText = this.add.text(-300, y, `${tip.icon}  ${tip.text}`, {
-                    fontSize: '18px',
+                const tipText = this.add.text(-350, y, `${tip.icon}  ${tip.text}`, {
+                    fontSize: '22px',
                     fontFamily: 'Arial',
                     color: '#ffffff',
                     stroke: '#000000',
@@ -1739,58 +1739,85 @@ class MenuScene extends Phaser.Scene {
             pageIndicator.setText(`Page ${currentPage + 1} of ${tipsPages.length}`);
         };
 
-        // Navigation buttons
-        const prevBtn = this.add.text(-280, 210, '< PREV', {
-            fontSize: '20px',
+        // Navigation buttons - larger for mobile with background buttons
+        const prevBtnContainer = this.add.container(-300, 215);
+        const prevBtnBg = this.add.rectangle(0, 0, 120, 50, 0x333366);
+        prevBtnBg.setStrokeStyle(2, 0x4169E1);
+        prevBtnContainer.add(prevBtnBg);
+        const prevBtnText = this.add.text(0, 0, '◀ PREV', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#4169E1',
-            stroke: '#000000',
-            strokeThickness: 2
+            color: '#4169E1'
         }).setOrigin(0.5);
-        prevBtn.setInteractive({ useHandCursor: true });
-        dialog.add(prevBtn);
+        prevBtnContainer.add(prevBtnText);
+        prevBtnBg.setInteractive({ useHandCursor: true });
+        dialog.add(prevBtnContainer);
 
-        prevBtn.on('pointerover', () => prevBtn.setColor('#6495ED'));
-        prevBtn.on('pointerout', () => prevBtn.setColor('#4169E1'));
-        prevBtn.on('pointerdown', () => {
+        prevBtnBg.on('pointerover', () => {
+            prevBtnBg.setFillStyle(0x444488);
+            prevBtnText.setColor('#6495ED');
+        });
+        prevBtnBg.on('pointerout', () => {
+            prevBtnBg.setFillStyle(0x333366);
+            prevBtnText.setColor('#4169E1');
+        });
+        prevBtnBg.on('pointerdown', () => {
             currentPage = (currentPage - 1 + tipsPages.length) % tipsPages.length;
             renderPage();
         });
 
-        const nextBtn = this.add.text(280, 210, 'NEXT >', {
-            fontSize: '20px',
+        const nextBtnContainer = this.add.container(300, 215);
+        const nextBtnBg = this.add.rectangle(0, 0, 120, 50, 0x333366);
+        nextBtnBg.setStrokeStyle(2, 0x4169E1);
+        nextBtnContainer.add(nextBtnBg);
+        const nextBtnText = this.add.text(0, 0, 'NEXT ▶', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#4169E1',
-            stroke: '#000000',
-            strokeThickness: 2
+            color: '#4169E1'
         }).setOrigin(0.5);
-        nextBtn.setInteractive({ useHandCursor: true });
-        dialog.add(nextBtn);
+        nextBtnContainer.add(nextBtnText);
+        nextBtnBg.setInteractive({ useHandCursor: true });
+        dialog.add(nextBtnContainer);
 
-        nextBtn.on('pointerover', () => nextBtn.setColor('#6495ED'));
-        nextBtn.on('pointerout', () => nextBtn.setColor('#4169E1'));
-        nextBtn.on('pointerdown', () => {
+        nextBtnBg.on('pointerover', () => {
+            nextBtnBg.setFillStyle(0x444488);
+            nextBtnText.setColor('#6495ED');
+        });
+        nextBtnBg.on('pointerout', () => {
+            nextBtnBg.setFillStyle(0x333366);
+            nextBtnText.setColor('#4169E1');
+        });
+        nextBtnBg.on('pointerdown', () => {
             currentPage = (currentPage + 1) % tipsPages.length;
             renderPage();
         });
 
-        // Close button
-        const closeBtn = this.add.text(320, -220, 'X', {
-            fontSize: '28px',
+        // Close button - larger with background for mobile
+        const closeBtnContainer = this.add.container(370, -230);
+        const closeBtnBg = this.add.rectangle(0, 0, 50, 50, 0x442222);
+        closeBtnBg.setStrokeStyle(2, 0xff4444);
+        closeBtnContainer.add(closeBtnBg);
+        const closeBtnText = this.add.text(0, 0, 'X', {
+            fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ff4444',
-            stroke: '#000000',
-            strokeThickness: 3
+            color: '#ff4444'
         }).setOrigin(0.5);
-        closeBtn.setInteractive({ useHandCursor: true });
-        dialog.add(closeBtn);
+        closeBtnContainer.add(closeBtnText);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        dialog.add(closeBtnContainer);
 
-        closeBtn.on('pointerover', () => closeBtn.setColor('#ff6666'));
-        closeBtn.on('pointerout', () => closeBtn.setColor('#ff4444'));
-        closeBtn.on('pointerdown', () => dialog.destroy());
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtnText.setColor('#ff6666');
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtnText.setColor('#ff4444');
+        });
+        closeBtnBg.on('pointerdown', () => dialog.destroy());
 
         // Render first page
         renderPage();

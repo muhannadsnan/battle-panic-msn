@@ -89,7 +89,7 @@ Main menu with navigation and monetization.
 | Stats display | Center | Shows highest wave |
 | PLAY button | Center | Starts GameScene |
 | UPGRADES button | Center | Opens UpgradeScene |
-| TIPS & INFO button | Center | Opens tips modal |
+| TIPS & INFO button | Center | Opens tips modal (mobile-friendly) |
 | Reset Upgrades | Bottom center | Opens reset dialog |
 | Settings gear | Top left | Opens account panel |
 | Buy XP ($2) | Bottom left | Disabled (Coming Soon) |
@@ -338,7 +338,7 @@ Tips appear before challenging waves to help players prepare:
 
 **File:** `src/scenes/UpgradeScene.js`
 
-Permanent upgrades using XP currency.
+Permanent upgrades using XP currency. Mobile-friendly design with larger fonts, buttons, and touch targets.
 
 ### Layout
 ```

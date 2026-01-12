@@ -123,8 +123,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.20.1)
+## Recent Updates (v1.20.2)
 
+- Mobile-friendly UI redesign for Tips & Info dialog (larger fonts, touch-friendly buttons)
+- Complete Upgrades scene redesign for mobile (larger cards, buttons, and fonts)
+- Added "max 3 XP per match" info to XP display
 - Supabase authentication with magic link (passwordless email)
 - Cloud save sync for logged-in users
 - Guest mode with separate local save (progress preserved on logout)
@@ -153,4 +156,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.20.1)*
+*Last updated: January 2026 (v1.20.2)*

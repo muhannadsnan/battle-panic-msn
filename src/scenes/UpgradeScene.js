@@ -25,17 +25,17 @@ class UpgradeScene extends Phaser.Scene {
             strokeThickness: 4
         }).setOrigin(0.5);
 
-        // XP display (upgrades use XP, not gold)
+        // XP display (upgrades use XP, not gold) - larger for mobile
         const xp = this.saveData.xp || 0;
         this.xpText = this.add.text(GAME_WIDTH / 2, 85, `⭐ XP: ${xp}`, {
-            fontSize: '24px',
+            fontSize: '28px',
             fontFamily: 'Arial',
             color: '#44ddff'
         }).setOrigin(0.5);
 
-        // Info text
-        this.add.text(GAME_WIDTH / 2, 110, 'Earn 1 XP per 10 waves completed in battle', {
-            fontSize: '16px',
+        // Info text - updated with max 3 XP info
+        this.add.text(GAME_WIDTH / 2, 115, 'Earn XP per 10 waves (max 3 XP per match)', {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
@@ -61,21 +61,21 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createPageNavigation() {
-        // Page indicator
-        this.pageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 30, '', {
-            fontSize: '16px',
+        // Page indicator - larger for mobile
+        this.pageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 35, '', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
         this.updatePageIndicator();
 
-        // Left arrow (previous page)
-        this.prevArrow = this.add.container(GAME_WIDTH / 2 - 100, GAME_HEIGHT - 30);
-        const prevBg = this.add.rectangle(0, 0, 50, 30, 0x444455);
+        // Left arrow (previous page) - larger for mobile
+        this.prevArrow = this.add.container(GAME_WIDTH / 2 - 130, GAME_HEIGHT - 35);
+        const prevBg = this.add.rectangle(0, 0, 70, 50, 0x444455);
         prevBg.setStrokeStyle(2, 0x666688);
         this.prevArrow.add(prevBg);
         const prevText = this.add.text(0, 0, '◀', {
-            fontSize: '20px',
+            fontSize: '28px',
             fontFamily: 'Arial',
             color: '#cccccc'
         }).setOrigin(0.5);
@@ -92,13 +92,13 @@ class UpgradeScene extends Phaser.Scene {
         });
         prevBg.on('pointerdown', () => this.changePage(-1));
 
-        // Right arrow (next page)
-        this.nextArrow = this.add.container(GAME_WIDTH / 2 + 100, GAME_HEIGHT - 30);
-        const nextBg = this.add.rectangle(0, 0, 50, 30, 0x444455);
+        // Right arrow (next page) - larger for mobile
+        this.nextArrow = this.add.container(GAME_WIDTH / 2 + 130, GAME_HEIGHT - 35);
+        const nextBg = this.add.rectangle(0, 0, 70, 50, 0x444455);
         nextBg.setStrokeStyle(2, 0x666688);
         this.nextArrow.add(nextBg);
         const nextText = this.add.text(0, 0, '▶', {
-            fontSize: '20px',
+            fontSize: '28px',
             fontFamily: 'Arial',
             color: '#cccccc'
         }).setOrigin(0.5);
@@ -130,7 +130,7 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     updatePageIndicator() {
-        const pageNames = ['Units & Castle', 'Special'];
+        const pageNames = ['Units & Castle', 'Special Upgrades'];
         this.pageText.setText(`${pageNames[this.currentPage]} (${this.currentPage + 1}/${this.totalPages})`);
     }
 
@@ -140,8 +140,8 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createUnitUpgrades(pageContainer) {
-        const title = this.add.text(GAME_WIDTH / 2, 135, 'UNIT UPGRADES', {
-            fontSize: '22px',
+        const title = this.add.text(GAME_WIDTH / 2, 145, 'UNIT UPGRADES', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
@@ -149,9 +149,9 @@ class UpgradeScene extends Phaser.Scene {
         pageContainer.add(title);
 
         const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
-        const startX = 195;
-        const spacing = 250;
-        const y = 265;
+        const startX = 185;
+        const spacing = 270;
+        const y = 280;
 
         this.upgradeCards = [];
 
@@ -169,30 +169,30 @@ class UpgradeScene extends Phaser.Scene {
 
         const card = this.add.container(x, y);
 
-        // Card background - larger to fit bigger icons
+        // Card background - larger for mobile
         const isUnlocked = upgradeData.unlocked;
         const bgColor = isUnlocked ? 0x333344 : 0x222222;
-        const bg = this.add.rectangle(0, 0, 160, 220, bgColor);
+        const bg = this.add.rectangle(0, 0, 200, 250, bgColor);
         bg.setStrokeStyle(3, isUnlocked ? stats.color : 0x444444);
         card.add(bg);
 
-        // Unit icon container - positioned higher for larger icon
-        const iconContainer = this.add.container(0, -50);
+        // Unit icon container - positioned higher
+        const iconContainer = this.add.container(0, -60);
         this.createUnitIcon(iconContainer, unitType, isUnlocked);
         card.add(iconContainer);
 
-        // Unit name
+        // Unit name - larger font
         const name = this.add.text(0, 10, stats.name, {
-            fontSize: '15px',
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
         }).setOrigin(0.5);
         card.add(name);
 
-        // Level
-        const levelText = this.add.text(0, 28, `Level ${upgradeData.level}`, {
-            fontSize: '14px',
+        // Level - larger font
+        const levelText = this.add.text(0, 32, `Level ${upgradeData.level}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -203,21 +203,21 @@ class UpgradeScene extends Phaser.Scene {
         const nextStats = this.getUpgradedStats(stats, upgradeData.level + 1);
         const isMaxLevel = upgradeData.level >= UPGRADE_CONFIG.maxLevel;
 
-        // Stats layout - fixed positions for alignment
-        const labelX = -58;
-        const currentX = -8;
+        // Stats layout - fixed positions for alignment (larger)
+        const labelX = -70;
+        const currentX = -10;
         const arrowX = 5;
-        const nextX = 27;
+        const nextX = 32;
 
-        // HP line
-        const hpContainer = this.add.container(0, 48);
+        // HP line - larger font
+        const hpContainer = this.add.container(0, 58);
         const hpLabel = this.add.text(labelX, 0, 'HP:', {
-            fontSize: '13px', fontFamily: 'Arial', color: '#aaaaaa'
+            fontSize: '18px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         hpContainer.add(hpLabel);
 
         const hpCurrent = this.add.text(currentX, 0, `${currentStats.health}`, {
-            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
+            fontSize: '18px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         hpContainer.add(hpCurrent);
 
@@ -225,30 +225,30 @@ class UpgradeScene extends Phaser.Scene {
             // Draw sleek double chevron arrow
             const hpArrow = this.add.graphics();
             hpArrow.lineStyle(2, 0x44ff44, 1);
-            hpArrow.moveTo(arrowX, -4);
-            hpArrow.lineTo(arrowX + 5, 0);
-            hpArrow.lineTo(arrowX, 4);
-            hpArrow.moveTo(arrowX + 7, -4);
-            hpArrow.lineTo(arrowX + 12, 0);
-            hpArrow.lineTo(arrowX + 7, 4);
+            hpArrow.moveTo(arrowX, -5);
+            hpArrow.lineTo(arrowX + 6, 0);
+            hpArrow.lineTo(arrowX, 5);
+            hpArrow.moveTo(arrowX + 8, -5);
+            hpArrow.lineTo(arrowX + 14, 0);
+            hpArrow.lineTo(arrowX + 8, 5);
             hpArrow.strokePath();
             hpContainer.add(hpArrow);
             const hpNext = this.add.text(nextX, 0, `${nextStats.health}`, {
-                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+                fontSize: '18px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             hpContainer.add(hpNext);
         }
         card.add(hpContainer);
 
-        // DMG line
-        const dmgContainer = this.add.container(0, 65);
+        // DMG line - larger font
+        const dmgContainer = this.add.container(0, 82);
         const dmgLabel = this.add.text(labelX, 0, 'DMG:', {
-            fontSize: '13px', fontFamily: 'Arial', color: '#aaaaaa'
+            fontSize: '18px', fontFamily: 'Arial', color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         dmgContainer.add(dmgLabel);
 
         const dmgCurrent = this.add.text(currentX, 0, `${currentStats.damage}`, {
-            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
+            fontSize: '18px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         dmgContainer.add(dmgCurrent);
 
@@ -256,16 +256,16 @@ class UpgradeScene extends Phaser.Scene {
             // Draw sleek double chevron arrow
             const dmgArrow = this.add.graphics();
             dmgArrow.lineStyle(2, 0x44ff44, 1);
-            dmgArrow.moveTo(arrowX, -4);
-            dmgArrow.lineTo(arrowX + 5, 0);
-            dmgArrow.lineTo(arrowX, 4);
-            dmgArrow.moveTo(arrowX + 7, -4);
-            dmgArrow.lineTo(arrowX + 12, 0);
-            dmgArrow.lineTo(arrowX + 7, 4);
+            dmgArrow.moveTo(arrowX, -5);
+            dmgArrow.lineTo(arrowX + 6, 0);
+            dmgArrow.lineTo(arrowX, 5);
+            dmgArrow.moveTo(arrowX + 8, -5);
+            dmgArrow.lineTo(arrowX + 14, 0);
+            dmgArrow.lineTo(arrowX + 8, 5);
             dmgArrow.strokePath();
             dmgContainer.add(dmgArrow);
             const dmgNext = this.add.text(nextX, 0, `${nextStats.damage}`, {
-                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+                fontSize: '18px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             dmgContainer.add(dmgNext);
         }
@@ -274,16 +274,16 @@ class UpgradeScene extends Phaser.Scene {
         const xp = this.saveData.xp || 0;
 
         if (isUnlocked) {
-            // Upgrade button (uses XP)
+            // Upgrade button (uses XP) - larger
             if (upgradeData.level < UPGRADE_CONFIG.maxLevel) {
                 const cost = this.calculateUpgradeCost(typeKey, upgradeData.level);
-                const upgradeBtn = this.createCardButton(0, 92, `Upgrade\n${cost} XP`, () => {
+                const upgradeBtn = this.createCardButton(0, 112, `Upgrade\n${cost} XP`, () => {
                     this.purchaseUpgrade(typeKey, cost);
                 }, xp >= cost);
                 card.add(upgradeBtn);
             } else {
-                const maxText = this.add.text(0, 92, 'MAX LEVEL', {
-                    fontSize: '14px',
+                const maxText = this.add.text(0, 112, 'MAX LEVEL', {
+                    fontSize: '18px',
                     fontFamily: 'Arial',
                     color: '#ffd700',
                     fontStyle: 'bold'
@@ -291,19 +291,19 @@ class UpgradeScene extends Phaser.Scene {
                 card.add(maxText);
             }
         } else {
-            // Unlock button (uses XP)
+            // Unlock button (uses XP) - larger
             const unlockCost = this.getUnlockCost(typeKey);
-            const unlockBtn = this.createCardButton(0, 92, `Unlock\n${unlockCost} XP`, () => {
+            const unlockBtn = this.createCardButton(0, 112, `Unlock\n${unlockCost} XP`, () => {
                 this.unlockUnit(typeKey, unlockCost);
             }, xp >= unlockCost);
             card.add(unlockBtn);
 
             // Lock overlay
-            const lockOverlay = this.add.rectangle(0, 0, 160, 220, 0x000000, 0.5);
+            const lockOverlay = this.add.rectangle(0, 0, 200, 250, 0x000000, 0.5);
             card.add(lockOverlay);
 
-            const lockIcon = this.add.text(0, -50, '🔒', {
-                fontSize: '36px'
+            const lockIcon = this.add.text(0, -60, '🔒', {
+                fontSize: '44px'
             }).setOrigin(0.5);
             card.add(lockIcon);
         }
@@ -441,8 +441,8 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createCastleUpgrades(pageContainer) {
-        const title = this.add.text(GAME_WIDTH / 2, 400, 'CASTLE UPGRADES', {
-            fontSize: '22px',
+        const title = this.add.text(GAME_WIDTH / 2, 430, 'CASTLE UPGRADES', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
@@ -455,9 +455,9 @@ class UpgradeScene extends Phaser.Scene {
             { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' }
         ];
 
-        const startX = 260;
-        const spacing = 200;
-        const y = 500;
+        const startX = 195;
+        const spacing = 270;
+        const y = 520;
 
         upgrades.forEach((upgrade, index) => {
             const card = this.createCastleUpgradeCard(startX + (index * spacing), y, upgrade);
@@ -470,23 +470,23 @@ class UpgradeScene extends Phaser.Scene {
         const card = this.add.container(x, y);
         const isMaxLevel = level >= UPGRADE_CONFIG.maxLevel;
 
-        // Background
-        const bg = this.add.rectangle(0, 0, 180, 90, 0x333344);
+        // Background - larger for mobile
+        const bg = this.add.rectangle(0, 0, 220, 120, 0x333344);
         bg.setStrokeStyle(2, 0x4169E1);
         card.add(bg);
 
-        // Icon and name
-        const header = this.add.text(0, -28, `${upgrade.icon} ${upgrade.name}`, {
-            fontSize: '14px',
+        // Icon and name - larger font
+        const header = this.add.text(0, -38, `${upgrade.icon} ${upgrade.name}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
         }).setOrigin(0.5);
         card.add(header);
 
-        // Level
-        const levelText = this.add.text(0, -10, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
-            fontSize: '13px',
+        // Level - larger font
+        const levelText = this.add.text(0, -14, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
@@ -496,9 +496,9 @@ class UpgradeScene extends Phaser.Scene {
         const currentBonus = this.getCastleBonus(upgrade.key, level);
         const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
 
-        const progressContainer = this.add.container(0, 6);
-        const currentText = this.add.text(-12, 0, currentBonus, {
-            fontSize: '13px', fontFamily: 'Arial', color: '#88ff88'
+        const progressContainer = this.add.container(0, 10);
+        const currentText = this.add.text(-15, 0, currentBonus, {
+            fontSize: '18px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         progressContainer.add(currentText);
 
@@ -507,34 +507,34 @@ class UpgradeScene extends Phaser.Scene {
             const arrow = this.add.graphics();
             arrow.lineStyle(2, 0x44ff44, 1);
             // First chevron
-            arrow.moveTo(2, -5);
-            arrow.lineTo(8, 0);
-            arrow.lineTo(2, 5);
+            arrow.moveTo(2, -6);
+            arrow.lineTo(9, 0);
+            arrow.lineTo(2, 6);
             // Second chevron
-            arrow.moveTo(10, -5);
-            arrow.lineTo(16, 0);
-            arrow.lineTo(10, 5);
+            arrow.moveTo(12, -6);
+            arrow.lineTo(19, 0);
+            arrow.lineTo(12, 6);
             arrow.strokePath();
             progressContainer.add(arrow);
 
-            const nextText = this.add.text(24, 0, nextBonus, {
-                fontSize: '13px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+            const nextText = this.add.text(28, 0, nextBonus, {
+                fontSize: '18px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             progressContainer.add(nextText);
         }
         card.add(progressContainer);
 
-        // Upgrade button (uses XP)
+        // Upgrade button (uses XP) - larger for mobile
         const xp = this.saveData.xp || 0;
         if (level < UPGRADE_CONFIG.maxLevel) {
             const cost = this.calculateCastleUpgradeCost(level, upgrade.key);
-            const btn = this.createCardButton(0, 32, `${cost} XP`, () => {
+            const btn = this.createCardButton(0, 42, `${cost} XP`, () => {
                 this.purchaseCastleUpgrade(upgrade.key, cost);
-            }, xp >= cost, 70, 22);
+            }, xp >= cost, 100, 32);
             card.add(btn);
         } else {
-            const maxText = this.add.text(0, 32, 'MAX', {
-                fontSize: '14px',
+            const maxText = this.add.text(0, 42, 'MAX', {
+                fontSize: '18px',
                 fontFamily: 'Arial',
                 color: '#ffd700',
                 fontStyle: 'bold'
@@ -547,9 +547,9 @@ class UpgradeScene extends Phaser.Scene {
 
     createSpecialUpgrades(pageContainer) {
         // Special upgrades section - rare powerful upgrades
-        // Title for page 2
-        const title = this.add.text(GAME_WIDTH / 2, 140, 'SPECIAL UPGRADES', {
-            fontSize: '28px',
+        // Title for page 2 - larger
+        const title = this.add.text(GAME_WIDTH / 2, 150, 'SPECIAL UPGRADES', {
+            fontSize: '34px',
             fontFamily: 'Arial',
             color: '#ffd700',
             fontStyle: 'bold',
@@ -558,8 +558,8 @@ class UpgradeScene extends Phaser.Scene {
         }).setOrigin(0.5);
         pageContainer.add(title);
 
-        const subtitle = this.add.text(GAME_WIDTH / 2, 175, 'Rare powerful upgrades with special requirements', {
-            fontSize: '16px',
+        const subtitle = this.add.text(GAME_WIDTH / 2, 190, 'Rare powerful upgrades with special requirements', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
@@ -579,17 +579,17 @@ class UpgradeScene extends Phaser.Scene {
         const xp = this.saveData.xp || 0;
         const eliteDiscountCost = 15; // High XP cost
 
-        // Create the elite discount card - centered on the page
-        const card = this.add.container(GAME_WIDTH / 2, 300);
+        // Create the elite discount card - centered on the page, larger
+        const card = this.add.container(GAME_WIDTH / 2, 340);
 
         // Special golden background - larger for featured upgrade
-        const bg = this.add.rectangle(0, 0, 500, 180, hasEliteDiscount ? 0x2a4a2a : 0x2a2a3a);
+        const bg = this.add.rectangle(0, 0, 600, 220, hasEliteDiscount ? 0x2a4a2a : 0x2a2a3a);
         bg.setStrokeStyle(4, hasEliteDiscount ? 0x88ff88 : 0xffd700);
         card.add(bg);
 
         // Crown icon and title - bigger
-        const cardTitle = this.add.text(0, -60, '👑 ELITE MASTERY', {
-            fontSize: '32px',
+        const cardTitle = this.add.text(0, -75, '👑 ELITE MASTERY', {
+            fontSize: '36px',
             fontFamily: 'Arial',
             color: '#ffd700',
             fontStyle: 'bold',
@@ -599,16 +599,16 @@ class UpgradeScene extends Phaser.Scene {
         card.add(cardTitle);
 
         // Description - more prominent
-        const desc = this.add.text(0, -20, 'Gold tier units spawn 2 for the cost of 1!', {
-            fontSize: '18px',
+        const desc = this.add.text(0, -30, 'Gold tier units spawn 2 for the cost of 1!', {
+            fontSize: '22px',
             fontFamily: 'Arial',
             color: '#ffffff'
         }).setOrigin(0.5);
         card.add(desc);
 
         // Flavor text
-        const flavor = this.add.text(0, 5, 'Master the art of elite unit production', {
-            fontSize: '14px',
+        const flavor = this.add.text(0, 0, 'Master the art of elite unit production', {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#aaaaaa',
             fontStyle: 'italic'
@@ -617,8 +617,8 @@ class UpgradeScene extends Phaser.Scene {
 
         if (hasEliteDiscount) {
             // Already unlocked - show big checkmark
-            const unlockedText = this.add.text(0, 50, '✓ UNLOCKED', {
-                fontSize: '24px',
+            const unlockedText = this.add.text(0, 55, '✓ UNLOCKED', {
+                fontSize: '28px',
                 fontFamily: 'Arial',
                 color: '#88ff88',
                 fontStyle: 'bold'
@@ -627,7 +627,7 @@ class UpgradeScene extends Phaser.Scene {
         } else if (!allUnitsLevel5) {
             // Requirements not met - show detailed progress
             const reqTitle = this.add.text(0, 35, 'Requirements:', {
-                fontSize: '14px',
+                fontSize: '18px',
                 fontFamily: 'Arial',
                 color: '#ffaa00',
                 fontStyle: 'bold'
@@ -641,14 +641,14 @@ class UpgradeScene extends Phaser.Scene {
             const archerColor = archerLevel >= 5 ? '#88ff88' : '#ff8888';
             const horsemanColor = (horsemanUnlocked && horsemanLevel >= 5) ? '#88ff88' : '#ff8888';
 
-            const req1 = this.add.text(-120, 58, `${peasantStatus} Peasant L${peasantLevel}/5`, {
-                fontSize: '13px', fontFamily: 'Arial', color: peasantColor
+            const req1 = this.add.text(-150, 68, `${peasantStatus} Peasant L${peasantLevel}/5`, {
+                fontSize: '18px', fontFamily: 'Arial', color: peasantColor
             }).setOrigin(0.5);
-            const req2 = this.add.text(0, 58, `${archerStatus} Archer L${archerLevel}/5`, {
-                fontSize: '13px', fontFamily: 'Arial', color: archerColor
+            const req2 = this.add.text(0, 68, `${archerStatus} Archer L${archerLevel}/5`, {
+                fontSize: '18px', fontFamily: 'Arial', color: archerColor
             }).setOrigin(0.5);
-            const req3 = this.add.text(120, 58, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/5' : '🔒'}`, {
-                fontSize: '13px', fontFamily: 'Arial', color: horsemanColor
+            const req3 = this.add.text(150, 68, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/5' : '🔒'}`, {
+                fontSize: '18px', fontFamily: 'Arial', color: horsemanColor
             }).setOrigin(0.5);
             card.add(req1);
             card.add(req2);
@@ -656,17 +656,17 @@ class UpgradeScene extends Phaser.Scene {
         } else {
             // Can purchase - show big buy button
             const canAfford = xp >= eliteDiscountCost;
-            const btn = this.createCardButton(0, 50, `Unlock: ${eliteDiscountCost} XP`, () => {
+            const btn = this.createCardButton(0, 60, `Unlock: ${eliteDiscountCost} XP`, () => {
                 this.purchaseEliteDiscount(eliteDiscountCost);
-            }, canAfford, 140, 36);
+            }, canAfford, 180, 48);
             card.add(btn);
         }
 
         pageContainer.add(card);
 
         // "More coming soon" teaser
-        const comingSoon = this.add.text(GAME_WIDTH / 2, 450, '🔮 More special upgrades coming soon...', {
-            fontSize: '16px',
+        const comingSoon = this.add.text(GAME_WIDTH / 2, 510, '🔮 More special upgrades coming soon...', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#666666',
             fontStyle: 'italic'
@@ -688,7 +688,7 @@ class UpgradeScene extends Phaser.Scene {
         }
     }
 
-    createCardButton(x, y, text, callback, enabled, width = 100, height = 35) {
+    createCardButton(x, y, text, callback, enabled, width = 130, height = 45) {
         const container = this.add.container(x, y);
 
         // Enabled buttons are much brighter (green/gold) to show they're affordable
@@ -699,7 +699,7 @@ class UpgradeScene extends Phaser.Scene {
         container.add(bg);
 
         const label = this.add.text(0, 0, text, {
-            fontSize: '16px',
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: enabled ? '#ffffff' : '#666666',
             align: 'center'
@@ -740,15 +740,16 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createBackButton() {
-        const btn = this.add.container(75, GAME_HEIGHT - 30);
+        const btn = this.add.container(90, GAME_HEIGHT - 35);
 
-        const bg = this.add.rectangle(0, 0, 100, 32, 0x444455);
+        // Larger button for mobile
+        const bg = this.add.rectangle(0, 0, 140, 50, 0x444455);
         bg.setStrokeStyle(2, 0x666688);
         bg.setInteractive({});
         btn.add(bg);
 
         const label = this.add.text(0, 0, '← Back', {
-            fontSize: '16px',
+            fontSize: '24px',
             fontFamily: 'Arial',
             color: '#cccccc',
             fontStyle: 'bold'
