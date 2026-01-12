@@ -277,13 +277,13 @@ class AuthScene extends Phaser.Scene {
         const user = supabaseClient.getUser();
         const displayName = supabaseClient.getDisplayName();
 
-        // Panel background
-        const panelBg = this.add.rectangle(0, 0, 380, 300, 0x1a1a2e);
+        // Panel background - taller for better layout
+        const panelBg = this.add.rectangle(0, 0, 420, 400, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
         // Close button - popping circle style outside panel
-        const closeBtnContainer = this.add.container(190 + 15, -150 + 15);
+        const closeBtnContainer = this.add.container(210 + 15, -200 + 15);
         const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
         closeBtnBg.setStrokeStyle(3, 0xff4444);
         closeBtnContainer.add(closeBtnBg);
@@ -317,73 +317,73 @@ class AuthScene extends Phaser.Scene {
         });
         closeBtnBg.on('pointerdown', () => this.goBack());
 
-        // Title
-        const title = this.add.text(0, -115, '👤 Profile', {
-            fontSize: '26px',
+        // Title - larger
+        const title = this.add.text(0, -160, '👤 Profile', {
+            fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff'
         }).setOrigin(0.5);
         this.panelContainer.add(title);
 
-        // Display name row with edit button - left aligned
-        const nameLabel = this.add.text(-170, -70, 'Name:', {
-            fontSize: '16px',
+        // Display name row - larger fonts
+        const nameLabel = this.add.text(-185, -95, 'Name:', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0, 0.5);
         this.panelContainer.add(nameLabel);
 
-        this.displayNameText = this.add.text(-60, -70, displayName, {
-            fontSize: '18px',
+        this.displayNameText = this.add.text(-70, -95, displayName, {
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700'
         }).setOrigin(0, 0.5);
         this.panelContainer.add(this.displayNameText);
 
-        // Edit name button
-        const editBtn = this.add.text(160, -70, '✏️', {
-            fontSize: '18px'
+        // Edit name button - larger
+        const editBtn = this.add.text(175, -95, '✏️', {
+            fontSize: '24px'
         }).setOrigin(0, 0.5);
         editBtn.setInteractive({ useHandCursor: true });
         this.panelContainer.add(editBtn);
         editBtn.on('pointerdown', () => this.showEditNameDialog());
 
-        // Email row - left aligned
-        const emailLabel = this.add.text(-170, -35, 'Email:', {
-            fontSize: '14px',
+        // Email row - larger fonts
+        const emailLabel = this.add.text(-185, -45, 'Email:', {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0, 0.5);
         this.panelContainer.add(emailLabel);
 
-        const emailText = this.add.text(-60, -35, user?.email || 'Unknown', {
-            fontSize: '14px',
+        const emailText = this.add.text(-70, -45, user?.email || 'Unknown', {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0, 0.5);
         this.panelContainer.add(emailText);
 
-        // Cloud sync status
-        this.syncStatusText = this.add.text(0, 5, '☁️ Cloud Save: Ready', {
-            fontSize: '14px',
+        // Cloud sync status - larger, centered
+        this.syncStatusText = this.add.text(0, 15, '☁️ Cloud Save: Ready', {
+            fontSize: '20px',
             fontFamily: 'Arial',
             color: '#4ade80'
         }).setOrigin(0.5);
         this.panelContainer.add(this.syncStatusText);
 
-        // Buttons with clear labels
+        // Buttons at bottom - larger, full width
         // Sync button
-        const syncBtn = this.createButton(-90, 55, '↻ Sync', async () => {
+        const syncBtn = this.createButton(-100, 120, '↻ Sync Now', async () => {
             await this.syncSaveData();
-        }, 0x3498db, 100, 40);
+        }, 0x3498db, 150, 55);
         this.panelContainer.add(syncBtn);
 
         // Logout button - red background
-        const logoutBtn = this.createButton(90, 55, 'Logout', async () => {
+        const logoutBtn = this.createButton(100, 120, 'Logout', async () => {
             await this.logout();
-        }, 0xcc4444, 100, 40);
+        }, 0xcc4444, 150, 55);
         this.panelContainer.add(logoutBtn);
     }
 

@@ -129,44 +129,78 @@ class UpgradeScene extends Phaser.Scene {
 
         let startX = 0;
         let startContainerX = 0;
+        let startTime = 0;
+        let lastX = 0;
+        let velocity = 0;
 
         dragZone.on('dragstart', (pointer) => {
             startX = pointer.x;
+            lastX = pointer.x;
             startContainerX = this.sliderContainer.x;
+            startTime = Date.now();
+            velocity = 0;
+            // Stop any ongoing tween
+            this.tweens.killTweensOf(this.sliderContainer);
         });
 
         dragZone.on('drag', (pointer) => {
             const deltaX = pointer.x - startX;
-            this.sliderContainer.x = startContainerX + deltaX;
+            // Calculate velocity for momentum
+            velocity = pointer.x - lastX;
+            lastX = pointer.x;
+
+            // Apply drag with slight resistance at edges
+            let newX = startContainerX + deltaX;
+            const minX = -(this.totalCards - 1) * (this.cardWidth + this.cardSpacing);
+            const maxX = 0;
+
+            // Rubber band effect at edges
+            if (newX > maxX) {
+                newX = maxX + (newX - maxX) * 0.3;
+            } else if (newX < minX) {
+                newX = minX + (newX - minX) * 0.3;
+            }
+
+            this.sliderContainer.x = newX;
         });
 
         dragZone.on('dragend', (pointer) => {
             const deltaX = pointer.x - startX;
-            const threshold = 50;
+            const elapsed = Date.now() - startTime;
+            const speed = Math.abs(deltaX) / elapsed;
 
-            if (deltaX < -threshold && this.currentCardIndex < this.totalCards - 1) {
-                // Swipe left - next card
-                this.slideToCard(this.currentCardIndex + 1);
-            } else if (deltaX > threshold && this.currentCardIndex > 0) {
-                // Swipe right - previous card
-                this.slideToCard(this.currentCardIndex - 1);
+            // Determine target card based on position and velocity
+            let targetIndex = this.currentCardIndex;
+
+            // Quick flick (fast swipe)
+            if (speed > 0.5 && Math.abs(velocity) > 5) {
+                if (velocity < 0 && this.currentCardIndex < this.totalCards - 1) {
+                    targetIndex = this.currentCardIndex + 1;
+                } else if (velocity > 0 && this.currentCardIndex > 0) {
+                    targetIndex = this.currentCardIndex - 1;
+                }
             } else {
-                // Snap back
-                this.slideToCard(this.currentCardIndex);
+                // Slow drag - snap to nearest
+                const cardSize = this.cardWidth + this.cardSpacing;
+                const currentOffset = -this.sliderContainer.x;
+                targetIndex = Math.round(currentOffset / cardSize);
+                targetIndex = Phaser.Math.Clamp(targetIndex, 0, this.totalCards - 1);
             }
+
+            this.slideToCard(targetIndex);
         });
     }
 
     slideToCard(index, animate = true) {
-        this.currentCardIndex = index;
-        const targetX = -index * (this.cardWidth + this.cardSpacing);
+        this.currentCardIndex = Phaser.Math.Clamp(index, 0, this.totalCards - 1);
+        const targetX = -this.currentCardIndex * (this.cardWidth + this.cardSpacing);
 
         if (animate) {
             this.tweens.add({
                 targets: this.sliderContainer,
                 x: targetX,
-                duration: 200,
-                ease: 'Power2'
+                duration: 350,
+                ease: 'Back.easeOut'
             });
         } else {
             this.sliderContainer.x = targetX;

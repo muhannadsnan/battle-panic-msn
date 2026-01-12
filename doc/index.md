@@ -123,27 +123,30 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.21.0)
+## Recent Updates (v1.22.0)
 
-- **Upgrades Scene Redesign**: Horizontal swipeable slider with all upgrade cards
-  - Swipe left/right to navigate between cards
-  - Navigation dots at bottom (clickable)
-  - 7 cards: Peasant, Archer, Horseman, Health, Armor, Mining, Special
-- **Consistent Close Buttons**: Popping circle close button style across all dialogs
-  - Tips & Info, Upgrades, Login, Check Email, Profile panels
-- **Profile Dialog Improvements**: Left-aligned labels, aligned values, red logout button
-- **Main Menu Polish**:
-  - Removed border from ranking display
-  - Clean PLAY button (no stroke)
-  - Profile button shows "Profile" instead of long display names
+- **Redesigned Unit Icons**: All unit sprites completely redesigned with cleaner shapes
+  - Base units (Peasant, Archer, Horseman) use circles and ellipses for smoother appearance
+  - Elite units (Knight, Robinhood, Lancelot) updated to match the new clean style
+  - Better proportions, simplified color palettes, more appealing visuals
+- **Smoother Upgrades Slider**: Enhanced swipe experience
+  - Velocity-based momentum scrolling
+  - Rubber band effect at edges
+  - Smooth Back.easeOut animation
+  - Snap-to-nearest card on release
+- **Profile Dialog Enlargements**: Bigger text and better layout
+  - Larger fonts for name, email, and sync status
+  - Buttons moved to bottom of dialog
+  - Panel expanded to 420x400 pixels
+
+### v1.21.0
+- Horizontal swipeable slider for upgrades (7 cards)
+- Consistent popping circle close buttons across dialogs
+- Profile dialog: left-aligned labels, aligned values, red logout button
+- Main menu polish: no borders on ranking/PLAY, "Profile" button label
 - PLAY button: Gold color, bigger (52px), pulsing animation
-- UPGRADES button: Shows XP count in gold parentheses
-- Rank display: Prestigious large format with progress bar
-- Reset upgrades: Moved to Settings dialog with 10 second safety countdown
-- Supabase authentication with magic link (passwordless email)
+- Supabase authentication with magic link
 - Cloud save sync for logged-in users
-- Guest mode with separate local save (progress preserved on logout)
-- First-time sign-in migrates guest progress to account
 
 ## Future Plans
 
@@ -165,4 +168,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.21.0)*
+*Last updated: January 2026 (v1.22.0)*
