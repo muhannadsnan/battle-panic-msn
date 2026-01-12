@@ -93,6 +93,41 @@ class AuthScene extends Phaser.Scene {
         panelBg.setStrokeStyle(3, 0x4169E1);
         this.panelContainer.add(panelBg);
 
+        // Close button - popping circle style outside panel
+        const closeBtnContainer = this.add.container(200 + 15, -175 + 15);
+        const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
+        closeBtnBg.setStrokeStyle(3, 0xff4444);
+        closeBtnContainer.add(closeBtnBg);
+        const closeBtnText = this.add.text(0, 0, '✕', {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        closeBtnContainer.add(closeBtnText);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        this.panelContainer.add(closeBtnContainer);
+
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtnText.setColor('#ff8888');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1.1,
+                duration: 100
+            });
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtnText.setColor('#ff6666');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1,
+                duration: 100
+            });
+        });
+        closeBtnBg.on('pointerdown', () => this.goBack());
+
         // Title
         const title = this.add.text(0, -140, 'Login', {
             fontSize: '32px',
@@ -140,12 +175,6 @@ class AuthScene extends Phaser.Scene {
             wordWrap: { width: 350 }
         }).setOrigin(0.5);
         this.panelContainer.add(this.statusText);
-
-        // Back button
-        this.backButton = this.createButton(0, 145, 'Back to Menu', () => {
-            this.goBack();
-        }, 0x666666, 120, 35);
-        this.panelContainer.add(this.backButton);
     }
 
     showCheckEmailPanel(email) {
@@ -158,6 +187,41 @@ class AuthScene extends Phaser.Scene {
         const panelBg = this.add.rectangle(0, 0, 400, 320, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
+
+        // Close button - popping circle style outside panel
+        const closeBtnContainer = this.add.container(200 + 15, -160 + 15);
+        const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
+        closeBtnBg.setStrokeStyle(3, 0xff4444);
+        closeBtnContainer.add(closeBtnBg);
+        const closeBtnText = this.add.text(0, 0, '✕', {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        closeBtnContainer.add(closeBtnText);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        this.panelContainer.add(closeBtnContainer);
+
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtnText.setColor('#ff8888');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1.1,
+                duration: 100
+            });
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtnText.setColor('#ff6666');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1,
+                duration: 100
+            });
+        });
+        closeBtnBg.on('pointerdown', () => this.goBack());
 
         // Title
         const title = this.add.text(0, -120, 'Check Your Email!', {
@@ -199,10 +263,10 @@ class AuthScene extends Phaser.Scene {
         }, 0x4a4a8e, 100, 35);
         this.panelContainer.add(resendBtn);
 
-        const cancelBtn = this.createButton(80, 115, 'Back', () => {
+        const cancelBtn = this.createButton(80, 115, '← Re-enter', () => {
             this.clearPanel();
             this.showLoginPanel();
-        }, 0x666666, 100, 35);
+        }, 0x666666, 110, 35);
         this.panelContainer.add(cancelBtn);
     }
 
@@ -218,18 +282,40 @@ class AuthScene extends Phaser.Scene {
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
-        // Close button (X in top-right corner)
-        const closeBtn = this.add.text(175, -135, '✕', {
-            fontSize: '24px',
+        // Close button - popping circle style outside panel
+        const closeBtnContainer = this.add.container(190 + 15, -150 + 15);
+        const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
+        closeBtnBg.setStrokeStyle(3, 0xff4444);
+        closeBtnContainer.add(closeBtnBg);
+        const closeBtnText = this.add.text(0, 0, '✕', {
+            fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#888888'
+            color: '#ff6666'
         }).setOrigin(0.5);
-        closeBtn.setInteractive({ useHandCursor: true });
-        this.panelContainer.add(closeBtn);
-        closeBtn.on('pointerover', () => closeBtn.setColor('#ff6666'));
-        closeBtn.on('pointerout', () => closeBtn.setColor('#888888'));
-        closeBtn.on('pointerdown', () => this.goBack());
+        closeBtnContainer.add(closeBtnText);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        this.panelContainer.add(closeBtnContainer);
+
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtnText.setColor('#ff8888');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1.1,
+                duration: 100
+            });
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtnText.setColor('#ff6666');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1,
+                duration: 100
+            });
+        });
+        closeBtnBg.on('pointerdown', () => this.goBack());
 
         // Title
         const title = this.add.text(0, -115, '👤 Profile', {
@@ -240,43 +326,43 @@ class AuthScene extends Phaser.Scene {
         }).setOrigin(0.5);
         this.panelContainer.add(title);
 
-        // Display name row with edit button
-        const nameLabel = this.add.text(-80, -70, 'Name:', {
+        // Display name row with edit button - left aligned
+        const nameLabel = this.add.text(-170, -70, 'Name:', {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0, 0.5);
         this.panelContainer.add(nameLabel);
 
-        this.displayNameText = this.add.text(80, -70, displayName, {
+        this.displayNameText = this.add.text(-60, -70, displayName, {
             fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700'
-        }).setOrigin(1, 0.5);
+        }).setOrigin(0, 0.5);
         this.panelContainer.add(this.displayNameText);
 
         // Edit name button
-        const editBtn = this.add.text(110, -70, '✏️', {
+        const editBtn = this.add.text(160, -70, '✏️', {
             fontSize: '18px'
         }).setOrigin(0, 0.5);
         editBtn.setInteractive({ useHandCursor: true });
         this.panelContainer.add(editBtn);
         editBtn.on('pointerdown', () => this.showEditNameDialog());
 
-        // Email row
-        const emailLabel = this.add.text(-80, -35, 'Email:', {
+        // Email row - left aligned
+        const emailLabel = this.add.text(-170, -35, 'Email:', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0, 0.5);
         this.panelContainer.add(emailLabel);
 
-        const emailText = this.add.text(110, -35, user?.email || 'Unknown', {
+        const emailText = this.add.text(-60, -35, user?.email || 'Unknown', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
-        }).setOrigin(1, 0.5);
+        }).setOrigin(0, 0.5);
         this.panelContainer.add(emailText);
 
         // Cloud sync status
@@ -294,17 +380,11 @@ class AuthScene extends Phaser.Scene {
         }, 0x3498db, 100, 40);
         this.panelContainer.add(syncBtn);
 
-        // Logout button
+        // Logout button - red background
         const logoutBtn = this.createButton(90, 55, 'Logout', async () => {
             await this.logout();
-        }, 0x666666, 100, 40);
+        }, 0xcc4444, 100, 40);
         this.panelContainer.add(logoutBtn);
-
-        // Back button at bottom
-        const backBtn = this.createButton(0, 110, '← Back to Menu', () => {
-            this.goBack();
-        }, 0x444444, 180, 40);
-        this.panelContainer.add(backBtn);
     }
 
     showEditNameDialog() {

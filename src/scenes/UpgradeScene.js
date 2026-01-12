@@ -6,8 +6,6 @@ class UpgradeScene extends Phaser.Scene {
 
     create() {
         this.saveData = saveSystem.load();
-        this.currentPage = 0;
-        this.totalPages = 2;
 
         // Hide default cursor and create sword cursor
         this.input.setDefaultCursor('none');
@@ -17,142 +15,164 @@ class UpgradeScene extends Phaser.Scene {
         this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x1a1a2e);
 
         // Title
-        this.add.text(GAME_WIDTH / 2, 40, 'UPGRADES', {
-            fontSize: '48px',
+        this.add.text(GAME_WIDTH / 2, 35, 'UPGRADES', {
+            fontSize: '40px',
             fontFamily: 'Arial',
             color: '#ffd700',
             stroke: '#000000',
             strokeThickness: 4
         }).setOrigin(0.5);
 
-        // XP display (upgrades use XP, not gold) - larger for mobile
+        // XP display
         const xp = this.saveData.xp || 0;
-        this.xpText = this.add.text(GAME_WIDTH / 2, 80, `⭐ XP: ${xp}`, {
-            fontSize: '32px',
+        this.xpText = this.add.text(GAME_WIDTH / 2, 70, `⭐ XP: ${xp}`, {
+            fontSize: '28px',
             fontFamily: 'Arial',
             color: '#44ddff'
         }).setOrigin(0.5);
 
-        // Create page containers
-        this.pages = [];
-
-        // Page 1: Unit and Castle upgrades
-        this.pages[0] = this.add.container(0, 0);
-        this.createUnitUpgrades(this.pages[0]);
-        this.createCastleUpgrades(this.pages[0]);
-
-        // Page 2: Special upgrades
-        this.pages[1] = this.add.container(0, 0);
-        this.createSpecialUpgrades(this.pages[1]);
-        this.pages[1].setVisible(false);
-
-        // Navigation arrows
-        this.createPageNavigation();
+        // Setup horizontal slider
+        this.setupSlider();
 
         // Back button
         this.createBackButton();
     }
 
-    createPageNavigation() {
-        // Page indicator - larger for mobile
-        this.pageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 35, '', {
-            fontSize: '20px',
+    setupSlider() {
+        // Card configuration
+        this.cardWidth = 280;
+        this.cardSpacing = 20;
+        this.currentCardIndex = 0;
+
+        // Create all cards data
+        this.allCards = [
+            { type: 'unit', unitType: 'PEASANT' },
+            { type: 'unit', unitType: 'ARCHER' },
+            { type: 'unit', unitType: 'HORSEMAN' },
+            { type: 'castle', upgrade: { key: 'health', name: 'Castle Health', desc: '+20 HP, +20/wave at L2+', icon: '❤️' } },
+            { type: 'castle', upgrade: { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' } },
+            { type: 'castle', upgrade: { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' } },
+            { type: 'special' }
+        ];
+        this.totalCards = this.allCards.length;
+
+        // Create slider container
+        this.sliderContainer = this.add.container(0, 0);
+
+        // Create cards
+        this.cardContainers = [];
+        this.allCards.forEach((cardData, index) => {
+            const x = GAME_WIDTH / 2 + index * (this.cardWidth + this.cardSpacing);
+            const y = 310;
+            let card;
+
+            if (cardData.type === 'unit') {
+                card = this.createUnitCard(x, y, cardData.unitType);
+            } else if (cardData.type === 'castle') {
+                card = this.createCastleUpgradeCard(x, y, cardData.upgrade);
+            } else if (cardData.type === 'special') {
+                card = this.createSpecialUpgradeCard(x, y);
+            }
+
+            this.cardContainers.push(card);
+            this.sliderContainer.add(card);
+        });
+
+        // Create navigation dots
+        this.createNavigationDots();
+
+        // Setup drag/swipe
+        this.setupDrag();
+
+        // Position slider to show first card
+        this.slideToCard(0, false);
+    }
+
+    createNavigationDots() {
+        this.dots = [];
+        const dotSpacing = 20;
+        const startX = GAME_WIDTH / 2 - (this.totalCards - 1) * dotSpacing / 2;
+        const y = GAME_HEIGHT - 40;
+
+        for (let i = 0; i < this.totalCards; i++) {
+            const dot = this.add.circle(startX + i * dotSpacing, y, 6, i === 0 ? 0xffd700 : 0x555555);
+            dot.setInteractive({ useHandCursor: true });
+            dot.on('pointerdown', () => this.slideToCard(i));
+            this.dots.push(dot);
+        }
+
+        // Card label below dots
+        this.cardLabel = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 15, '', {
+            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
         }).setOrigin(0.5);
-        this.updatePageIndicator();
-
-        // Left arrow (previous page) - larger for mobile
-        this.prevArrow = this.add.container(GAME_WIDTH / 2 - 130, GAME_HEIGHT - 35);
-        const prevBg = this.add.rectangle(0, 0, 70, 50, 0x444455);
-        prevBg.setStrokeStyle(2, 0x666688);
-        this.prevArrow.add(prevBg);
-        const prevText = this.add.text(0, 0, '◀', {
-            fontSize: '28px',
-            fontFamily: 'Arial',
-            color: '#cccccc'
-        }).setOrigin(0.5);
-        this.prevArrow.add(prevText);
-
-        prevBg.setInteractive({ useHandCursor: true });
-        prevBg.on('pointerover', () => {
-            prevBg.setFillStyle(0x555566);
-            prevText.setColor('#ffffff');
-        });
-        prevBg.on('pointerout', () => {
-            prevBg.setFillStyle(0x444455);
-            prevText.setColor('#cccccc');
-        });
-        prevBg.on('pointerdown', () => this.changePage(-1));
-
-        // Right arrow (next page) - larger for mobile
-        this.nextArrow = this.add.container(GAME_WIDTH / 2 + 130, GAME_HEIGHT - 35);
-        const nextBg = this.add.rectangle(0, 0, 70, 50, 0x444455);
-        nextBg.setStrokeStyle(2, 0x666688);
-        this.nextArrow.add(nextBg);
-        const nextText = this.add.text(0, 0, '▶', {
-            fontSize: '28px',
-            fontFamily: 'Arial',
-            color: '#cccccc'
-        }).setOrigin(0.5);
-        this.nextArrow.add(nextText);
-
-        nextBg.setInteractive({ useHandCursor: true });
-        nextBg.on('pointerover', () => {
-            nextBg.setFillStyle(0x555566);
-            nextText.setColor('#ffffff');
-        });
-        nextBg.on('pointerout', () => {
-            nextBg.setFillStyle(0x444455);
-            nextText.setColor('#cccccc');
-        });
-        nextBg.on('pointerdown', () => this.changePage(1));
-
-        this.updateArrowVisibility();
+        this.updateCardLabel();
     }
 
-    changePage(direction) {
-        const newPage = this.currentPage + direction;
-        if (newPage >= 0 && newPage < this.totalPages) {
-            this.pages[this.currentPage].setVisible(false);
-            this.currentPage = newPage;
-            this.pages[this.currentPage].setVisible(true);
-            this.updatePageIndicator();
-            this.updateArrowVisibility();
+    updateCardLabel() {
+        const labels = ['Peasant', 'Archer', 'Horseman', 'Health', 'Armor', 'Mining', 'Special'];
+        this.cardLabel.setText(labels[this.currentCardIndex]);
+    }
+
+    updateDots() {
+        this.dots.forEach((dot, i) => {
+            dot.setFillStyle(i === this.currentCardIndex ? 0xffd700 : 0x555555);
+        });
+        this.updateCardLabel();
+    }
+
+    setupDrag() {
+        // Create invisible drag zone
+        const dragZone = this.add.rectangle(GAME_WIDTH / 2, 310, GAME_WIDTH, 450, 0x000000, 0);
+        dragZone.setInteractive({ draggable: true });
+
+        let startX = 0;
+        let startContainerX = 0;
+
+        dragZone.on('dragstart', (pointer) => {
+            startX = pointer.x;
+            startContainerX = this.sliderContainer.x;
+        });
+
+        dragZone.on('drag', (pointer) => {
+            const deltaX = pointer.x - startX;
+            this.sliderContainer.x = startContainerX + deltaX;
+        });
+
+        dragZone.on('dragend', (pointer) => {
+            const deltaX = pointer.x - startX;
+            const threshold = 50;
+
+            if (deltaX < -threshold && this.currentCardIndex < this.totalCards - 1) {
+                // Swipe left - next card
+                this.slideToCard(this.currentCardIndex + 1);
+            } else if (deltaX > threshold && this.currentCardIndex > 0) {
+                // Swipe right - previous card
+                this.slideToCard(this.currentCardIndex - 1);
+            } else {
+                // Snap back
+                this.slideToCard(this.currentCardIndex);
+            }
+        });
+    }
+
+    slideToCard(index, animate = true) {
+        this.currentCardIndex = index;
+        const targetX = -index * (this.cardWidth + this.cardSpacing);
+
+        if (animate) {
+            this.tweens.add({
+                targets: this.sliderContainer,
+                x: targetX,
+                duration: 200,
+                ease: 'Power2'
+            });
+        } else {
+            this.sliderContainer.x = targetX;
         }
-    }
 
-    updatePageIndicator() {
-        const pageNames = ['Units & Castle', 'Special Upgrades'];
-        this.pageText.setText(`${pageNames[this.currentPage]} (${this.currentPage + 1}/${this.totalPages})`);
-    }
-
-    updateArrowVisibility() {
-        this.prevArrow.setAlpha(this.currentPage > 0 ? 1 : 0.3);
-        this.nextArrow.setAlpha(this.currentPage < this.totalPages - 1 ? 1 : 0.3);
-    }
-
-    createUnitUpgrades(pageContainer) {
-        const title = this.add.text(GAME_WIDTH / 2, 120, 'UNIT UPGRADES', {
-            fontSize: '26px',
-            fontFamily: 'Arial',
-            color: '#ffffff',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-        pageContainer.add(title);
-
-        const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
-        const startX = 185;
-        const spacing = 270;
-        const y = 260;
-
-        this.upgradeCards = [];
-
-        unitTypes.forEach((type, index) => {
-            const card = this.createUnitCard(startX + (index * spacing), y, type);
-            this.upgradeCards.push(card);
-            pageContainer.add(card);
-        });
+        this.updateDots();
     }
 
     createUnitCard(x, y, unitType) {
@@ -162,10 +182,10 @@ class UpgradeScene extends Phaser.Scene {
 
         const card = this.add.container(x, y);
 
-        // Card background - larger for mobile
+        // Card background - sized for slider
         const isUnlocked = upgradeData.unlocked;
         const bgColor = isUnlocked ? 0x333344 : 0x222222;
-        const bg = this.add.rectangle(0, 0, 200, 250, bgColor);
+        const bg = this.add.rectangle(0, 0, 260, 380, bgColor);
         bg.setStrokeStyle(3, isUnlocked ? stats.color : 0x444444);
         card.add(bg);
 
@@ -267,15 +287,15 @@ class UpgradeScene extends Phaser.Scene {
         const xp = this.saveData.xp || 0;
 
         if (isUnlocked) {
-            // Upgrade button (uses XP) - larger
+            // Upgrade button
             if (upgradeData.level < UPGRADE_CONFIG.maxLevel) {
                 const cost = this.calculateUpgradeCost(typeKey, upgradeData.level);
-                const upgradeBtn = this.createCardButton(0, 112, `Upgrade\n${cost} XP`, () => {
+                const upgradeBtn = this.createCardButton(0, 145, `Upgrade\n${cost} XP`, () => {
                     this.purchaseUpgrade(typeKey, cost);
                 }, xp >= cost);
                 card.add(upgradeBtn);
             } else {
-                const maxText = this.add.text(0, 112, 'MAX LEVEL', {
+                const maxText = this.add.text(0, 145, 'MAX LEVEL', {
                     fontSize: '22px',
                     fontFamily: 'Arial',
                     color: '#ffd700',
@@ -284,19 +304,19 @@ class UpgradeScene extends Phaser.Scene {
                 card.add(maxText);
             }
         } else {
-            // Unlock button (uses XP) - larger
+            // Unlock button
             const unlockCost = this.getUnlockCost(typeKey);
-            const unlockBtn = this.createCardButton(0, 112, `Unlock\n${unlockCost} XP`, () => {
+            const unlockBtn = this.createCardButton(0, 145, `Unlock\n${unlockCost} XP`, () => {
                 this.unlockUnit(typeKey, unlockCost);
             }, xp >= unlockCost);
             card.add(unlockBtn);
 
-            // Lock overlay
-            const lockOverlay = this.add.rectangle(0, 0, 200, 250, 0x000000, 0.5);
+            // Lock overlay - match card size
+            const lockOverlay = this.add.rectangle(0, 0, 260, 380, 0x000000, 0.5);
             card.add(lockOverlay);
 
             const lockIcon = this.add.text(0, -60, '🔒', {
-                fontSize: '44px'
+                fontSize: '50px'
             }).setOrigin(0.5);
             card.add(lockIcon);
         }
@@ -433,65 +453,54 @@ class UpgradeScene extends Phaser.Scene {
         container.add(mane);
     }
 
-    createCastleUpgrades(pageContainer) {
-        const title = this.add.text(GAME_WIDTH / 2, 410, 'CASTLE UPGRADES', {
-            fontSize: '26px',
-            fontFamily: 'Arial',
-            color: '#ffffff',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-        pageContainer.add(title);
-
-        const upgrades = [
-            { key: 'health', name: 'Castle Health', desc: '+20 HP, +20/wave at L2+', icon: '❤️' },
-            { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' },
-            { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' }
-        ];
-
-        const startX = 195;
-        const spacing = 270;
-        const y = 500;
-
-        upgrades.forEach((upgrade, index) => {
-            const card = this.createCastleUpgradeCard(startX + (index * spacing), y, upgrade);
-            pageContainer.add(card);
-        });
-    }
-
     createCastleUpgradeCard(x, y, upgrade) {
         const level = this.saveData.castleUpgrades[upgrade.key];
         const card = this.add.container(x, y);
         const isMaxLevel = level >= UPGRADE_CONFIG.maxLevel;
 
-        // Background - larger for mobile
-        const bg = this.add.rectangle(0, 0, 220, 120, 0x333344);
+        // Background - sized for slider (same as unit cards)
+        const bg = this.add.rectangle(0, 0, 260, 380, 0x333344);
         bg.setStrokeStyle(2, 0x4169E1);
         card.add(bg);
 
-        // Icon and name - larger font
-        const header = this.add.text(0, -38, `${upgrade.icon} ${upgrade.name}`, {
-            fontSize: '18px',
+        // Large icon at top
+        const iconText = this.add.text(0, -110, upgrade.icon, {
+            fontSize: '70px'
+        }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Name
+        const header = this.add.text(0, -30, upgrade.name, {
+            fontSize: '22px',
             fontFamily: 'Arial',
             color: '#ffffff',
             fontStyle: 'bold'
         }).setOrigin(0.5);
         card.add(header);
 
-        // Level - larger font
-        const levelText = this.add.text(0, -14, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
-            fontSize: '16px',
+        // Level
+        const levelText = this.add.text(0, 5, `Level ${level}/${UPGRADE_CONFIG.maxLevel}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
         card.add(levelText);
 
+        // Description
+        const desc = this.add.text(0, 35, upgrade.desc, {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#888888'
+        }).setOrigin(0.5);
+        card.add(desc);
+
         // Progression display: current -> next
         const currentBonus = this.getCastleBonus(upgrade.key, level);
         const nextBonus = this.getCastleBonus(upgrade.key, level + 1);
 
-        const progressContainer = this.add.container(0, 10);
+        const progressContainer = this.add.container(0, 75);
         const currentText = this.add.text(-15, 0, currentBonus, {
-            fontSize: '18px', fontFamily: 'Arial', color: '#88ff88'
+            fontSize: '20px', fontFamily: 'Arial', color: '#88ff88'
         }).setOrigin(1, 0.5);
         progressContainer.add(currentText);
 
@@ -499,11 +508,9 @@ class UpgradeScene extends Phaser.Scene {
             // Draw sleek double chevron arrow
             const arrow = this.add.graphics();
             arrow.lineStyle(2, 0x44ff44, 1);
-            // First chevron
             arrow.moveTo(2, -6);
             arrow.lineTo(9, 0);
             arrow.lineTo(2, 6);
-            // Second chevron
             arrow.moveTo(12, -6);
             arrow.lineTo(19, 0);
             arrow.lineTo(12, 6);
@@ -511,23 +518,23 @@ class UpgradeScene extends Phaser.Scene {
             progressContainer.add(arrow);
 
             const nextText = this.add.text(28, 0, nextBonus, {
-                fontSize: '18px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
+                fontSize: '20px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
             }).setOrigin(0, 0.5);
             progressContainer.add(nextText);
         }
         card.add(progressContainer);
 
-        // Upgrade button (uses XP) - larger for mobile
+        // Upgrade button
         const xp = this.saveData.xp || 0;
         if (level < UPGRADE_CONFIG.maxLevel) {
             const cost = this.calculateCastleUpgradeCost(level, upgrade.key);
-            const btn = this.createCardButton(0, 42, `${cost} XP`, () => {
+            const btn = this.createCardButton(0, 140, `${cost} XP`, () => {
                 this.purchaseCastleUpgrade(upgrade.key, cost);
-            }, xp >= cost, 130, 45);
+            }, xp >= cost, 150, 55);
             card.add(btn);
         } else {
-            const maxText = this.add.text(0, 42, 'MAX', {
-                fontSize: '22px',
+            const maxText = this.add.text(0, 140, 'MAX', {
+                fontSize: '24px',
                 fontFamily: 'Arial',
                 color: '#ffd700',
                 fontStyle: 'bold'
@@ -538,25 +545,8 @@ class UpgradeScene extends Phaser.Scene {
         return card;
     }
 
-    createSpecialUpgrades(pageContainer) {
-        // Special upgrades section - rare powerful upgrades
-        // Title for page 2 - larger
-        const title = this.add.text(GAME_WIDTH / 2, 150, 'SPECIAL UPGRADES', {
-            fontSize: '34px',
-            fontFamily: 'Arial',
-            color: '#ffd700',
-            fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5);
-        pageContainer.add(title);
-
-        const subtitle = this.add.text(GAME_WIDTH / 2, 190, 'Rare powerful upgrades with special requirements', {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            color: '#888888'
-        }).setOrigin(0.5);
-        pageContainer.add(subtitle);
+    createSpecialUpgradeCard(x, y) {
+        const card = this.add.container(x, y);
 
         // Check if already unlocked
         const specialUpgrades = this.saveData.specialUpgrades || {};
@@ -570,57 +560,51 @@ class UpgradeScene extends Phaser.Scene {
         const allUnitsLevel5 = peasantLevel >= 5 && archerLevel >= 5 && horsemanUnlocked && horsemanLevel >= 5;
 
         const xp = this.saveData.xp || 0;
-        const eliteDiscountCost = 15; // High XP cost
+        const eliteDiscountCost = 15;
 
-        // Create the elite discount card - centered on the page, larger
-        const card = this.add.container(GAME_WIDTH / 2, 340);
-
-        // Special golden background - larger for featured upgrade
-        const bg = this.add.rectangle(0, 0, 600, 220, hasEliteDiscount ? 0x2a4a2a : 0x2a2a3a);
-        bg.setStrokeStyle(4, hasEliteDiscount ? 0x88ff88 : 0xffd700);
+        // Background - sized for slider with gold border
+        const bg = this.add.rectangle(0, 0, 260, 380, hasEliteDiscount ? 0x2a4a2a : 0x2a2a3a);
+        bg.setStrokeStyle(3, hasEliteDiscount ? 0x88ff88 : 0xffd700);
         card.add(bg);
 
-        // Crown icon and title - bigger
-        const cardTitle = this.add.text(0, -75, '👑 ELITE MASTERY', {
-            fontSize: '36px',
+        // Crown icon at top
+        const iconText = this.add.text(0, -120, '👑', {
+            fontSize: '60px'
+        }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -50, 'ELITE\nMASTERY', {
+            fontSize: '24px',
             fontFamily: 'Arial',
             color: '#ffd700',
             fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 2
+            align: 'center'
         }).setOrigin(0.5);
         card.add(cardTitle);
 
-        // Description - more prominent
-        const desc = this.add.text(0, -30, 'Gold tier units spawn 2 for the cost of 1!', {
-            fontSize: '22px',
+        // Description
+        const desc = this.add.text(0, 15, 'Gold tier units\nspawn 2 for 1!', {
+            fontSize: '16px',
             fontFamily: 'Arial',
-            color: '#ffffff'
+            color: '#ffffff',
+            align: 'center'
         }).setOrigin(0.5);
         card.add(desc);
 
-        // Flavor text
-        const flavor = this.add.text(0, 0, 'Master the art of elite unit production', {
-            fontSize: '18px',
-            fontFamily: 'Arial',
-            color: '#aaaaaa',
-            fontStyle: 'italic'
-        }).setOrigin(0.5);
-        card.add(flavor);
-
         if (hasEliteDiscount) {
-            // Already unlocked - show big checkmark
-            const unlockedText = this.add.text(0, 55, '✓ UNLOCKED', {
-                fontSize: '28px',
+            // Already unlocked
+            const unlockedText = this.add.text(0, 80, '✓ UNLOCKED', {
+                fontSize: '24px',
                 fontFamily: 'Arial',
                 color: '#88ff88',
                 fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(unlockedText);
         } else if (!allUnitsLevel5) {
-            // Requirements not met - show detailed progress
-            const reqTitle = this.add.text(0, 35, 'Requirements:', {
-                fontSize: '18px',
+            // Requirements not met
+            const reqTitle = this.add.text(0, 60, 'Requirements:', {
+                fontSize: '14px',
                 fontFamily: 'Arial',
                 color: '#ffaa00',
                 fontStyle: 'bold'
@@ -634,37 +618,28 @@ class UpgradeScene extends Phaser.Scene {
             const archerColor = archerLevel >= 5 ? '#88ff88' : '#ff8888';
             const horsemanColor = (horsemanUnlocked && horsemanLevel >= 5) ? '#88ff88' : '#ff8888';
 
-            const req1 = this.add.text(-150, 68, `${peasantStatus} Peasant L${peasantLevel}/5`, {
-                fontSize: '18px', fontFamily: 'Arial', color: peasantColor
+            const req1 = this.add.text(0, 85, `${peasantStatus} Peasant L${peasantLevel}/5`, {
+                fontSize: '14px', fontFamily: 'Arial', color: peasantColor
             }).setOrigin(0.5);
-            const req2 = this.add.text(0, 68, `${archerStatus} Archer L${archerLevel}/5`, {
-                fontSize: '18px', fontFamily: 'Arial', color: archerColor
+            const req2 = this.add.text(0, 105, `${archerStatus} Archer L${archerLevel}/5`, {
+                fontSize: '14px', fontFamily: 'Arial', color: archerColor
             }).setOrigin(0.5);
-            const req3 = this.add.text(150, 68, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/5' : '🔒'}`, {
-                fontSize: '18px', fontFamily: 'Arial', color: horsemanColor
+            const req3 = this.add.text(0, 125, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/5' : '🔒'}`, {
+                fontSize: '14px', fontFamily: 'Arial', color: horsemanColor
             }).setOrigin(0.5);
             card.add(req1);
             card.add(req2);
             card.add(req3);
         } else {
-            // Can purchase - show big buy button
+            // Can purchase
             const canAfford = xp >= eliteDiscountCost;
-            const btn = this.createCardButton(0, 60, `Unlock: ${eliteDiscountCost} XP`, () => {
+            const btn = this.createCardButton(0, 100, `Unlock\n${eliteDiscountCost} XP`, () => {
                 this.purchaseEliteDiscount(eliteDiscountCost);
-            }, canAfford, 180, 48);
+            }, canAfford, 150, 55);
             card.add(btn);
         }
 
-        pageContainer.add(card);
-
-        // "More coming soon" teaser
-        const comingSoon = this.add.text(GAME_WIDTH / 2, 510, '🔮 More special upgrades coming soon...', {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            color: '#666666',
-            fontStyle: 'italic'
-        }).setOrigin(0.5);
-        pageContainer.add(comingSoon);
+        return card;
     }
 
     purchaseEliteDiscount(cost) {
@@ -734,30 +709,31 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     createBackButton() {
-        const btn = this.add.container(90, GAME_HEIGHT - 35);
+        // Popping close button in top-left corner (outside panel style)
+        const btn = this.add.container(35, 35);
 
-        // Larger button for mobile
-        const bg = this.add.rectangle(0, 0, 140, 50, 0x444455);
-        bg.setStrokeStyle(2, 0x666688);
-        bg.setInteractive({});
+        // Background circle that pops out
+        const bg = this.add.circle(0, 0, 28, 0x442222);
+        bg.setStrokeStyle(3, 0xff4444);
+        bg.setInteractive({ useHandCursor: true });
         btn.add(bg);
 
-        const label = this.add.text(0, 0, '← Back', {
-            fontSize: '24px',
+        const label = this.add.text(0, 0, '✕', {
+            fontSize: '32px',
             fontFamily: 'Arial',
-            color: '#cccccc',
-            fontStyle: 'bold'
+            fontStyle: 'bold',
+            color: '#ff6666'
         }).setOrigin(0.5);
         btn.add(label);
 
         bg.on('pointerover', () => {
-            bg.setFillStyle(0x555566);
-            label.setColor('#ffffff');
+            bg.setFillStyle(0x663333);
+            label.setColor('#ff8888');
         });
 
         bg.on('pointerout', () => {
-            bg.setFillStyle(0x444455);
-            label.setColor('#cccccc');
+            bg.setFillStyle(0x442222);
+            label.setColor('#ff6666');
         });
 
         bg.on('pointerdown', () => {
@@ -766,6 +742,8 @@ class UpgradeScene extends Phaser.Scene {
             }
             this.scene.start('MenuScene');
         });
+
+        btn.setDepth(100);
     }
 
     getUpgradedStats(baseStats, level) {

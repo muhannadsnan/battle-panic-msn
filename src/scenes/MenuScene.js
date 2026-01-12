@@ -103,11 +103,11 @@ class MenuScene extends Phaser.Scene {
         // Login/Profile button (top right corner)
         this.createLoginButton(width - 50, 40);
 
-        // Version (bottom left, under Buy XP button)
+        // Version (bottom left, under Buy XP button) - white color
         this.add.text(100, height - 18, GAME_VERSION, {
             fontSize: '14px',
             fontFamily: 'Arial',
-            color: '#555555'
+            color: '#ffffff'
         }).setOrigin(0.5, 0);
     }
 
@@ -161,14 +161,12 @@ class MenuScene extends Phaser.Scene {
     }
 
     createPlayButton(x, y, callback) {
-        // Special GOLD and BIGGER play button
+        // Special GOLD and BIGGER play button (no border/stroke)
         const label = this.add.text(x, y, 'PLAY', {
             fontSize: '52px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffd700',
-            stroke: '#8B6914',
-            strokeThickness: 6,
             padding: { x: 30, y: 15 }
         }).setOrigin(0.5);
 
@@ -238,9 +236,9 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(label);
 
-        // XP count in different color (yellow/gold) after the text
+        // XP count in different color (yellow/gold) after the text - closer with spaces
         if (xpAmount > 0) {
-            const xpLabel = this.add.text(label.width / 2 + 5, 0, `(${xpAmount})`, {
+            const xpLabel = this.add.text(label.width / 2 - 5, 0, `( ${xpAmount} )`, {
                 fontSize: '32px',
                 fontFamily: 'Arial',
                 fontStyle: 'bold',
@@ -635,9 +633,8 @@ class MenuScene extends Phaser.Scene {
     createRankDisplay(x, y, rankInfo) {
         const container = this.add.container(x, y);
 
-        // Prestigious background panel
+        // Prestigious background panel (no border)
         const panelBg = this.add.rectangle(0, 40, 320, 130, 0x1a1a2e, 0.8);
-        panelBg.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(rankInfo.rank.color).color);
         container.add(panelBg);
 
         // Rank icon and full name with grade (e.g., "⚔️ Soldier II") - PRESTIGIOUS & LARGE
@@ -780,10 +777,10 @@ class MenuScene extends Phaser.Scene {
             container.add(statusDot);
         }
 
-        // Label below - show name if logged in, otherwise "Login" - LARGER for mobile
-        const labelText = isLoggedIn ? supabaseClient.getDisplayName() : 'Login';
+        // Label below - short text only, name shown in profile dialog
+        const labelText = isLoggedIn ? 'Profile' : 'Login';
         const label = this.add.text(0, 42, labelText, {
-            fontSize: '18px',
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: isLoggedIn ? '#4ade80' : '#888888'
@@ -1603,20 +1600,20 @@ class MenuScene extends Phaser.Scene {
         dialog.add(statusText);
 
         // Reset Upgrades button (moved here from main menu)
-        const resetUpgradesBtn = this.createSettingsButton(0, -30, 'Reset Upgrades (2 XP)', 0x665500, () => {
+        const resetUpgradesBtn = this.createSettingsButton(0, -35, 'Reset Upgrades (2 XP)', 0x665500, () => {
             dialog.destroy();
             this.confirmResetUpgrades();
         }, false);
         dialog.add(resetUpgradesBtn);
 
-        // Delete Account / Reset Progress button
-        const deleteBtn = this.createSettingsButton(0, 25, 'Delete Account', 0x8B0000, () => {
+        // Delete Account / Reset Progress button - bigger gap
+        const deleteBtn = this.createSettingsButton(0, 35, 'Delete Account', 0x8B0000, () => {
             this.confirmDeleteAccount(dialog);
         }, false);
         dialog.add(deleteBtn);
 
         // Warning text
-        const warning = this.add.text(0, 65, 'Delete resets all progress to Rank 0', {
+        const warning = this.add.text(0, 80, 'Delete resets all progress to Rank 0', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ff6666'
@@ -1989,16 +1986,16 @@ class MenuScene extends Phaser.Scene {
             renderPage();
         });
 
-        // Close button - larger with background for mobile
-        const closeBtnContainer = this.add.container(370, -230);
-        const closeBtnBg = this.add.rectangle(0, 0, 50, 50, 0x442222);
-        closeBtnBg.setStrokeStyle(2, 0xff4444);
+        // Close button - popping circle style outside panel
+        const closeBtnContainer = this.add.container(400 + 15, -260 + 15);
+        const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
+        closeBtnBg.setStrokeStyle(3, 0xff4444);
         closeBtnContainer.add(closeBtnBg);
-        const closeBtnText = this.add.text(0, 0, 'X', {
+        const closeBtnText = this.add.text(0, 0, '✕', {
             fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ff4444'
+            color: '#ff6666'
         }).setOrigin(0.5);
         closeBtnContainer.add(closeBtnText);
         closeBtnBg.setInteractive({ useHandCursor: true });
@@ -2006,11 +2003,21 @@ class MenuScene extends Phaser.Scene {
 
         closeBtnBg.on('pointerover', () => {
             closeBtnBg.setFillStyle(0x663333);
-            closeBtnText.setColor('#ff6666');
+            closeBtnText.setColor('#ff8888');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1.1,
+                duration: 100
+            });
         });
         closeBtnBg.on('pointerout', () => {
             closeBtnBg.setFillStyle(0x442222);
-            closeBtnText.setColor('#ff4444');
+            closeBtnText.setColor('#ff6666');
+            this.tweens.add({
+                targets: closeBtnContainer,
+                scale: 1,
+                duration: 100
+            });
         });
         closeBtnBg.on('pointerdown', () => dialog.destroy());
 

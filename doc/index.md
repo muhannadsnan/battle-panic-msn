@@ -123,23 +123,27 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.20.3)
+## Recent Updates (v1.21.0)
 
+- **Upgrades Scene Redesign**: Horizontal swipeable slider with all upgrade cards
+  - Swipe left/right to navigate between cards
+  - Navigation dots at bottom (clickable)
+  - 7 cards: Peasant, Archer, Horseman, Health, Armor, Mining, Special
+- **Consistent Close Buttons**: Popping circle close button style across all dialogs
+  - Tips & Info, Upgrades, Login, Check Email, Profile panels
+- **Profile Dialog Improvements**: Left-aligned labels, aligned values, red logout button
+- **Main Menu Polish**:
+  - Removed border from ranking display
+  - Clean PLAY button (no stroke)
+  - Profile button shows "Profile" instead of long display names
 - PLAY button: Gold color, bigger (52px), pulsing animation
-- UPGRADES button: XP notification badge showing available XP
-- Profile name display: Larger font (18px) for mobile
-- Rank/score display: Larger fonts (18-28px) and progress bar
-- Reset upgrades dialog: 10 second safety countdown, larger buttons
-- Mobile-friendly UI redesign for Tips & Info dialog (larger fonts, touch-friendly buttons)
-- Complete Upgrades scene redesign for mobile (larger cards, buttons, and fonts)
-- Added "max 3 XP per match" info to XP display
+- UPGRADES button: Shows XP count in gold parentheses
+- Rank display: Prestigious large format with progress bar
+- Reset upgrades: Moved to Settings dialog with 10 second safety countdown
 - Supabase authentication with magic link (passwordless email)
 - Cloud save sync for logged-in users
 - Guest mode with separate local save (progress preserved on logout)
 - First-time sign-in migrates guest progress to account
-- Leaderboard integration
-- Login/Profile UI (AuthScene) with compact design
-- Profile panel: horizontal icon buttons (back, sync, logout)
 
 ## Future Plans
 
@@ -161,4 +165,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.20.3)*
+*Last updated: January 2026 (v1.21.0)*
