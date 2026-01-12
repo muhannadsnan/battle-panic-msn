@@ -7,6 +7,10 @@ class AuthScene extends Phaser.Scene {
     create() {
         const { width, height } = this.scale;
 
+        // Ensure cursor is visible in this scene
+        this.input.setDefaultCursor('default');
+        this.game.canvas.style.cursor = 'default';
+
         // Dark overlay background
         this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85);
 
@@ -177,88 +181,62 @@ class AuthScene extends Phaser.Scene {
         const user = supabaseClient.getUser();
         const displayName = supabaseClient.getDisplayName();
 
-        // Panel background
-        const panelBg = this.add.rectangle(0, 0, 400, 380, 0x1a1a2e);
+        // Panel background - more compact
+        const panelBg = this.add.rectangle(0, 0, 350, 250, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
-        // Title
-        const title = this.add.text(0, -155, 'Profile', {
-            fontSize: '28px',
+        // Title with user icon
+        const title = this.add.text(0, -95, '👤 Profile', {
+            fontSize: '26px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff'
         }).setOrigin(0.5);
         this.panelContainer.add(title);
 
-        // User icon
-        const userIcon = this.add.text(0, -105, '👤', {
-            fontSize: '40px'
-        }).setOrigin(0.5);
-        this.panelContainer.add(userIcon);
-
-        // Display name
-        const nameLabel = this.add.text(-160, -60, 'Display Name:', {
-            fontSize: '14px',
+        // Display name - inlined
+        const nameRow = this.add.text(0, -50, `Name: ${displayName}`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
-            color: '#888888'
-        }).setOrigin(0, 0.5);
-        this.panelContainer.add(nameLabel);
-
-        this.displayNameText = this.add.text(0, -35, displayName, {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
             color: '#ffd700'
         }).setOrigin(0.5);
-        this.panelContainer.add(this.displayNameText);
+        this.panelContainer.add(nameRow);
 
-        // Email
-        const emailLabel = this.add.text(-160, 5, 'Email:', {
+        // Email - inlined
+        const emailRow = this.add.text(0, -20, `Email: ${user?.email || 'Unknown'}`, {
             fontSize: '14px',
-            fontFamily: 'Arial',
-            color: '#888888'
-        }).setOrigin(0, 0.5);
-        this.panelContainer.add(emailLabel);
-
-        const emailText = this.add.text(0, 30, user?.email || 'Unknown', {
-            fontSize: '16px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
-        this.panelContainer.add(emailText);
+        this.panelContainer.add(emailRow);
 
         // Cloud sync status
-        const syncIcon = this.add.text(-160, 75, '☁️', {
-            fontSize: '20px'
-        }).setOrigin(0, 0.5);
-        this.panelContainer.add(syncIcon);
-
-        this.syncStatusText = this.add.text(-130, 75, 'Cloud Save: Ready', {
+        this.syncStatusText = this.add.text(0, 15, '☁️ Cloud Save: Ready', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#4ade80'
-        }).setOrigin(0, 0.5);
+        }).setOrigin(0.5);
         this.panelContainer.add(this.syncStatusText);
 
-        // Sync Now button
-        const syncBtn = this.createButton(0, 115, 'Sync Now', async () => {
+        // Buttons row - horizontal layout
+        // Back button (left) - arrow icon only
+        const backBtn = this.createIconButton(-120, 70, '←', () => {
+            this.goBack();
+        }, 0x666666);
+        this.panelContainer.add(backBtn);
+
+        // Sync button (center) - icon only
+        const syncBtn = this.createIconButton(0, 70, '🔄', async () => {
             await this.syncSaveData();
-        }, 0x4a7aba, 140, 35);
+        }, 0x4a7aba);
         this.panelContainer.add(syncBtn);
 
-        // Logout button
-        const logoutBtn = this.createButton(0, 160, 'Logout', async () => {
+        // Logout button (right)
+        const logoutBtn = this.createButton(90, 70, 'Logout', async () => {
             await this.logout();
-        }, 0xc0392b, 140, 35);
+        }, 0xc0392b, 100, 40);
         this.panelContainer.add(logoutBtn);
-
-        // Back button
-        const backBtn = this.createButton(0, 160, 'Back to Menu', () => {
-            this.goBack();
-        }, 0x666666, 140, 35);
-        backBtn.y = 205;
-        this.panelContainer.add(backBtn);
     }
 
     createButton(x, y, text, callback, bgColor = 0x4169E1, width = 200, height = 45) {
@@ -275,6 +253,39 @@ class AuthScene extends Phaser.Scene {
             color: '#ffffff'
         }).setOrigin(0.5);
         container.add(label);
+
+        bg.setInteractive({ useHandCursor: true });
+        bg.on('pointerover', () => {
+            bg.setFillStyle(Phaser.Display.Color.GetColor(
+                Math.min(255, ((bgColor >> 16) & 0xFF) + 30),
+                Math.min(255, ((bgColor >> 8) & 0xFF) + 30),
+                Math.min(255, (bgColor & 0xFF) + 30)
+            ));
+        });
+        bg.on('pointerout', () => {
+            bg.setFillStyle(bgColor);
+        });
+        bg.on('pointerdown', () => {
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playClick();
+            }
+            callback();
+        });
+
+        return container;
+    }
+
+    createIconButton(x, y, icon, callback, bgColor = 0x4169E1) {
+        const container = this.add.container(x, y);
+
+        const bg = this.add.circle(0, 0, 25, bgColor);
+        bg.setStrokeStyle(2, 0xffffff, 0.3);
+        container.add(bg);
+
+        const iconText = this.add.text(0, 0, icon, {
+            fontSize: '24px'
+        }).setOrigin(0.5);
+        container.add(iconText);
 
         bg.setInteractive({ useHandCursor: true });
         bg.on('pointerover', () => {
@@ -393,7 +404,7 @@ class AuthScene extends Phaser.Scene {
     }
 
     async syncSaveData() {
-        this.syncStatusText.setText('Cloud Save: Syncing...');
+        this.syncStatusText.setText('☁️ Syncing...');
         this.syncStatusText.setColor('#ffd700');
 
         try {
@@ -404,7 +415,7 @@ class AuthScene extends Phaser.Scene {
             const saveResult = await supabaseClient.saveToCloud(localSave);
 
             if (saveResult.success) {
-                this.syncStatusText.setText('Cloud Save: Synced!');
+                this.syncStatusText.setText('☁️ Synced!');
                 this.syncStatusText.setColor('#4ade80');
 
                 // Update leaderboard
@@ -415,12 +426,12 @@ class AuthScene extends Phaser.Scene {
 
                 this.showMessage('Save synced to cloud!', '#4ade80');
             } else {
-                this.syncStatusText.setText('Cloud Save: Failed');
+                this.syncStatusText.setText('☁️ Sync Failed');
                 this.syncStatusText.setColor('#ff6b6b');
                 this.showMessage('Sync failed: ' + saveResult.error, '#ff6b6b');
             }
         } catch (error) {
-            this.syncStatusText.setText('Cloud Save: Error');
+            this.syncStatusText.setText('☁️ Error');
             this.syncStatusText.setColor('#ff6b6b');
             console.error('Sync error:', error);
         }
