@@ -123,21 +123,32 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.23.0)
+## Recent Updates (v1.24.0)
 
+- **Weapons Attached to Arms**: Swords and bows now move with arm animations
+  - Peasant/Knight sword swings with arm during attack
+  - Archer/Robinhood bow follows arm movement
+  - Horseman/Lancelot sword attached to rider's arm
+- **Improved UI Icons**: Full character icons in spawn buttons and upgrade cards
+  - Spawn buttons show complete unit (not just weapons)
+  - Upgrade cards display full character at larger scale
+  - Consistent angular style matching in-game units
+- **Trumpet Promotion Sound**: Military bugle fanfare on unit promotion
+  - Short 3-note ascending call (G4 → C5 → E5)
+  - Brass-like timbre using filtered sawtooth waves
+  - Plays when units reach new promotion levels
+
+### v1.23.0
 - **Redesigned Unit Icons (Angular Style)**: All 6 unit sprites completely redesigned
   - Clean, bold rectangular shapes with better proportions
   - Consistent Material Design color palettes
-  - Fewer rectangles, bigger shapes for clarity at game scale
   - **Peasant**: Tan tunic, brown hair, clean sword
-  - **Archer**: Forest green hood, wooden bow with string
-  - **Horseman**: Brown horse, blue armored rider with helmet
   - **Knight**: Blue armor, golden emblems, red plume, glowing visor
+  - **Archer**: Forest green hood, wooden bow with string
   - **Robinhood**: Dark green cloak, pointed hood, red feather, golden-tipped bow
+  - **Horseman**: Brown horse, blue armored rider with helmet
   - **Lancelot**: White stallion, golden armor, red cape, Excalibur
 - **Fixed Upgrades Slider**: Buttons now work while swiping still works
-  - Changed from drag zone to scene-level input events
-  - 10px movement threshold prevents accidental drags on button clicks
 
 ### v1.22.0
 - Smoother upgrades slider with velocity-based momentum scrolling
@@ -173,4 +184,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.23.0)*
+*Last updated: January 2026 (v1.24.0)*

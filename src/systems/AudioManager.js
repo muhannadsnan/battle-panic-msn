@@ -323,32 +323,74 @@ class AudioManager {
         osc.stop(this.audioContext.currentTime + 0.08);
     }
 
-    // Play promotion fanfare sound - celebratory ding
+    // Play promotion fanfare sound - short trumpet/bugle call
     playPromotion() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
         this.resume();
 
         const now = this.audioContext.currentTime;
-        
-        // Triple ascending chime
-        const notes = [523, 659, 784]; // C5, E5, G5 - major chord
-        notes.forEach((freq, i) => {
+
+        // Trumpet fanfare - military promotion style
+        // Short 3-note bugle call: G4 -> C5 -> E5 (quick ascending)
+        const notes = [
+            { freq: 392, start: 0, duration: 0.12 },      // G4 - quick
+            { freq: 523, start: 0.1, duration: 0.12 },    // C5 - quick
+            { freq: 659, start: 0.2, duration: 0.35 }     // E5 - held longer
+        ];
+
+        notes.forEach(note => {
+            // Main trumpet tone (sawtooth for brass)
             const osc = this.audioContext.createOscillator();
+            const osc2 = this.audioContext.createOscillator();
             const gain = this.audioContext.createGain();
-            
-            osc.connect(gain);
+            const filter = this.audioContext.createBiquadFilter();
+
+            osc.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain);
             gain.connect(this.sfxGain);
-            
-            osc.frequency.setValueAtTime(freq, now + i * 0.1);
-            osc.type = 'sine';
-            
-            gain.gain.setValueAtTime(0, now + i * 0.1);
-            gain.gain.linearRampToValueAtTime(0.08, now + i * 0.1 + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
-            
-            osc.start(now + i * 0.1);
-            osc.stop(now + i * 0.1 + 0.3);
+
+            // Brass-like sawtooth with slight detune for richness
+            osc.frequency.setValueAtTime(note.freq, now + note.start);
+            osc2.frequency.setValueAtTime(note.freq * 1.003, now + note.start);
+            osc.type = 'sawtooth';
+            osc2.type = 'sawtooth';
+
+            // Filter to soften harsh harmonics (brass timbre)
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1800, now + note.start);
+            filter.Q.value = 1;
+
+            // Quick attack, sustain, then decay (trumpet envelope)
+            gain.gain.setValueAtTime(0, now + note.start);
+            gain.gain.linearRampToValueAtTime(0.12, now + note.start + 0.02);
+            gain.gain.setValueAtTime(0.1, now + note.start + note.duration * 0.7);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.duration);
+
+            osc.start(now + note.start);
+            osc2.start(now + note.start);
+            osc.stop(now + note.start + note.duration);
+            osc2.stop(now + note.start + note.duration);
         });
+
+        // Add slight "breath" noise at attack for realism
+        const bufferSize = this.audioContext.sampleRate * 0.03;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+        }
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        noise.buffer = buffer;
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.value = 2000;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseGain.gain.setValueAtTime(0.04, now);
+        noise.start(now);
     }
 
     // Play wood chop sound - axe hitting wood
