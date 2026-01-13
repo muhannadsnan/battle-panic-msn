@@ -30,7 +30,7 @@ serve(async (req) => {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `${xp_amount} XP for Battle Panic`,
+              name: `${xp_amount} XP for Battle Panic MSN`,
               description: `Support the game and receive ${xp_amount} XP instantly!`,
             },
             unit_amount: price_cents,
