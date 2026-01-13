@@ -179,80 +179,64 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createPeasant(scene) {
-        // CARTOONY PEASANT - friendly farmer style with animated parts
-        // Shadow (soft)
-        this.spriteContainer.add(scene.add.rectangle(0, 30, 24, 6, 0x000000, 0.2));
+        // PEASANT - Simple farmer with sword, clean angular design
+        // Shadow
+        this.spriteContainer.add(scene.add.rectangle(0, 28, 26, 6, 0x000000, 0.25));
 
-        // Animated legs container
-        this.bodyParts.leftLeg = scene.add.container(-6, 22);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 10, 14, 0x6B4423));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 6, 12, 6, 0x4A3020)); // shoe
+        // Legs
+        this.bodyParts.leftLeg = scene.add.container(-5, 18);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 16, 0x7A5230)); // brown pants
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 10, 10, 8, 0x4A3020)); // boot
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
-        this.bodyParts.rightLeg = scene.add.container(6, 22);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 10, 14, 0x6B4423));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 6, 12, 6, 0x4A3020)); // shoe
+        this.bodyParts.rightLeg = scene.add.container(5, 18);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 16, 0x8A6240));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 10, 10, 8, 0x5A4030));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
-        // Body container (for bobbing)
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Body - puffy tunic
-        const body = scene.add.rectangle(0, 6, 22, 22, 0xE8C87A);
+        // Body - tan tunic
+        const body = scene.add.rectangle(0, 4, 22, 22, 0xD4A855);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(0, 8, 18, 16, 0xF5D88A)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-8, 6, 4, 18, 0xD4B060)); // left shade
+        this.bodyParts.torso.add(scene.add.rectangle(2, 4, 16, 18, 0xE4B865)); // highlight
+        // Belt
+        this.bodyParts.torso.add(scene.add.rectangle(0, 13, 24, 5, 0x6B4423));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 13, 6, 6, 0xD4A020)); // buckle
 
-        // Belt with buckle
-        this.bodyParts.torso.add(scene.add.rectangle(0, 14, 24, 5, 0x8B5A2B));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 14, 6, 6, 0xFFD700)); // buckle
-
-        // Animated arms
-        this.bodyParts.leftArm = scene.add.container(-14, 4);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 8, 14, 0xFFCBA4));
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 8, 10, 8, 0xFFDDBB)); // hand
+        // Left arm
+        this.bodyParts.leftArm = scene.add.container(-13, 2);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 8, 16, 0xE4B865)); // sleeve
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 10, 8, 8, 0xF5CBA7)); // hand
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
-        this.bodyParts.rightArm = scene.add.container(14, 4);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 8, 14, 0xFFCBA4));
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 8, 10, 8, 0xFFDDBB)); // hand
+        // Right arm
+        this.bodyParts.rightArm = scene.add.container(13, 2);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 8, 16, 0xD4A855));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 10, 8, 8, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // BIG cartoony head
-        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 26, 24, 0xFFCBA4)); // face
-        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 22, 18, 0xFFDDBB)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-10, -14, 4, 20, 0xE8B090)); // shade
+        // Head
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16, 22, 22, 0xF5CBA7)); // face
+        this.bodyParts.torso.add(scene.add.rectangle(2, -16, 18, 18, 0xFFDDBB)); // highlight
+        // Hair - brown messy
+        this.bodyParts.torso.add(scene.add.rectangle(0, -28, 24, 12, 0x8B5A2B));
+        this.bodyParts.torso.add(scene.add.rectangle(-6, -26, 8, 8, 0x7B4A1B));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -26, 8, 8, 0x9B6A3B));
+        // Eyes
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -16, 6, 6, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -16, 6, 6, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -15, 4, 5, 0x3A2010));
+        this.bodyParts.torso.add(scene.add.rectangle(6, -15, 4, 5, 0x3A2010));
+        // Smile
+        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 8, 3, 0xC08060));
 
-        // Messy hair
-        this.bodyParts.torso.add(scene.add.rectangle(0, -26, 28, 10, 0x8B6914));
-        this.bodyParts.torso.add(scene.add.rectangle(-8, -24, 8, 8, 0x8B6914));
-        this.bodyParts.torso.add(scene.add.rectangle(8, -24, 8, 8, 0x8B6914));
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -30, 6, 6, 0x9B7924)); // highlight tuft
-
-        // BIG cute eyes
-        this.bodyParts.torso.add(scene.add.rectangle(-6, -14, 10, 12, 0xFFFFFF)); // left eye white
-        this.bodyParts.torso.add(scene.add.rectangle(6, -14, 10, 12, 0xFFFFFF)); // right eye white
-        this.bodyParts.torso.add(scene.add.rectangle(-5, -13, 6, 8, 0x4A3020)); // left pupil
-        this.bodyParts.torso.add(scene.add.rectangle(7, -13, 6, 8, 0x4A3020)); // right pupil
-        this.bodyParts.torso.add(scene.add.rectangle(-6, -15, 3, 3, 0xFFFFFF)); // left shine
-        this.bodyParts.torso.add(scene.add.rectangle(6, -15, 3, 3, 0xFFFFFF)); // right shine
-
-        // Happy mouth
-        this.bodyParts.torso.add(scene.add.rectangle(0, -4, 8, 4, 0xE08080));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -3, 6, 2, 0xC06060)); // inner mouth
-
-        // Rosy cheeks
-        this.bodyParts.torso.add(scene.add.rectangle(-10, -8, 6, 4, 0xFFAAAA, 0.5));
-        this.bodyParts.torso.add(scene.add.rectangle(10, -8, 6, 4, 0xFFAAAA, 0.5));
-
-        // Weapon arm with pitchfork
-        this.bodyParts.weapon = scene.add.container(20, 0);
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 5, 36, 0xC49A4A)); // handle
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 2, 3, 32, 0xD4AA5A)); // handle highlight
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -18, 4, 10, 0x88AACC)); // center prong
-        this.bodyParts.weapon.add(scene.add.rectangle(-6, -16, 4, 8, 0x88AACC)); // left prong
-        this.bodyParts.weapon.add(scene.add.rectangle(6, -16, 4, 8, 0x88AACC)); // right prong
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -12, 16, 4, 0x99BBDD)); // crossbar
+        // Sword
+        this.bodyParts.weapon = scene.add.container(20, -6);
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -10, 6, 30, 0xC0C0C0)); // blade
+        this.bodyParts.weapon.add(scene.add.rectangle(1, -10, 3, 26, 0xE8E8E8)); // shine
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 8, 14, 5, 0xD4A020)); // crossguard
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 14, 5, 10, 0x6B4423)); // handle
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);
@@ -260,75 +244,70 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createArcher(scene) {
-        // CARTOONY ARCHER - cool ranger style WITH ANIMATIONS
+        // ARCHER - Hooded ranger with bow, clean angular design
         // Shadow
-        this.spriteContainer.add(scene.add.rectangle(0, 28, 22, 5, 0x000000, 0.2));
+        this.spriteContainer.add(scene.add.rectangle(0, 26, 24, 6, 0x000000, 0.25));
 
-        // Animated legs with boots
-        this.bodyParts.leftLeg = scene.add.container(-5, 20);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2E5A2E));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 6, 10, 6, 0x5A3A20)); // boot
+        // Legs
+        this.bodyParts.leftLeg = scene.add.container(-5, 16);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2D5A30)); // green pants
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 9, 10, 8, 0x5A3A20)); // boot
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
-        this.bodyParts.rightLeg = scene.add.container(5, 20);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2E5A2E));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 6, 10, 6, 0x5A3A20)); // boot
+        this.bodyParts.rightLeg = scene.add.container(5, 16);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x3D6A40));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 9, 10, 8, 0x6A4A30));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
-        // Body container
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Body - sleek tunic
-        const body = scene.add.rectangle(0, 4, 18, 20, 0x3CB043);
+        // Body - forest green tunic
+        const body = scene.add.rectangle(0, 2, 20, 20, 0x2E7D32);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(0, 6, 14, 14, 0x4CC053));
-        this.bodyParts.torso.add(scene.add.rectangle(-6, 4, 4, 16, 0x2A9030));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 12, 20, 4, 0x6B4423)); // belt
+        this.bodyParts.torso.add(scene.add.rectangle(2, 2, 14, 16, 0x43A047)); // highlight
+        // Belt
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 22, 4, 0x5D4037));
 
         // Quiver on back
-        this.bodyParts.torso.add(scene.add.rectangle(-14, 2, 8, 20, 0x6B4423));
-        this.bodyParts.torso.add(scene.add.rectangle(-14, 0, 6, 16, 0x7B5433));
-        this.bodyParts.torso.add(scene.add.rectangle(-14, -10, 3, 6, 0xFF6666));
-        this.bodyParts.torso.add(scene.add.rectangle(-12, -10, 3, 6, 0x66FF66));
+        this.bodyParts.torso.add(scene.add.rectangle(-13, 0, 8, 22, 0x6D5047));
+        this.bodyParts.torso.add(scene.add.rectangle(-13, -10, 3, 8, 0xE53935)); // red arrow
+        this.bodyParts.torso.add(scene.add.rectangle(-11, -10, 3, 8, 0xFDD835)); // yellow arrow
 
-        // Animated bow arm
-        this.bodyParts.leftArm = scene.add.container(-12, 2);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 6, 12, 0xFFCBA4));
+        // Arms
+        this.bodyParts.leftArm = scene.add.container(-12, 0);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 7, 14, 0x43A047));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 9, 7, 7, 0xF5CBA7)); // hand
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
-        // Animated draw arm with bow
-        this.bodyParts.rightArm = scene.add.container(12, 2);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 6, 12, 0xFFCBA4));
+        this.bodyParts.rightArm = scene.add.container(12, 0);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 7, 14, 0x2E7D32));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 9, 7, 7, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // Cool hood/cape
-        this.bodyParts.torso.add(scene.add.rectangle(0, -4, 22, 14, 0x228B22));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 20, 10, 0x228B22));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -16, 16, 8, 0x2A9B32));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -20, 10, 6, 0x2A9B32));
+        // Hood
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 24, 18, 0x1B5E20));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -22, 18, 10, 0x2E7D32));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -28, 10, 8, 0x388E3C)); // hood point
 
-        // Face (visible under hood)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -6, 16, 14, 0xFFCBA4));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -5, 14, 10, 0xFFDDBB));
+        // Face under hood
+        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 16, 14, 0xF5CBA7));
+        this.bodyParts.torso.add(scene.add.rectangle(2, -10, 12, 10, 0xFFDDBB));
+        // Eyes - green, focused
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -10, 5, 5, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(4, -10, 5, 5, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(-3, -9, 4, 4, 0x2E7D32));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -9, 4, 4, 0x2E7D32));
+        // Smirk
+        this.bodyParts.torso.add(scene.add.rectangle(2, -4, 6, 2, 0xC08060));
 
-        // Determined eyes
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -8, 8, 8, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -8, 8, 8, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-3, -7, 5, 6, 0x228B22));
-        this.bodyParts.torso.add(scene.add.rectangle(5, -7, 5, 6, 0x228B22));
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -8, 3, 3, 0x000000));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -8, 3, 3, 0x000000));
-        this.bodyParts.torso.add(scene.add.rectangle(-5, -10, 2, 2, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(2, -1, 6, 2, 0xCC8888)); // smirk
-
-        // Cool bow (animated weapon)
-        this.bodyParts.weapon = scene.add.container(18, 0);
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -12, 5, 8, 0x8B5A33));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, -6, 5, 6, 0x9B6A43));
-        this.bodyParts.weapon.add(scene.add.rectangle(4, 0, 5, 8, 0x9B6A43));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, 6, 5, 6, 0x9B6A43));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 12, 5, 8, 0x8B5A33));
-        this.bodyParts.weapon.add(scene.add.rectangle(-2, 0, 2, 28, 0xDDDDDD)); // bowstring
+        // Bow
+        this.bodyParts.weapon = scene.add.container(18, -2);
+        this.bodyParts.weapon.add(scene.add.rectangle(2, -14, 5, 12, 0x795548)); // top limb
+        this.bodyParts.weapon.add(scene.add.rectangle(4, -4, 5, 8, 0x8D6E63));
+        this.bodyParts.weapon.add(scene.add.rectangle(5, 4, 6, 8, 0x8D6E63)); // grip
+        this.bodyParts.weapon.add(scene.add.rectangle(4, 12, 5, 8, 0x8D6E63));
+        this.bodyParts.weapon.add(scene.add.rectangle(2, 20, 5, 12, 0x795548)); // bottom limb
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 2, 2, 36, 0xE0E0E0)); // string
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);
@@ -336,104 +315,75 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createHorseman(scene) {
-        // CARTOONY HORSEMAN - mounted cavalry charging RIGHT!
-        // Shadow (larger for horse)
-        this.spriteContainer.add(scene.add.rectangle(0, 36, 44, 8, 0x000000, 0.2));
+        // HORSEMAN - Mounted cavalry, clean angular design
+        // Shadow
+        this.spriteContainer.add(scene.add.rectangle(0, 34, 48, 8, 0x000000, 0.25));
 
-        // Horse back legs (animated - these are on LEFT/back)
-        this.bodyParts.leftLeg = scene.add.container(-12, 24);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 7, 18, 0x6B3503));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 10, 6, 6, 0x4B2503)); // hoof
+        // Horse back legs
+        this.bodyParts.leftLeg = scene.add.container(-14, 22);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 18, 0x6D4C30));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 12, 8, 6, 0x3D2C10)); // hoof
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
-        // Horse front legs (animated - these are on RIGHT/front)
-        this.bodyParts.rightLeg = scene.add.container(12, 24);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 7, 18, 0x7B4513));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 10, 6, 6, 0x5B3503)); // hoof
+        // Horse front legs
+        this.bodyParts.rightLeg = scene.add.container(14, 22);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 18, 0x7D5C40));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 12, 8, 6, 0x4D3C20));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
-        // Body container (horse + rider)
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Horse body - brown stallion
-        const body = scene.add.rectangle(0, 12, 40, 20, 0x8B4513);
+        // Horse body - brown
+        const body = scene.add.rectangle(0, 12, 44, 22, 0x8B5A2B);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(2, 10, 34, 16, 0x9B5523)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-16, 12, 8, 16, 0x6B3503)); // rear shade
+        this.bodyParts.torso.add(scene.add.rectangle(2, 10, 38, 18, 0x9B6A3B)); // highlight
 
-        // Horse tail (on LEFT/back) - flowing
-        this.bodyParts.torso.add(scene.add.rectangle(-22, 14, 6, 14, 0x3B2503));
-        this.bodyParts.torso.add(scene.add.rectangle(-26, 18, 5, 12, 0x2B1503));
-        this.bodyParts.torso.add(scene.add.rectangle(-28, 22, 4, 8, 0x3B2503));
+        // Horse tail
+        this.bodyParts.torso.add(scene.add.rectangle(-24, 14, 6, 16, 0x3D2C10));
+        this.bodyParts.torso.add(scene.add.rectangle(-28, 20, 5, 12, 0x4D3C20));
 
-        // Horse neck and head (on RIGHT/front - facing enemies!)
-        this.bodyParts.leftArm = scene.add.container(22, 2);
-        // Neck (angled forward)
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 4, 12, 18, 0x8B4513));
-        this.bodyParts.leftArm.add(scene.add.rectangle(2, 2, 8, 14, 0x9B5523)); // highlight
-        // Head
-        this.bodyParts.leftArm.add(scene.add.rectangle(10, -4, 16, 14, 0x9B5523));
-        this.bodyParts.leftArm.add(scene.add.rectangle(12, -6, 12, 10, 0xAB6533)); // face highlight
-        // Snout/nose
-        this.bodyParts.leftArm.add(scene.add.rectangle(18, -2, 8, 8, 0x8B4513));
-        this.bodyParts.leftArm.add(scene.add.rectangle(20, 0, 4, 3, 0x2B1503)); // nostril
-        // Ears (perked forward)
-        this.bodyParts.leftArm.add(scene.add.rectangle(6, -12, 5, 8, 0x7B3503));
-        this.bodyParts.leftArm.add(scene.add.rectangle(12, -12, 5, 8, 0x7B3503));
-        // Eye
-        this.bodyParts.leftArm.add(scene.add.rectangle(8, -4, 5, 5, 0xFFFFFF));
-        this.bodyParts.leftArm.add(scene.add.rectangle(9, -4, 3, 4, 0x000000));
-        // Bridle/reins
-        this.bodyParts.leftArm.add(scene.add.rectangle(10, 0, 18, 2, 0xC49A4A));
-        this.bodyParts.leftArm.add(scene.add.rectangle(6, 6, 2, 10, 0xC49A4A)); // rein to rider
-        // Mane
-        this.bodyParts.leftArm.add(scene.add.rectangle(-2, -6, 6, 12, 0x3B2503));
-        this.bodyParts.leftArm.add(scene.add.rectangle(2, -8, 5, 10, 0x4B3503));
+        // Horse neck and head
+        this.bodyParts.leftArm = scene.add.container(22, 0);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 4, 12, 20, 0x8B5A2B)); // neck
+        this.bodyParts.leftArm.add(scene.add.rectangle(2, 2, 8, 16, 0x9B6A3B));
+        this.bodyParts.leftArm.add(scene.add.rectangle(12, -4, 18, 14, 0x9B6A3B)); // head
+        this.bodyParts.leftArm.add(scene.add.rectangle(20, -2, 10, 10, 0x8B5A2B)); // snout
+        this.bodyParts.leftArm.add(scene.add.rectangle(6, -14, 6, 10, 0x7B4A1B)); // ear
+        this.bodyParts.leftArm.add(scene.add.rectangle(12, -14, 6, 10, 0x7B4A1B)); // ear
+        this.bodyParts.leftArm.add(scene.add.rectangle(10, -4, 5, 5, 0x000000)); // eye
+        this.bodyParts.leftArm.add(scene.add.rectangle(-2, -4, 6, 14, 0x3D2C10)); // mane
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
         // Saddle
-        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 18, 10, 0x5B3020));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 0, 14, 6, 0x6B4030)); // seat
+        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 20, 12, 0x5D4037));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 0, 16, 8, 0x6D5047));
 
-        // Rider torso (blue tunic with chainmail)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 18, 20, 0x4169E1));
-        this.bodyParts.torso.add(scene.add.rectangle(2, -10, 14, 16, 0x5179F1)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-7, -12, 4, 16, 0x3159D1)); // shade
-        // Chainmail detail
-        this.bodyParts.torso.add(scene.add.rectangle(0, -6, 12, 4, 0x708090));
+        // Rider body - blue armor
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 18, 22, 0x1565C0));
+        this.bodyParts.torso.add(scene.add.rectangle(2, -12, 14, 18, 0x1E88E5)); // highlight
+        this.bodyParts.torso.add(scene.add.rectangle(0, -6, 14, 4, 0x78909C)); // chainmail
 
-        // Rider arm holding reins (left arm)
-        this.bodyParts.torso.add(scene.add.rectangle(-8, -6, 6, 14, 0xFFCBA4));
-
-        // Rider arm with lance (right arm)
+        // Rider arms
+        this.bodyParts.torso.add(scene.add.rectangle(-10, -8, 6, 14, 0xF5CBA7)); // rein arm
         this.bodyParts.rightArm = scene.add.container(10, -10);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 2, 7, 14, 0xFFCBA4));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 2, 7, 14, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // Rider head
-        this.bodyParts.torso.add(scene.add.rectangle(2, -28, 14, 14, 0xFFCBA4));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -26, 10, 10, 0xFFDDBB)); // highlight
-        // Helmet with nose guard
-        this.bodyParts.torso.add(scene.add.rectangle(2, -36, 16, 12, 0x708090));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -34, 12, 8, 0x808890));
-        this.bodyParts.torso.add(scene.add.rectangle(10, -30, 4, 8, 0x606070)); // nose guard
-        // Eyes (determined look)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -28, 4, 4, 0x000000));
-        this.bodyParts.torso.add(scene.add.rectangle(6, -28, 4, 4, 0x000000));
+        // Rider head with helmet
+        this.bodyParts.torso.add(scene.add.rectangle(0, -30, 14, 14, 0xF5CBA7)); // face
+        this.bodyParts.torso.add(scene.add.rectangle(0, -38, 16, 14, 0x607D8B)); // helmet
+        this.bodyParts.torso.add(scene.add.rectangle(2, -36, 12, 10, 0x78909C));
+        this.bodyParts.torso.add(scene.add.rectangle(8, -32, 4, 8, 0x546E7A)); // nose guard
+        // Eyes
+        this.bodyParts.torso.add(scene.add.rectangle(-3, -30, 4, 4, 0x263238));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -30, 4, 4, 0x263238));
 
-        // SWORD (weapon) - raised and ready to strike!
-        this.bodyParts.weapon = scene.add.container(14, -14);
-        // Sword blade (angled forward/up)
-        this.bodyParts.weapon.add(scene.add.rectangle(12, -8, 6, 28, 0xC0C0C0));
-        this.bodyParts.weapon.add(scene.add.rectangle(13, -8, 3, 24, 0xE0E0E0)); // shine
-        // Sword tip
-        this.bodyParts.weapon.add(scene.add.rectangle(12, -24, 5, 6, 0xD0D0D0));
-        // Cross guard (gold)
-        this.bodyParts.weapon.add(scene.add.rectangle(12, 6, 14, 4, 0xFFD700));
-        // Handle
-        this.bodyParts.weapon.add(scene.add.rectangle(12, 12, 5, 10, 0x8B4513));
-        // Pommel
-        this.bodyParts.weapon.add(scene.add.rectangle(12, 18, 6, 4, 0xFFD700));
+        // Sword
+        this.bodyParts.weapon = scene.add.container(16, -18);
+        this.bodyParts.weapon.add(scene.add.rectangle(8, -8, 6, 30, 0xC0C0C0)); // blade
+        this.bodyParts.weapon.add(scene.add.rectangle(9, -8, 3, 26, 0xE0E0E0)); // shine
+        this.bodyParts.weapon.add(scene.add.rectangle(8, 8, 14, 5, 0xD4A020)); // crossguard
+        this.bodyParts.weapon.add(scene.add.rectangle(8, 14, 5, 10, 0x5D4037)); // handle
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);
@@ -441,69 +391,65 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createKnightVisual(scene) {
-        // PROMOTED PEASANT becomes KNIGHT - heroic armored warrior!
+        // KNIGHT - Elite peasant with blue armor and shield
         // Shadow
-        this.spriteContainer.add(scene.add.rectangle(0, 32, 28, 6, 0x000000, 0.2));
+        this.spriteContainer.add(scene.add.rectangle(0, 30, 28, 6, 0x000000, 0.25));
 
-        // Animated legs
-        this.bodyParts.leftLeg = scene.add.container(-6, 22);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 10, 16, 0x5080C0));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(1, 0, 6, 12, 0x60A0E0)); // highlight
-        this.bodyParts.leftLeg.add(scene.add.rectangle(-1, 8, 12, 6, 0x4070B0)); // boot
+        // Legs - armored
+        this.bodyParts.leftLeg = scene.add.container(-6, 18);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 10, 18, 0x1565C0));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(1, 0, 6, 14, 0x1E88E5));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 10, 12, 8, 0x0D47A1)); // boot
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
-        this.bodyParts.rightLeg = scene.add.container(6, 22);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 10, 16, 0x5080C0));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(1, 8, 12, 6, 0x4070B0)); // boot
+        this.bodyParts.rightLeg = scene.add.container(6, 18);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 10, 18, 0x1976D2));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 10, 12, 8, 0x1565C0));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
-        // Body container
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Body - heroic blue armor
-        const body = scene.add.rectangle(0, 4, 24, 24, 0x4488DD);
+        // Body - blue armor
+        const body = scene.add.rectangle(0, 4, 24, 24, 0x1565C0);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(0, 6, 20, 18, 0x55AAEE)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-9, 4, 5, 20, 0x3366AA)); // shade
+        this.bodyParts.torso.add(scene.add.rectangle(2, 4, 18, 20, 0x1E88E5)); // highlight
         // Golden chest emblem
-        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 10, 10, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 6, 6, 0xFFEE44)); // inner shine
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 10, 10, 0xFFC107));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 4, 6, 6, 0xFFD54F));
 
-        // Shield arm (animated)
-        this.bodyParts.leftArm = scene.add.container(-18, 6);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 14, 26, 0x4488DD)); // shield
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 12, 22, 0x55AAEE)); // highlight
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, -2, 8, 8, 0xFFD700)); // emblem
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, -2, 4, 4, 0xFFEE66)); // shine
+        // Shield arm
+        this.bodyParts.leftArm = scene.add.container(-18, 4);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 14, 28, 0x1565C0)); // shield
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 10, 24, 0x1E88E5));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 8, 8, 0xFFC107)); // emblem
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
-        // Sword arm (animated)
-        this.bodyParts.rightArm = scene.add.container(13, 8);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 6, 14, 0x5080C0)); // arm
+        // Sword arm
+        this.bodyParts.rightArm = scene.add.container(14, 4);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 2, 8, 16, 0x1976D2));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 12, 8, 8, 0xF5CBA7)); // hand
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // AWESOME Helmet
-        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 22, 18, 0x6090D0));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 18, 14, 0x70A0E0)); // highlight
-        // Visor (shows brave eyes inside)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 16, 8, 0x303030));
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -12, 6, 5, 0x4488FF)); // left eye glow
-        this.bodyParts.torso.add(scene.add.rectangle(4, -12, 6, 5, 0x4488FF)); // right eye glow
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -13, 3, 2, 0xAADDFF)); // shine
-        this.bodyParts.torso.add(scene.add.rectangle(4, -13, 3, 2, 0xAADDFF));
-        // Epic plume
-        this.bodyParts.torso.add(scene.add.rectangle(0, -24, 6, 12, 0xFF4444));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -30, 5, 8, 0xFF6666));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -34, 4, 6, 0xFF8888)); // tip
+        // Helmet
+        this.bodyParts.torso.add(scene.add.rectangle(0, -16, 24, 20, 0x1565C0));
+        this.bodyParts.torso.add(scene.add.rectangle(2, -14, 18, 16, 0x1E88E5));
+        // Visor
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 18, 8, 0x263238));
+        // Glowing eyes
+        this.bodyParts.torso.add(scene.add.rectangle(-5, -14, 6, 5, 0x42A5F5));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -14, 6, 5, 0x42A5F5));
+        // Red plume
+        this.bodyParts.torso.add(scene.add.rectangle(0, -28, 8, 16, 0xE53935));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -38, 6, 12, 0xEF5350));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -46, 4, 8, 0xE57373));
 
-        // SHINY Sword (in weapon container)
-        this.bodyParts.weapon = scene.add.container(20, -8);
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 0, 6, 32, 0xDDDDDD)); // blade
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 2, 4, 28, 0xFFFFFF)); // shine
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -14, 4, 6, 0xFFFFFF)); // tip shine
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 18, 14, 6, 0xC49A4A)); // crossguard
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 18, 10, 4, 0xD4AA5A)); // highlight
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 24, 6, 6, 0xFFD700)); // pommel
+        // Sword
+        this.bodyParts.weapon = scene.add.container(22, -8);
+        this.bodyParts.weapon.add(scene.add.rectangle(0, -8, 6, 32, 0xE0E0E0)); // blade
+        this.bodyParts.weapon.add(scene.add.rectangle(1, -8, 3, 28, 0xFFFFFF)); // shine
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 10, 16, 5, 0xFFC107)); // crossguard
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 16, 5, 10, 0x5D4037)); // handle
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 22, 6, 5, 0xFFC107)); // pommel
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);
@@ -511,86 +457,84 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createRobinhoodVisual(scene) {
-        // ELITE ARCHER becomes ROBINHOOD - legendary outlaw archer!
+        // ROBINHOOD - Elite archer with flowing cloak and legendary bow
         // Shadow
-        this.spriteContainer.add(scene.add.rectangle(0, 30, 24, 5, 0x000000, 0.2));
+        this.spriteContainer.add(scene.add.rectangle(0, 28, 26, 6, 0x000000, 0.25));
 
-        // Animated legs with leather boots
-        this.bodyParts.leftLeg = scene.add.container(-5, 20);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2E4A2E));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 8, 10, 6, 0x4A3020)); // boot
+        // Legs
+        this.bodyParts.leftLeg = scene.add.container(-5, 16);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x1B5E20));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 10, 10, 8, 0x4E342E)); // boot
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
-        this.bodyParts.rightLeg = scene.add.container(5, 20);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2E4A2E));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 8, 10, 6, 0x4A3020)); // boot
+        this.bodyParts.rightLeg = scene.add.container(5, 16);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2E7D32));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 10, 10, 8, 0x5D4037));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
-        // Body container
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Flowing cloak (behind)
-        this.bodyParts.torso.add(scene.add.rectangle(-6, 8, 20, 24, 0x1A3A1A));
-        this.bodyParts.torso.add(scene.add.rectangle(-8, 14, 16, 18, 0x0A2A0A));
+        // Flowing cloak behind
+        this.bodyParts.torso.add(scene.add.rectangle(-6, 6, 22, 28, 0x1B5E20));
+        this.bodyParts.torso.add(scene.add.rectangle(-10, 12, 16, 22, 0x0D3B0F));
 
         // Body - dark green tunic
-        const body = scene.add.rectangle(0, 4, 18, 20, 0x2E5A2E);
+        const body = scene.add.rectangle(0, 2, 20, 20, 0x2E7D32);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(0, 6, 14, 14, 0x3E6A3E)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-6, 4, 4, 16, 0x1E4A1E)); // shade
-        // Leather belt with golden buckle
-        this.bodyParts.torso.add(scene.add.rectangle(0, 12, 20, 4, 0x5A3A20));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 12, 6, 5, 0xFFD700));
+        this.bodyParts.torso.add(scene.add.rectangle(2, 2, 14, 16, 0x43A047));
+        // Belt with golden buckle
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 22, 4, 0x5D4037));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 6, 5, 0xFFC107));
 
-        // Quiver on back (more arrows!)
-        this.bodyParts.torso.add(scene.add.rectangle(-14, 2, 10, 22, 0x5A3A20));
-        this.bodyParts.torso.add(scene.add.rectangle(-14, -10, 4, 6, 0xFF4444)); // red fletching
-        this.bodyParts.torso.add(scene.add.rectangle(-12, -10, 4, 6, 0x44FF44)); // green
-        this.bodyParts.torso.add(scene.add.rectangle(-16, -10, 4, 6, 0xFFFF44)); // yellow
+        // Quiver on back
+        this.bodyParts.torso.add(scene.add.rectangle(-14, 0, 10, 24, 0x5D4037));
+        this.bodyParts.torso.add(scene.add.rectangle(-14, -12, 3, 8, 0xE53935)); // red arrow
+        this.bodyParts.torso.add(scene.add.rectangle(-12, -12, 3, 8, 0x43A047)); // green
+        this.bodyParts.torso.add(scene.add.rectangle(-16, -12, 3, 8, 0xFFC107)); // gold
 
         // Arms
-        this.bodyParts.leftArm = scene.add.container(-12, 2);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 6, 12, 0xFFCBA4));
+        this.bodyParts.leftArm = scene.add.container(-12, 0);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 7, 14, 0x43A047));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 10, 7, 7, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
-        this.bodyParts.rightArm = scene.add.container(12, 2);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 6, 12, 0xFFCBA4));
+        this.bodyParts.rightArm = scene.add.container(12, 0);
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 7, 14, 0x2E7D32));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 10, 7, 7, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // Hood (iconic Robinhood look)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -6, 24, 16, 0x1A4A1A));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -12, 22, 12, 0x1A4A1A));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -18, 18, 10, 0x2A5A2A));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -24, 12, 8, 0x2A5A2A));
-        // Hood point
-        this.bodyParts.torso.add(scene.add.rectangle(0, -30, 6, 8, 0x3A6A3A));
+        // Hood - iconic pointed style
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 26, 20, 0x1B5E20));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -24, 20, 12, 0x2E7D32));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -32, 12, 10, 0x388E3C));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -38, 6, 8, 0x43A047)); // point
 
-        // Face under hood (confident smirk)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -8, 16, 14, 0xFFCBA4));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -6, 14, 10, 0xFFDDBB));
-        // Determined eyes
-        this.bodyParts.torso.add(scene.add.rectangle(-4, -10, 8, 6, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -10, 8, 6, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-3, -9, 4, 5, 0x228B22));
-        this.bodyParts.torso.add(scene.add.rectangle(5, -9, 4, 5, 0x228B22));
+        // Face under hood
+        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 18, 16, 0xF5CBA7));
+        this.bodyParts.torso.add(scene.add.rectangle(2, -10, 14, 12, 0xFFDDBB));
+        // Green eyes
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -10, 5, 5, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(4, -10, 5, 5, 0xFFFFFF));
+        this.bodyParts.torso.add(scene.add.rectangle(-3, -9, 4, 4, 0x388E3C));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -9, 4, 4, 0x388E3C));
         // Smirk
-        this.bodyParts.torso.add(scene.add.rectangle(2, -3, 6, 2, 0xCC8888));
-        // Feather in cap!
-        this.bodyParts.torso.add(scene.add.rectangle(10, -22, 4, 16, 0xFF4444));
-        this.bodyParts.torso.add(scene.add.rectangle(12, -28, 3, 10, 0xFF6666));
+        this.bodyParts.torso.add(scene.add.rectangle(2, -4, 6, 2, 0xC08060));
+        // Red feather
+        this.bodyParts.torso.add(scene.add.rectangle(12, -26, 4, 18, 0xE53935));
+        this.bodyParts.torso.add(scene.add.rectangle(14, -36, 3, 12, 0xEF5350));
 
-        // LEGENDARY BOW (golden trim)
-        this.bodyParts.weapon = scene.add.container(20, 0);
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -14, 6, 10, 0x6B4423));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, -8, 6, 8, 0x7B5433));
-        this.bodyParts.weapon.add(scene.add.rectangle(4, 0, 6, 10, 0x7B5433));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, 8, 6, 8, 0x7B5433));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 14, 6, 10, 0x6B4423));
-        // Golden accents on bow
-        this.bodyParts.weapon.add(scene.add.rectangle(0, -16, 4, 4, 0xFFD700));
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 16, 4, 4, 0xFFD700));
+        // Legendary bow with golden tips
+        this.bodyParts.weapon = scene.add.container(20, -2);
+        this.bodyParts.weapon.add(scene.add.rectangle(2, -16, 5, 14, 0x795548)); // top limb
+        this.bodyParts.weapon.add(scene.add.rectangle(4, -4, 5, 10, 0x8D6E63));
+        this.bodyParts.weapon.add(scene.add.rectangle(5, 6, 6, 10, 0x8D6E63)); // grip
+        this.bodyParts.weapon.add(scene.add.rectangle(4, 16, 5, 10, 0x8D6E63));
+        this.bodyParts.weapon.add(scene.add.rectangle(2, 26, 5, 14, 0x795548)); // bottom
+        // Golden tips
+        this.bodyParts.weapon.add(scene.add.rectangle(2, -22, 4, 5, 0xFFC107));
+        this.bodyParts.weapon.add(scene.add.rectangle(2, 32, 4, 5, 0xFFC107));
         // Bowstring
-        this.bodyParts.weapon.add(scene.add.rectangle(-2, 0, 2, 32, 0xEEEEEE));
+        this.bodyParts.weapon.add(scene.add.rectangle(0, 4, 2, 42, 0xE0E0E0));
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);
@@ -598,114 +542,93 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createLancelotVisual(scene) {
-        // ELITE HORSEMAN becomes LANCELOT - legendary knight of the round table!
-        // Shadow (larger for armored horse)
-        this.spriteContainer.add(scene.add.rectangle(0, 38, 48, 8, 0x000000, 0.2));
+        // LANCELOT - Elite horseman on white stallion with golden armor
+        // Shadow
+        this.spriteContainer.add(scene.add.rectangle(0, 36, 52, 8, 0x000000, 0.25));
 
-        // Horse back legs (WHITE STALLION!)
-        this.bodyParts.leftLeg = scene.add.container(-12, 26);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 7, 18, 0xDDDDDD));
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 10, 6, 6, 0xCCCCCC)); // hoof
+        // Horse back legs - white
+        this.bodyParts.leftLeg = scene.add.container(-14, 24);
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 18, 0xE0E0E0));
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 12, 8, 6, 0xBDBDBD)); // hoof
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
         // Horse front legs
-        this.bodyParts.rightLeg = scene.add.container(12, 26);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 7, 18, 0xEEEEEE));
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 10, 6, 6, 0xDDDDDD)); // hoof
+        this.bodyParts.rightLeg = scene.add.container(14, 24);
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 18, 0xEEEEEE));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 12, 8, 6, 0xE0E0E0));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
-        // Body container (horse + rider)
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Royal cape (flowing behind)
-        this.bodyParts.torso.add(scene.add.rectangle(-10, -6, 24, 32, 0x8B0000));
-        this.bodyParts.torso.add(scene.add.rectangle(-14, 0, 20, 28, 0xAA2222));
+        // Royal red cape
+        this.bodyParts.torso.add(scene.add.rectangle(-8, -4, 24, 34, 0xB71C1C));
+        this.bodyParts.torso.add(scene.add.rectangle(-12, 4, 18, 28, 0xC62828));
 
-        // Horse body - WHITE STALLION
-        const body = scene.add.rectangle(0, 14, 44, 22, 0xEEEEEE);
+        // Horse body - white stallion
+        const body = scene.add.rectangle(0, 14, 48, 24, 0xEEEEEE);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(2, 12, 38, 18, 0xFFFFFF)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-18, 14, 8, 18, 0xDDDDDD)); // rear shade
-        // Horse armor (golden barding)
-        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 32, 8, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 28, 6, 0xFFEE44));
+        this.bodyParts.torso.add(scene.add.rectangle(2, 12, 42, 20, 0xFAFAFA)); // highlight
+        // Golden barding
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 36, 8, 0xFFC107));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 10, 32, 5, 0xFFD54F));
 
-        // Horse tail (flowing white)
-        this.bodyParts.torso.add(scene.add.rectangle(-24, 16, 6, 16, 0xCCCCCC));
-        this.bodyParts.torso.add(scene.add.rectangle(-28, 20, 5, 14, 0xDDDDDD));
-        this.bodyParts.torso.add(scene.add.rectangle(-30, 24, 4, 10, 0xEEEEEE));
+        // Horse tail - white
+        this.bodyParts.torso.add(scene.add.rectangle(-26, 16, 6, 18, 0xE0E0E0));
+        this.bodyParts.torso.add(scene.add.rectangle(-30, 22, 5, 14, 0xEEEEEE));
 
-        // Horse head and neck (right side - charging!)
-        this.bodyParts.leftArm = scene.add.container(24, 2);
-        // Neck
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 4, 14, 20, 0xEEEEEE));
-        this.bodyParts.leftArm.add(scene.add.rectangle(2, 2, 10, 16, 0xFFFFFF)); // highlight
-        // Head
-        this.bodyParts.leftArm.add(scene.add.rectangle(12, -4, 18, 14, 0xFFFFFF));
-        this.bodyParts.leftArm.add(scene.add.rectangle(14, -6, 14, 10, 0xFFFFFF)); // face
-        // Snout
-        this.bodyParts.leftArm.add(scene.add.rectangle(20, -2, 10, 8, 0xEEEEEE));
-        this.bodyParts.leftArm.add(scene.add.rectangle(22, 0, 4, 3, 0xCCCCCC)); // nostril
-        // Golden face armor
-        this.bodyParts.leftArm.add(scene.add.rectangle(10, -4, 16, 4, 0xFFD700));
-        // Ears
-        this.bodyParts.leftArm.add(scene.add.rectangle(6, -14, 5, 10, 0xEEEEEE));
-        this.bodyParts.leftArm.add(scene.add.rectangle(12, -14, 5, 10, 0xEEEEEE));
-        // Eye
-        this.bodyParts.leftArm.add(scene.add.rectangle(8, -4, 5, 5, 0x000000));
-        // Mane (white flowing)
-        this.bodyParts.leftArm.add(scene.add.rectangle(-2, -8, 8, 16, 0xDDDDDD));
-        this.bodyParts.leftArm.add(scene.add.rectangle(2, -10, 6, 12, 0xEEEEEE));
+        // Horse neck and head
+        this.bodyParts.leftArm = scene.add.container(24, 0);
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 4, 14, 22, 0xEEEEEE)); // neck
+        this.bodyParts.leftArm.add(scene.add.rectangle(2, 2, 10, 18, 0xFAFAFA));
+        this.bodyParts.leftArm.add(scene.add.rectangle(14, -4, 20, 16, 0xFAFAFA)); // head
+        this.bodyParts.leftArm.add(scene.add.rectangle(22, -2, 12, 10, 0xEEEEEE)); // snout
+        this.bodyParts.leftArm.add(scene.add.rectangle(10, -4, 16, 5, 0xFFC107)); // face armor
+        this.bodyParts.leftArm.add(scene.add.rectangle(6, -14, 6, 12, 0xEEEEEE)); // ear
+        this.bodyParts.leftArm.add(scene.add.rectangle(12, -14, 6, 12, 0xEEEEEE)); // ear
+        this.bodyParts.leftArm.add(scene.add.rectangle(10, -4, 5, 5, 0x263238)); // eye
+        this.bodyParts.leftArm.add(scene.add.rectangle(-2, -4, 6, 16, 0xE0E0E0)); // mane
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
         // Golden saddle
-        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 20, 12, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(0, 0, 16, 8, 0xFFEE44)); // seat
+        this.bodyParts.torso.add(scene.add.rectangle(0, 2, 22, 14, 0xFFC107));
+        this.bodyParts.torso.add(scene.add.rectangle(0, 0, 18, 10, 0xFFD54F));
 
-        // Lancelot - GOLDEN ARMOR!
-        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 20, 22, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(2, -12, 16, 18, 0xFFEE44)); // highlight
-        this.bodyParts.torso.add(scene.add.rectangle(-8, -14, 4, 18, 0xDDAA00)); // shade
-        // Chest emblem (royal crest)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 10, 10, 0x4169E1));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 6, 6, 0x5179F1));
+        // Lancelot - golden armor
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 20, 24, 0xFFC107));
+        this.bodyParts.torso.add(scene.add.rectangle(2, -12, 16, 20, 0xFFD54F)); // highlight
+        // Blue chest emblem
+        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 10, 10, 0x1565C0));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -10, 6, 6, 0x1E88E5));
 
         // Arms
-        this.bodyParts.torso.add(scene.add.rectangle(-10, -8, 6, 14, 0xFFCBA4)); // rein arm
-
+        this.bodyParts.torso.add(scene.add.rectangle(-10, -8, 6, 16, 0xF5CBA7)); // rein arm
         this.bodyParts.rightArm = scene.add.container(12, -12);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 2, 7, 14, 0xFFCBA4));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 4, 7, 16, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // Lancelot head
-        this.bodyParts.torso.add(scene.add.rectangle(2, -32, 16, 16, 0xFFCBA4));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -30, 12, 12, 0xFFDDBB)); // highlight
-        // EPIC GOLDEN HELMET
-        this.bodyParts.torso.add(scene.add.rectangle(2, -40, 18, 14, 0xFFD700));
-        this.bodyParts.torso.add(scene.add.rectangle(4, -38, 14, 10, 0xFFEE44));
+        // Head with golden helmet
+        this.bodyParts.torso.add(scene.add.rectangle(0, -32, 16, 16, 0xF5CBA7)); // face
+        this.bodyParts.torso.add(scene.add.rectangle(0, -42, 20, 16, 0xFFC107)); // helmet
+        this.bodyParts.torso.add(scene.add.rectangle(2, -40, 16, 12, 0xFFD54F));
         // Visor
-        this.bodyParts.torso.add(scene.add.rectangle(8, -34, 6, 6, 0x404040)); // nose guard
-        // Eyes (heroic gaze)
-        this.bodyParts.torso.add(scene.add.rectangle(0, -32, 4, 4, 0x4488FF));
-        this.bodyParts.torso.add(scene.add.rectangle(6, -32, 4, 4, 0x4488FF));
-        // MAGNIFICENT PLUME (blue and gold!)
-        this.bodyParts.torso.add(scene.add.rectangle(2, -50, 8, 14, 0x4169E1));
-        this.bodyParts.torso.add(scene.add.rectangle(2, -58, 6, 10, 0x5179F1));
-        this.bodyParts.torso.add(scene.add.rectangle(2, -64, 5, 8, 0x6189FF));
-        this.bodyParts.torso.add(scene.add.rectangle(-2, -52, 4, 10, 0xFFD700)); // gold accent
+        this.bodyParts.torso.add(scene.add.rectangle(0, -34, 16, 6, 0x263238));
+        // Glowing eyes
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -32, 5, 4, 0x42A5F5));
+        this.bodyParts.torso.add(scene.add.rectangle(4, -32, 5, 4, 0x42A5F5));
+        // Blue and gold plume
+        this.bodyParts.torso.add(scene.add.rectangle(0, -54, 10, 18, 0x1565C0));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -66, 8, 14, 0x1E88E5));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -76, 6, 10, 0x42A5F5));
+        this.bodyParts.torso.add(scene.add.rectangle(-4, -56, 4, 12, 0xFFC107)); // gold accent
 
-        // EXCALIBUR - legendary golden sword!
-        this.bodyParts.weapon = scene.add.container(18, -20);
-        this.bodyParts.weapon.add(scene.add.rectangle(10, -8, 7, 34, 0xFFFFFF)); // blade
-        this.bodyParts.weapon.add(scene.add.rectangle(11, -8, 4, 30, 0xFFFFEE)); // shine
-        this.bodyParts.weapon.add(scene.add.rectangle(10, -28, 6, 8, 0xFFFFFF)); // tip
-        // Golden hilt
-        this.bodyParts.weapon.add(scene.add.rectangle(10, 10, 18, 6, 0xFFD700)); // crossguard
-        this.bodyParts.weapon.add(scene.add.rectangle(10, 10, 14, 4, 0xFFEE44)); // highlight
-        this.bodyParts.weapon.add(scene.add.rectangle(10, 16, 6, 10, 0x8B5A33)); // handle
-        this.bodyParts.weapon.add(scene.add.rectangle(10, 22, 8, 6, 0xFFD700)); // pommel
-        // Gem in pommel
-        this.bodyParts.weapon.add(scene.add.rectangle(10, 22, 4, 4, 0x4169E1));
+        // Excalibur - legendary sword
+        this.bodyParts.weapon = scene.add.container(18, -22);
+        this.bodyParts.weapon.add(scene.add.rectangle(8, -10, 7, 36, 0xFAFAFA)); // blade
+        this.bodyParts.weapon.add(scene.add.rectangle(9, -10, 4, 32, 0xFFFFFF)); // shine
+        this.bodyParts.weapon.add(scene.add.rectangle(8, 10, 18, 6, 0xFFC107)); // crossguard
+        this.bodyParts.weapon.add(scene.add.rectangle(8, 16, 5, 12, 0x5D4037)); // handle
+        this.bodyParts.weapon.add(scene.add.rectangle(8, 24, 8, 6, 0xFFC107)); // pommel
+        this.bodyParts.weapon.add(scene.add.rectangle(8, 24, 4, 4, 0x1565C0)); // gem
         this.bodyParts.torso.add(this.bodyParts.weapon);
 
         this.spriteContainer.add(this.bodyParts.torso);

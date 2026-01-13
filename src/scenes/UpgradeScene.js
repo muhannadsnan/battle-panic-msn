@@ -123,28 +123,42 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     setupDrag() {
-        // Create invisible drag zone
-        const dragZone = this.add.rectangle(GAME_WIDTH / 2, 310, GAME_WIDTH, 450, 0x000000, 0);
-        dragZone.setInteractive({ draggable: true });
-
+        // Use scene-level input events so buttons still work
         let startX = 0;
         let startContainerX = 0;
         let startTime = 0;
         let lastX = 0;
         let velocity = 0;
+        let isDragging = false;
+        let hasMoved = false;
 
-        dragZone.on('dragstart', (pointer) => {
+        this.input.on('pointerdown', (pointer) => {
+            // Only start drag if in the slider area (y between 100 and 520)
+            if (pointer.y < 100 || pointer.y > 520) return;
+
             startX = pointer.x;
             lastX = pointer.x;
             startContainerX = this.sliderContainer.x;
             startTime = Date.now();
             velocity = 0;
+            isDragging = true;
+            hasMoved = false;
             // Stop any ongoing tween
             this.tweens.killTweensOf(this.sliderContainer);
         });
 
-        dragZone.on('drag', (pointer) => {
+        this.input.on('pointermove', (pointer) => {
+            if (!isDragging) return;
+
             const deltaX = pointer.x - startX;
+
+            // Only start actual dragging after moving more than 10px (allows button clicks)
+            if (Math.abs(deltaX) > 10) {
+                hasMoved = true;
+            }
+
+            if (!hasMoved) return;
+
             // Calculate velocity for momentum
             velocity = pointer.x - lastX;
             lastX = pointer.x;
@@ -164,7 +178,13 @@ class UpgradeScene extends Phaser.Scene {
             this.sliderContainer.x = newX;
         });
 
-        dragZone.on('dragend', (pointer) => {
+        this.input.on('pointerup', (pointer) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            // If we didn't actually drag, don't snap (allow button click to process)
+            if (!hasMoved) return;
+
             const deltaX = pointer.x - startX;
             const elapsed = Date.now() - startTime;
             const speed = Math.abs(deltaX) / elapsed;

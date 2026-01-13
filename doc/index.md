@@ -123,21 +123,26 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.22.0)
+## Recent Updates (v1.23.0)
 
-- **Redesigned Unit Icons**: All unit sprites completely redesigned with cleaner shapes
-  - Base units (Peasant, Archer, Horseman) use circles and ellipses for smoother appearance
-  - Elite units (Knight, Robinhood, Lancelot) updated to match the new clean style
-  - Better proportions, simplified color palettes, more appealing visuals
-- **Smoother Upgrades Slider**: Enhanced swipe experience
-  - Velocity-based momentum scrolling
-  - Rubber band effect at edges
-  - Smooth Back.easeOut animation
-  - Snap-to-nearest card on release
-- **Profile Dialog Enlargements**: Bigger text and better layout
-  - Larger fonts for name, email, and sync status
-  - Buttons moved to bottom of dialog
-  - Panel expanded to 420x400 pixels
+- **Redesigned Unit Icons (Angular Style)**: All 6 unit sprites completely redesigned
+  - Clean, bold rectangular shapes with better proportions
+  - Consistent Material Design color palettes
+  - Fewer rectangles, bigger shapes for clarity at game scale
+  - **Peasant**: Tan tunic, brown hair, clean sword
+  - **Archer**: Forest green hood, wooden bow with string
+  - **Horseman**: Brown horse, blue armored rider with helmet
+  - **Knight**: Blue armor, golden emblems, red plume, glowing visor
+  - **Robinhood**: Dark green cloak, pointed hood, red feather, golden-tipped bow
+  - **Lancelot**: White stallion, golden armor, red cape, Excalibur
+- **Fixed Upgrades Slider**: Buttons now work while swiping still works
+  - Changed from drag zone to scene-level input events
+  - 10px movement threshold prevents accidental drags on button clicks
+
+### v1.22.0
+- Smoother upgrades slider with velocity-based momentum scrolling
+- Rubber band effect at slider edges
+- Profile dialog enlarged with bigger fonts, buttons at bottom
 
 ### v1.21.0
 - Horizontal swipeable slider for upgrades (7 cards)
@@ -168,4 +173,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.22.0)*
+*Last updated: January 2026 (v1.23.0)*
