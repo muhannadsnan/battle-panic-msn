@@ -483,8 +483,8 @@ class MenuScene extends Phaser.Scene {
         // XP packages
         const packages = [
             { xp: 25, price: 299, priceText: '$2.99', color: 0x4a3800 },
-            { xp: 50, price: 450, priceText: '$4.50', color: 0x3a4800, best: true },
-            { xp: 100, price: 799, priceText: '$7.99', color: 0x48003a }
+            { xp: 50, price: 450, priceText: '$4.50', color: 0x3a4800 },
+            { xp: 100, price: 799, priceText: '$7.99', color: 0x48003a, best: true }
         ];
 
         packages.forEach((pkg, index) => {
