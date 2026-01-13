@@ -279,6 +279,36 @@ class SupabaseClient {
             return { success: false, error: error.message };
         }
     }
+
+    // Create Stripe checkout session for XP purchase
+    async createCheckoutSession(xpAmount, priceInCents) {
+        if (!this.initialized || !this.user) {
+            return { success: false, error: 'Please log in to purchase XP' };
+        }
+
+        try {
+            const { data, error } = await this.supabase.functions.invoke('create-checkout', {
+                body: {
+                    user_id: this.user.id,
+                    xp_amount: xpAmount,
+                    price_cents: priceInCents,
+                    success_url: window.location.origin + '?payment=success',
+                    cancel_url: window.location.origin + '?payment=cancelled'
+                }
+            });
+
+            if (error) throw error;
+
+            if (data?.url) {
+                return { success: true, url: data.url };
+            } else {
+                throw new Error('No checkout URL returned');
+            }
+        } catch (error) {
+            console.error('Checkout session error:', error);
+            return { success: false, error: error.message };
+        }
+    }
 }
 
 // Global instance

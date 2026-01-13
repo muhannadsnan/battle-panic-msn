@@ -395,47 +395,278 @@ class MenuScene extends Phaser.Scene {
     }
 
     createBuyXPButton(x, y) {
-        // "Coming Soon" label above button
-        this.add.text(x, y - 52, 'Coming Soon', {
-            fontSize: '14px',
-            fontFamily: 'Arial',
-            fontStyle: 'italic',
-            color: '#ffaa00'
-        }).setOrigin(0.5);
-
         const container = this.add.container(x, y);
 
-        // Background - greyed out (disabled)
-        const bg = this.add.rectangle(0, 0, 160, 60, 0x333333);
-        bg.setStrokeStyle(3, 0x555555);
+        // Background - active gold/amber style
+        const bg = this.add.rectangle(0, 0, 160, 60, 0x4a3800);
+        bg.setStrokeStyle(3, 0xffd700);
         container.add(bg);
 
-        // Star icon for XP (dimmed)
+        // Star icon for XP
         const star = this.add.text(-50, 0, '⭐', {
             fontSize: '32px'
         }).setOrigin(0.5);
-        star.setAlpha(0.4);
         container.add(star);
 
-        // Text (dimmed)
-        const text = this.add.text(20, -8, '25 XP', {
+        // Text
+        const text = this.add.text(20, -8, 'Buy XP', {
             fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#666666'
+            color: '#ffd700'
         }).setOrigin(0.5);
         container.add(text);
 
-        const text2 = this.add.text(20, 14, 'for $2', {
-            fontSize: '21px',
+        const text2 = this.add.text(20, 14, 'Support Us!', {
+            fontSize: '14px',
             fontFamily: 'Arial',
-            color: '#555555'
+            color: '#ffaa00'
         }).setOrigin(0.5);
         container.add(text2);
 
-        // No interactivity - button is disabled
+        // Make interactive
+        bg.setInteractive({ useHandCursor: true });
+
+        bg.on('pointerover', () => {
+            bg.setFillStyle(0x5a4800);
+            bg.setStrokeStyle(3, 0xffee44);
+        });
+
+        bg.on('pointerout', () => {
+            bg.setFillStyle(0x4a3800);
+            bg.setStrokeStyle(3, 0xffd700);
+        });
+
+        bg.on('pointerdown', () => {
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playClick();
+            }
+            this.showBuyXPDialog();
+        });
 
         return container;
+    }
+
+    showBuyXPDialog() {
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        dialog.setDepth(1000);
+
+        // Overlay
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+        overlay.setInteractive();
+        dialog.add(overlay);
+
+        // Panel background
+        const panel = this.add.rectangle(0, 0, 420, 400, 0x1a1a2e);
+        panel.setStrokeStyle(3, 0xffd700);
+        dialog.add(panel);
+
+        // Title
+        const title = this.add.text(0, -165, '⭐ BUY XP ⭐', {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffd700',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        // Subtitle
+        const subtitle = this.add.text(0, -130, 'Support the game & get XP instantly!', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#aaaaaa'
+        }).setOrigin(0.5);
+        dialog.add(subtitle);
+
+        // XP packages
+        const packages = [
+            { xp: 25, price: 299, priceText: '$2.99', color: 0x4a3800 },
+            { xp: 50, price: 450, priceText: '$4.50', color: 0x3a4800, best: true },
+            { xp: 100, price: 799, priceText: '$7.99', color: 0x48003a }
+        ];
+
+        packages.forEach((pkg, index) => {
+            const y = -60 + index * 80;
+            this.createXPPackageButton(dialog, 0, y, pkg);
+        });
+
+        // Login reminder if not logged in
+        if (!supabaseClient.isLoggedIn()) {
+            const loginNote = this.add.text(0, 130, '⚠️ Please log in first to purchase XP', {
+                fontSize: '14px',
+                fontFamily: 'Arial',
+                color: '#ff8888'
+            }).setOrigin(0.5);
+            dialog.add(loginNote);
+        }
+
+        // Close button
+        const closeBtn = this.add.container(185, -175);
+        const closeBg = this.add.circle(0, 0, 22, 0x442222);
+        closeBg.setStrokeStyle(2, 0xff4444);
+        closeBg.setInteractive({ useHandCursor: true });
+        closeBtn.add(closeBg);
+
+        const closeX = this.add.text(0, 0, '✕', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        closeBtn.add(closeX);
+
+        closeBg.on('pointerover', () => {
+            closeBg.setFillStyle(0x663333);
+            closeX.setColor('#ff8888');
+        });
+
+        closeBg.on('pointerout', () => {
+            closeBg.setFillStyle(0x442222);
+            closeX.setColor('#ff6666');
+        });
+
+        closeBg.on('pointerdown', () => {
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playClick();
+            }
+            dialog.destroy();
+        });
+
+        dialog.add(closeBtn);
+
+        // Store reference
+        this.buyXPDialog = dialog;
+    }
+
+    createXPPackageButton(dialog, x, y, pkg) {
+        const container = this.add.container(x, y);
+
+        // Background
+        const bg = this.add.rectangle(0, 0, 340, 65, pkg.color);
+        bg.setStrokeStyle(2, pkg.best ? 0x88ff88 : 0x666666);
+        container.add(bg);
+
+        // Best value badge
+        if (pkg.best) {
+            const badge = this.add.text(120, -25, 'BEST VALUE', {
+                fontSize: '12px',
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                color: '#88ff88',
+                backgroundColor: '#1a1a2e',
+                padding: { x: 6, y: 2 }
+            }).setOrigin(0.5);
+            container.add(badge);
+        }
+
+        // Star icon
+        const star = this.add.text(-130, 0, '⭐', {
+            fontSize: '28px'
+        }).setOrigin(0.5);
+        container.add(star);
+
+        // XP amount
+        const xpText = this.add.text(-50, 0, `${pkg.xp} XP`, {
+            fontSize: '26px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff'
+        }).setOrigin(0, 0.5);
+        container.add(xpText);
+
+        // Price
+        const priceText = this.add.text(130, 0, pkg.priceText, {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffd700'
+        }).setOrigin(0.5);
+        container.add(priceText);
+
+        // Make interactive
+        bg.setInteractive({ useHandCursor: true });
+
+        bg.on('pointerover', () => {
+            bg.setFillStyle(pkg.color + 0x222222);
+            bg.setStrokeStyle(3, 0xffd700);
+        });
+
+        bg.on('pointerout', () => {
+            bg.setFillStyle(pkg.color);
+            bg.setStrokeStyle(2, pkg.best ? 0x88ff88 : 0x666666);
+        });
+
+        bg.on('pointerdown', async () => {
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playClick();
+            }
+
+            // Check if logged in
+            if (!supabaseClient.isLoggedIn()) {
+                this.showNotification('Please log in first to purchase XP', 0xff8888);
+                return;
+            }
+
+            // Show loading state
+            priceText.setText('Loading...');
+            bg.disableInteractive();
+
+            // Create checkout session
+            const result = await supabaseClient.createCheckoutSession(pkg.xp, pkg.price);
+
+            if (result.success && result.url) {
+                // Redirect to Stripe checkout
+                window.location.href = result.url;
+            } else {
+                // Show error
+                priceText.setText(pkg.priceText);
+                bg.setInteractive({ useHandCursor: true });
+                this.showNotification(result.error || 'Payment failed. Please try again.', 0xff8888);
+            }
+        });
+
+        dialog.add(container);
+    }
+
+    showNotification(message, color = 0xffffff) {
+        const notification = this.add.container(GAME_WIDTH / 2, 50);
+        notification.setDepth(2000);
+
+        const bg = this.add.rectangle(0, 0, 500, 50, 0x000000, 0.9);
+        bg.setStrokeStyle(2, color);
+        notification.add(bg);
+
+        const text = this.add.text(0, 0, message, {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            color: '#' + color.toString(16).padStart(6, '0')
+        }).setOrigin(0.5);
+        notification.add(text);
+
+        // Animate in and out
+        notification.setAlpha(0);
+        notification.y = 20;
+
+        this.tweens.add({
+            targets: notification,
+            alpha: 1,
+            y: 50,
+            duration: 300,
+            ease: 'Back.easeOut',
+            onComplete: () => {
+                this.time.delayedCall(3000, () => {
+                    this.tweens.add({
+                        targets: notification,
+                        alpha: 0,
+                        y: 20,
+                        duration: 300,
+                        onComplete: () => notification.destroy()
+                    });
+                });
+            }
+        });
     }
 
     showXPPurchaseInfo() {

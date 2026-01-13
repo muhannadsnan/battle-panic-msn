@@ -117,26 +117,30 @@ BootScene → PreloadScene → MenuScene
 
 ## Monetization
 
-- **Buy Me a Coffee** button in main menu
-- **Buy XP** button: 25 XP for $2 donation (Coming Soon)
+- **Buy XP** button in main menu (Stripe Checkout)
+  - 25 XP for $2.99
+  - 50 XP for $4.50 (Best Value)
+  - 100 XP for $7.99
+- **Buy Me a Coffee** button for donations
 - Links to: https://www.buymeacoffee.com/masterassassin
 
 ---
 
-## Recent Updates (v1.24.0)
+## Recent Updates (v1.25.0)
 
+- **Buy XP with Stripe**: In-game XP purchases now available!
+  - 3 packages: 25 XP ($2.99), 50 XP ($4.50), 100 XP ($7.99)
+  - Secure Stripe Checkout integration
+  - Automatic XP crediting via webhook
+  - Requires login to purchase
+- **Supabase Edge Functions**: Backend payment processing
+  - `create-checkout`: Creates Stripe checkout sessions
+  - `stripe-webhook`: Receives payment confirmations and credits XP
+
+### v1.24.0
 - **Weapons Attached to Arms**: Swords and bows now move with arm animations
-  - Peasant/Knight sword swings with arm during attack
-  - Archer/Robinhood bow follows arm movement
-  - Horseman/Lancelot sword attached to rider's arm
 - **Improved UI Icons**: Full character icons in spawn buttons and upgrade cards
-  - Spawn buttons show complete unit (not just weapons)
-  - Upgrade cards display full character at larger scale
-  - Consistent angular style matching in-game units
 - **Trumpet Promotion Sound**: Military bugle fanfare on unit promotion
-  - Short 3-note ascending call (G4 → C5 → E5)
-  - Brass-like timbre using filtered sawtooth waves
-  - Plays when units reach new promotion levels
 
 ### v1.23.0
 - **Redesigned Unit Icons (Angular Style)**: All 6 unit sprites completely redesigned
@@ -184,4 +188,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.24.0)*
+*Last updated: January 2026 (v1.25.0)*
