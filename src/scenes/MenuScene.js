@@ -62,6 +62,21 @@ class MenuScene extends Phaser.Scene {
             repeat: -1
         });
 
+        // Auto-sync with cloud if logged in (updates local with cloud XP, etc.)
+        // Only sync once per session to avoid infinite restart loop
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn() && !MenuScene.hasSynced) {
+            MenuScene.hasSynced = true;
+            saveSystem.syncWithCloud().then(result => {
+                if (result.success) {
+                    console.log('Cloud sync completed:', result.action);
+                    // Restart scene to show updated data
+                    this.scene.restart();
+                }
+            }).catch(err => {
+                console.log('Cloud sync failed:', err);
+            });
+        }
+
         // Load save data for stats display
         const saveData = saveSystem.load();
         const rankInfo = saveSystem.getRankInfo(saveData);
@@ -2329,3 +2344,6 @@ class MenuScene extends Phaser.Scene {
         }
     }
 }
+
+// Static flag to prevent infinite sync loop (reset on page reload)
+MenuScene.hasSynced = false;
