@@ -417,7 +417,7 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(text);
 
-        const text2 = this.add.text(20, 14, 'Support Us!', {
+        const text2 = this.add.text(20, 14, 'from $2.99', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ffaa00'
