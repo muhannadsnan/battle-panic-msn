@@ -1,41 +1,67 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import Stripe from 'https://esm.sh/stripe@12.0.0?target=deno'
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2023-10-16',
-})
+// Simple HMAC-SHA256 signature verification for Stripe webhooks
+async function verifyStripeSignature(payload: string, signature: string, secret: string): Promise<boolean> {
+  try {
+    const parts = signature.split(',').reduce((acc, part) => {
+      const [key, value] = part.split('=')
+      acc[key] = value
+      return acc
+    }, {} as Record<string, string>)
 
-const cryptoProvider = Stripe.createSubtleCryptoProvider()
+    const timestamp = parts['t']
+    const expectedSig = parts['v1']
+
+    if (!timestamp || !expectedSig) return false
+
+    const signedPayload = `${timestamp}.${payload}`
+    const encoder = new TextEncoder()
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    )
+    const signatureBytes = await crypto.subtle.sign('HMAC', key, encoder.encode(signedPayload))
+    const computedSig = Array.from(new Uint8Array(signatureBytes))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+
+    return computedSig === expectedSig
+  } catch (err) {
+    console.error('Signature verification error:', err)
+    return false
+  }
+}
 
 serve(async (req) => {
   const signature = req.headers.get('stripe-signature')
   if (!signature) {
+    console.log('No signature header')
     return new Response('No signature', { status: 400 })
   }
 
   const body = await req.text()
   const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!
 
-  let event: Stripe.Event
-
-  try {
-    event = await stripe.webhooks.constructEventAsync(
-      body,
-      signature,
-      webhookSecret,
-      undefined,
-      cryptoProvider
-    )
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err.message)
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 })
+  // Verify signature
+  const isValid = await verifyStripeSignature(body, signature, webhookSecret)
+  if (!isValid) {
+    console.error('Webhook signature verification failed')
+    return new Response('Invalid signature', { status: 400 })
   }
 
+  const event = JSON.parse(body)
   console.log('Received event:', event.type)
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session
+    const session = event.data.object
+
+    console.log('Session ID:', session.id)
+    console.log('Metadata:', JSON.stringify(session.metadata))
+
     const userId = session.metadata?.user_id
     const xpAmount = parseInt(session.metadata?.xp_amount || '0')
 
@@ -84,23 +110,11 @@ serve(async (req) => {
 
         console.log('Successfully credited', xpAmount, 'XP to user', userId)
 
-        // Optional: Log payment for records
-        await supabase.from('payments').insert({
-          user_id: userId,
-          stripe_payment_id: session.payment_intent,
-          xp_amount: xpAmount,
-          amount_cents: session.amount_total,
-          status: 'completed'
-        }).catch(err => {
-          // Payments table might not exist, that's ok
-          console.log('Could not log payment (table may not exist):', err.message)
-        })
-
       } catch (error) {
         console.error('Error processing payment:', error)
-        // Still return 200 to Stripe so they don't retry
-        // But log the error for debugging
       }
+    } else {
+      console.log('Missing userId or xpAmount, skipping XP credit')
     }
   }
 
