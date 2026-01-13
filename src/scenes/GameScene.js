@@ -1677,6 +1677,95 @@ Lv.${level + 1}`;
     }
 
     // Wave tips for challenging waves
+    createEnemyPreview(enemyType) {
+        const container = this.add.container(0, 0);
+        
+        switch(enemyType) {
+            case 'SKELETON_ARCHER':
+                // Skeleton with bow
+                container.add(this.add.rectangle(0, 0, 20, 30, 0xccccaa)); // body
+                container.add(this.add.rectangle(0, -20, 14, 14, 0xddddbb)); // head
+                container.add(this.add.rectangle(-4, -20, 4, 4, 0x000000)); // eye
+                container.add(this.add.rectangle(4, -20, 4, 4, 0x000000)); // eye
+                container.add(this.add.rectangle(-12, 0, 4, 20, 0xccccaa)); // arm
+                container.add(this.add.rectangle(12, 0, 4, 20, 0xccccaa)); // arm
+                container.add(this.add.rectangle(18, -5, 3, 30, 0x8B4513)); // bow
+                container.add(this.add.arc(22, -5, 15, Phaser.Math.DegToRad(270), Phaser.Math.DegToRad(90), false, 0x8B4513)); // bow curve
+                break;
+                
+            case 'TROLL':
+                // Big green troll
+                const s = 1.2;
+                container.add(this.add.rectangle(0, 10*s, 34*s, 38*s, 0x669977)); // body
+                container.add(this.add.rectangle(0, -18*s, 30*s, 26*s, 0x669977)); // head
+                container.add(this.add.rectangle(-8*s, -20*s, 10*s, 10*s, 0xFFFF66)); // eye
+                container.add(this.add.rectangle(8*s, -20*s, 10*s, 10*s, 0xFFFF66)); // eye
+                container.add(this.add.rectangle(-7*s, -19*s, 5*s, 6*s, 0x000000)); // pupil
+                container.add(this.add.rectangle(9*s, -19*s, 5*s, 6*s, 0x000000)); // pupil
+                container.add(this.add.rectangle(0, -10*s, 14*s, 12*s, 0x558866)); // nose
+                container.add(this.add.rectangle(-24*s, 10*s, 14*s, 30*s, 0x669977)); // arm
+                container.add(this.add.rectangle(24*s, 10*s, 14*s, 30*s, 0x669977)); // arm
+                container.add(this.add.rectangle(-30*s, 30*s, 8*s, 38*s, 0x8B6633)); // club
+                container.add(this.add.rectangle(-30*s, 46*s, 18*s, 20*s, 0x6B5533)); // club head
+                break;
+                
+            case 'DRAGON':
+                // Red dragon
+                container.add(this.add.rectangle(0, 0, 50, 35, 0xcc3333)); // body
+                container.add(this.add.rectangle(-30, -5, 25, 20, 0xcc3333)); // neck
+                container.add(this.add.rectangle(-50, -10, 30, 22, 0xdd4444)); // head
+                container.add(this.add.triangle(-70, -10, 0, 10, 15, 0, 15, 20, 0xdd4444)); // snout
+                container.add(this.add.rectangle(-45, -16, 8, 8, 0xffff00)); // eye
+                container.add(this.add.rectangle(-44, -15, 4, 5, 0x000000)); // pupil
+                container.add(this.add.triangle(-35, -25, 0, 15, 8, 0, 16, 15, 0xaa2222)); // horn
+                container.add(this.add.rectangle(30, 5, 40, 8, 0xcc3333)); // tail
+                container.add(this.add.triangle(55, 5, 0, 0, 20, -8, 20, 8, 0xaa2222)); // tail tip
+                // Wings
+                container.add(this.add.triangle(0, -20, 0, 30, 40, 0, 50, 40, 0xaa2222));
+                container.add(this.add.triangle(0, -20, 0, 30, -40, 0, -50, 40, 0xaa2222));
+                break;
+                
+            case 'DARK_KNIGHT':
+                // Dark armored knight
+                container.add(this.add.rectangle(0, 20, 24, 30, 0x333344)); // legs
+                container.add(this.add.rectangle(0, 0, 28, 32, 0x444455)); // armor body
+                container.add(this.add.rectangle(0, -22, 22, 22, 0x333344)); // helmet
+                container.add(this.add.rectangle(0, -20, 18, 8, 0x111122)); // visor
+                container.add(this.add.rectangle(0, -32, 6, 12, 0x660022)); // plume
+                container.add(this.add.rectangle(-18, 5, 8, 28, 0x444455)); // arm
+                container.add(this.add.rectangle(18, 5, 8, 28, 0x444455)); // arm
+                container.add(this.add.rectangle(26, -10, 6, 40, 0x666677)); // sword
+                container.add(this.add.rectangle(26, -32, 12, 4, 0x666677)); // crossguard
+                container.add(this.add.rectangle(0, 24, 34, 36, 0x660022).setAlpha(0.7)); // cape
+                break;
+                
+            case 'DEMON':
+                // Red demon
+                container.add(this.add.rectangle(0, 10, 30, 36, 0x881111)); // body
+                container.add(this.add.rectangle(0, -16, 26, 24, 0x991111)); // head
+                container.add(this.add.triangle(-14, -30, 0, 20, 6, 0, 12, 20, 0x661111)); // horn
+                container.add(this.add.triangle(14, -30, 0, 20, 6, 0, 12, 20, 0x661111)); // horn
+                container.add(this.add.rectangle(-7, -16, 8, 6, 0xffff00)); // eye
+                container.add(this.add.rectangle(7, -16, 8, 6, 0xffff00)); // eye
+                container.add(this.add.rectangle(-6, -15, 4, 4, 0x000000)); // pupil
+                container.add(this.add.rectangle(8, -15, 4, 4, 0x000000)); // pupil
+                container.add(this.add.rectangle(0, -4, 14, 6, 0x550000)); // mouth
+                container.add(this.add.rectangle(-20, 5, 10, 30, 0x881111)); // arm
+                container.add(this.add.rectangle(20, 5, 10, 30, 0x881111)); // arm
+                // Wings
+                container.add(this.add.triangle(-25, -5, 0, 0, -30, -20, -25, 25, 0x660000));
+                container.add(this.add.triangle(25, -5, 0, 0, 30, -20, 25, 25, 0x660000));
+                break;
+                
+            default:
+                // Fallback - generic enemy shape
+                container.add(this.add.rectangle(0, 0, 30, 40, 0x666666));
+                container.add(this.add.rectangle(0, -25, 20, 20, 0x888888));
+        }
+        
+        return container;
+    }
+
     getWaveTip(waveNumber) {
         const tips = {
             6: {
@@ -1752,11 +1841,11 @@ Lv.${level + 1}`;
         panel.setStrokeStyle(3, 0xffaa00);
         tipOverlay.add(panel);
 
-        // Icon
-        const icon = this.add.text(0, -110, tip.icon, {
-            fontSize: '48px'
-        }).setOrigin(0.5);
-        tipOverlay.add(icon);
+        // Create actual enemy preview instead of emoji
+        const enemyPreview = this.createEnemyPreview(tip.enemyType);
+        enemyPreview.setPosition(0, -100);
+        enemyPreview.setScale(1.5);
+        tipOverlay.add(enemyPreview);
 
         // Title
         const title = this.add.text(0, -60, tip.title, {
@@ -2308,7 +2397,10 @@ Lv.${level + 1}`;
         const color = badgeInfo.color === 'gold' ? '#ffd700' : '#c0c0c0';
         const signs = '▲'.repeat(badgeInfo.signs);  // Triangle chevrons
 
-        const message = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50,
+        // Position right below top bar
+        const yPos = 70;
+
+        const message = this.add.text(GAME_WIDTH / 2, yPos,
             `${unitName} PROMOTED!`, {
             fontSize: '32px',
             fontFamily: 'Arial',
@@ -2318,7 +2410,7 @@ Lv.${level + 1}`;
             strokeThickness: 4
         }).setOrigin(0.5).setDepth(1100);
 
-        const badge = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, signs, {
+        const badge = this.add.text(GAME_WIDTH / 2, yPos + 35, signs, {
             fontSize: '28px',
             color: color,
             stroke: '#000000',
@@ -2326,7 +2418,7 @@ Lv.${level + 1}`;
         }).setOrigin(0.5).setDepth(1100);
 
         const bonus = Math.round((this.getPromotionBonus(level) - 1) * 100);
-        const bonusText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 40,
+        const bonusText = this.add.text(GAME_WIDTH / 2, yPos + 70,
             `+${bonus}% Stats!`, {
             fontSize: '20px',
             fontFamily: 'Arial',
@@ -2335,23 +2427,28 @@ Lv.${level + 1}`;
             strokeThickness: 3
         }).setOrigin(0.5).setDepth(1100);
 
-        // Play sound
+        // Play promotion fanfare sound
         if (typeof audioManager !== 'undefined') {
-            audioManager.playGold();
+            audioManager.playPromotion();
         }
 
-        // Animate out
+        // Scale in animation
+        message.setScale(0);
+        badge.setScale(0);
+        bonusText.setScale(0);
+        
         this.tweens.add({
             targets: [message, badge, bonusText],
-            y: '-=30',
-            alpha: 0,
-            duration: 2000,
-            delay: 1000,
-            onComplete: () => {
-                message.destroy();
-                badge.destroy();
-                bonusText.destroy();
-            }
+            scale: 1,
+            duration: 300,
+            ease: 'Back.easeOut'
+        });
+
+        // Remove after delay (no fade)
+        this.time.delayedCall(2500, () => {
+            message.destroy();
+            badge.destroy();
+            bonusText.destroy();
         });
     }
 

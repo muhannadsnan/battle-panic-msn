@@ -385,7 +385,7 @@ class UnitButton extends Phaser.GameObjects.Container {
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4
-        }).setOrigin(0, 0.5).setDepth(1000).setAlpha(0.6);
+        }).setOrigin(0, 0.5).setDepth(1000).setAlpha(0.85);
     }
 
     hideTooltip() {

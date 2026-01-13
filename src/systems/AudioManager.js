@@ -323,6 +323,34 @@ class AudioManager {
         osc.stop(this.audioContext.currentTime + 0.08);
     }
 
+    // Play promotion fanfare sound - celebratory ding
+    playPromotion() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+        
+        // Triple ascending chime
+        const notes = [523, 659, 784]; // C5, E5, G5 - major chord
+        notes.forEach((freq, i) => {
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+            
+            osc.connect(gain);
+            gain.connect(this.sfxGain);
+            
+            osc.frequency.setValueAtTime(freq, now + i * 0.1);
+            osc.type = 'sine';
+            
+            gain.gain.setValueAtTime(0, now + i * 0.1);
+            gain.gain.linearRampToValueAtTime(0.08, now + i * 0.1 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
+            
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.3);
+        });
+    }
+
     // Play wood chop sound - axe hitting wood
     playWood() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
