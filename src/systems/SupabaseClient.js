@@ -97,7 +97,7 @@ class SupabaseClient {
             const { data, error } = await this.supabase.auth.signInWithOtp({
                 email: email,
                 options: {
-                    emailRedirectTo: window.location.origin
+                    emailRedirectTo: window.location.origin + '/callback.html'
                 }
             });
 

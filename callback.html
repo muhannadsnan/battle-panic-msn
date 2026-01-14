@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Successful - Battle Panic</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            border: 2px solid #4ade80;
+            max-width: 400px;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #4ade80;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        p {
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .closing {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✅</div>
+        <h1>Login Successful!</h1>
+        <p>You are now logged in.<br>Return to the game tab to continue.</p>
+        <p class="closing">This tab will close automatically...</p>
+    </div>
+
+    <!-- Supabase JS to process the token -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase to process the auth token from URL
+        const SUPABASE_URL = 'https://mswxeapzslsqzewrnjbs.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zd3hlYXB6c2xzcXpld3JuamJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyMzIxODksImV4cCI6MjA4MzgwODE4OX0.5zHRscPaYeSiBd_gD0d01T4W_1KSA03zxOdsepoabnU';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // The session is automatically processed from the URL hash by Supabase
+        // Just need to wait a moment for it to complete, then close
+        setTimeout(() => {
+            window.close();
+            // If window.close() doesn't work (some browsers block it), show message
+            document.querySelector('.closing').textContent = 'You can close this tab now.';
+        }, 2000);
+    </script>
+</body>
+</html>
