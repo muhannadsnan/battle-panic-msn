@@ -99,6 +99,69 @@ On game load:
 
 ---
 
+## Single-Device Session Management
+
+Prevents data conflicts when game is open on multiple devices simultaneously.
+
+### How It Works
+
+```
+Device A opens game
+         │
+         ▼
+┌─────────────────────────────────────┐
+│   validateSession()                  │
+│   - Generates unique session_id      │
+│   - Stores in user metadata          │
+│   - Stores in sessionStorage         │
+└─────────────────────────────────────┘
+         │
+         │ Device B opens game
+         ▼
+┌─────────────────────────────────────┐
+│   Session Conflict Detected!         │
+│   - Cloud session_id != local        │
+│   - Session < 2 hours old            │
+│                                      │
+│   Dialog: "Play Here" / "Cancel"     │
+└─────────────────────────────────────┘
+         │
+         │ User clicks "Play Here"
+         ▼
+┌─────────────────────────────────────┐
+│   takeoverSession()                  │
+│   - New session_id saved to cloud    │
+│   - Device B becomes active          │
+└─────────────────────────────────────┘
+         │
+         │ Within 30 seconds...
+         ▼
+┌─────────────────────────────────────┐
+│   Device A: "Session Expired"        │
+│   - Periodic check detects mismatch  │
+│   - User logged out automatically    │
+└─────────────────────────────────────┘
+```
+
+### Session Storage
+
+| Location | Key/Field | Purpose |
+|----------|-----------|---------|
+| User Metadata | `session_id` | Unique session identifier |
+| User Metadata | `session_started_at` | When session was started |
+| sessionStorage | `battlePanicSessionId` | Local session ID (survives refresh) |
+
+### Auto-Takeover
+
+Sessions older than **2 hours** are automatically taken over without showing the conflict dialog.
+
+### Periodic Validation
+
+Every **30 seconds**, MenuScene and GameScene check if the session is still valid:
+- If another device took over → Show "Session Expired" dialog → Logout
+
+---
+
 ## Save System Integration
 
 ### Save Keys
@@ -123,9 +186,15 @@ Logged In Mode:
               Supabase (saves table)
 ```
 
-### Merge Strategy (on login)
+### Cloud as Source of Truth
 
-When a user logs in with existing cloud data:
+For logged-in users, **cloud data is always the source of truth**:
+- On sync: Cloud data overwrites local data
+- No "take max values" merge (prevents XP/upgrade rollback bugs)
+- All data-changing actions (purchases, upgrades) sync to cloud immediately
+
+**Exception - First-Time Migration:**
+When a guest logs in for the first time with existing cloud data:
 - **Stats**: Take maximum values (kills, waves, XP, etc.)
 - **Upgrades**: Take highest level for each upgrade
 - **Legacy stats**: Take highest, preserve earliest `firstPlayedAt`
@@ -158,6 +227,23 @@ Called in `index.html` on DOMContentLoaded.
 | `getDisplayName()` | `string \| null` | Get display name (metadata or email prefix) |
 | `updateDisplayName(name)` | `{success, error?}` | Update user's display name |
 
+#### Session Management Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `startSession()` | `boolean` | Start new session, store ID in metadata |
+| `validateSession()` | `{valid, reason, ...}` | Check if session is still valid |
+| `takeoverSession()` | `boolean` | Take over from another device |
+| `hasValidLocalSession()` | `boolean` | Check if local session ID exists |
+
+#### Real-Time Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `subscribeToSaves()` | `void` | Subscribe to save changes (for XP purchases) |
+| `unsubscribeFromSaves()` | `void` | Unsubscribe from real-time updates |
+| `updateLastKnownXP(xp)` | `void` | Update XP tracking to avoid false notifications |
+
 #### Cloud Save Methods
 
 | Method | Returns | Description |
@@ -175,9 +261,16 @@ Called in `index.html` on DOMContentLoaded.
 #### Events
 
 ```javascript
+// Auth state changes (login/logout)
 window.addEventListener('authStateChanged', (event) => {
     const { user } = event.detail;
     // user is null if logged out, user object if logged in
+});
+
+// XP purchased via Stripe (real-time notification)
+window.addEventListener('xpPurchased', (event) => {
+    const { newXP, xpGained } = event.detail;
+    // Show notification, refresh UI
 });
 ```
 
@@ -336,4 +429,4 @@ Get credentials from: `https://supabase.com/dashboard/project/YOUR_PROJECT/setti
 
 ---
 
-*Status: IMPLEMENTED (v1.20.1)*
+*Status: IMPLEMENTED (v1.28.0) - Session management, real-time XP notifications*

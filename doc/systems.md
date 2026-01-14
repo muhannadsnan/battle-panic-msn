@@ -307,13 +307,13 @@ Returns current save key string.
 **`isGuestSave()`**
 Returns `true` if using guest save key.
 
-**`syncWithCloud()`**
-Full bidirectional sync with Supabase:
-1. Loads local save
-2. Loads cloud save (if exists)
-3. Merges taking highest values
-4. Saves merged data locally and to cloud
-5. Returns `{success, action: 'uploaded'|'merged', data}`
+**`syncWithCloud(guestDataForMigration = null)`**
+Syncs with cloud (cloud is source of truth):
+1. Loads cloud save
+2. If no cloud save: uploads local data
+3. If cloud exists: overwrites local with cloud
+4. **Exception**: If `guestDataForMigration` provided, merges guest data first
+5. Returns `{success, action: 'uploaded'|'loaded'|'merged'|'migrated', data}`
 
 **`mergeCloudData(local, cloud)`**
 Merges two save objects, taking maximum values for:

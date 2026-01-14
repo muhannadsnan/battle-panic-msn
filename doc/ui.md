@@ -306,6 +306,45 @@ this.bg.on('pointerdown', () => {
 
 ---
 
+## SessionUI
+
+**File:** `src/ui/SessionUI.js`
+
+Static class for session conflict and expiration dialogs.
+
+### Static Methods
+
+**`SessionUI.showConflictDialog(scene)`**
+Shows modal when another device has an active session:
+```
+┌──────────────────────────────────┐
+│              ⚠️                  │
+│       Session Conflict           │
+│                                  │
+│  Game is open on another device  │
+│                                  │
+│  [ Play Here ]    [ Cancel ]     │
+└──────────────────────────────────┘
+```
+- Returns: `Promise<'takeover' | 'cancel'>`
+
+**`SessionUI.showExpiredDialog(scene)`**
+Shows modal when session was taken over by another device:
+```
+┌──────────────────────────────────┐
+│              🔒                  │
+│        Session Expired           │
+│                                  │
+│  You logged in from another      │
+│  device                          │
+│                                  │
+│           [ OK ]                 │
+└──────────────────────────────────┘
+```
+- Returns: `Promise<'ok'>`
+
+---
+
 *Files: `src/ui/*.js`*
 
 ## iPad/Touch Optimization (v1.5.0)
