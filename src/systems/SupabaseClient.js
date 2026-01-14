@@ -12,7 +12,7 @@ class SupabaseClient {
         this.initialized = false;
 
         // Session management for single-device enforcement
-        this.localSessionId = null;
+        this.localSessionId = sessionStorage.getItem('battlePanicSessionId') || null;
         this.SESSION_TIMEOUT_HOURS = 2; // Auto-takeover after 2 hours
     }
 
@@ -323,9 +323,15 @@ class SupabaseClient {
 
     // Start a new session (called after successful login or takeover)
     async startSession() {
-        if (!this.initialized || !this.user) return false;
+        console.log('startSession called, initialized:', this.initialized, 'user:', !!this.user);
+        if (!this.initialized || !this.user) {
+            console.error('startSession failed: not initialized or no user');
+            return false;
+        }
 
         this.localSessionId = this.generateSessionId();
+        sessionStorage.setItem('battlePanicSessionId', this.localSessionId);
+        console.log('Session ID saved to sessionStorage:', this.localSessionId);
         const now = new Date().toISOString();
 
         try {

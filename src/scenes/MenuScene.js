@@ -2355,10 +2355,14 @@ class MenuScene extends Phaser.Scene {
             } else if (validation.reason === 'session_conflict') {
                 // Active session on another device - show dialog
                 const choice = await SessionUI.showConflictDialog(this);
+                console.log('User choice:', choice);
                 if (choice === 'takeover') {
-                    await supabaseClient.takeoverSession();
+                    console.log('Calling takeoverSession...');
+                    const takeoverResult = await supabaseClient.takeoverSession();
+                    console.log('Takeover result:', takeoverResult);
                     const guestData = supabaseClient.getPendingGuestData();
                     const result = await saveSystem.syncWithCloud(guestData);
+                    console.log('Sync result:', result);
                     if (result.success) {
                         this.scene.restart();
                     }

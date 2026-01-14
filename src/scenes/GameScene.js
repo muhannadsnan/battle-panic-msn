@@ -52,6 +52,8 @@ class GameScene extends Phaser.Scene {
 
     // Initialize game (extracted from create)
     initializeGame() {
+        this.gameInitialized = true; // Flag for update() guard
+
         // Resume audio context on first interaction
         if (typeof audioManager !== 'undefined') {
             audioManager.resume();
@@ -1458,7 +1460,7 @@ Lv.${level + 1}`;
     }
 
     update(time, delta) {
-        if (this.isPaused) return;
+        if (!this.gameInitialized || this.isPaused) return;
 
         // Update manual mining
         this.updateMining(delta);
