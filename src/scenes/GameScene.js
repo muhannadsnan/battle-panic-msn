@@ -188,6 +188,29 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    // Sync to cloud and validate session after battle ends
+    async syncAndValidateAfterBattle() {
+        try {
+            // First sync the battle results to cloud
+            const syncResult = await saveSystem.uploadToCloud();
+            if (syncResult.success) {
+                console.log('Auto-synced to cloud after battle');
+            }
+
+            // Then validate session
+            const validation = await supabaseClient.validateSession();
+            if (validation.reason === 'session_conflict' || validation.reason === 'session_expired') {
+                console.log('Session taken over during battle');
+                // Don't interrupt game over screen, just log out silently
+                // User will see login screen when they return to menu
+                await supabaseClient.logout();
+                sessionStorage.removeItem('battlePanicSessionId');
+            }
+        } catch (err) {
+            console.warn('Post-battle sync/validation failed:', err);
+        }
+    }
+
     createBackground() {
         // CARTOONY BATTLEFIELD - bright, colorful, and fun!
 
@@ -2085,13 +2108,9 @@ Lv.${level + 1}`;
         );
         const xpEarned = saveResult.xpEarned || 0;
 
-        // Auto-sync to cloud if logged in (runs in background)
+        // Auto-sync to cloud and validate session if logged in
         if (supabaseClient && supabaseClient.isLoggedIn()) {
-            saveSystem.uploadToCloud().then(result => {
-                if (result.success) {
-                    console.log('Auto-synced to cloud after battle');
-                }
-            }).catch(err => console.warn('Cloud sync failed:', err));
+            this.syncAndValidateAfterBattle();
         }
 
         // Show game over text

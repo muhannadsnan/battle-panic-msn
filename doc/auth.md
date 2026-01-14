@@ -160,6 +160,13 @@ Sessions older than **2 hours** are automatically taken over without showing the
 Every **30 seconds**, MenuScene and GameScene check if the session is still valid:
 - If another device took over → Show "Session Expired" dialog → Logout
 
+### Post-Battle Validation
+
+After every battle ends:
+1. Sync battle results to cloud immediately
+2. Validate session - if taken over, logout silently
+3. User returns to menu as logged out (sees login screen)
+
 ---
 
 ## Save System Integration
