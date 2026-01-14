@@ -153,6 +153,39 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(3000, () => {
             this.waveSystem.startWave();
         });
+
+        // Periodic session validation (check every 30s if another device took over)
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            this.sessionCheckTimer = this.time.addEvent({
+                delay: 30000,
+                callback: this.checkSessionStillValid,
+                callbackScope: this,
+                loop: true
+            });
+        }
+    }
+
+    // Check if session is still valid (called periodically)
+    async checkSessionStillValid() {
+        if (!supabaseClient.isLoggedIn() || !supabaseClient.hasValidLocalSession()) return;
+
+        const validation = await supabaseClient.validateSession();
+
+        if (validation.reason === 'session_conflict' || validation.reason === 'session_expired') {
+            // Another device took over - pause game and show expired dialog
+            if (this.sessionCheckTimer) {
+                this.sessionCheckTimer.remove();
+            }
+            this.isPaused = true;
+
+            console.log('Session taken over by another device during game');
+            await SessionUI.showExpiredDialog(this);
+
+            // Log out and return to menu
+            await supabaseClient.logout();
+            sessionStorage.removeItem('battlePanicSessionId');
+            this.scene.start('MenuScene');
+        }
     }
 
     createBackground() {

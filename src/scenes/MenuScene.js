@@ -83,6 +83,16 @@ class MenuScene extends Phaser.Scene {
         };
         window.addEventListener('xpPurchased', this.xpPurchaseHandler);
 
+        // Periodic session validation (check every 30s if another device took over)
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            this.sessionCheckTimer = this.time.addEvent({
+                delay: 30000, // 30 seconds
+                callback: this.checkSessionStillValid,
+                callbackScope: this,
+                loop: true
+            });
+        }
+
         // Load save data for stats display
         const saveData = saveSystem.load();
         const rankInfo = saveSystem.getRankInfo(saveData);
@@ -2410,6 +2420,28 @@ class MenuScene extends Phaser.Scene {
             delay: 5000,
             duration: 1000
         });
+    }
+
+    // Check if session is still valid (called periodically)
+    async checkSessionStillValid() {
+        if (!supabaseClient.isLoggedIn() || !supabaseClient.hasValidLocalSession()) return;
+
+        const validation = await supabaseClient.validateSession();
+
+        if (validation.reason === 'session_conflict' || validation.reason === 'session_expired') {
+            // Another device took over - stop the timer and show expired dialog
+            if (this.sessionCheckTimer) {
+                this.sessionCheckTimer.remove();
+            }
+
+            console.log('Session taken over by another device');
+            await SessionUI.showExpiredDialog(this);
+
+            // Log out and reload
+            await supabaseClient.logout();
+            sessionStorage.removeItem('battlePanicSessionId');
+            window.location.reload();
+        }
     }
 
     // Show XP purchase notification
