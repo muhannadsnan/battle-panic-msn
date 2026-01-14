@@ -866,6 +866,11 @@ class Unit extends Phaser.GameObjects.Container {
     die() {
         this.isDead = true;
 
+        // Play human death sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playUnitDeath();
+        }
+
         // Death animation
         this.scene.tweens.add({
             targets: this,

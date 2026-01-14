@@ -990,6 +990,121 @@ class AudioManager {
             this.sfxGain.gain.value = volume;
         }
     }
+
+    // Monster death sound - guttural growl with splat
+    playMonsterDeath() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // Guttural monster growl - low frequency rumble
+        const growl = this.audioContext.createOscillator();
+        const growlGain = this.audioContext.createGain();
+        const growlFilter = this.audioContext.createBiquadFilter();
+
+        growl.connect(growlFilter);
+        growlFilter.connect(growlGain);
+        growlGain.connect(this.sfxGain);
+
+        growl.type = 'sawtooth';
+        growl.frequency.setValueAtTime(100 + Math.random() * 30, now);
+        growl.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+
+        growlFilter.type = 'lowpass';
+        growlFilter.frequency.setValueAtTime(400, now);
+        growlFilter.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+
+        growlGain.gain.setValueAtTime(0.25, now);
+        growlGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+
+        growl.start(now);
+        growl.stop(now + 0.2);
+
+        // Wet splat sound - noise burst
+        const bufferSize = this.audioContext.sampleRate * 0.1;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+        }
+
+        const splat = this.audioContext.createBufferSource();
+        const splatGain = this.audioContext.createGain();
+        const splatFilter = this.audioContext.createBiquadFilter();
+
+        splat.buffer = buffer;
+        splat.connect(splatFilter);
+        splatFilter.connect(splatGain);
+        splatGain.connect(this.sfxGain);
+
+        splatFilter.type = 'bandpass';
+        splatFilter.frequency.value = 600;
+        splatFilter.Q.value = 1;
+
+        splatGain.gain.setValueAtTime(0.3, now + 0.05);
+        splatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+        splat.start(now + 0.05);
+    }
+
+    // Unit (human) death sound - short pain grunt
+    playUnitDeath() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // Human pain grunt - higher pitch, voice-like
+        const voice = this.audioContext.createOscillator();
+        const voiceGain = this.audioContext.createGain();
+        const voiceFilter = this.audioContext.createBiquadFilter();
+
+        voice.connect(voiceFilter);
+        voiceFilter.connect(voiceGain);
+        voiceGain.connect(this.sfxGain);
+
+        // Start high, drop down (pain sound)
+        voice.type = 'triangle';
+        voice.frequency.setValueAtTime(400 + Math.random() * 100, now);
+        voice.frequency.exponentialRampToValueAtTime(150, now + 0.12);
+
+        voiceFilter.type = 'bandpass';
+        voiceFilter.frequency.value = 800;
+        voiceFilter.Q.value = 2;
+
+        voiceGain.gain.setValueAtTime(0.2, now);
+        voiceGain.gain.linearRampToValueAtTime(0.25, now + 0.02);
+        voiceGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+        voice.start(now);
+        voice.stop(now + 0.18);
+
+        // Add breath/gasp noise
+        const breathSize = this.audioContext.sampleRate * 0.08;
+        const breathBuffer = this.audioContext.createBuffer(1, breathSize, this.audioContext.sampleRate);
+        const breathData = breathBuffer.getChannelData(0);
+        for (let i = 0; i < breathSize; i++) {
+            const env = Math.sin(Math.PI * i / breathSize);
+            breathData[i] = (Math.random() * 2 - 1) * env * 0.3;
+        }
+
+        const breath = this.audioContext.createBufferSource();
+        const breathGain = this.audioContext.createGain();
+        const breathFilter = this.audioContext.createBiquadFilter();
+
+        breath.buffer = breathBuffer;
+        breath.connect(breathFilter);
+        breathFilter.connect(breathGain);
+        breathGain.connect(this.sfxGain);
+
+        breathFilter.type = 'highpass';
+        breathFilter.frequency.value = 1000;
+
+        breathGain.gain.setValueAtTime(0.15, now);
+
+        breath.start(now);
+    }
 }
 
 // Global instance

@@ -1134,9 +1134,9 @@ class Enemy extends Phaser.GameObjects.Container {
     die() {
         this.isDead = true;
 
-        // Play death sound
+        // Play monster death sound
         if (typeof audioManager !== 'undefined') {
-            audioManager.playDeath();
+            audioManager.playMonsterDeath();
         }
 
         // Calculate rewards - bosses get multiplied by wave number
@@ -1163,6 +1163,9 @@ class Enemy extends Phaser.GameObjects.Container {
             }
         }
 
+        // Purple blood explosion effect
+        this.createBloodExplosion();
+
         // Death animation
         this.scene.tweens.add({
             targets: this,
@@ -1180,6 +1183,55 @@ class Enemy extends Phaser.GameObjects.Container {
         if (this.scene.onEnemyKilled) {
             this.scene.onEnemyKilled(this);
         }
+    }
+
+    createBloodExplosion() {
+        const x = this.x;
+        const y = this.y;
+        const scale = this.isBoss ? 1.5 : 1;
+
+        // Purple blood colors
+        const bloodColors = [0x8B008B, 0x9400D3, 0x800080, 0x6A0DAD, 0x4B0082];
+
+        // Blood splatter particles spraying upward
+        for (let i = 0; i < 12; i++) {
+            const color = Phaser.Utils.Array.GetRandom(bloodColors);
+            const size = Phaser.Math.Between(3, 8) * scale;
+            const particle = this.scene.add.circle(x, y, size, color);
+            particle.setDepth(5);
+
+            // Random spray direction (mostly upward)
+            const angle = Phaser.Math.Between(-150, -30); // Upward arc
+            const speed = Phaser.Math.Between(80, 180) * scale;
+            const vx = Math.cos(Phaser.Math.DegToRad(angle)) * speed;
+            const vy = Math.sin(Phaser.Math.DegToRad(angle)) * speed;
+
+            this.scene.tweens.add({
+                targets: particle,
+                x: x + vx * 0.4,
+                y: y + vy * 0.4 + 40, // Gravity pulls down
+                alpha: 0,
+                scale: 0.3,
+                duration: Phaser.Math.Between(300, 500),
+                ease: 'Quad.easeOut',
+                onComplete: () => particle.destroy()
+            });
+        }
+
+        // Blood spot on ground
+        const spotSize = Phaser.Math.Between(20, 35) * scale;
+        const spotColor = Phaser.Utils.Array.GetRandom(bloodColors);
+        const bloodSpot = this.scene.add.ellipse(x, y + 15, spotSize, spotSize * 0.4, spotColor, 0.7);
+        bloodSpot.setDepth(1); // Below units/enemies
+
+        // Fade out after 5 seconds
+        this.scene.tweens.add({
+            targets: bloodSpot,
+            alpha: 0,
+            duration: 1500,
+            delay: 3500, // Wait 3.5s then fade over 1.5s = 5s total
+            onComplete: () => bloodSpot.destroy()
+        });
     }
 
     // Animation methods
