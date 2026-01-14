@@ -2417,7 +2417,7 @@ Lv.${level + 1}`;
 
         this.tweens.add({
             targets: rateText,
-            y: y - 20,
+            y: y - 40,  // 2x farther for mobile visibility
             alpha: 0,
             duration: 2000,
             onComplete: () => rateText.destroy()
