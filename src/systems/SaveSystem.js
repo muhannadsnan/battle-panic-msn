@@ -46,6 +46,7 @@ class SaveSystem {
         return {
             gold: RESOURCE_CONFIG.startingGold,
             xp: 0, // XP points for upgrades (earned from battles)
+            purchasedXP: 0, // XP bought with money (excluded from rank)
             highestWave: 0,
             totalGoldEarned: 0,
             totalEnemiesKilled: 0,
@@ -374,10 +375,17 @@ class SaveSystem {
         return { success: true, refunded: spentXP, fee: totalFee, flatFee: flatFee, percentFee: percentFee, newXP: newXP };
     }
 
-    // Add XP (for purchases)
-    addXP(amount) {
+    // Add XP (for purchases or earned)
+    // isPurchased: true if bought with money (excluded from rank calculation)
+    addXP(amount, isPurchased = true) {
         const data = this.load();
         data.xp = (data.xp || 0) + amount;
+
+        // Track purchased XP separately (for rank exclusion)
+        if (isPurchased) {
+            data.purchasedXP = (data.purchasedXP || 0) + amount;
+        }
+
         this.save(data);
 
         // Sync to cloud
@@ -412,14 +420,17 @@ class SaveSystem {
 
     // Calculate total rank score based on all achievements
     // Designed for LONG-TERM progression - takes many hours/days to rank up
+    // Note: Purchased XP is excluded to prevent pay-to-rank
     calculateRankScore(data) {
         const spentXP = this.calculateSpentXP(data);
         const totalXP = (data.xp || 0) + spentXP;
+        const purchasedXP = data.purchasedXP || 0;
+        const earnedXP = totalXP - purchasedXP; // Only earned XP counts for rank
 
         let score = 0;
 
-        // XP contribution (x5 weight) - main progression
-        score += totalXP * 5;
+        // XP contribution (x5 weight) - main progression (earned only, not purchased)
+        score += earnedXP * 5;
 
         // Kills contribution (x0.1) - grinding matters
         score += (data.totalEnemiesKilled || 0) * 0.1;

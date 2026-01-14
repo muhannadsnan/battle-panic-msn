@@ -176,6 +176,7 @@ Handles localStorage persistence for game progress with guest/user save separati
 {
     gold: 50,                    // Current gold (not used between games)
     xp: 0,                       // XP points for upgrades
+    purchasedXP: 0,              // XP bought with money (excluded from rank)
     highestWave: 0,              // Best wave reached
     totalGoldEarned: 0,          // Lifetime gold
     totalEnemiesKilled: 0,       // Lifetime kills
@@ -291,8 +292,10 @@ Resets upgrades and refunds XP:
 4. Resets all upgrades to defaults
 5. Keeps stats (highestWave, etc.)
 
-**`addXP(amount)`**
-Adds XP to save data (for purchases).
+**`addXP(amount, isPurchased = true)`**
+Adds XP to save data:
+- `isPurchased = true`: Tracks as purchased XP (excluded from rank)
+- `isPurchased = false`: Counts as earned XP (contributes to rank)
 
 #### Cloud Sync Methods
 
