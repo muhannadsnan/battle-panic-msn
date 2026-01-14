@@ -62,19 +62,11 @@ class MenuScene extends Phaser.Scene {
             repeat: -1
         });
 
-        // Auto-sync with cloud if logged in (updates local with cloud XP, etc.)
-        // Only sync once per session to avoid infinite restart loop
+        // Session validation + cloud sync if logged in
+        // Only validate once per session to avoid infinite restart loop
         if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn() && !MenuScene.hasSynced) {
             MenuScene.hasSynced = true;
-            saveSystem.syncWithCloud().then(result => {
-                if (result.success) {
-                    console.log('Cloud sync completed:', result.action);
-                    // Restart scene to show updated data
-                    this.scene.restart();
-                }
-            }).catch(err => {
-                console.log('Cloud sync failed:', err);
-            });
+            this.validateAndSync();
         }
 
         // Load save data for stats display
@@ -2330,6 +2322,71 @@ class MenuScene extends Phaser.Scene {
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut'
+        });
+    }
+
+    // Validate session and sync with cloud
+    async validateAndSync() {
+        try {
+            const validation = await supabaseClient.validateSession();
+            console.log('Session validation:', validation.reason);
+
+            if (validation.valid || validation.reason === 'new_session') {
+                // Start new session or session matches
+                if (validation.reason === 'new_session' || !supabaseClient.hasValidLocalSession()) {
+                    await supabaseClient.startSession();
+                }
+                // Sync with cloud
+                const guestData = supabaseClient.getPendingGuestData();
+                const result = await saveSystem.syncWithCloud(guestData);
+                if (result.success) {
+                    console.log('Cloud sync completed:', result.action);
+                    this.scene.restart();
+                }
+            } else if (validation.canAutoTakeover) {
+                // Stale session (>2h old), auto-takeover
+                console.log('Auto-taking over stale session');
+                await supabaseClient.takeoverSession();
+                const guestData = supabaseClient.getPendingGuestData();
+                const result = await saveSystem.syncWithCloud(guestData);
+                if (result.success) {
+                    this.scene.restart();
+                }
+            } else if (validation.reason === 'session_conflict') {
+                // Active session on another device - show dialog
+                const choice = await SessionUI.showConflictDialog(this);
+                if (choice === 'takeover') {
+                    await supabaseClient.takeoverSession();
+                    const guestData = supabaseClient.getPendingGuestData();
+                    const result = await saveSystem.syncWithCloud(guestData);
+                    if (result.success) {
+                        this.scene.restart();
+                    }
+                } else {
+                    // User cancelled - show blocked message
+                    this.showSessionBlockedMessage();
+                }
+            }
+        } catch (error) {
+            console.error('Session validation error:', error);
+        }
+    }
+
+    // Show message when session is blocked
+    showSessionBlockedMessage() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        const msg = this.add.text(width / 2, height - 50,
+            'Session active on another device. Refresh to try again.',
+            { fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00' }
+        ).setOrigin(0.5);
+
+        this.tweens.add({
+            targets: msg,
+            alpha: 0,
+            delay: 5000,
+            duration: 1000
         });
     }
 

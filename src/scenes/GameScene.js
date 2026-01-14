@@ -5,6 +5,53 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Check session validity before starting game (logged-in users only)
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            if (!supabaseClient.hasValidLocalSession()) {
+                // Session wasn't validated in MenuScene - validate now
+                this.validateSessionAndStart();
+                return;
+            }
+        }
+
+        // Session valid or guest - proceed with game
+        this.initializeGame();
+    }
+
+    // Validate session and start game if valid
+    async validateSessionAndStart() {
+        try {
+            const validation = await supabaseClient.validateSession();
+
+            if (validation.valid || validation.canAutoTakeover) {
+                // Session valid or can auto-takeover - start game
+                if (validation.canAutoTakeover) {
+                    await supabaseClient.takeoverSession();
+                }
+                this.initializeGame();
+            } else if (validation.reason === 'session_conflict') {
+                // Show conflict dialog
+                const choice = await SessionUI.showConflictDialog(this);
+                if (choice === 'takeover') {
+                    await supabaseClient.takeoverSession();
+                    this.initializeGame();
+                } else {
+                    // Return to menu
+                    this.scene.start('MenuScene');
+                }
+            } else {
+                // Unknown state - return to menu
+                this.scene.start('MenuScene');
+            }
+        } catch (error) {
+            console.error('Session validation error in GameScene:', error);
+            // On error, let them play anyway
+            this.initializeGame();
+        }
+    }
+
+    // Initialize game (extracted from create)
+    initializeGame() {
         // Resume audio context on first interaction
         if (typeof audioManager !== 'undefined') {
             audioManager.resume();

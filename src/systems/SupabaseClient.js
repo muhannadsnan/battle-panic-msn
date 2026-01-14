@@ -10,6 +10,10 @@ class SupabaseClient {
         this.user = null;
         this.session = null;
         this.initialized = false;
+
+        // Session management for single-device enforcement
+        this.localSessionId = null;
+        this.SESSION_TIMEOUT_HOURS = 2; // Auto-takeover after 2 hours
     }
 
     // Initialize with Supabase credentials
@@ -308,6 +312,99 @@ class SupabaseClient {
             console.error('Checkout session error:', error);
             return { success: false, error: error.message };
         }
+    }
+
+    // === Session Management Methods ===
+
+    // Generate a unique session ID
+    generateSessionId() {
+        return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Start a new session (called after successful login or takeover)
+    async startSession() {
+        if (!this.initialized || !this.user) return false;
+
+        this.localSessionId = this.generateSessionId();
+        const now = new Date().toISOString();
+
+        try {
+            const { error } = await this.supabase.auth.updateUser({
+                data: {
+                    session_id: this.localSessionId,
+                    session_started_at: now
+                }
+            });
+
+            if (error) throw error;
+            console.log('Session started:', this.localSessionId);
+            return true;
+        } catch (error) {
+            console.error('Failed to start session:', error);
+            return false;
+        }
+    }
+
+    // Get the cloud session info from user metadata
+    async getCloudSession() {
+        if (!this.initialized || !this.user) return null;
+
+        try {
+            const { data: { user }, error } = await this.supabase.auth.getUser();
+            if (error) throw error;
+
+            return {
+                sessionId: user.user_metadata?.session_id || null,
+                startedAt: user.user_metadata?.session_started_at || null
+            };
+        } catch (error) {
+            console.error('Failed to get cloud session:', error);
+            return null;
+        }
+    }
+
+    // Validate current session against cloud
+    // Returns: { valid, reason, canAutoTakeover, cloudSession }
+    async validateSession() {
+        if (!this.initialized || !this.user) {
+            return { valid: false, reason: 'not_logged_in' };
+        }
+
+        const cloudSession = await this.getCloudSession();
+
+        // No session in cloud - this is a new session
+        if (!cloudSession || !cloudSession.sessionId) {
+            return { valid: true, reason: 'new_session', cloudSession };
+        }
+
+        // Session matches - we're good
+        if (this.localSessionId && this.localSessionId === cloudSession.sessionId) {
+            return { valid: true, reason: 'session_match', cloudSession };
+        }
+
+        // Session mismatch - check if we can auto-takeover
+        if (cloudSession.startedAt) {
+            const sessionAge = Date.now() - new Date(cloudSession.startedAt).getTime();
+            const hoursOld = sessionAge / (1000 * 60 * 60);
+
+            if (hoursOld >= this.SESSION_TIMEOUT_HOURS) {
+                return { valid: false, reason: 'auto_takeover_stale', canAutoTakeover: true, cloudSession };
+            }
+        }
+
+        // Session conflict - another device is active recently
+        return { valid: false, reason: 'session_conflict', canAutoTakeover: false, cloudSession };
+    }
+
+    // Take over session from another device
+    async takeoverSession() {
+        const started = await this.startSession();
+        return started;
+    }
+
+    // Check if we have a valid local session
+    hasValidLocalSession() {
+        return this.localSessionId !== null;
     }
 }
 

@@ -365,6 +365,12 @@ class SaveSystem {
         data.xp = newXP;
 
         this.save(data);
+
+        // Sync to cloud
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            supabaseClient.saveToCloud(data).catch(err => console.warn('Cloud sync failed:', err));
+        }
+
         return { success: true, refunded: spentXP, fee: totalFee, flatFee: flatFee, percentFee: percentFee, newXP: newXP };
     }
 
@@ -373,6 +379,12 @@ class SaveSystem {
         const data = this.load();
         data.xp = (data.xp || 0) + amount;
         this.save(data);
+
+        // Sync to cloud
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            supabaseClient.saveToCloud(data).catch(err => console.warn('Cloud sync failed:', err));
+        }
+
         return data.xp;
     }
 
@@ -434,37 +446,51 @@ class SaveSystem {
         return Math.floor(score);
     }
 
-    // Cloud sync: Compare and merge cloud data with local data
-    async syncWithCloud() {
+    // Cloud sync: Load cloud data as source of truth
+    // guestDataForMigration: optional guest data for first-time user migration (only case where merge is used)
+    async syncWithCloud(guestDataForMigration = null) {
         if (!supabaseClient || !supabaseClient.isLoggedIn()) {
             return { success: false, error: 'Not logged in' };
         }
 
         try {
-            const localData = this.load();
             const cloudResult = await supabaseClient.loadFromCloud();
 
-            if (!cloudResult.success) {
-                // No cloud data, upload local
-                await supabaseClient.saveToCloud(localData);
-                return { success: true, action: 'uploaded', data: localData };
+            // No cloud data exists
+            if (!cloudResult.success || !cloudResult.saveData) {
+                if (guestDataForMigration) {
+                    // First-time migration: merge guest data with defaults and upload
+                    const mergedData = this.mergeWithDefaults(guestDataForMigration);
+                    this.save(mergedData);
+                    await supabaseClient.saveToCloud(mergedData);
+                    console.log('Cloud sync: First-time migration, uploaded guest data');
+                    return { success: true, action: 'migrated', data: mergedData };
+                } else {
+                    // No guest data to migrate, upload current local
+                    const localData = this.load();
+                    await supabaseClient.saveToCloud(localData);
+                    console.log('Cloud sync: No cloud data, uploaded local');
+                    return { success: true, action: 'uploaded', data: localData };
+                }
             }
 
             const cloudData = cloudResult.saveData;
-            if (!cloudData) {
-                // No cloud save exists, upload local
-                await supabaseClient.saveToCloud(localData);
-                return { success: true, action: 'uploaded', data: localData };
+
+            // Cloud data exists - check if we need to merge guest data
+            if (guestDataForMigration) {
+                // Returning user with guest progress - merge guest into cloud
+                const mergedData = this.mergeCloudData(guestDataForMigration, cloudData);
+                this.save(mergedData);
+                await supabaseClient.saveToCloud(mergedData);
+                console.log('Cloud sync: Merged guest data with existing cloud data');
+                return { success: true, action: 'merged', data: mergedData };
             }
 
-            // Merge: take the better stats from each
-            const mergedData = this.mergeCloudData(localData, cloudData);
-
-            // Save merged data both locally and to cloud
-            this.save(mergedData);
-            await supabaseClient.saveToCloud(mergedData);
-
-            return { success: true, action: 'merged', data: mergedData };
+            // Normal sync: cloud is source of truth, replace local
+            const mergedWithDefaults = this.mergeWithDefaults(cloudData);
+            this.save(mergedWithDefaults);
+            console.log('Cloud sync: Loaded cloud data as truth');
+            return { success: true, action: 'loaded', data: mergedWithDefaults };
         } catch (error) {
             console.error('Cloud sync error:', error);
             return { success: false, error: error.message };

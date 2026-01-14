@@ -6,6 +6,12 @@ class UpgradeScene extends Phaser.Scene {
 
     create() {
         this.saveData = saveSystem.load();
+        this.sessionValid = true; // Assume valid, will be updated by validation
+        
+        // Validate session for logged-in users
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            this.validateSession();
+        }
 
         // Hide default cursor and create sword cursor
         this.input.setDefaultCursor('none');
@@ -939,6 +945,10 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     purchaseEliteDiscount(cost) {
+        if (!this.sessionValid) {
+            this.showSessionError();
+            return;
+        }
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
@@ -1097,6 +1107,10 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     purchaseUpgrade(unitKey, cost) {
+        if (!this.sessionValid) {
+            this.showSessionError();
+            return;
+        }
         const xp = this.saveData.xp || 0;
         if (xp >= cost) {
             this.saveData.xp = xp - cost;
@@ -1111,6 +1125,10 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     unlockUnit(unitKey, cost) {
+        if (!this.sessionValid) {
+            this.showSessionError();
+            return;
+        }
         const xp = this.saveData.xp || 0;
         if (xp >= cost) {
             this.saveData.xp = xp - cost;
@@ -1125,6 +1143,10 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     purchaseCastleUpgrade(upgradeKey, cost) {
+        if (!this.sessionValid) {
+            this.showSessionError();
+            return;
+        }
         const xp = this.saveData.xp || 0;
         if (xp >= cost) {
             this.saveData.xp = xp - cost;
@@ -1138,6 +1160,49 @@ class UpgradeScene extends Phaser.Scene {
         }
     }
 
+    // Validate session before allowing purchases
+    async validateSession() {
+        try {
+            const validation = await supabaseClient.validateSession();
+            
+            if (!validation.valid) {
+                this.sessionValid = false;
+                
+                if (validation.reason === 'session_conflict') {
+                    const choice = await SessionUI.showConflictDialog(this);
+                    if (choice === 'takeover') {
+                        await supabaseClient.takeoverSession();
+                        this.sessionValid = true;
+                        // Reload data from cloud after takeover
+                        const result = await saveSystem.syncWithCloud();
+                        if (result.success) {
+                            this.saveData = result.data;
+                            this.scene.restart();
+                        }
+                    }
+                } else if (validation.reason === 'session_expired') {
+                    await SessionUI.showExpiredDialog(this);
+                    this.scene.start('MenuScene');
+                }
+            }
+        } catch (error) {
+            console.error('Session validation error:', error);
+            // Fail open - allow purchases on error
+            this.sessionValid = true;
+        }
+    }
+    
+    // Show error when trying to purchase with invalid session
+    showSessionError() {
+        const errorText = this.add.text(GAME_WIDTH / 2, 100, 'Session invalid - please refresh', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#ff6b6b'
+        }).setOrigin(0.5).setDepth(1000);
+        
+        this.time.delayedCall(2000, () => errorText.destroy());
+    }
+    
     // Sync current save to cloud after purchases
     syncToCloud() {
         if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
