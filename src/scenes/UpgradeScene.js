@@ -90,19 +90,57 @@ class UpgradeScene extends Phaser.Scene {
 
     createNavigationDots() {
         this.dots = [];
-        const dotSpacing = 20;
-        const startX = GAME_WIDTH / 2 - (this.totalCards - 1) * dotSpacing / 2;
-        const y = GAME_HEIGHT - 40;
+        const pillSpacing = 28;
+        const pillWidth = 8;
+        const pillHeight = 20;
+        const x = GAME_WIDTH - 25;
+        const startY = GAME_HEIGHT / 2 - (this.totalCards - 1) * pillSpacing / 2;
 
+        // Vertical pills on right side
         for (let i = 0; i < this.totalCards; i++) {
-            const dot = this.add.circle(startX + i * dotSpacing, y, 6, i === 0 ? 0xffd700 : 0x555555);
-            dot.setInteractive({ useHandCursor: true });
-            dot.on('pointerdown', () => this.slideToCard(i));
-            this.dots.push(dot);
+            const pill = this.add.rectangle(x, startY + i * pillSpacing, pillWidth, pillHeight, i === 0 ? 0xffd700 : 0x444444);
+            pill.setStrokeStyle(1, i === 0 ? 0xffee88 : 0x666666);
+            pill.setInteractive({ useHandCursor: true });
+            pill.on('pointerdown', () => this.slideToCard(i));
+            pill.on('pointerover', () => {
+                if (i !== this.currentCardIndex) {
+                    pill.setFillStyle(0x666666);
+                }
+            });
+            pill.on('pointerout', () => {
+                if (i !== this.currentCardIndex) {
+                    pill.setFillStyle(0x444444);
+                }
+            });
+            this.dots.push(pill);
         }
 
-        // Card label below dots
-        this.cardLabel = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 15, '', {
+        // Left arrow - clickable area on left side
+        const leftArea = this.add.rectangle(35, GAME_HEIGHT / 2, 60, 300, 0x000000, 0);
+        leftArea.setInteractive({ useHandCursor: true });
+        leftArea.on('pointerdown', () => {
+            if (this.currentCardIndex > 0) this.slideToCard(this.currentCardIndex - 1);
+        });
+        this.leftArrow = this.add.text(35, GAME_HEIGHT / 2 + 40, '<', {
+            fontSize: '50px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5).setAlpha(0.3);
+
+        // Right arrow - clickable area on right side
+        const rightArea = this.add.rectangle(GAME_WIDTH - 55, GAME_HEIGHT / 2, 60, 300, 0x000000, 0);
+        rightArea.setInteractive({ useHandCursor: true });
+        rightArea.on('pointerdown', () => {
+            if (this.currentCardIndex < this.totalCards - 1) this.slideToCard(this.currentCardIndex + 1);
+        });
+        this.rightArrow = this.add.text(GAME_WIDTH - 55, GAME_HEIGHT / 2 + 40, '>', {
+            fontSize: '50px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5).setAlpha(0.3);
+
+        // Card label at bottom
+        this.cardLabel = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 25, '', {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
@@ -116,8 +154,9 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     updateDots() {
-        this.dots.forEach((dot, i) => {
-            dot.setFillStyle(i === this.currentCardIndex ? 0xffd700 : 0x555555);
+        this.dots.forEach((pill, i) => {
+            pill.setFillStyle(i === this.currentCardIndex ? 0xffd700 : 0x444444);
+            pill.setStrokeStyle(1, i === this.currentCardIndex ? 0xffee88 : 0x666666);
         });
         this.updateCardLabel();
     }
@@ -831,7 +870,7 @@ class UpgradeScene extends Phaser.Scene {
         card.add(iconText);
 
         // Title
-        const cardTitle = this.add.text(0, -50, 'ELITE\nMASTERY', {
+        const cardTitle = this.add.text(0, -50, 'HALF PRICE\nGOLD TIER', {
             fontSize: '24px',
             fontFamily: 'Arial',
             color: '#ffd700',
@@ -907,6 +946,7 @@ class UpgradeScene extends Phaser.Scene {
             }
             this.saveData.specialUpgrades.eliteDiscount = true;
             saveSystem.save(this.saveData);
+            this.syncToCloud();
 
             // Refresh scene
             this.scene.restart();
@@ -1062,6 +1102,7 @@ class UpgradeScene extends Phaser.Scene {
             this.saveData.xp = xp - cost;
             this.saveData.upgrades[unitKey].level++;
             saveSystem.save(this.saveData);
+            this.syncToCloud();
             if (typeof audioManager !== 'undefined') {
                 audioManager.playSpawn();
             }
@@ -1075,6 +1116,7 @@ class UpgradeScene extends Phaser.Scene {
             this.saveData.xp = xp - cost;
             this.saveData.upgrades[unitKey].unlocked = true;
             saveSystem.save(this.saveData);
+            this.syncToCloud();
             if (typeof audioManager !== 'undefined') {
                 audioManager.playSpawn();
             }
@@ -1088,10 +1130,22 @@ class UpgradeScene extends Phaser.Scene {
             this.saveData.xp = xp - cost;
             this.saveData.castleUpgrades[upgradeKey]++;
             saveSystem.save(this.saveData);
+            this.syncToCloud();
             if (typeof audioManager !== 'undefined') {
                 audioManager.playSpawn();
             }
             this.scene.restart();
+        }
+    }
+
+    // Sync current save to cloud after purchases
+    syncToCloud() {
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            supabaseClient.saveToCloud(this.saveData).then(result => {
+                if (result.success) {
+                    console.log('Purchase synced to cloud');
+                }
+            }).catch(err => console.warn('Cloud sync failed:', err));
         }
     }
 
