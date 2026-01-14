@@ -42,15 +42,20 @@ class Enemy extends Phaser.GameObjects.Container {
 
         this.isBoss = baseStats.isBoss || false;
 
-        // Apply boss multipliers (10x stronger!)
+        // Apply boss multipliers - scales with boss number!
+        // Boss 1 (wave 10) = 1x, Boss 2 (wave 20) = 2x, Boss 3 (wave 30) = 3x, etc.
         let healthMult = waveHealthMultiplier;
         let damageMult = waveDamageMultiplier;
         let sizeMult = 1;
 
         if (this.isBoss) {
-            healthMult *= BOSS_CONFIG.healthMultiplier;
-            damageMult *= BOSS_CONFIG.damageMultiplier;
-            sizeMult = BOSS_CONFIG.sizeMultiplier;
+            const bossNumber = Math.floor(waveNumber / BOSS_CONFIG.spawnEveryWaves);
+            this.bossNumber = bossNumber;
+
+            // Each boss is bossNumber times stronger than base boss
+            healthMult *= BOSS_CONFIG.healthMultiplier * bossNumber;
+            damageMult *= BOSS_CONFIG.damageMultiplier * bossNumber;
+            sizeMult = BOSS_CONFIG.sizeMultiplier * (1 + (bossNumber - 1) * 0.1); // Slightly bigger each time
         }
 
         this.maxHealth = Math.floor(baseStats.health * healthMult);
