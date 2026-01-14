@@ -48,6 +48,8 @@ class Enemy extends Phaser.GameObjects.Container {
         let damageMult = waveDamageMultiplier;
         let sizeMult = 1;
 
+        let attackSpeedMult = 1;
+
         if (this.isBoss) {
             const bossNumber = Math.floor(waveNumber / BOSS_CONFIG.spawnEveryWaves);
             this.bossNumber = bossNumber;
@@ -56,13 +58,17 @@ class Enemy extends Phaser.GameObjects.Container {
             healthMult *= BOSS_CONFIG.healthMultiplier * bossNumber;
             damageMult *= BOSS_CONFIG.damageMultiplier * bossNumber;
             sizeMult = BOSS_CONFIG.sizeMultiplier * (1 + (bossNumber - 1) * 0.1); // Slightly bigger each time
+
+            // Attack speed: N × 10% faster (lower ms = faster)
+            attackSpeedMult = 1 - (bossNumber * 0.1);
+            attackSpeedMult = Math.max(0.2, attackSpeedMult); // Cap at 80% reduction (5x faster max)
         }
 
         this.maxHealth = Math.floor(baseStats.health * healthMult);
         this.currentHealth = this.maxHealth;
         this.damage = Math.floor(baseStats.damage * damageMult);
         this.speed = Math.min(baseStats.speed * waveSpeedMultiplier, baseStats.speed * 1.5);
-        this.attackSpeed = baseStats.attackSpeed;
+        this.attackSpeed = Math.floor(baseStats.attackSpeed * attackSpeedMult);
         this.range = baseStats.range;
         this.isRanged = baseStats.isRanged || false;
         this.goldReward = baseStats.goldReward;
