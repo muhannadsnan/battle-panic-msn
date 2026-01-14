@@ -1874,43 +1874,43 @@ Lv.${level + 1}`;
     getWaveTip(waveNumber) {
         const tips = {
             6: {
-                icon: '🏹',
+                enemyType: 'SKELETON_ARCHER',
                 title: 'RANGED ENEMIES!',
                 message: 'Skeleton Archers are coming!\nPosition tanks in front to protect your ranged units.',
                 suggestion: 'Consider: Horsemen as fast frontline'
             },
             8: {
-                icon: '🧌',
+                enemyType: 'TROLL',
                 title: 'TROLLS INCOMING!',
                 message: 'Trolls hit HARD and have high HP!\nPeasants will die in one hit.',
                 suggestion: 'Consider: Horsemen can charge and survive'
             },
             10: {
-                icon: '🐉',
+                enemyType: 'DRAGON',
                 title: 'BOSS WAVE!',
                 message: 'A DRAGON is coming!\nExtremely high damage, ranged attacks.',
                 suggestion: 'Consider: Horsemen to tank, mix ranged DPS'
             },
             12: {
-                icon: '⚫',
+                enemyType: 'DARK_KNIGHT',
                 title: 'DARK KNIGHTS!',
                 message: 'Armored enemies with high damage!\nThey will shred weak units.',
                 suggestion: 'Consider: Multiple Archers for ranged damage'
             },
             18: {
-                icon: '😈',
+                enemyType: 'DEMON',
                 title: 'DEMONS APPROACH!',
                 message: 'Demons are brutal! High HP and damage.\nYou need a balanced army.',
                 suggestion: 'Consider: Mix Horsemen, Archers, promoted units'
             },
             20: {
-                icon: '🐉',
+                enemyType: 'DRAGON',
                 title: 'SECOND DRAGON!',
                 message: 'Another Dragon boss!\nEnemies are much stronger now.',
                 suggestion: 'Consider: Multiple Horsemen, strong ranged'
             },
             30: {
-                icon: '🐉',
+                enemyType: 'DRAGON',
                 title: 'THIRD DRAGON!',
                 message: 'Dragon boss with scaled-up enemies!\nThis will be a tough fight.',
                 suggestion: 'Consider: Max promotion units, full army'
