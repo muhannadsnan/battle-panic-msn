@@ -57,6 +57,13 @@ class CombatSystem {
                     : (UNIT_TYPES.HORSEMAN.infantryDamageReduction || 0);
                 finalDamage = Math.floor(damage * (1 - reduction));
             }
+
+            // Horseman Shield upgrade: 50% damage reduction
+            const saveData = typeof saveSystem !== 'undefined' ? saveSystem.load() : null;
+            const hasShield = saveData?.specialUpgrades?.horsemanShield || false;
+            if (hasShield) {
+                finalDamage = Math.floor(finalDamage * 0.5);
+            }
         }
         // Knight armor: gold tier peasants (lvl 4+) get 25% damage reduction
         else if (target.unitType === 'PEASANT' && target.promotionLevel >= 4) {

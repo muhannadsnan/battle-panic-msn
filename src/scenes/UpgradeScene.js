@@ -58,7 +58,8 @@ class UpgradeScene extends Phaser.Scene {
             { type: 'castle', upgrade: { key: 'health', name: 'Castle Health', desc: '+20 HP, +20/wave at L2+', icon: '❤️' } },
             { type: 'castle', upgrade: { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' } },
             { type: 'castle', upgrade: { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' } },
-            { type: 'special' }
+            { type: 'special' },
+            { type: 'horsemanShield' }
         ];
         this.totalCards = this.allCards.length;
 
@@ -78,6 +79,8 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createCastleUpgradeCard(x, y, cardData.upgrade);
             } else if (cardData.type === 'special') {
                 card = this.createSpecialUpgradeCard(x, y);
+            } else if (cardData.type === 'horsemanShield') {
+                card = this.createHorsemanShieldCard(x, y);
             }
 
             this.cardContainers.push(card);
@@ -155,7 +158,7 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     updateCardLabel() {
-        const labels = ['Peasant', 'Archer', 'Horseman', 'Health', 'Armor', 'Mining', 'Special'];
+        const labels = ['Peasant', 'Archer', 'Horseman', 'Health', 'Armor', 'Mining', 'Special', 'Shield'];
         this.cardLabel.setText(labels[this.currentCardIndex]);
     }
 
@@ -942,6 +945,103 @@ class UpgradeScene extends Phaser.Scene {
         }
 
         return card;
+    }
+
+    createHorsemanShieldCard(x, y) {
+        const card = this.add.container(x, y);
+
+        // Check if already unlocked
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const hasHorsemanShield = specialUpgrades.horsemanShield || false;
+
+        // Check requirements: horseman must be unlocked
+        const horsemanUnlocked = this.saveData.upgrades.horseman.unlocked;
+
+        const xp = this.saveData.xp || 0;
+        const shieldCost = 10;
+
+        // Background - sized for slider with blue/steel border
+        const bg = this.add.rectangle(0, 0, 260, 380, hasHorsemanShield ? 0x2a4a4a : 0x2a3a4a);
+        bg.setStrokeStyle(3, hasHorsemanShield ? 0x88ffff : 0x4488ff);
+        card.add(bg);
+
+        // Shield icon at top
+        const iconText = this.add.text(0, -120, '🛡️', {
+            fontSize: '60px'
+        }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -50, 'HORSEMAN\nSHIELD', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#4488ff',
+            fontStyle: 'bold',
+            align: 'center'
+        }).setOrigin(0.5);
+        card.add(cardTitle);
+
+        // Description
+        const desc = this.add.text(0, 15, 'Horsemen take\n50% less damage!', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        if (hasHorsemanShield) {
+            // Already unlocked
+            const unlockedText = this.add.text(0, 80, '✓ UNLOCKED', {
+                fontSize: '24px',
+                fontFamily: 'Arial',
+                color: '#88ffff',
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(unlockedText);
+        } else if (!horsemanUnlocked) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 70, 'Requirements:', {
+                fontSize: '14px',
+                fontFamily: 'Arial',
+                color: '#ffaa00',
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const req1 = this.add.text(0, 95, '✗ Unlock Horseman first', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ff8888'
+            }).setOrigin(0.5);
+            card.add(req1);
+        } else {
+            // Can purchase
+            const canAfford = xp >= shieldCost;
+            const btn = this.createCardButton(0, 100, `Unlock\n${shieldCost} XP`, () => {
+                this.purchaseHorsemanShield(shieldCost);
+            }, canAfford, 150, 55);
+            card.add(btn);
+        }
+
+        return card;
+    }
+
+    purchaseHorsemanShield(cost) {
+        if (!this.sessionValid) {
+            this.showSessionError();
+            return;
+        }
+        if (this.saveData.xp >= cost) {
+            this.saveData.xp -= cost;
+            if (!this.saveData.specialUpgrades) {
+                this.saveData.specialUpgrades = {};
+            }
+            this.saveData.specialUpgrades.horsemanShield = true;
+            saveSystem.save(this.saveData);
+            this.syncToCloud();
+
+            // Refresh scene
+            this.scene.restart();
+        }
     }
 
     purchaseEliteDiscount(cost) {

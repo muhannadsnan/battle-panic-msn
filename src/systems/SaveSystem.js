@@ -98,7 +98,8 @@ class SaveSystem {
             },
             // Special upgrades
             specialUpgrades: {
-                eliteDiscount: false  // Gold tier spawns 2 units for the cost of 1
+                eliteDiscount: false,  // Gold tier spawns 2 units for the cost of 1
+                horsemanShield: false  // Horsemen take 50% less damage (x2 tankier)
             },
             castleUpgrades: {
                 health: 1,

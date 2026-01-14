@@ -149,7 +149,21 @@ class WaveSystem {
         // Wave 6-10: 2 enemies at a time
         // Wave 11-15: 3 enemies at a time
         // Wave 16+: 4 enemies at a time
-        const burstSize = Math.min(4, 1 + Math.floor(this.currentWave / 5));
+        let burstSize = Math.min(4, 1 + Math.floor(this.currentWave / 5));
+
+        // Higher ranks spawn more enemies at once (25% more per tier)
+        // Tier 0 (Recruit) = 1x, Tier 1 (Soldier) = 1.25x, Tier 2 (Warrior) = 1.5x, etc.
+        if (typeof saveSystem !== 'undefined') {
+            const saveData = saveSystem.load();
+            const rankInfo = saveSystem.getRankInfo(saveData);
+            // Calculate tier index (0-9) from rank name
+            const tierNames = ['Recruit', 'Soldier', 'Warrior', 'Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+            const tierIndex = tierNames.indexOf(rankInfo.rank.name);
+            if (tierIndex > 0) {
+                const rankMultiplier = 1 + (tierIndex * 0.25);
+                burstSize = Math.ceil(burstSize * rankMultiplier);
+            }
+        }
 
         for (let i = 0; i < burstSize && this.enemiesToSpawn.length > 0; i++) {
             const enemyData = this.enemiesToSpawn.shift();

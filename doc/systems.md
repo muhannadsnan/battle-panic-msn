@@ -29,10 +29,16 @@ Finds the closest valid target from an array:
 Returns `true` if target is within attack range.
 
 **`dealDamage(attacker, target, damage)`**
-Applies damage to target:
-1. Calls `target.takeDamage(damage)`
-2. Plays hit sound (sword or arrow)
-3. Shows floating damage number
+Applies damage to target with armor reductions:
+1. **Horseman/Lancelot armor** - ranged/melee damage reduction
+2. **Horseman Shield upgrade** - additional 50% damage reduction (stacks)
+3. **Knight armor** - gold tier peasants get 25% damage reduction
+4. **Robinhood armor** - gold tier archers get 15% damage reduction
+5. Calls `target.takeDamage(finalDamage)`
+6. Plays hit sound (sword, arrow, or orc hit)
+
+**Horseman Shield Upgrade:**
+When `specialUpgrades.horsemanShield` is active, all horsemen take 50% less damage. This stacks multiplicatively with Lancelot's innate armor.
 
 **`dealSplashDamage(attacker, centerX, centerY, damage, radius, targets)`**
 AoE damage for area attacks:
@@ -124,12 +130,27 @@ Spawns enemies with burst spawning at higher waves:
 4. Schedules next spawn (faster at higher waves)
 
 **Burst Spawning:**
-| Wave | Enemies per burst | Spawn interval |
-|------|-------------------|----------------|
+| Wave | Base enemies per burst | Spawn interval |
+|------|------------------------|----------------|
 | 1-5 | 1 | ~1.0s |
 | 6-10 | 2 | ~0.7s |
 | 11-15 | 3 | ~0.5s |
 | 16+ | 4 | ~0.4s |
+
+**Rank-Based Spawn Scaling:**
+Higher ranked players spawn more enemies at once, making waves complete faster:
+| Rank Tier | Spawn Multiplier | Example (Wave 16+) |
+|-----------|------------------|-------------------|
+| Recruit | 1.0x | 4 enemies |
+| Soldier | 1.25x | 5 enemies |
+| Warrior | 1.5x | 6 enemies |
+| Knight | 1.75x | 7 enemies |
+| Captain | 2.0x | 8 enemies |
+| Commander | 2.25x | 9 enemies |
+| General | 2.5x | 10 enemies |
+| Champion | 2.75x | 11 enemies |
+| Legend | 3.0x | 12 enemies |
+| Immortal | 3.25x | 13 enemies |
 
 **`onEnemyKilled()`**
 Called when enemy dies:
@@ -216,6 +237,10 @@ Handles localStorage persistence for game progress with guest/user save separati
         health: 1,               // +20 HP per level (permanent) + unlocks +20 HP/wave at L2+
         armor: 1,                // -5% damage taken per level (permanent)
         goldIncome: 1            // +10% mining speed per level (permanent) - costs 2x XP!
+    },
+    specialUpgrades: {
+        eliteDiscount: false,    // Gold tier units spawn 2 for 1 (requires all units L5+)
+        horsemanShield: false    // Horsemen take 50% less damage (requires horseman unlocked)
     },
     // Legacy stats - NEVER reset, persist through account deletion
     legacy: {
