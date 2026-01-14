@@ -14,6 +14,10 @@ class SupabaseClient {
         // Session management for single-device enforcement
         this.localSessionId = sessionStorage.getItem('battlePanicSessionId') || null;
         this.SESSION_TIMEOUT_HOURS = 2; // Auto-takeover after 2 hours
+
+        // Real-time subscription
+        this.saveSubscription = null;
+        this.lastKnownXP = null;
     }
 
     // Initialize with Supabase credentials
@@ -411,6 +415,58 @@ class SupabaseClient {
     // Check if we have a valid local session
     hasValidLocalSession() {
         return this.localSessionId !== null;
+    }
+
+    // Subscribe to real-time changes on saves table (for XP purchase notifications)
+    subscribeToSaves() {
+        if (!this.initialized || !this.user || this.saveSubscription) return;
+
+        // Store current XP to detect changes
+        const currentData = saveSystem.load();
+        this.lastKnownXP = currentData.xp || 0;
+
+        this.saveSubscription = this.supabase
+            .channel('saves-changes')
+            .on('postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'saves',
+                    filter: `user_id=eq.${this.user.id}`
+                },
+                (payload) => {
+                    console.log('Real-time save update received:', payload);
+                    const newXP = payload.new?.save_data?.xp;
+
+                    // Check if XP increased (external purchase)
+                    if (newXP !== undefined && newXP > this.lastKnownXP) {
+                        const xpGained = newXP - this.lastKnownXP;
+                        console.log(`XP increased externally: +${xpGained}`);
+                        this.lastKnownXP = newXP;
+
+                        // Dispatch event for game to handle
+                        window.dispatchEvent(new CustomEvent('xpPurchased', {
+                            detail: { newXP, xpGained }
+                        }));
+                    }
+                }
+            )
+            .subscribe((status) => {
+                console.log('Saves subscription status:', status);
+            });
+    }
+
+    // Unsubscribe from real-time changes
+    unsubscribeFromSaves() {
+        if (this.saveSubscription) {
+            this.supabase.removeChannel(this.saveSubscription);
+            this.saveSubscription = null;
+        }
+    }
+
+    // Update lastKnownXP (call after local XP changes)
+    updateLastKnownXP(xp) {
+        this.lastKnownXP = xp;
     }
 }
 

@@ -69,6 +69,20 @@ class MenuScene extends Phaser.Scene {
             this.validateAndSync();
         }
 
+        // Listen for XP purchases (real-time from Stripe webhook)
+        this.xpPurchaseHandler = (event) => {
+            const { newXP, xpGained } = event.detail;
+            console.log(`XP purchased! +${xpGained} XP`);
+            this.showXPPurchaseNotification(xpGained);
+            // Reload save data and restart scene to show new XP
+            this.time.delayedCall(2000, () => {
+                saveSystem.syncWithCloud().then(() => {
+                    this.scene.restart();
+                });
+            });
+        };
+        window.addEventListener('xpPurchased', this.xpPurchaseHandler);
+
         // Load save data for stats display
         const saveData = saveSystem.load();
         const rankInfo = saveSystem.getRankInfo(saveData);
@@ -2341,6 +2355,8 @@ class MenuScene extends Phaser.Scene {
                 const result = await saveSystem.syncWithCloud(guestData);
                 if (result.success) {
                     console.log('Cloud sync completed:', result.action);
+                    // Subscribe to real-time save updates (for XP purchases)
+                    supabaseClient.subscribeToSaves();
                     this.scene.restart();
                 }
             } else if (validation.canAutoTakeover) {
@@ -2350,6 +2366,7 @@ class MenuScene extends Phaser.Scene {
                 const guestData = supabaseClient.getPendingGuestData();
                 const result = await saveSystem.syncWithCloud(guestData);
                 if (result.success) {
+                    supabaseClient.subscribeToSaves();
                     this.scene.restart();
                 }
             } else if (validation.reason === 'session_conflict') {
@@ -2364,6 +2381,7 @@ class MenuScene extends Phaser.Scene {
                     const result = await saveSystem.syncWithCloud(guestData);
                     console.log('Sync result:', result);
                     if (result.success) {
+                        supabaseClient.subscribeToSaves();
                         this.scene.restart();
                     }
                 } else {
@@ -2391,6 +2409,48 @@ class MenuScene extends Phaser.Scene {
             alpha: 0,
             delay: 5000,
             duration: 1000
+        });
+    }
+
+    // Show XP purchase notification
+    showXPPurchaseNotification(xpGained) {
+        const width = this.cameras.main.width;
+
+        // Create notification container
+        const container = this.add.container(width / 2, 120);
+        container.setDepth(9999);
+
+        // Background
+        const bg = this.add.rectangle(0, 0, 280, 60, 0x228B22, 0.95);
+        bg.setStrokeStyle(3, 0x44FF44);
+        container.add(bg);
+
+        // Text
+        const text = this.add.text(0, 0, `+${xpGained} XP Purchased!`, {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        container.add(text);
+
+        // Animate in
+        container.setScale(0);
+        this.tweens.add({
+            targets: container,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.easeOut'
+        });
+
+        // Animate out after delay
+        this.tweens.add({
+            targets: container,
+            alpha: 0,
+            y: 80,
+            delay: 1500,
+            duration: 500,
+            onComplete: () => container.destroy()
         });
     }
 
