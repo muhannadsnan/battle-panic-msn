@@ -1120,7 +1120,8 @@ class UpgradeScene extends Phaser.Scene {
             if (typeof audioManager !== 'undefined') {
                 audioManager.playSpawn();
             }
-            this.scene.restart();
+            const newLevel = this.saveData.upgrades[unitKey].level;
+            this.showUpgradeNotification(`${unitKey.charAt(0).toUpperCase() + unitKey.slice(1)} → Level ${newLevel}`);
         }
     }
 
@@ -1138,7 +1139,7 @@ class UpgradeScene extends Phaser.Scene {
             if (typeof audioManager !== 'undefined') {
                 audioManager.playSpawn();
             }
-            this.scene.restart();
+            this.showUpgradeNotification(`${unitKey.charAt(0).toUpperCase() + unitKey.slice(1)} Unlocked!`);
         }
     }
 
@@ -1156,8 +1157,44 @@ class UpgradeScene extends Phaser.Scene {
             if (typeof audioManager !== 'undefined') {
                 audioManager.playSpawn();
             }
-            this.scene.restart();
+            const newLevel = this.saveData.castleUpgrades[upgradeKey];
+            const names = { health: 'Castle Health', armor: 'Castle Armor', goldIncome: 'Mining Speed' };
+            this.showUpgradeNotification(`${names[upgradeKey]} → Level ${newLevel}`);
         }
+    }
+
+    // Show upgrade success notification (green popup)
+    showUpgradeNotification(message) {
+        const container = this.add.container(GAME_WIDTH / 2, 120);
+        container.setDepth(9999);
+
+        // Background
+        const bg = this.add.rectangle(0, 0, 300, 60, 0x228B22, 0.95);
+        bg.setStrokeStyle(3, 0x44FF44);
+        container.add(bg);
+
+        // Text
+        const text = this.add.text(0, 0, message, {
+            fontSize: '22px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        container.add(text);
+
+        // Animate in
+        container.setScale(0);
+        this.tweens.add({
+            targets: container,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.easeOut'
+        });
+
+        // Restart scene after notification
+        this.time.delayedCall(800, () => {
+            this.scene.restart();
+        });
     }
 
     // Validate session before allowing purchases
