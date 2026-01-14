@@ -1012,44 +1012,79 @@ class Unit extends Phaser.GameObjects.Container {
 
     createPromotionBadge() {
         // Badge appears to the LEFT of the unit
-        // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
-        // Military style: V-shaped chevrons stacked vertically
+        // Level 1-2: Silver chevrons, Level 3: Silver star
+        // Level 4-5: Gold chevrons, Level 6: Gold star
         const badgeContainer = this.scene.add.container(-22, -28);
         this.add(badgeContainer);
 
         const isGold = this.promotionLevel > 3;
-        const numChevrons = isGold ? this.promotionLevel - 3 : this.promotionLevel;
+        const levelInTier = isGold ? this.promotionLevel - 3 : this.promotionLevel;
         const color = isGold ? 0xffd700 : 0xc0c0c0;
         const borderColor = isGold ? 0x8b6914 : 0x606060;
 
-        // Draw stacked chevrons (open V shapes pointing down, like military rank)
-        // 2x size
-        const chevronWidth = 16;
-        const chevronHeight = 8;
-        const spacing = 8;
+        // Level 3 or 6: Show a star instead of 3 chevrons
+        if (levelInTier === 3) {
+            this.drawStar(badgeContainer, 8, 0, 10, color, borderColor);
+        } else {
+            // Draw stacked chevrons (open V shapes pointing down, like military rank)
+            const chevronWidth = 16;
+            const chevronHeight = 8;
+            const spacing = 8;
 
-        for (let i = 0; i < numChevrons; i++) {
-            const graphics = this.scene.add.graphics();
-            const offsetY = -i * spacing; // Stack upward
+            for (let i = 0; i < levelInTier; i++) {
+                const graphics = this.scene.add.graphics();
+                const offsetY = -i * spacing; // Stack upward
 
-            // Draw border first (thicker, darker)
-            graphics.lineStyle(6, borderColor, 1);
-            graphics.beginPath();
-            graphics.moveTo(0, offsetY);
-            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
-            graphics.lineTo(chevronWidth, offsetY);
-            graphics.strokePath();
+                // Draw border first (thicker, darker)
+                graphics.lineStyle(6, borderColor, 1);
+                graphics.beginPath();
+                graphics.moveTo(0, offsetY);
+                graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+                graphics.lineTo(chevronWidth, offsetY);
+                graphics.strokePath();
 
-            // Draw main chevron on top
-            graphics.lineStyle(3, color, 1);
-            graphics.beginPath();
-            graphics.moveTo(0, offsetY);
-            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
-            graphics.lineTo(chevronWidth, offsetY);
-            graphics.strokePath();
+                // Draw main chevron on top
+                graphics.lineStyle(3, color, 1);
+                graphics.beginPath();
+                graphics.moveTo(0, offsetY);
+                graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+                graphics.lineTo(chevronWidth, offsetY);
+                graphics.strokePath();
 
-            badgeContainer.add(graphics);
+                badgeContainer.add(graphics);
+            }
         }
+    }
+
+    drawStar(container, x, y, size, fillColor, borderColor) {
+        const graphics = this.scene.add.graphics();
+        const points = [];
+        const spikes = 5;
+        const outerRadius = size;
+        const innerRadius = size * 0.5;
+
+        for (let i = 0; i < spikes * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = (i * Math.PI / spikes) - Math.PI / 2;
+            points.push({
+                x: x + Math.cos(angle) * radius,
+                y: y + Math.sin(angle) * radius
+            });
+        }
+
+        // Draw border
+        graphics.lineStyle(3, borderColor, 1);
+        graphics.fillStyle(fillColor, 1);
+        graphics.beginPath();
+        graphics.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            graphics.lineTo(points[i].x, points[i].y);
+        }
+        graphics.closePath();
+        graphics.fillPath();
+        graphics.strokePath();
+
+        container.add(graphics);
     }
 }
 

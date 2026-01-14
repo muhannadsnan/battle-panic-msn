@@ -2468,12 +2468,12 @@ Lv.${level + 1}`;
     }
 
     getPromotionBadgeInfo(promotionLevel) {
-        // Returns {color: 'silver'|'gold', signs: 1-3}
+        // Returns {color: 'silver'|'gold', signs: 1-3, isStar: bool}
         if (promotionLevel <= 0) return null;
         if (promotionLevel <= 3) {
-            return { color: 'silver', signs: promotionLevel };
+            return { color: 'silver', signs: promotionLevel, isStar: promotionLevel === 3 };
         } else {
-            return { color: 'gold', signs: promotionLevel - 3 };
+            return { color: 'gold', signs: promotionLevel - 3, isStar: promotionLevel === 6 };
         }
     }
 
@@ -2496,7 +2496,8 @@ Lv.${level + 1}`;
         const badgeInfo = this.getPromotionBadgeInfo(level);
         const unitName = UNIT_TYPES[unitType].name;
         const color = badgeInfo.color === 'gold' ? '#ffd700' : '#c0c0c0';
-        const signs = '▲'.repeat(badgeInfo.signs);  // Triangle chevrons
+        // Level 3 and 6 show a star, others show chevrons
+        const signs = badgeInfo.isStar ? '★' : '▲'.repeat(badgeInfo.signs);
 
         // Position right below top bar
         const yPos = 70;

@@ -535,40 +535,45 @@ class UnitButton extends Phaser.GameObjects.Container {
         }
 
         // Determine badge appearance
-        // Level 1-3: Silver chevrons, Level 4-6: Gold chevrons
-        // Military style: V-shaped chevrons stacked vertically (matching unit badges)
+        // Level 1-2: Silver chevrons, Level 3: Silver star
+        // Level 4-5: Gold chevrons, Level 6: Gold star
         const isGold = level > 3;
-        const numChevrons = isGold ? level - 3 : level;
+        const levelInTier = isGold ? level - 3 : level;
         const color = isGold ? 0xffd700 : 0xc0c0c0;
         const borderColor = isGold ? 0x8b6914 : 0x606060;
 
-        // Draw stacked chevrons (open V shapes pointing down, like military rank)
-        // Scaled down from unit badges (unit uses 16/8/8, button uses 12/6/6)
-        const chevronWidth = 12;
-        const chevronHeight = 6;
-        const spacing = 6;
+        // Level 3 or 6: Show a star instead of 3 chevrons
+        if (levelInTier === 3) {
+            this.drawButtonStar(6, -4, 8, color, borderColor);
+        } else {
+            // Draw stacked chevrons (open V shapes pointing down, like military rank)
+            // Scaled down from unit badges (unit uses 16/8/8, button uses 12/6/6)
+            const chevronWidth = 12;
+            const chevronHeight = 6;
+            const spacing = 6;
 
-        for (let i = 0; i < numChevrons; i++) {
-            const graphics = this.scene.add.graphics();
-            const offsetY = -i * spacing; // Stack upward
+            for (let i = 0; i < levelInTier; i++) {
+                const graphics = this.scene.add.graphics();
+                const offsetY = -i * spacing; // Stack upward
 
-            // Draw border first (thicker, darker) - matching unit style
-            graphics.lineStyle(4, borderColor, 1);
-            graphics.beginPath();
-            graphics.moveTo(0, offsetY);
-            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
-            graphics.lineTo(chevronWidth, offsetY);
-            graphics.strokePath();
+                // Draw border first (thicker, darker) - matching unit style
+                graphics.lineStyle(4, borderColor, 1);
+                graphics.beginPath();
+                graphics.moveTo(0, offsetY);
+                graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+                graphics.lineTo(chevronWidth, offsetY);
+                graphics.strokePath();
 
-            // Draw main chevron on top (thinner, brighter) - matching unit style
-            graphics.lineStyle(2, color, 1);
-            graphics.beginPath();
-            graphics.moveTo(0, offsetY);
-            graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
-            graphics.lineTo(chevronWidth, offsetY);
-            graphics.strokePath();
+                // Draw main chevron on top (thinner, brighter) - matching unit style
+                graphics.lineStyle(2, color, 1);
+                graphics.beginPath();
+                graphics.moveTo(0, offsetY);
+                graphics.lineTo(chevronWidth / 2, offsetY + chevronHeight);
+                graphics.lineTo(chevronWidth, offsetY);
+                graphics.strokePath();
 
-            this.promotionBadgeContainer.add(graphics);
+                this.promotionBadgeContainer.add(graphics);
+            }
         }
 
         this.promotionBadgeContainer.setVisible(true);
@@ -582,5 +587,36 @@ class UnitButton extends Phaser.GameObjects.Container {
             yoyo: true,
             ease: 'Bounce.easeOut'
         });
+    }
+
+    drawButtonStar(x, y, size, fillColor, borderColor) {
+        const graphics = this.scene.add.graphics();
+        const points = [];
+        const spikes = 5;
+        const outerRadius = size;
+        const innerRadius = size * 0.5;
+
+        for (let i = 0; i < spikes * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = (i * Math.PI / spikes) - Math.PI / 2;
+            points.push({
+                x: x + Math.cos(angle) * radius,
+                y: y + Math.sin(angle) * radius
+            });
+        }
+
+        // Draw border
+        graphics.lineStyle(2, borderColor, 1);
+        graphics.fillStyle(fillColor, 1);
+        graphics.beginPath();
+        graphics.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            graphics.lineTo(points[i].x, points[i].y);
+        }
+        graphics.closePath();
+        graphics.fillPath();
+        graphics.strokePath();
+
+        this.promotionBadgeContainer.add(graphics);
     }
 }
