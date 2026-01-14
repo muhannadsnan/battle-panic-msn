@@ -50,7 +50,7 @@ const UNIT_TYPES = {
         infantryDamageReduction: 0.4,  // Takes 40% less damage from melee (armor + shield)
         rangedDamageReduction: 0.2,    // Takes 20% less damage from ranged (helmet + speed)
         // Gold tier (lvl 4+) becomes Lancelot (legendary knight)
-        lancelotSpeedBonus: 1.25,             // 25% faster
+        lancelotSpeedBonus: 2.0,              // 2x speed!
         lancelotDamageBonus: 1.2,             // 20% more damage
         lancelotMeleeArmor: 0.5,              // 50% melee reduction (up from 40%)
         lancelotRangedArmor: 0.3,             // 30% ranged reduction (up from 20%)
