@@ -122,23 +122,17 @@ class MenuScene extends Phaser.Scene {
             this.showTipsPanel();
         });
 
-        // Buy XP button (bottom left) - hide on third-party sites
-        if (!this.checkIfEmbedded()) {
-            this.createBuyXPButton(100, height - 60);
-        }
+        // Buy XP button (bottom left)
+        this.createBuyXPButton(100, height - 60);
 
-        // Buy me a coffee button (bottom right) - hide on third-party sites
-        if (!this.checkIfEmbedded()) {
-            this.createCoffeeButton(width - 100, height - 60);
-        }
+        // Buy me a coffee button (bottom right)
+        this.createCoffeeButton(width - 100, height - 60);
 
         // Settings gear icon (top left corner)
         this.createSettingsGear(40, 40);
 
-        // Login/Profile button (top right corner) - hide on third-party sites
-        if (!this.checkIfEmbedded()) {
-            this.createLoginButton(width - 50, 40);
-        }
+        // Login/Profile button (top right corner)
+        this.createLoginButton(width - 50, 40);
 
         // Version (bottom left, under Buy XP button) - white color
         this.add.text(100, height - 18, GAME_VERSION, {
