@@ -133,29 +133,28 @@ class UpgradeScene extends Phaser.Scene {
 
     createNavigationDots() {
         this.dots = [];
-        const pillSpacing = 28;
-        const pillWidth = 8;
-        const pillHeight = 20;
-        const x = GAME_WIDTH - 25;
-        const startY = GAME_HEIGHT / 2 - (this.totalCards - 1) * pillSpacing / 2;
+        const dotSpacing = 20;
+        const dotSize = 10;
+        const y = GAME_HEIGHT - 50;
+        const startX = GAME_WIDTH / 2 - (this.totalCards - 1) * dotSpacing / 2;
 
-        // Vertical pills on right side
+        // Horizontal dots at bottom
         for (let i = 0; i < this.totalCards; i++) {
-            const pill = this.add.rectangle(x, startY + i * pillSpacing, pillWidth, pillHeight, i === 0 ? 0xffd700 : 0x444444);
-            pill.setStrokeStyle(1, i === 0 ? 0xffee88 : 0x666666);
-            pill.setInteractive({ useHandCursor: true });
-            pill.on('pointerdown', () => this.slideToCard(i));
-            pill.on('pointerover', () => {
+            const dot = this.add.circle(startX + i * dotSpacing, y, dotSize / 2, i === 0 ? 0xffd700 : 0x444444);
+            dot.setStrokeStyle(1, i === 0 ? 0xffee88 : 0x666666);
+            dot.setInteractive({ useHandCursor: true });
+            dot.on('pointerdown', () => this.slideToCard(i));
+            dot.on('pointerover', () => {
                 if (i !== this.currentCardIndex) {
-                    pill.setFillStyle(0x666666);
+                    dot.setFillStyle(0x666666);
                 }
             });
-            pill.on('pointerout', () => {
+            dot.on('pointerout', () => {
                 if (i !== this.currentCardIndex) {
-                    pill.setFillStyle(0x444444);
+                    dot.setFillStyle(0x444444);
                 }
             });
-            this.dots.push(pill);
+            this.dots.push(dot);
         }
 
         // Left arrow - visible button
@@ -190,8 +189,8 @@ class UpgradeScene extends Phaser.Scene {
         this.rightArrow.on('pointerover', () => this.rightArrow.setAlpha(1));
         this.rightArrow.on('pointerout', () => this.rightArrow.setAlpha(0.6));
 
-        // Card label at bottom
-        this.cardLabel = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 25, '', {
+        // Card label at bottom (above dots)
+        this.cardLabel = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 75, '', {
             fontSize: '16px',
             fontFamily: 'Arial',
             color: '#888888'
@@ -1389,34 +1388,34 @@ class UpgradeScene extends Phaser.Scene {
         const cost = 20; // XP cost
 
         // Background - red/orange theme for emergency
-        const bg = this.add.rectangle(0, 0, this.cardWidth, this.cardHeight, 0x3a2a1a);
+        const bg = this.add.rectangle(0, 0, 260, 380, 0x3a2a1a);
         bg.setStrokeStyle(3, isPurchased ? 0xffd700 : 0xff6600);
         card.add(bg);
 
         // Icon
-        const icon = this.add.text(0, -100, '🚨', { fontSize: '64px' }).setOrigin(0.5);
+        const icon = this.add.text(0, -120, '🚨', { fontSize: '60px' }).setOrigin(0.5);
         card.add(icon);
 
         // Title
-        const title = this.add.text(0, -30, 'EMERGENCY\nREINFORCE', {
-            fontSize: '28px', fontFamily: 'Arial', color: '#ff8844', fontStyle: 'bold', align: 'center'
+        const title = this.add.text(0, -50, 'EMERGENCY\nREINFORCE', {
+            fontSize: '22px', fontFamily: 'Arial', color: '#ff8844', fontStyle: 'bold', align: 'center'
         }).setOrigin(0.5);
         card.add(title);
 
         // Description
-        const desc = this.add.text(0, 40, 'When castle HP drops\nbelow 50%, auto-spawn\nreinforcements (1x/battle)', {
-            fontSize: '18px', fontFamily: 'Arial', color: '#cccccc', align: 'center'
+        const desc = this.add.text(0, 20, 'When castle HP drops\nbelow 50%, auto-spawn\nreinforcements (1x/battle)', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#cccccc', align: 'center'
         }).setOrigin(0.5);
         card.add(desc);
 
         if (isPurchased) {
-            const owned = this.add.text(0, 120, '✓ UNLOCKED', {
-                fontSize: '24px', fontFamily: 'Arial', color: '#4ade80', fontStyle: 'bold'
+            const owned = this.add.text(0, 80, '✓ UNLOCKED', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#88ff88', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(owned);
         } else {
             const canAfford = xp >= cost;
-            const btn = this.createCardButton(0, 120, `Unlock\n${cost} XP`, () => {
+            const btn = this.createCardButton(0, 100, `Unlock\n${cost} XP`, () => {
                 this.purchaseEmergencyReinforcement(cost);
             }, canAfford, 150, 55);
             card.add(btn);
@@ -1454,17 +1453,17 @@ class UpgradeScene extends Phaser.Scene {
         const isMaxLevel = currentLevel >= maxLevel;
 
         // Background - blue/purple tactical theme
-        const bg = this.add.rectangle(0, 0, this.cardWidth, this.cardHeight, 0x2a2a4a);
-        bg.setStrokeStyle(3, isMaxLevel ? 0xffd700 : 0x6666ff);
+        const bg = this.add.rectangle(0, 0, 260, 380, 0x2a2a4a);
+        bg.setStrokeStyle(3, isMaxLevel ? 0x88ff88 : 0x6666ff);
         card.add(bg);
 
         // Icon
-        const icon = this.add.text(0, -100, '🧠', { fontSize: '64px' }).setOrigin(0.5);
+        const icon = this.add.text(0, -120, '🧠', { fontSize: '60px' }).setOrigin(0.5);
         card.add(icon);
 
         // Title
-        const title = this.add.text(0, -30, 'SMARTER\nUNITS', {
-            fontSize: '28px', fontFamily: 'Arial', color: '#8888ff', fontStyle: 'bold', align: 'center'
+        const title = this.add.text(0, -50, 'SMARTER\nUNITS', {
+            fontSize: '22px', fontFamily: 'Arial', color: '#8888ff', fontStyle: 'bold', align: 'center'
         }).setOrigin(0.5);
         card.add(title);
 
@@ -1478,26 +1477,26 @@ class UpgradeScene extends Phaser.Scene {
         ];
         const nextDesc = currentLevel < maxLevel ? levelDescs[currentLevel] : 'All groups active';
 
-        // Description
-        const desc = this.add.text(0, 30, `Units form defense groups\n${nextDesc}`, {
-            fontSize: '16px', fontFamily: 'Arial', color: '#cccccc', align: 'center'
-        }).setOrigin(0.5);
-        card.add(desc);
-
         // Level indicator
-        const levelText = this.add.text(0, 75, `Level ${currentLevel}/${maxLevel}`, {
-            fontSize: '20px', fontFamily: 'Arial', color: '#aaaaaa', fontStyle: 'bold'
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
         }).setOrigin(0.5);
         card.add(levelText);
 
+        // Description
+        const desc = this.add.text(0, 40, `Units form defense groups\n${nextDesc}`, {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
+        }).setOrigin(0.5);
+        card.add(desc);
+
         if (isMaxLevel) {
-            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+            const maxText = this.add.text(0, 100, 'MAX LEVEL', {
                 fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(maxText);
         } else {
             const canAfford = xp >= cost;
-            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+            const btn = this.createCardButton(0, 100, `Upgrade\n${cost} XP`, () => {
                 this.purchaseMultiLevelUpgrade('smarterUnits', cost, maxLevel);
             }, canAfford, 150, 55);
             card.add(btn);
