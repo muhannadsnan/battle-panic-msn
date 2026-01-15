@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.31.5';
+const GAME_VERSION = 'v1.35.4';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
