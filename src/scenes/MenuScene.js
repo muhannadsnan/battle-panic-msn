@@ -141,10 +141,9 @@ class MenuScene extends Phaser.Scene {
             color: '#ffffff'
         }).setOrigin(0.5, 0);
 
-        // Show "Play on Official Site" button if not on official domain
-        const officialDomain = 'battle-panic-msn.netlify.app';
-        const isOfficialSite = window.location.hostname === officialDomain || window.location.hostname === 'localhost';
-        if (!isOfficialSite) {
+        // Show "Play on Official Site" button if embedded on another site (iframe)
+        const isEmbedded = this.checkIfEmbedded();
+        if (isEmbedded) {
             this.createOfficialSiteButton(width / 2, height - 35);
         }
     }
@@ -192,6 +191,24 @@ class MenuScene extends Phaser.Scene {
         });
 
         return container;
+    }
+
+    checkIfEmbedded() {
+        // Check if we're in an iframe on a different domain
+        try {
+            // If we're not in an iframe, window.self === window.top
+            if (window.self === window.top) {
+                return false;
+            }
+            // We're in an iframe - try to access parent location
+            // This will throw an error if cross-origin (embedded on different site)
+            const parentHost = window.top.location.hostname;
+            // If we can access it and it's the same domain, not embedded externally
+            return parentHost !== window.location.hostname;
+        } catch (e) {
+            // Cross-origin error = we're embedded on another site
+            return true;
+        }
     }
 
     createButton(x, y, text, callback) {
