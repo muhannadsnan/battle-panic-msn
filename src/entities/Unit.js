@@ -125,30 +125,69 @@ class Unit extends Phaser.GameObjects.Container {
         const baseX = CASTLE_CONFIG.defenseLineX;
         const minY = CASTLE_CONFIG.defenseMinY;
         const maxY = CASTLE_CONFIG.defenseMaxY;
+        const midY = (minY + maxY) / 2;
 
-        // Position units based on their role
-        // Ranged units stay further back (lower X, closer to castle)
-        // Melee units form the front line (higher X, toward enemies)
+        // Get smarter units upgrade level (0-5)
+        const smarterLevel = this.scene.saveData?.specialUpgrades?.smarterUnits || 0;
+
+        // Define defense groups based on upgrade level
+        // Level 0: Single default group
+        // Level 1: Castle group (close to castle)
+        // Level 2: + Top group
+        // Level 3: + Bottom group
+        // Level 4: + Middle group
+        // Level 5: + Front group (further right)
+        const groups = [];
+
+        // Base group (always available) - near castle
+        groups.push({ xOffset: 0, yMin: minY, yMax: maxY, name: 'castle' });
+
+        if (smarterLevel >= 1) {
+            // Castle group already added as base
+        }
+        if (smarterLevel >= 2) {
+            // Top group - upper portion of screen
+            groups.push({ xOffset: 40, yMin: minY, yMax: minY + 100, name: 'top' });
+        }
+        if (smarterLevel >= 3) {
+            // Bottom group - lower portion of screen
+            groups.push({ xOffset: 40, yMin: maxY - 100, yMax: maxY, name: 'bottom' });
+        }
+        if (smarterLevel >= 4) {
+            // Middle group - center of screen
+            groups.push({ xOffset: 60, yMin: midY - 60, yMax: midY + 60, name: 'middle' });
+        }
+        if (smarterLevel >= 5) {
+            // Front group - further toward enemies
+            groups.push({ xOffset: 120, yMin: minY + 50, yMax: maxY - 50, name: 'front' });
+        }
+
+        // Pick a random group for this unit
+        const group = groups[Phaser.Math.Between(0, groups.length - 1)];
+
+        // Position units based on their role within the group
         const type = this.unitType.toUpperCase();
 
         if (this.isRanged) {
-            // Ranged units: Archers stay behind
-            // Position them 30-60px behind the defense line
-            this.defenseX = baseX - Phaser.Math.Between(30, 60);
-            this.defenseY = Phaser.Math.Between(minY, maxY);
+            // Ranged units: stay behind in their group
+            this.defenseX = baseX - Phaser.Math.Between(30, 60) + group.xOffset;
+            this.defenseY = Phaser.Math.Between(group.yMin, group.yMax);
         } else {
             // Melee units form front line based on their tankiness
             switch (type) {
                 case 'HORSEMAN':
-                    // Horsemen are cavalry - charge to front
-                    this.defenseX = baseX + Phaser.Math.Between(50, 80);
-                    this.defenseY = Phaser.Math.Between(minY + 20, maxY - 20);
+                    // Horsemen are cavalry - charge to front of group
+                    this.defenseX = baseX + Phaser.Math.Between(50, 80) + group.xOffset;
+                    this.defenseY = Phaser.Math.Between(
+                        Math.max(group.yMin, minY + 20),
+                        Math.min(group.yMax, maxY - 20)
+                    );
                     break;
                 case 'PEASANT':
                 default:
-                    // Peasants - middle ground, not too far front
-                    this.defenseX = baseX + Phaser.Math.Between(10, 40);
-                    this.defenseY = Phaser.Math.Between(minY, maxY);
+                    // Peasants - middle ground within group
+                    this.defenseX = baseX + Phaser.Math.Between(10, 40) + group.xOffset;
+                    this.defenseY = Phaser.Math.Between(group.yMin, group.yMax);
                     break;
             }
         }

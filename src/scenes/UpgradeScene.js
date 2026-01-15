@@ -70,7 +70,8 @@ class UpgradeScene extends Phaser.Scene {
             { type: 'archerPromoSkip' },
             { type: 'horsemanPromoSkip' },
             { type: 'castleExtension' },
-            { type: 'emergencyReinforcement' }
+            { type: 'emergencyReinforcement' },
+            { type: 'smarterUnits' }
         ];
         this.totalCards = this.allCards.length;
 
@@ -112,6 +113,8 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createMultiLevelCard(x, y, 'castleExtension', '🏰', 'CASTLE\nEXTENSION', '+5 max level', 10, 5);
             } else if (cardData.type === 'emergencyReinforcement') {
                 card = this.createEmergencyReinforcementCard(x, y);
+            } else if (cardData.type === 'smarterUnits') {
+                card = this.createSmarterUnitsCard(x, y);
             }
 
             this.cardContainers.push(card);
@@ -200,7 +203,7 @@ class UpgradeScene extends Phaser.Scene {
         const labels = [
             'Peasant', 'Archer', 'Horseman', 'Health', 'Armor', 'Mining', 'Special', 'Shield',
             'Prod Speed', 'Prod Cost', 'Unit Speed', 'Reinforce', 'Reinf Lvl',
-            'Peasant Skip', 'Archer Skip', 'Horse Skip', 'Castle Ext', 'Emergency'
+            'Peasant Skip', 'Archer Skip', 'Horse Skip', 'Castle Ext', 'Emergency', 'Tactics'
         ];
         this.cardLabel.setText(labels[this.currentCardIndex] || '');
     }
@@ -1439,6 +1442,68 @@ class UpgradeScene extends Phaser.Scene {
             // Refresh scene
             this.scene.restart();
         }
+    }
+
+    createSmarterUnitsCard(x, y) {
+        const card = this.add.container(x, y);
+        const xp = this.saveData.xp || 0;
+        const currentLevel = this.saveData.specialUpgrades?.smarterUnits || 0;
+        const maxLevel = 5;
+        const costPerLevel = 5;
+        const cost = costPerLevel;
+        const isMaxLevel = currentLevel >= maxLevel;
+
+        // Background - blue/purple tactical theme
+        const bg = this.add.rectangle(0, 0, this.cardWidth, this.cardHeight, 0x2a2a4a);
+        bg.setStrokeStyle(3, isMaxLevel ? 0xffd700 : 0x6666ff);
+        card.add(bg);
+
+        // Icon
+        const icon = this.add.text(0, -100, '🧠', { fontSize: '64px' }).setOrigin(0.5);
+        card.add(icon);
+
+        // Title
+        const title = this.add.text(0, -30, 'SMARTER\nUNITS', {
+            fontSize: '28px', fontFamily: 'Arial', color: '#8888ff', fontStyle: 'bold', align: 'center'
+        }).setOrigin(0.5);
+        card.add(title);
+
+        // Level descriptions
+        const levelDescs = [
+            'Lv1: Castle group',
+            'Lv2: + Top group',
+            'Lv3: + Bottom group',
+            'Lv4: + Middle group',
+            'Lv5: + Front group'
+        ];
+        const nextDesc = currentLevel < maxLevel ? levelDescs[currentLevel] : 'All groups active';
+
+        // Description
+        const desc = this.add.text(0, 30, `Units form defense groups\n${nextDesc}`, {
+            fontSize: '16px', fontFamily: 'Arial', color: '#cccccc', align: 'center'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        // Level indicator
+        const levelText = this.add.text(0, 75, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#aaaaaa', fontStyle: 'bold'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(maxText);
+        } else {
+            const canAfford = xp >= cost;
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                this.purchaseMultiLevelUpgrade('smarterUnits', cost, maxLevel);
+            }, canAfford, 150, 55);
+            card.add(btn);
+        }
+
+        return card;
     }
 
     purchaseEliteDiscount(cost) {

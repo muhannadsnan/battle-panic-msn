@@ -110,7 +110,8 @@ class SaveSystem {
                 archerPromoSkip: 0,    // 0-5: Skip promotion tiers for archers
                 horsemanPromoSkip: 0,  // 0-5: Skip promotion tiers for horsemen
                 castleExtension: 0,    // 0-10: +5 castle max level per level
-                emergencyReinforcement: false // One-time emergency when castle HP < 50%
+                emergencyReinforcement: false, // One-time emergency when castle HP < 50%
+                smarterUnits: 0        // 0-5: Units form multiple defense groups
             },
             castleUpgrades: {
                 health: 1,

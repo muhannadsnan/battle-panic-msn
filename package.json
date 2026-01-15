@@ -1,6 +1,6 @@
 {
   "name": "battle-panic-clone",
-  "version": "1.30.0",
+  "version": "1.31.0",
   "description": "A Battle Panic clone built with Phaser 3",
   "main": "src/main.js",
   "scripts": {
