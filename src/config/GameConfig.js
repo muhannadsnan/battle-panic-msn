@@ -45,7 +45,7 @@ const UNIT_TYPES = {
         health: 35,
         damage: 14,
         speed: 176,     // 2x faster than peasants (cavalry charge!)
-        attackSpeed: 1400,
+        attackSpeed: 800,  // Fast attacker, gets 25% faster per promotion level
         range: 40,
         infantryDamageReduction: 0.4,  // Takes 40% less damage from melee (armor + shield)
         rangedDamageReduction: 0.2,    // Takes 20% less damage from ranged (helmet + speed)

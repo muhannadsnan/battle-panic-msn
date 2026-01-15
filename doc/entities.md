@@ -107,6 +107,16 @@ Units get promoted based on how many of that type have been spawned in the curre
 - Attack Speed (faster by bonus)
 - Range (Archers only: +10% per promotion level)
 
+**Horseman Attack Speed:**
+Horsemen have a unique attack speed progression - 25% faster per promotion level:
+| Level | Attack Speed |
+|-------|--------------|
+| 0 | 800ms |
+| 1 | 600ms |
+| 2 | 450ms |
+| 3 | 337ms |
+| 4+ | 253ms → 200ms (capped) |
+
 At gold tier (level 4+), units **spawn 2 at a time** and **transform into elite versions**!
 
 **Elite Transformations:**
@@ -114,7 +124,7 @@ At gold tier (level 4+), units **spawn 2 at a time** and **transform into elite 
 |-----------|------------|---------|
 | Peasant | **Knight** | 25% damage reduction from all attacks |
 | Archer | **Robinhood** | 2x attack speed, 15% damage reduction |
-| Horseman | **Lancelot** | +25% speed, +20% damage, enhanced armor (50% melee, 30% ranged) |
+| Horseman | **Lancelot** | 2x speed, +20% damage, enhanced armor (50% melee, 30% ranged) |
 
 Max promotion (level 6) gives **3x stats** (cost ~8x for 2 units).
 Archers at max promotion get **+60% range**.
@@ -256,24 +266,27 @@ The castle automatically shoots arrows at nearby enemies **starting from level 2
 #### Mining Speed Bonus
 Castle level also increases mining rate by 10% per level.
 
-#### Fence System (Unlocked at Level 6)
-At castle level 6, a defensive wooden fence appears in front of the castle.
+#### Fence System (Unlocked at Level 3)
+At castle level 3, a defensive wooden fence appears in front of the castle.
 
 **Fence Stats:**
 | Level | Fence HP |
 |-------|----------|
-| 6 | 50 |
-| 7 | 80 |
-| 8 | 120 |
-| 9 | 160 |
-| 10 | 200 |
+| 3 | 100 |
+| 4 | 150 |
+| 5 | 200 |
+| 6 | 275 |
+| 7 | 325 |
+| 8 | 400 |
+| 9 | 450 |
+| 10 | 500 |
 
 **Fence Behavior:**
 - Enemies physically stop at the fence and attack it
 - Enemies must destroy the fence before they can reach the castle
 - Fence has its own health bar with "FENCE" label
 - When destroyed, fence explodes into wooden debris
-- On game reset, fence is recreated if castle level >= 6
+- On repair at max level, fence is recreated if it was destroyed
 
 **Visual:**
 - Wooden palisade with vertical planks

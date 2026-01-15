@@ -25,6 +25,11 @@ class Unit extends Phaser.GameObjects.Container {
         let promotedAttackSpeed = Math.max(200, Math.floor(stats.attackSpeed / promotionBonus)); // Faster = lower ms
         let promotedSpeed = stats.speed;
 
+        // Horseman-specific: 25% faster attack speed per promotion level
+        if (unitType.toUpperCase() === 'HORSEMAN' && promotionLevel > 0) {
+            promotedAttackSpeed = Math.max(200, Math.floor(stats.attackSpeed * Math.pow(0.75, promotionLevel)));
+        }
+
         // Elite unit bonuses (gold tier lvl 4+)
         const isElite = promotionLevel >= 4;
         if (isElite) {
@@ -33,8 +38,8 @@ class Unit extends Phaser.GameObjects.Container {
                 const atkMultiplier = baseStats.robinhoodAttackSpeedMultiplier || 0.5;
                 promotedAttackSpeed = Math.max(200, Math.floor(promotedAttackSpeed * atkMultiplier));
             } else if (unitType.toUpperCase() === 'HORSEMAN') {
-                // Lancelot: +25% speed, +20% damage
-                const speedBonus = baseStats.lancelotSpeedBonus || 1.25;
+                // Lancelot: 2x speed, +20% damage
+                const speedBonus = baseStats.lancelotSpeedBonus || 2.0;
                 const dmgBonus = baseStats.lancelotDamageBonus || 1.2;
                 promotedSpeed = Math.floor(stats.speed * speedBonus);
                 promotedDamage = Math.floor(promotedDamage * dmgBonus);

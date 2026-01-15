@@ -969,10 +969,20 @@ Lv.${currentLevel + 1}`;
             this.playerCastle.currentHealth = this.playerCastle.maxHealth;
             this.playerCastle.updateHealthBar();
 
-            // Also repair fence if it exists
-            if (this.playerCastle.hasFence) {
-                this.playerCastle.fenceCurrentHealth = this.playerCastle.fenceMaxHealth;
-                this.playerCastle.updateFenceHealthBar();
+            // Repair or recreate fence if level >= 3
+            if (this.playerCastle.level >= 3) {
+                if (this.playerCastle.hasFence && this.playerCastle.fenceContainer) {
+                    // Fence exists - just restore HP
+                    this.playerCastle.fenceCurrentHealth = this.playerCastle.fenceMaxHealth;
+                    this.playerCastle.updateFenceHealthBar();
+                } else {
+                    // Fence was destroyed - recreate it
+                    const fenceHPTable = { 3: 100, 4: 150, 5: 200, 6: 275, 7: 325, 8: 400, 9: 450, 10: 500 };
+                    this.playerCastle.hasFence = true;
+                    this.playerCastle.fenceMaxHealth = fenceHPTable[this.playerCastle.level] || 500;
+                    this.playerCastle.fenceCurrentHealth = this.playerCastle.fenceMaxHealth;
+                    this.playerCastle.createFence();
+                }
             }
 
             // Play sound
