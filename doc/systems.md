@@ -22,6 +22,7 @@ new CombatSystem(scene)
 **`findTarget(attacker, potentialTargets)`**
 Finds the closest valid target from an array:
 - Filters out dead/inactive targets
+- Skips enemies in spawn grace period (first 500ms)
 - Returns target with minimum distance
 - Returns `null` if no valid targets
 
@@ -239,8 +240,22 @@ Handles localStorage persistence for game progress with guest/user save separati
         goldIncome: 1            // +10% mining speed per level (permanent) - costs 2x XP!
     },
     specialUpgrades: {
-        eliteDiscount: false,    // Gold tier units spawn 2 for 1 (requires all units L5+)
-        horsemanShield: false    // Horsemen take 50% less damage (requires horseman unlocked)
+        // Boolean upgrades (one-time purchase)
+        eliteDiscount: false,        // Gold tier units spawn 2 for 1 (requires all units L5+)
+        horsemanShield: false,       // Horsemen take 50% less damage (requires horseman unlocked)
+        reinforcements: false,       // Enables reinforcement button (2-min timer)
+        emergencyReinforcement: false, // Auto-spawn when castle HP < 50% (1x/battle)
+
+        // Multi-level upgrades (0 = not purchased)
+        productionSpeed: 0,          // 0-10: -5% unit spawn time per level
+        productionCost: 0,           // 0-10: -5% unit cost per level
+        unitSpeed: 0,                // 0-10: +5% movement speed per level
+        reinforcementLevel: 0,       // 0-10: Better reinforcement units
+        peasantPromoSkip: 0,         // 0-5: Start peasants at higher promotion
+        archerPromoSkip: 0,          // 0-5: Start archers at higher promotion
+        horsemanPromoSkip: 0,        // 0-5: Start horsemen at higher promotion
+        castleExtension: 0,          // 0-10: +5 max castle level per level (up to 60)
+        smarterUnits: 0              // 0-5: Units form multiple defense groups
     },
     // Legacy stats - NEVER reset, persist through account deletion
     legacy: {

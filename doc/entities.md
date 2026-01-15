@@ -161,6 +161,18 @@ Similar to Unit, plus:
 | `goldReward` | number | Gold dropped on death |
 | `woodReward` | number | Wood dropped on death |
 | `bossScale` | number | Size multiplier for bosses |
+| `isSpawning` | boolean | In spawn grace period |
+| `spawnTime` | number | Timestamp when spawned |
+| `spawnGracePeriod` | number | Grace period duration (500ms) |
+
+#### Spawn Grace Period
+Enemies have a 500ms grace period when spawning:
+- **Invulnerable** - Cannot take damage
+- **Non-aggressive** - Won't attack units or castle
+- **Mobile** - Still moves toward targets (natural appearance)
+- **Untargetable** - Units won't target spawning enemies
+
+This prevents strong units from instantly killing enemies before players can see them.
 
 #### Stat Scaling
 Enemy stats scale with wave number:
