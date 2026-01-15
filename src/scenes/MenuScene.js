@@ -140,6 +140,58 @@ class MenuScene extends Phaser.Scene {
             fontFamily: 'Arial',
             color: '#ffffff'
         }).setOrigin(0.5, 0);
+
+        // Show "Play on Official Site" button if not on official domain
+        const officialDomain = 'battle-panic-msn.netlify.app';
+        const isOfficialSite = window.location.hostname === officialDomain || window.location.hostname === 'localhost';
+        if (!isOfficialSite) {
+            this.createOfficialSiteButton(width / 2, height - 35);
+        }
+    }
+
+    createOfficialSiteButton(x, y) {
+        const container = this.add.container(x, y);
+
+        // Background pill
+        const bg = this.add.rectangle(0, 0, 280, 32, 0x2266aa, 0.9);
+        bg.setStrokeStyle(2, 0x44aaff);
+        bg.setInteractive({ useHandCursor: true });
+        container.add(bg);
+
+        // Icon + Text
+        const text = this.add.text(0, 0, '🌐 Play on Official Site', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+        container.add(text);
+
+        // Hover effects
+        bg.on('pointerover', () => {
+            bg.setFillStyle(0x3388cc);
+            text.setColor('#ffff88');
+        });
+        bg.on('pointerout', () => {
+            bg.setFillStyle(0x2266aa);
+            text.setColor('#ffffff');
+        });
+        bg.on('pointerdown', () => {
+            window.open('https://battle-panic-msn.netlify.app/', '_blank');
+        });
+
+        // Subtle pulse animation
+        this.tweens.add({
+            targets: bg,
+            scaleX: 1.02,
+            scaleY: 1.05,
+            duration: 1500,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1
+        });
+
+        return container;
     }
 
     createButton(x, y, text, callback) {
