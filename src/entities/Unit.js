@@ -50,7 +50,11 @@ class Unit extends Phaser.GameObjects.Container {
         this.maxHealth = promotedHealth;
         this.currentHealth = promotedHealth;
         this.damage = promotedDamage;
-        this.speed = promotedSpeed;
+
+        // Apply unit speed bonus from special upgrade: +5% per level
+        const unitSpeedBonus = 1 + (scene.saveData?.specialUpgrades?.unitSpeed || 0) * 0.05;
+        this.speed = Math.floor(promotedSpeed * unitSpeedBonus);
+
         this.attackSpeed = promotedAttackSpeed;
 
         // Apply range bonus for archers: +10% per promotion level

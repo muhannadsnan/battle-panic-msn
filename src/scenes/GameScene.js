@@ -112,6 +112,14 @@ class GameScene extends Phaser.Scene {
             horseman: false
         };
 
+        // Reinforcements system
+        this.reinforcementTimer = 0; // Current progress (0 to 120000ms = 2 min)
+        this.reinforcementCooldown = 120000; // 2 minutes in ms
+        this.reinforcementReady = false;
+
+        // Emergency reinforcement (one-time per battle when HP < 50%)
+        this.emergencyReinforcementUsed = false;
+
         // Resource tracking
         this.goldCollectedThisRun = 0;
         this.woodCollectedThisRun = 0;
@@ -813,6 +821,12 @@ class GameScene extends Phaser.Scene {
         };
     }
 
+    getEffectiveMaxCastleLevel() {
+        // Castle extension upgrade adds +5 max level per upgrade level
+        const castleExtension = this.saveData.specialUpgrades?.castleExtension || 0;
+        return CASTLE_CONFIG.maxLevel + (castleExtension * 5);
+    }
+
     needsRepair() {
         // Check if castle or fence needs repair
         const castle = this.playerCastle;
@@ -855,10 +869,12 @@ class GameScene extends Phaser.Scene {
 
     updateCastleSpinnerPosition() {
         // Calculate castle scale based on level (matches Castle.setLevel logic)
+        // Visual scaling capped at level 20
         const level = this.castleLevel || 1;
+        const visualLevel = Math.min(level, 20);
         const minScale = 0.6;
         const maxScale = 1.4;
-        const scaleProgress = (level - 1) / (CASTLE_CONFIG.maxLevel - 1);
+        const scaleProgress = (visualLevel - 1) / 19; // 19 = 20 - 1
         const castleScale = minScale + (maxScale - minScale) * scaleProgress;
 
         // Spinner should be right above the castle (closer positioning)
@@ -875,7 +891,8 @@ class GameScene extends Phaser.Scene {
         if (this.isPaused) return;
 
         const currentLevel = this.castleLevel || 1;
-        const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
+        const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
+        const isMaxLevel = currentLevel >= effectiveMaxLevel;
         const needsRepair = isMaxLevel && this.needsRepair();
 
         // At max level with no damage, hide repair option
@@ -973,7 +990,8 @@ Lv.${currentLevel + 1}`;
 
     performCastleUpgrade() {
         const currentLevel = this.castleLevel || 1;
-        const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
+        const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
+        const isMaxLevel = currentLevel >= effectiveMaxLevel;
 
         // Cost depends on whether upgrading or repairing
         const cost = isMaxLevel
@@ -1001,9 +1019,13 @@ Lv.${currentLevel + 1}`;
                     this.playerCastle.updateFenceHealthBar();
                 } else {
                     // Fence was destroyed - recreate it
+                    // HP progression: 100-500 for levels 3-10, +100 per level beyond 10
                     const fenceHPTable = { 3: 100, 4: 150, 5: 200, 6: 275, 7: 325, 8: 400, 9: 450, 10: 500 };
+                    const level = this.playerCastle.level;
+                    const baseFenceHP = level <= 10 ? (fenceHPTable[level] || 500) : 500;
+                    const extraFenceHP = level > 10 ? (level - 10) * 100 : 0;
                     this.playerCastle.hasFence = true;
-                    this.playerCastle.fenceMaxHealth = fenceHPTable[this.playerCastle.level] || 500;
+                    this.playerCastle.fenceMaxHealth = baseFenceHP + extraFenceHP;
                     this.playerCastle.fenceCurrentHealth = this.playerCastle.fenceMaxHealth;
                     this.playerCastle.createFence();
                 }
@@ -1046,14 +1068,14 @@ Lv.${currentLevel + 1}`;
             }
 
             // Visual feedback
-            if (this.castleLevel >= CASTLE_CONFIG.maxLevel) {
+            if (this.castleLevel >= effectiveMaxLevel) {
                 this.showMessage(`Castle MAX LEVEL!`, '#ffd700');
             } else {
                 this.showMessage(`Castle Lv.${this.castleLevel}!`, '#4ade80');
             }
 
             // Glow effect
-            const glowColor = this.castleLevel >= CASTLE_CONFIG.maxLevel ? 0xffd700 : 0x4ade80;
+            const glowColor = this.castleLevel >= effectiveMaxLevel ? 0xffd700 : 0x4ade80;
             const glow = this.add.rectangle(this.playerCastle.x, this.playerCastle.y, 180, 220, glowColor, 0.3);
             this.tweens.add({
                 targets: glow,
@@ -1068,7 +1090,8 @@ Lv.${currentLevel + 1}`;
 
     updateCastleUpgradeDisplay() {
         const level = this.castleLevel || 1;
-        const isMaxLevel = level >= CASTLE_CONFIG.maxLevel;
+        const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
+        const isMaxLevel = level >= effectiveMaxLevel;
         const needsRepair = isMaxLevel && this.needsRepair();
 
         // At max level with no damage, show MAX
@@ -1129,6 +1152,9 @@ Lv.${level + 1}`;
 
         // Unit buttons panel
         this.createUnitButtons();
+
+        // Reinforcements button (if unlocked)
+        this.createReinforcementButton();
 
         // Pause button
         this.createPauseButton();
@@ -1289,6 +1315,93 @@ Lv.${level + 1}`;
 
             this.unitButtons.push(button);
         });
+    }
+
+    createReinforcementButton() {
+        // Only create if reinforcements upgrade is unlocked
+        if (!this.saveData.specialUpgrades?.reinforcements) {
+            this.reinforcementButton = null;
+            return;
+        }
+
+        // Position below the unit buttons
+        const panelX = 50;
+        const buttonY = 420; // Below horseman button (60 + 3 * 120)
+
+        const buttonWidth = 110;
+        const buttonHeight = 100;
+
+        // Container for the button
+        this.reinforcementButtonContainer = this.add.container(panelX, buttonY);
+        this.reinforcementButtonContainer.setDepth(900);
+
+        // Background
+        const background = this.add.rectangle(0, 0, buttonWidth, buttonHeight, 0x2a3a4a, 0.85);
+        this.reinforcementButtonContainer.add(background);
+
+        // Inner area
+        const innerBg = this.add.rectangle(0, -5, buttonWidth - 10, buttonHeight - 25, 0x3a4a5a, 0.7);
+        this.reinforcementButtonContainer.add(innerBg);
+
+        // Spinner graphics for timer progress
+        this.reinforcementSpinner = this.add.graphics();
+        this.reinforcementButtonContainer.add(this.reinforcementSpinner);
+
+        // Icon - shield/sword combo
+        const icon = this.add.text(0, -15, '⚔️', {
+            fontSize: '36px'
+        }).setOrigin(0.5);
+        this.reinforcementButtonContainer.add(icon);
+
+        // Label
+        const label = this.add.text(0, 30, 'REINFORCE', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        this.reinforcementButtonContainer.add(label);
+
+        // Timer text (shows when charging)
+        this.reinforcementTimerText = this.add.text(0, 48, '', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#aaaaaa',
+            stroke: '#000000',
+            strokeThickness: 1
+        }).setOrigin(0.5);
+        this.reinforcementButtonContainer.add(this.reinforcementTimerText);
+
+        // Make interactive
+        background.setInteractive({});
+
+        background.on('pointerdown', () => {
+            if (this.reinforcementReady) {
+                this.spawnReinforcements();
+            } else {
+                this.showMessage('Reinforcements charging...', '#ffaa00');
+            }
+        });
+
+        background.on('pointerover', () => {
+            if (this.reinforcementReady) {
+                innerBg.setFillStyle(0x4a6a8a, 0.85);
+            }
+        });
+
+        background.on('pointerout', () => {
+            innerBg.setFillStyle(0x3a4a5a, 0.7);
+        });
+
+        this.reinforcementButton = {
+            container: this.reinforcementButtonContainer,
+            background,
+            innerBg,
+            icon,
+            label
+        };
     }
 
     createPauseButton() {
@@ -1592,6 +1705,9 @@ Lv.${level + 1}`;
         // Update unit button states and hover-to-spawn progress
         this.updateUnitButtons(delta);
 
+        // Update reinforcement timer
+        this.updateReinforcementTimer(delta);
+
         // Update wave display
         const waveInfo = this.waveSystem.getWaveInfo();
         this.waveDisplay.setWave(waveInfo.currentWave, waveInfo.enemiesRemaining);
@@ -1629,6 +1745,11 @@ Lv.${level + 1}`;
                 totalWoodCost *= 2;
             }
 
+            // Apply production cost reduction from special upgrade
+            const costReduction = 1 - (this.saveData.specialUpgrades?.productionCost || 0) * 0.05;
+            totalGoldCost = Math.ceil(totalGoldCost * costReduction);
+            totalWoodCost = Math.ceil(totalWoodCost * costReduction);
+
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
 
@@ -1646,6 +1767,220 @@ Lv.${level + 1}`;
         if (this.upgradeCostText) {
             this.updateUpgradeButton();
         }
+    }
+
+    updateReinforcementTimer(delta) {
+        // Skip if reinforcements not unlocked
+        if (!this.reinforcementButton) return;
+
+        // Update timer
+        if (!this.reinforcementReady) {
+            this.reinforcementTimer += delta;
+
+            if (this.reinforcementTimer >= this.reinforcementCooldown) {
+                this.reinforcementTimer = this.reinforcementCooldown;
+                this.reinforcementReady = true;
+                this.showMessage('Reinforcements READY!', '#4ade80');
+            }
+        }
+
+        // Update visual
+        this.drawReinforcementSpinner();
+
+        // Update timer text
+        if (this.reinforcementReady) {
+            this.reinforcementTimerText.setText('READY!');
+            this.reinforcementTimerText.setColor('#4ade80');
+        } else {
+            const remaining = Math.ceil((this.reinforcementCooldown - this.reinforcementTimer) / 1000);
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+            this.reinforcementTimerText.setText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+            this.reinforcementTimerText.setColor('#aaaaaa');
+        }
+    }
+
+    drawReinforcementSpinner() {
+        if (!this.reinforcementSpinner) return;
+
+        const graphics = this.reinforcementSpinner;
+        graphics.clear();
+
+        const progress = this.reinforcementTimer / this.reinforcementCooldown;
+        const radius = 35;
+
+        if (progress > 0) {
+            const startAngle = -Math.PI / 2;
+            const endAngle = startAngle + progress * Math.PI * 2;
+            const color = this.reinforcementReady ? 0x4ade80 : 0xffa500;
+
+            // Progress arc
+            graphics.lineStyle(4, color, 0.8);
+            graphics.beginPath();
+            graphics.arc(0, -10, radius, startAngle, endAngle, false);
+            graphics.strokePath();
+
+            // Glow when ready
+            if (this.reinforcementReady) {
+                graphics.lineStyle(6, 0x4ade80, 0.3);
+                graphics.beginPath();
+                graphics.arc(0, -10, radius + 3, startAngle, endAngle, false);
+                graphics.strokePath();
+            }
+        }
+    }
+
+    spawnReinforcements() {
+        if (!this.reinforcementReady) return;
+
+        // Get reinforcement level (affects unit count and quality)
+        const reinfLevel = this.saveData.specialUpgrades?.reinforcementLevel || 0;
+
+        // Base units: 5 peasants + 5 archers + 1 horseman
+        // +10% per level (rounded)
+        const baseMultiplier = 1 + (reinfLevel * 0.1);
+        const peasantCount = Math.round(5 * baseMultiplier);
+        const archerCount = Math.round(5 * baseMultiplier);
+        const horsemanCount = Math.round(1 * baseMultiplier);
+
+        // Spawn base units at promotion level 0
+        for (let i = 0; i < peasantCount; i++) {
+            this.spawnReinforcementUnit('PEASANT', 0);
+        }
+        for (let i = 0; i < archerCount; i++) {
+            this.spawnReinforcementUnit('ARCHER', 0);
+        }
+        for (let i = 0; i < horsemanCount; i++) {
+            this.spawnReinforcementUnit('HORSEMAN', 0);
+        }
+
+        // Level 5+: Spawn 2 promotion-3 units of each type
+        if (reinfLevel >= 5) {
+            for (let i = 0; i < 2; i++) {
+                this.spawnReinforcementUnit('PEASANT', 3);
+                this.spawnReinforcementUnit('ARCHER', 3);
+                this.spawnReinforcementUnit('HORSEMAN', 3);
+            }
+        }
+
+        // Level 10: Spawn 1 promotion-6 (max tier) unit of each type
+        if (reinfLevel >= 10) {
+            this.spawnReinforcementUnit('PEASANT', 6);
+            this.spawnReinforcementUnit('ARCHER', 6);
+            this.spawnReinforcementUnit('HORSEMAN', 6);
+        }
+
+        // Reset timer
+        this.reinforcementTimer = 0;
+        this.reinforcementReady = false;
+
+        // Visual feedback
+        this.showMessage('Reinforcements arrived!', '#4ade80');
+        audioManager.playGold();
+    }
+
+    spawnReinforcementUnit(unitType, forcedPromotionLevel) {
+        // Get upgrade data for stats bonuses
+        const typeKey = unitType.toLowerCase();
+        const upgradeData = this.saveData.upgrades[typeKey];
+        const upgradeLevel = upgradeData ? upgradeData.level : 1;
+
+        // Calculate spawn position near castle
+        const spawnX = CASTLE_CONFIG.playerX + 100 + Math.random() * 80;
+        const spawnY = 280 + (Math.random() - 0.5) * 300;
+
+        // Calculate promotion bonus from promotion level
+        const promotionBonus = this.getPromotionBonus(forcedPromotionLevel);
+
+        // Create unit with forced promotion level (bypasses spawn count)
+        const unit = new Unit(this, spawnX, spawnY, unitType, upgradeLevel, promotionBonus, forcedPromotionLevel);
+        this.units.add(unit);
+
+        // Visual spawn effect
+        const flash = this.add.circle(spawnX, spawnY, 20, 0x4ade80, 0.5);
+        this.tweens.add({
+            targets: flash,
+            scaleX: 2,
+            scaleY: 2,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => flash.destroy()
+        });
+    }
+
+    checkEmergencyReinforcement() {
+        // Skip if not unlocked
+        if (!this.saveData.specialUpgrades?.emergencyReinforcement) return;
+
+        // Skip if already used this battle
+        if (this.emergencyReinforcementUsed) return;
+
+        // Check if castle HP is below 50%
+        const castle = this.playerCastle;
+        if (!castle || castle.isDead) return;
+
+        const hpPercent = castle.currentHealth / castle.maxHealth;
+        if (hpPercent >= 0.5) return;
+
+        // Trigger emergency reinforcement!
+        this.emergencyReinforcementUsed = true;
+
+        // Big warning message
+        this.showMessage('⚠️ EMERGENCY REINFORCEMENTS! ⚠️', '#ff6600');
+
+        // Spawn units based on regular reinforcement level
+        const reinfLevel = this.saveData.specialUpgrades?.reinforcementLevel || 0;
+
+        // Base units: 5 peasants + 5 archers + 1 horseman (same as regular reinforcement)
+        const baseMultiplier = 1 + (reinfLevel * 0.1);
+        const peasantCount = Math.round(5 * baseMultiplier);
+        const archerCount = Math.round(5 * baseMultiplier);
+        const horsemanCount = Math.round(1 * baseMultiplier);
+
+        // Spawn with slight delay staggering for visual effect
+        for (let i = 0; i < peasantCount; i++) {
+            this.time.delayedCall(i * 50, () => this.spawnReinforcementUnit('PEASANT', 0));
+        }
+        for (let i = 0; i < archerCount; i++) {
+            this.time.delayedCall(peasantCount * 50 + i * 50, () => this.spawnReinforcementUnit('ARCHER', 0));
+        }
+        for (let i = 0; i < horsemanCount; i++) {
+            this.time.delayedCall((peasantCount + archerCount) * 50 + i * 50, () => this.spawnReinforcementUnit('HORSEMAN', 0));
+        }
+
+        // Level 5+: Also spawn elite units
+        if (reinfLevel >= 5) {
+            const eliteDelay = (peasantCount + archerCount + horsemanCount) * 50;
+            for (let i = 0; i < 2; i++) {
+                this.time.delayedCall(eliteDelay + i * 100, () => {
+                    this.spawnReinforcementUnit('PEASANT', 3);
+                    this.spawnReinforcementUnit('ARCHER', 3);
+                    this.spawnReinforcementUnit('HORSEMAN', 3);
+                });
+            }
+        }
+
+        // Level 10: Spawn max tier units
+        if (reinfLevel >= 10) {
+            this.time.delayedCall(1500, () => {
+                this.spawnReinforcementUnit('PEASANT', 6);
+                this.spawnReinforcementUnit('ARCHER', 6);
+                this.spawnReinforcementUnit('HORSEMAN', 6);
+            });
+        }
+
+        // Play dramatic sound
+        audioManager.playGold();
+
+        // Screen flash effect
+        const flash = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xff6600, 0.3);
+        flash.setDepth(2000);
+        this.tweens.add({
+            targets: flash,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => flash.destroy()
+        });
     }
 
     spawnUnit(unitType) {
@@ -1692,6 +2027,11 @@ Lv.${level + 1}`;
             totalGoldCost *= 2;
             totalWoodCost *= 2;
         }
+
+        // Apply production cost reduction from special upgrade
+        const costReduction = 1 - (this.saveData.specialUpgrades?.productionCost || 0) * 0.05;
+        totalGoldCost = Math.ceil(totalGoldCost * costReduction);
+        totalWoodCost = Math.ceil(totalWoodCost * costReduction);
 
         // Check costs (includes double spawn cost)
         if (this.gold < totalGoldCost) {
@@ -2636,12 +2976,19 @@ Lv.${level + 1}`;
         // Level 4-6: 50, 80, 120 spawns
         const thresholds = [0, 10, 20, 30, 50, 80, 120];
 
+        let calculatedLevel = 0;
         for (let level = 6; level >= 1; level--) {
             if (spawnCount >= thresholds[level]) {
-                return level;
+                calculatedLevel = level;
+                break;
             }
         }
-        return 0;
+
+        // Apply promotion skip from special upgrades
+        // Each skip level sets a minimum promotion level
+        const skipKey = `${typeKey}PromoSkip`;
+        const skipLevel = this.saveData.specialUpgrades?.[skipKey] || 0;
+        return Math.max(calculatedLevel, skipLevel);
     }
 
     getPromotionBonus(promotionLevel) {

@@ -13,7 +13,12 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.hoverDelay = 250; // 250ms delay before progress starts
         this.spawnProgress = 0;
         this.spawnTarget = 100;
-        this.spawnSpeed = 100; // Progress per second
+
+        // Apply production speed bonus: -5% spawn time per level = faster progress
+        const saveData = saveSystem.load();
+        const productionSpeedLevel = saveData.specialUpgrades?.productionSpeed || 0;
+        const timeReduction = 1 - (productionSpeedLevel * 0.05); // 0.5 at level 10
+        this.spawnSpeed = Math.floor(100 / timeReduction); // 200 at level 10
 
         const stats = UNIT_TYPES[unitType.toUpperCase()];
         if (!stats) {

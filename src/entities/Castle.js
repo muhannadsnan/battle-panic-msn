@@ -318,8 +318,12 @@ class Castle extends Phaser.GameObjects.Container {
     }
 
     setLevel(level) {
-        // Clamp level to max 10
-        this.level = Math.min(level, CASTLE_CONFIG.maxLevel);
+        // Get effective max level from castle extension upgrade (+5 per level, max 60)
+        const castleExtension = this.scene.saveData?.specialUpgrades?.castleExtension || 0;
+        const effectiveMaxLevel = CASTLE_CONFIG.maxLevel + (castleExtension * 5);
+
+        // Clamp level to effective max
+        this.level = Math.min(level, effectiveMaxLevel);
         this.levelText.setText(`${this.level}`);
 
         // Update health based on level (includes permanent XP upgrade bonus + wave bonus)
@@ -331,14 +335,16 @@ class Castle extends Phaser.GameObjects.Container {
 
         // Scale attack stats with level
         this.arrowDamage = 8 + (this.level - 1) * 3;        // +3 damage per level
-        this.attackSpeed = Math.max(300, 700 - (this.level - 1) * 40);    // Faster attacks (base 0.7s)
+        this.attackSpeed = Math.max(150, 700 - (this.level - 1) * 40);    // Faster attacks (min 150ms at high levels)
         this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
 
         // Fence system - unlocks at level 3
-        // HP progression: 100 to 500 for levels 3-10
+        // HP progression: 100 to 500 for levels 3-10, +100 per level beyond 10
         if (this.level >= 3) {
             const fenceHPTable = { 3: 100, 4: 150, 5: 200, 6: 275, 7: 325, 8: 400, 9: 450, 10: 500 };
-            const newFenceHP = fenceHPTable[this.level] || 500;
+            const baseFenceHP = this.level <= 10 ? (fenceHPTable[this.level] || 500) : 500;
+            const extraFenceHP = this.level > 10 ? (this.level - 10) * 100 : 0;
+            const newFenceHP = baseFenceHP + extraFenceHP;
 
             if (!this.hasFence) {
                 // First time getting fence
@@ -365,10 +371,12 @@ class Castle extends Phaser.GameObjects.Container {
         }
 
         // Castle grows bigger with each level!
-        // Level 1 = 0.6 scale (small castle), Level 10 = 1.4 scale (grand palace)
+        // Level 1 = 0.6 scale (small castle), Level 20+ = 1.4 scale (grand palace)
+        // Cap visual scaling at level 20 to prevent castle from getting too huge
         const minScale = 0.6;
         const maxScale = 1.4;
-        const scaleProgress = (this.level - 1) / (CASTLE_CONFIG.maxLevel - 1);
+        const visualLevel = Math.min(this.level, 20); // Cap visual scaling at level 20
+        const scaleProgress = (visualLevel - 1) / 19; // 19 = 20 - 1
         const castleScale = minScale + (maxScale - minScale) * scaleProgress;
 
         // Animate scale change
@@ -645,6 +653,11 @@ class Castle extends Phaser.GameObjects.Container {
                 duration: 600,
                 onComplete: () => debris.destroy()
             });
+        }
+
+        // Check for emergency reinforcement trigger (HP below 50%)
+        if (this.scene.checkEmergencyReinforcement) {
+            this.scene.checkEmergencyReinforcement();
         }
 
         if (this.currentHealth <= 0) {

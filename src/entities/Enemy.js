@@ -82,6 +82,11 @@ class Enemy extends Phaser.GameObjects.Container {
         this.lastAttackTime = 0;
         this.direction = -1; // -1 = left (toward player)
 
+        // Spawn grace period - enemies are invulnerable and don't attack for first 500ms
+        this.spawnTime = Date.now();
+        this.spawnGracePeriod = 500; // ms
+        this.isSpawning = true;
+
         // Animation state
         this.walkTime = 0;
         this.bodyParts = {}; // Store references to animated parts
@@ -944,6 +949,14 @@ class Enemy extends Phaser.GameObjects.Container {
     update(time, delta) {
         if (this.isDead) return;
 
+        // Check spawn grace period - enemies can move but not attack during grace
+        if (this.isSpawning) {
+            const elapsed = Date.now() - this.spawnTime;
+            if (elapsed >= this.spawnGracePeriod) {
+                this.isSpawning = false;
+            }
+        }
+
         let isMoving = false;
 
         // Check if castle has fence - fence blocks enemies
@@ -975,10 +988,10 @@ class Enemy extends Phaser.GameObjects.Container {
             const distanceToTarget = Phaser.Math.Distance.Between(this.x, this.y, targetX, targetY);
             const inRange = distanceToTarget <= this.range;
 
-            if (inRange) {
-                // Stop and attack
+            if (inRange && !this.isSpawning) {
+                // Stop and attack (but not during spawn grace period)
                 this.attack(time);
-            } else {
+            } else if (!inRange) {
                 // Move toward target (fence or actual target)
                 this.moveTowardPosition(targetX, targetY, delta);
                 isMoving = true;
@@ -1120,6 +1133,9 @@ class Enemy extends Phaser.GameObjects.Container {
 
     takeDamage(amount) {
         if (this.isDead) return;
+
+        // Invulnerable during spawn grace period
+        if (this.isSpawning) return;
 
         this.currentHealth -= amount;
         this.healthBar.setPercent(this.currentHealth / this.maxHealth);

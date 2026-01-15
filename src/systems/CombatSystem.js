@@ -13,6 +13,9 @@ class CombatSystem {
         potentialTargets.forEach(target => {
             if (!target.active || target.isDead) return;
 
+            // Skip enemies in spawn grace period (invulnerable)
+            if (target.isSpawning) return;
+
             const distance = Phaser.Math.Distance.Between(
                 attacker.x, attacker.y,
                 target.x, target.y
