@@ -142,15 +142,15 @@ Higher ranked players spawn more enemies at once, making waves complete faster:
 | Rank Tier | Spawn Multiplier | Example (Wave 16+) |
 |-----------|------------------|-------------------|
 | Recruit | 1.0x | 4 enemies |
-| Soldier | 1.25x | 5 enemies |
-| Warrior | 1.5x | 6 enemies |
-| Knight | 1.75x | 7 enemies |
-| Captain | 2.0x | 8 enemies |
-| Commander | 2.25x | 9 enemies |
-| General | 2.5x | 10 enemies |
-| Champion | 2.75x | 11 enemies |
-| Legend | 3.0x | 12 enemies |
-| Immortal | 3.25x | 13 enemies |
+| Soldier | 1.15x | 5 enemies |
+| Warrior | 1.3x | 6 enemies |
+| Knight | 1.45x | 6 enemies |
+| Captain | 1.6x | 7 enemies |
+| Commander | 1.75x | 7 enemies |
+| General | 1.9x | 8 enemies |
+| Champion | 2.05x | 9 enemies |
+| Legend | 2.2x | 9 enemies |
+| Immortal | 2.35x | 10 enemies |
 
 **`onEnemyKilled()`**
 Called when enemy dies:

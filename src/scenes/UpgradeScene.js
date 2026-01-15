@@ -124,29 +124,37 @@ class UpgradeScene extends Phaser.Scene {
             this.dots.push(pill);
         }
 
-        // Left arrow - clickable area on left side
-        const leftArea = this.add.rectangle(35, GAME_HEIGHT / 2, 60, 300, 0x000000, 0);
-        leftArea.setInteractive({ useHandCursor: true });
-        leftArea.on('pointerdown', () => {
-            if (this.currentCardIndex > 0) this.slideToCard(this.currentCardIndex - 1);
-        });
-        this.leftArrow = this.add.text(35, GAME_HEIGHT / 2 + 40, '<', {
-            fontSize: '50px',
+        // Left arrow - visible button
+        this.leftArrow = this.add.text(40, GAME_HEIGHT / 2, '‹', {
+            fontSize: '80px',
             fontFamily: 'Arial',
             color: '#ffffff'
-        }).setOrigin(0.5).setAlpha(0.3);
+        }).setOrigin(0.5).setAlpha(0.6).setDepth(100);
+        this.leftArrow.setInteractive({ useHandCursor: true });
+        this.leftArrow.on('pointerdown', () => {
+            if (this.currentCardIndex > 0) {
+                if (typeof audioManager !== 'undefined') audioManager.playClick();
+                this.slideToCard(this.currentCardIndex - 1);
+            }
+        });
+        this.leftArrow.on('pointerover', () => this.leftArrow.setAlpha(1));
+        this.leftArrow.on('pointerout', () => this.leftArrow.setAlpha(0.6));
 
-        // Right arrow - clickable area on right side
-        const rightArea = this.add.rectangle(GAME_WIDTH - 55, GAME_HEIGHT / 2, 60, 300, 0x000000, 0);
-        rightArea.setInteractive({ useHandCursor: true });
-        rightArea.on('pointerdown', () => {
-            if (this.currentCardIndex < this.totalCards - 1) this.slideToCard(this.currentCardIndex + 1);
-        });
-        this.rightArrow = this.add.text(GAME_WIDTH - 55, GAME_HEIGHT / 2 + 40, '>', {
-            fontSize: '50px',
+        // Right arrow - visible button
+        this.rightArrow = this.add.text(GAME_WIDTH - 40, GAME_HEIGHT / 2, '›', {
+            fontSize: '80px',
             fontFamily: 'Arial',
             color: '#ffffff'
-        }).setOrigin(0.5).setAlpha(0.3);
+        }).setOrigin(0.5).setAlpha(0.6).setDepth(100);
+        this.rightArrow.setInteractive({ useHandCursor: true });
+        this.rightArrow.on('pointerdown', () => {
+            if (this.currentCardIndex < this.totalCards - 1) {
+                if (typeof audioManager !== 'undefined') audioManager.playClick();
+                this.slideToCard(this.currentCardIndex + 1);
+            }
+        });
+        this.rightArrow.on('pointerover', () => this.rightArrow.setAlpha(1));
+        this.rightArrow.on('pointerout', () => this.rightArrow.setAlpha(0.6));
 
         // Card label at bottom
         this.cardLabel = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 25, '', {
@@ -176,6 +184,7 @@ class UpgradeScene extends Phaser.Scene {
         let startContainerX = 0;
         let startTime = 0;
         let lastX = 0;
+        let lastTime = 0;
         let velocity = 0;
         let isDragging = false;
         let hasMoved = false;
@@ -184,8 +193,12 @@ class UpgradeScene extends Phaser.Scene {
             // Only start drag if in the slider area (y between 100 and 520)
             if (pointer.y < 100 || pointer.y > 520) return;
 
+            // Don't start drag if clicking on arrow areas (left 70px or right 80px)
+            if (pointer.x < 70 || pointer.x > GAME_WIDTH - 80) return;
+
             startX = pointer.x;
             lastX = pointer.x;
+            lastTime = Date.now();
             startContainerX = this.sliderContainer.x;
             startTime = Date.now();
             velocity = 0;
@@ -199,17 +212,23 @@ class UpgradeScene extends Phaser.Scene {
             if (!isDragging) return;
 
             const deltaX = pointer.x - startX;
+            const now = Date.now();
+            const timeDelta = now - lastTime;
 
-            // Only start actual dragging after moving more than 10px (allows button clicks)
-            if (Math.abs(deltaX) > 10) {
+            // Only start actual dragging after moving more than 5px (allows button clicks)
+            if (Math.abs(deltaX) > 5) {
                 hasMoved = true;
             }
 
             if (!hasMoved) return;
 
-            // Calculate velocity for momentum
-            velocity = pointer.x - lastX;
+            // Calculate velocity for momentum (smoothed)
+            if (timeDelta > 0) {
+                const instantVelocity = (pointer.x - lastX) / timeDelta;
+                velocity = velocity * 0.6 + instantVelocity * 0.4; // Smooth velocity
+            }
             lastX = pointer.x;
+            lastTime = now;
 
             // Apply drag with slight resistance at edges
             let newX = startContainerX + deltaX;
@@ -240,8 +259,8 @@ class UpgradeScene extends Phaser.Scene {
             // Determine target card based on position and velocity
             let targetIndex = this.currentCardIndex;
 
-            // Quick flick (fast swipe)
-            if (speed > 0.5 && Math.abs(velocity) > 5) {
+            // Quick flick detection (more sensitive)
+            if (speed > 0.3 && Math.abs(velocity) > 0.3) {
                 if (velocity < 0 && this.currentCardIndex < this.totalCards - 1) {
                     targetIndex = this.currentCardIndex + 1;
                 } else if (velocity > 0 && this.currentCardIndex > 0) {
@@ -264,11 +283,15 @@ class UpgradeScene extends Phaser.Scene {
         const targetX = -this.currentCardIndex * (this.cardWidth + this.cardSpacing);
 
         if (animate) {
+            // Calculate distance for dynamic duration (smoother feel)
+            const distance = Math.abs(this.sliderContainer.x - targetX);
+            const duration = Math.min(400, Math.max(200, distance * 1.2));
+
             this.tweens.add({
                 targets: this.sliderContainer,
                 x: targetX,
-                duration: 350,
-                ease: 'Back.easeOut'
+                duration: duration,
+                ease: 'Cubic.easeOut'  // Smoother deceleration
             });
         } else {
             this.sliderContainer.x = targetX;
