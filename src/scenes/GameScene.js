@@ -813,6 +813,19 @@ class GameScene extends Phaser.Scene {
         };
     }
 
+    needsRepair() {
+        // Check if castle or fence needs repair
+        const castle = this.playerCastle;
+        if (!castle) return false;
+
+        const castleNeedsFix = castle.currentHealth < castle.maxHealth;
+        const fenceMax = castle.fenceMaxHealth || 0;
+        const fenceHP = castle.fenceCurrentHealth || 0;
+        const fenceNeedsFix = fenceMax > 0 && fenceHP < fenceMax;
+
+        return castleNeedsFix || fenceNeedsFix;
+    }
+
     getRepairCost() {
         // Tiered repair cost based on damage state (at max level)
         const castle = this.playerCastle;
@@ -836,8 +849,8 @@ class GameScene extends Phaser.Scene {
         if (fenceDamaged) {
             return { gold: 30, wood: 50 };
         }
-        // Everything full - still allow repair at minimal cost
-        return { gold: 30, wood: 50 };
+        // Everything full - no repair needed
+        return { gold: 0, wood: 0 };
     }
 
     updateCastleSpinnerPosition() {
@@ -863,6 +876,17 @@ class GameScene extends Phaser.Scene {
 
         const currentLevel = this.castleLevel || 1;
         const isMaxLevel = currentLevel >= CASTLE_CONFIG.maxLevel;
+        const needsRepair = isMaxLevel && this.needsRepair();
+
+        // At max level with no damage, hide repair option
+        if (isMaxLevel && !needsRepair) {
+            this.castleUpgradeCostText.setText('MAX');
+            this.castleCostGlow.setText('MAX');
+            this.castleUpgradeCostText.setStyle({ color: '#ffd700' });
+            this.castleCostGlow.setAlpha(0);
+            this.drawCastleSpinner();
+            return;
+        }
 
         // At max level, allow repair with tiered cost based on damage
         const cost = isMaxLevel
@@ -1045,8 +1069,19 @@ Lv.${currentLevel + 1}`;
     updateCastleUpgradeDisplay() {
         const level = this.castleLevel || 1;
         const isMaxLevel = level >= CASTLE_CONFIG.maxLevel;
+        const needsRepair = isMaxLevel && this.needsRepair();
+
+        // At max level with no damage, show MAX
+        if (isMaxLevel && !needsRepair) {
+            this.castleUpgradeCostText.setText('MAX');
+            this.castleCostGlow.setText('MAX');
+            this.castleUpgradeCostText.setStyle({ color: '#ffd700' });
+            this.castleCostGlow.setAlpha(0);
+            return;
+        }
+
         const cost = isMaxLevel
-            ? this.getCastleUpgradeCost(CASTLE_CONFIG.maxLevel - 1)
+            ? this.getRepairCost()
             : this.getCastleUpgradeCost(level);
 
         const costText = isMaxLevel
