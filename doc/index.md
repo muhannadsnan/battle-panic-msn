@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.14)
+## Recent Updates (v1.35.15)
+
+### v1.35.15
+- **Messages**: Queue system - one message at a time, 25% shorter duration, higher position
+- **Unit Bar**: Full height opaque background
 
 ### v1.35.14
 - **Upgrades**: Button hides during glow animation, reappears when glow ends
@@ -270,4 +274,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.14)*
+*Last updated: January 2026 (v1.35.15)*

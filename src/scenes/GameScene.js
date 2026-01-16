@@ -1303,8 +1303,16 @@ Lv.${level + 1}`;
 
     createUnitButtons() {
         this.unitButtons = [];
+        
+        // Message queue for showing one message at a time
+        this.messageQueue = [];
+        this.isShowingMessage = false;
 
-        // Vertical layout on FAR LEFT - NO panel background
+        // Full height unit bar background (opaque)
+        const unitBarBg = this.add.rectangle(50, GAME_HEIGHT / 2, 120, GAME_HEIGHT, 0x1a2a3a);
+        unitBarBg.setDepth(850);
+
+        // Vertical layout on FAR LEFT
         const panelX = 50;
 
         // Unit buttons - vertical layout, no panel boxes
@@ -3004,8 +3012,20 @@ Lv.${level + 1}`;
     }
 
     showMessage(text, color = '#ffffff') {
-        // Create container for message box
-        const container = this.add.container(GAME_WIDTH / 2, 150);
+        // Add to queue and process
+        this.messageQueue.push({ text, color });
+        this.processMessageQueue();
+    }
+    
+    processMessageQueue() {
+        // If already showing a message or queue is empty, return
+        if (this.isShowingMessage || this.messageQueue.length === 0) return;
+        
+        this.isShowingMessage = true;
+        const { text, color } = this.messageQueue.shift();
+        
+        // Create container for message box (higher position)
+        const container = this.add.container(GAME_WIDTH / 2, 90);
         container.setDepth(1000);
 
         // Create text first to measure it
@@ -3046,8 +3066,13 @@ Lv.${level + 1}`;
             duration: 150,
             ease: 'Back.easeOut',
             onComplete: () => {
-                // Stay visible then destroy instantly (no fade)
-                this.time.delayedCall(3200, () => container.destroy());
+                // Stay visible then destroy (25% shorter = 2400ms)
+                this.time.delayedCall(2400, () => {
+                    container.destroy();
+                    this.isShowingMessage = false;
+                    // Process next message in queue
+                    this.processMessageQueue();
+                });
             }
         });
     }
