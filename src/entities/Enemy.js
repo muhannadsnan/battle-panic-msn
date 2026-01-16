@@ -738,122 +738,147 @@ class Enemy extends Phaser.GameObjects.Container {
     }
 
     createDragon(scene) {
-        // CARTOONY DRAGON BOSS - epic fire-breathing beast!
-        const s = 1.6;
+        // MENACING PIXEL ART DRAGON BOSS
+        const s = 1.5;
 
         // Shadow
-        this.spriteContainer.add(scene.add.rectangle(0, 56 * s, 60 * s, 10, 0x000000, 0.2));
+        this.spriteContainer.add(scene.add.rectangle(0, 52 * s, 70 * s, 12, 0x000000, 0.25));
 
-        // EPIC Wings
-        // Left wing bones
-        this.spriteContainer.add(scene.add.rectangle(-44 * s, -12 * s, 16 * s, 40 * s, 0xFF6633));
-        this.spriteContainer.add(scene.add.rectangle(-56 * s, -22 * s, 14 * s, 32 * s, 0xFF7744));
-        this.spriteContainer.add(scene.add.rectangle(-66 * s, -32 * s, 12 * s, 26 * s, 0xFF8855));
-        // Wing membrane
-        this.spriteContainer.add(scene.add.rectangle(-50 * s, -16 * s, 10 * s, 30 * s, 0xFF8844, 0.6));
-        this.spriteContainer.add(scene.add.rectangle(-60 * s, -26 * s, 8 * s, 22 * s, 0xFF9955, 0.6));
-        // Right wing
-        this.spriteContainer.add(scene.add.rectangle(44 * s, -12 * s, 16 * s, 40 * s, 0xFF6633));
-        this.spriteContainer.add(scene.add.rectangle(56 * s, -22 * s, 14 * s, 32 * s, 0xFF7744));
-        this.spriteContainer.add(scene.add.rectangle(66 * s, -32 * s, 12 * s, 26 * s, 0xFF8855));
-        this.spriteContainer.add(scene.add.rectangle(50 * s, -16 * s, 10 * s, 30 * s, 0xFF8844, 0.6));
-        this.spriteContainer.add(scene.add.rectangle(60 * s, -26 * s, 8 * s, 22 * s, 0xFF9955, 0.6));
+        // === WINGS (bat-like, behind body) ===
+        // Left wing - main bone
+        this.spriteContainer.add(scene.add.rectangle(-32 * s, -8 * s, 8 * s, 50 * s, 0x8B0000));
+        // Left wing - finger bones
+        this.spriteContainer.add(scene.add.rectangle(-44 * s, -20 * s, 6 * s, 36 * s, 0xA01010));
+        this.spriteContainer.add(scene.add.rectangle(-54 * s, -28 * s, 5 * s, 28 * s, 0xB02020));
+        this.spriteContainer.add(scene.add.rectangle(-62 * s, -34 * s, 4 * s, 22 * s, 0xC03030));
+        // Left wing membrane
+        this.spriteContainer.add(scene.add.rectangle(-38 * s, -4 * s, 18 * s, 40 * s, 0x660000, 0.7));
+        this.spriteContainer.add(scene.add.rectangle(-50 * s, -16 * s, 14 * s, 30 * s, 0x550000, 0.6));
+        this.spriteContainer.add(scene.add.rectangle(-58 * s, -24 * s, 10 * s, 22 * s, 0x440000, 0.5));
+        // Right wing - main bone
+        this.spriteContainer.add(scene.add.rectangle(32 * s, -8 * s, 8 * s, 50 * s, 0x8B0000));
+        // Right wing - finger bones
+        this.spriteContainer.add(scene.add.rectangle(44 * s, -20 * s, 6 * s, 36 * s, 0xA01010));
+        this.spriteContainer.add(scene.add.rectangle(54 * s, -28 * s, 5 * s, 28 * s, 0xB02020));
+        this.spriteContainer.add(scene.add.rectangle(62 * s, -34 * s, 4 * s, 22 * s, 0xC03030));
+        // Right wing membrane
+        this.spriteContainer.add(scene.add.rectangle(38 * s, -4 * s, 18 * s, 40 * s, 0x660000, 0.7));
+        this.spriteContainer.add(scene.add.rectangle(50 * s, -16 * s, 14 * s, 30 * s, 0x550000, 0.6));
+        this.spriteContainer.add(scene.add.rectangle(58 * s, -24 * s, 10 * s, 22 * s, 0x440000, 0.5));
 
-        // Long tail
-        this.spriteContainer.add(scene.add.rectangle(0, 42 * s, 16 * s, 22 * s, 0xFF5522));
-        this.spriteContainer.add(scene.add.rectangle(0, 58 * s, 14 * s, 18 * s, 0xFF6633));
-        this.spriteContainer.add(scene.add.rectangle(0, 72 * s, 12 * s, 14 * s, 0xFF7744));
-        this.spriteContainer.add(scene.add.rectangle(0, 84 * s, 10 * s, 12 * s, 0xFF8855));
-        // Tail spike
-        this.spriteContainer.add(scene.add.rectangle(0, 94 * s, 14 * s, 10 * s, 0xCC4411));
-        this.spriteContainer.add(scene.add.rectangle(0, 102 * s, 10 * s, 8 * s, 0xAA3300));
+        // === TAIL (curving, with spikes) ===
+        this.spriteContainer.add(scene.add.rectangle(0, 38 * s, 14 * s, 16 * s, 0xCC2200));
+        this.spriteContainer.add(scene.add.rectangle(4 * s, 50 * s, 12 * s, 14 * s, 0xBB1100));
+        this.spriteContainer.add(scene.add.rectangle(10 * s, 60 * s, 10 * s, 12 * s, 0xAA0000));
+        this.spriteContainer.add(scene.add.rectangle(18 * s, 68 * s, 8 * s, 10 * s, 0x990000));
+        this.spriteContainer.add(scene.add.rectangle(26 * s, 74 * s, 6 * s, 8 * s, 0x880000));
+        // Tail spike (arrow shape)
+        this.spriteContainer.add(scene.add.rectangle(34 * s, 76 * s, 12 * s, 6 * s, 0x442200));
+        this.spriteContainer.add(scene.add.rectangle(40 * s, 76 * s, 8 * s, 4 * s, 0x553311));
 
-        // Big legs
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, 38 * s, 14 * s, 22 * s, 0xFF5522));
-        this.spriteContainer.add(scene.add.rectangle(14 * s, 38 * s, 14 * s, 22 * s, 0xFF5522));
-        // Huge claws
-        this.spriteContainer.add(scene.add.rectangle(-20 * s, 52 * s, 6 * s, 10 * s, 0x664422));
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, 52 * s, 6 * s, 10 * s, 0x775533));
-        this.spriteContainer.add(scene.add.rectangle(-8 * s, 52 * s, 6 * s, 10 * s, 0x664422));
-        this.spriteContainer.add(scene.add.rectangle(20 * s, 52 * s, 6 * s, 10 * s, 0x664422));
-        this.spriteContainer.add(scene.add.rectangle(14 * s, 52 * s, 6 * s, 10 * s, 0x775533));
-        this.spriteContainer.add(scene.add.rectangle(8 * s, 52 * s, 6 * s, 10 * s, 0x664422));
+        // === LEGS (powerful, with claws) ===
+        // Left leg
+        this.spriteContainer.add(scene.add.rectangle(-12 * s, 32 * s, 12 * s, 20 * s, 0xAA1100));
+        this.spriteContainer.add(scene.add.rectangle(-14 * s, 44 * s, 14 * s, 10 * s, 0x991100));
+        // Left claws
+        this.spriteContainer.add(scene.add.rectangle(-20 * s, 50 * s, 4 * s, 8 * s, 0x332211));
+        this.spriteContainer.add(scene.add.rectangle(-14 * s, 52 * s, 4 * s, 10 * s, 0x443322));
+        this.spriteContainer.add(scene.add.rectangle(-8 * s, 50 * s, 4 * s, 8 * s, 0x332211));
+        // Right leg
+        this.spriteContainer.add(scene.add.rectangle(12 * s, 32 * s, 12 * s, 20 * s, 0xBB2200));
+        this.spriteContainer.add(scene.add.rectangle(14 * s, 44 * s, 14 * s, 10 * s, 0xAA2200));
+        // Right claws
+        this.spriteContainer.add(scene.add.rectangle(20 * s, 50 * s, 4 * s, 8 * s, 0x332211));
+        this.spriteContainer.add(scene.add.rectangle(14 * s, 52 * s, 4 * s, 10 * s, 0x443322));
+        this.spriteContainer.add(scene.add.rectangle(8 * s, 50 * s, 4 * s, 8 * s, 0x332211));
 
-        // MASSIVE body
-        const body = scene.add.rectangle(0, 12 * s, 44 * s, 38 * s, 0xFF5522);
+        // === BODY (muscular, scaled) ===
+        const body = scene.add.rectangle(0, 10 * s, 40 * s, 36 * s, 0xCC2200);
         this.spriteContainer.add(body);
-        this.spriteContainer.add(scene.add.rectangle(0, 14 * s, 38 * s, 32 * s, 0xFF6633)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-18 * s, 12 * s, 8 * s, 34 * s, 0xDD4411)); // shade
+        this.spriteContainer.add(scene.add.rectangle(2 * s, 10 * s, 34 * s, 30 * s, 0xDD3311)); // highlight
+        // Belly scales (lighter, segmented)
+        this.spriteContainer.add(scene.add.rectangle(0, 8 * s, 24 * s, 6 * s, 0xDD8844));
+        this.spriteContainer.add(scene.add.rectangle(0, 16 * s, 26 * s, 6 * s, 0xCC7733));
+        this.spriteContainer.add(scene.add.rectangle(0, 24 * s, 24 * s, 6 * s, 0xDD8844));
 
-        // Golden belly scales
-        this.spriteContainer.add(scene.add.rectangle(0, 18 * s, 30 * s, 26 * s, 0xFFAA33));
-        this.spriteContainer.add(scene.add.rectangle(0, 14 * s, 26 * s, 8 * s, 0xFFBB44)); // scale row
-        this.spriteContainer.add(scene.add.rectangle(0, 24 * s, 26 * s, 8 * s, 0xFFBB44)); // scale row
+        // === NECK (long, armored) ===
+        this.spriteContainer.add(scene.add.rectangle(0, -14 * s, 18 * s, 28 * s, 0xCC2200));
+        this.spriteContainer.add(scene.add.rectangle(2 * s, -12 * s, 14 * s, 24 * s, 0xDD3311));
+        // Neck scales
+        this.spriteContainer.add(scene.add.rectangle(0, -6 * s, 12 * s, 4 * s, 0xDD8844));
+        this.spriteContainer.add(scene.add.rectangle(0, -14 * s, 10 * s, 4 * s, 0xCC7733));
+        this.spriteContainer.add(scene.add.rectangle(0, -22 * s, 8 * s, 4 * s, 0xDD8844));
 
-        // Long neck
-        this.spriteContainer.add(scene.add.rectangle(0, -16 * s, 20 * s, 32 * s, 0xFF5522));
-        this.spriteContainer.add(scene.add.rectangle(0, -14 * s, 16 * s, 28 * s, 0xFF6633)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-7 * s, -16 * s, 6 * s, 28 * s, 0xDD4411)); // shade
-
-        // Back spikes (epic!)
-        for (let i = 0; i < 5; i++) {
-            const y = (-32 + i * 14) * s;
-            this.spriteContainer.add(scene.add.rectangle(0, y, 10 * s, 8 * s, 0xDD4411));
-            this.spriteContainer.add(scene.add.rectangle(0, y - 5 * s, 8 * s, 6 * s, 0xEE5522));
-            this.spriteContainer.add(scene.add.rectangle(0, y - 9 * s, 6 * s, 4 * s, 0xFF6633)); // tip
+        // === DORSAL SPIKES (along spine) ===
+        const spineColors = [0x661100, 0x772200, 0x883300, 0x994400];
+        for (let i = 0; i < 6; i++) {
+            const y = (-28 + i * 12) * s;
+            const spikeH = (10 - i) * s;
+            this.spriteContainer.add(scene.add.rectangle(0, y - spikeH/2, 6 * s, spikeH, spineColors[i % 4]));
         }
 
-        // BIG dragon head
-        const head = scene.add.rectangle(0, -42 * s, 32 * s, 26 * s, 0xFF5522);
+        // === HEAD (fierce, angular) ===
+        const head = scene.add.rectangle(0, -38 * s, 28 * s, 22 * s, 0xCC2200);
         this.spriteContainer.add(head);
-        this.spriteContainer.add(scene.add.rectangle(0, -40 * s, 28 * s, 20 * s, 0xFF6633)); // highlight
-        this.spriteContainer.add(scene.add.rectangle(-12 * s, -42 * s, 8 * s, 22 * s, 0xDD4411)); // shade
+        this.spriteContainer.add(scene.add.rectangle(2 * s, -36 * s, 22 * s, 16 * s, 0xDD3311));
 
-        // Long snout
-        this.spriteContainer.add(scene.add.rectangle(0, -52 * s, 20 * s, 14 * s, 0xDD4411));
-        this.spriteContainer.add(scene.add.rectangle(0, -54 * s, 16 * s, 8 * s, 0xEE5522)); // highlight
+        // Snout (elongated)
+        this.spriteContainer.add(scene.add.rectangle(0, -50 * s, 18 * s, 12 * s, 0xBB1100));
+        this.spriteContainer.add(scene.add.rectangle(0, -52 * s, 14 * s, 6 * s, 0xCC2200));
+        // Nostrils
+        this.spriteContainer.add(scene.add.rectangle(-4 * s, -54 * s, 4 * s, 3 * s, 0x220000));
+        this.spriteContainer.add(scene.add.rectangle(4 * s, -54 * s, 4 * s, 3 * s, 0x220000));
+        // Nostril smoke
+        const smoke1 = scene.add.rectangle(-4 * s, -58 * s, 6 * s, 4 * s, 0x444444, 0.4);
+        const smoke2 = scene.add.rectangle(4 * s, -58 * s, 6 * s, 4 * s, 0x444444, 0.4);
+        this.spriteContainer.add(smoke1);
+        this.spriteContainer.add(smoke2);
 
-        // Nostrils (with smoke!)
-        this.spriteContainer.add(scene.add.rectangle(-5 * s, -56 * s, 5 * s, 4 * s, 0x333333));
-        this.spriteContainer.add(scene.add.rectangle(5 * s, -56 * s, 5 * s, 4 * s, 0x333333));
+        // === HORNS (curved, menacing) ===
+        // Left horn
+        this.spriteContainer.add(scene.add.rectangle(-12 * s, -48 * s, 6 * s, 12 * s, 0x332211));
+        this.spriteContainer.add(scene.add.rectangle(-14 * s, -58 * s, 5 * s, 10 * s, 0x443322));
+        this.spriteContainer.add(scene.add.rectangle(-16 * s, -66 * s, 4 * s, 8 * s, 0x554433));
+        this.spriteContainer.add(scene.add.rectangle(-18 * s, -72 * s, 3 * s, 6 * s, 0x665544));
+        // Right horn
+        this.spriteContainer.add(scene.add.rectangle(12 * s, -48 * s, 6 * s, 12 * s, 0x332211));
+        this.spriteContainer.add(scene.add.rectangle(14 * s, -58 * s, 5 * s, 10 * s, 0x443322));
+        this.spriteContainer.add(scene.add.rectangle(16 * s, -66 * s, 4 * s, 8 * s, 0x554433));
+        this.spriteContainer.add(scene.add.rectangle(18 * s, -72 * s, 3 * s, 6 * s, 0x665544));
 
-        // Majestic horns
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, -54 * s, 8 * s, 14 * s, 0x775533));
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, -64 * s, 7 * s, 12 * s, 0x886644));
-        this.spriteContainer.add(scene.add.rectangle(-14 * s, -72 * s, 6 * s, 10 * s, 0x997755));
-        this.spriteContainer.add(scene.add.rectangle(14 * s, -54 * s, 8 * s, 14 * s, 0x775533));
-        this.spriteContainer.add(scene.add.rectangle(14 * s, -64 * s, 7 * s, 12 * s, 0x886644));
-        this.spriteContainer.add(scene.add.rectangle(14 * s, -72 * s, 6 * s, 10 * s, 0x997755));
+        // === EYES (glowing, fierce) ===
+        // Eye sockets (dark)
+        this.spriteContainer.add(scene.add.rectangle(-8 * s, -40 * s, 10 * s, 8 * s, 0x110000));
+        this.spriteContainer.add(scene.add.rectangle(8 * s, -40 * s, 10 * s, 8 * s, 0x110000));
+        // Glowing eyes (yellow-orange)
+        this.spriteContainer.add(scene.add.rectangle(-8 * s, -40 * s, 8 * s, 6 * s, 0xFFAA00));
+        this.spriteContainer.add(scene.add.rectangle(8 * s, -40 * s, 8 * s, 6 * s, 0xFFAA00));
+        // Slit pupils
+        this.spriteContainer.add(scene.add.rectangle(-8 * s, -40 * s, 3 * s, 5 * s, 0x000000));
+        this.spriteContainer.add(scene.add.rectangle(8 * s, -40 * s, 3 * s, 5 * s, 0x000000));
+        // Eye glow
+        this.spriteContainer.add(scene.add.rectangle(-9 * s, -42 * s, 3 * s, 2 * s, 0xFFDD44));
+        this.spriteContainer.add(scene.add.rectangle(7 * s, -42 * s, 3 * s, 2 * s, 0xFFDD44));
 
-        // Fierce glowing eyes
-        this.spriteContainer.add(scene.add.rectangle(-9 * s, -44 * s, 12 * s, 10 * s, 0xFFFF44)); // left eye
-        this.spriteContainer.add(scene.add.rectangle(9 * s, -44 * s, 12 * s, 10 * s, 0xFFFF44)); // right eye
-        this.spriteContainer.add(scene.add.rectangle(-8 * s, -43 * s, 6 * s, 8 * s, 0x000000)); // left pupil
-        this.spriteContainer.add(scene.add.rectangle(10 * s, -43 * s, 6 * s, 8 * s, 0x000000)); // right pupil
-        this.spriteContainer.add(scene.add.rectangle(-10 * s, -46 * s, 4 * s, 4 * s, 0xFFFFAA)); // shine
+        // === MOUTH (with teeth) ===
+        this.spriteContainer.add(scene.add.rectangle(0, -44 * s, 12 * s, 4 * s, 0x110000));
+        // Fangs
+        this.spriteContainer.add(scene.add.rectangle(-4 * s, -42 * s, 2 * s, 4 * s, 0xFFFFEE));
+        this.spriteContainer.add(scene.add.rectangle(4 * s, -42 * s, 2 * s, 4 * s, 0xFFFFEE));
 
-        // GOLDEN Crown for the boss!
-        this.spriteContainer.add(scene.add.rectangle(0, -62 * s, 24 * s, 8 * s, 0xFFDD00));
-        this.spriteContainer.add(scene.add.rectangle(-10 * s, -70 * s, 6 * s, 12 * s, 0xFFEE22));
-        this.spriteContainer.add(scene.add.rectangle(0, -74 * s, 6 * s, 16 * s, 0xFFEE22));
-        this.spriteContainer.add(scene.add.rectangle(10 * s, -70 * s, 6 * s, 12 * s, 0xFFEE22));
-        // Crown gems
-        this.spriteContainer.add(scene.add.rectangle(0, -68 * s, 5 * s, 5 * s, 0xFF2222)); // ruby
-        this.spriteContainer.add(scene.add.rectangle(-10 * s, -66 * s, 4 * s, 4 * s, 0x22FF22)); // emerald
-        this.spriteContainer.add(scene.add.rectangle(10 * s, -66 * s, 4 * s, 4 * s, 0x44AAFF)); // sapphire
-
-        // Fire breath glow effect
-        const fireGlow = scene.add.rectangle(0, -60 * s, 18 * s, 14 * s, 0xFF6600, 0.4);
+        // === FIRE BREATH GLOW ===
+        const fireGlow = scene.add.rectangle(0, -56 * s, 20 * s, 16 * s, 0xFF4400, 0.3);
         this.spriteContainer.add(fireGlow);
 
         scene.tweens.add({
-            targets: fireGlow,
-            alpha: 0.7,
-            scaleX: 1.5,
-            scaleY: 1.5,
-            duration: 400,
+            targets: [fireGlow, smoke1, smoke2],
+            alpha: { from: 0.3, to: 0.6 },
+            scaleX: { from: 1, to: 1.3 },
+            scaleY: { from: 1, to: 1.3 },
+            duration: 500,
             yoyo: true,
-            repeat: -1
+            repeat: -1,
+            ease: 'Sine.easeInOut'
         });
 
         this.mainSprite = body;

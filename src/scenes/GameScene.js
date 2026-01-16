@@ -2282,53 +2282,71 @@ Lv.${level + 1}`;
     }
 
     createPreviewDragon(container) {
-        const s = 1.0;
-        // Wings
-        container.add(this.add.rectangle(-44 * s, -12 * s, 16 * s, 40 * s, 0xFF6633));
-        container.add(this.add.rectangle(-56 * s, -22 * s, 14 * s, 32 * s, 0xFF7744));
-        container.add(this.add.rectangle(-66 * s, -32 * s, 12 * s, 26 * s, 0xFF8855));
-        container.add(this.add.rectangle(44 * s, -12 * s, 16 * s, 40 * s, 0xFF6633));
-        container.add(this.add.rectangle(56 * s, -22 * s, 14 * s, 32 * s, 0xFF7744));
-        container.add(this.add.rectangle(66 * s, -32 * s, 12 * s, 26 * s, 0xFF8855));
-        // Tail
-        container.add(this.add.rectangle(0, 42 * s, 16 * s, 22 * s, 0xFF5522));
-        container.add(this.add.rectangle(0, 58 * s, 14 * s, 18 * s, 0xFF6633));
-        container.add(this.add.rectangle(0, 72 * s, 12 * s, 14 * s, 0xFF7744));
-        container.add(this.add.rectangle(0, 84 * s, 14 * s, 10 * s, 0xCC4411));
+        const s = 0.9;
+        // Wings (bat-like)
+        container.add(this.add.rectangle(-32 * s, -8 * s, 8 * s, 50 * s, 0x8B0000));
+        container.add(this.add.rectangle(-44 * s, -20 * s, 6 * s, 36 * s, 0xA01010));
+        container.add(this.add.rectangle(-54 * s, -28 * s, 5 * s, 28 * s, 0xB02020));
+        container.add(this.add.rectangle(-38 * s, -4 * s, 18 * s, 40 * s, 0x660000, 0.7));
+        container.add(this.add.rectangle(-50 * s, -16 * s, 14 * s, 30 * s, 0x550000, 0.6));
+        container.add(this.add.rectangle(32 * s, -8 * s, 8 * s, 50 * s, 0x8B0000));
+        container.add(this.add.rectangle(44 * s, -20 * s, 6 * s, 36 * s, 0xA01010));
+        container.add(this.add.rectangle(54 * s, -28 * s, 5 * s, 28 * s, 0xB02020));
+        container.add(this.add.rectangle(38 * s, -4 * s, 18 * s, 40 * s, 0x660000, 0.7));
+        container.add(this.add.rectangle(50 * s, -16 * s, 14 * s, 30 * s, 0x550000, 0.6));
+        // Tail (curving)
+        container.add(this.add.rectangle(0, 38 * s, 14 * s, 16 * s, 0xCC2200));
+        container.add(this.add.rectangle(4 * s, 50 * s, 12 * s, 14 * s, 0xBB1100));
+        container.add(this.add.rectangle(10 * s, 60 * s, 10 * s, 12 * s, 0xAA0000));
+        container.add(this.add.rectangle(18 * s, 68 * s, 8 * s, 10 * s, 0x990000));
+        container.add(this.add.rectangle(26 * s, 72 * s, 12 * s, 6 * s, 0x442200));
         // Legs
-        container.add(this.add.rectangle(-14 * s, 38 * s, 14 * s, 22 * s, 0xFF5522));
-        container.add(this.add.rectangle(14 * s, 38 * s, 14 * s, 22 * s, 0xFF5522));
+        container.add(this.add.rectangle(-12 * s, 32 * s, 12 * s, 20 * s, 0xAA1100));
+        container.add(this.add.rectangle(12 * s, 32 * s, 12 * s, 20 * s, 0xBB2200));
+        container.add(this.add.rectangle(-14 * s, 44 * s, 14 * s, 10 * s, 0x991100));
+        container.add(this.add.rectangle(14 * s, 44 * s, 14 * s, 10 * s, 0xAA2200));
         // Body
-        container.add(this.add.rectangle(0, 12 * s, 44 * s, 38 * s, 0xFF5522));
-        container.add(this.add.rectangle(0, 14 * s, 38 * s, 32 * s, 0xFF6633));
+        container.add(this.add.rectangle(0, 10 * s, 40 * s, 36 * s, 0xCC2200));
+        container.add(this.add.rectangle(2 * s, 10 * s, 34 * s, 30 * s, 0xDD3311));
         // Belly scales
-        container.add(this.add.rectangle(0, 18 * s, 30 * s, 26 * s, 0xFFAA33));
-        container.add(this.add.rectangle(0, 14 * s, 26 * s, 8 * s, 0xFFBB44));
-        container.add(this.add.rectangle(0, 24 * s, 26 * s, 8 * s, 0xFFBB44));
+        container.add(this.add.rectangle(0, 8 * s, 24 * s, 6 * s, 0xDD8844));
+        container.add(this.add.rectangle(0, 16 * s, 26 * s, 6 * s, 0xCC7733));
+        container.add(this.add.rectangle(0, 24 * s, 24 * s, 6 * s, 0xDD8844));
         // Neck
-        container.add(this.add.rectangle(0, -16 * s, 20 * s, 32 * s, 0xFF5522));
-        container.add(this.add.rectangle(0, -14 * s, 16 * s, 28 * s, 0xFF6633));
+        container.add(this.add.rectangle(0, -14 * s, 18 * s, 28 * s, 0xCC2200));
+        container.add(this.add.rectangle(2 * s, -12 * s, 14 * s, 24 * s, 0xDD3311));
+        // Dorsal spikes
+        for (let i = 0; i < 5; i++) {
+            const y = (-28 + i * 12) * s;
+            const spikeH = (10 - i) * s;
+            container.add(this.add.rectangle(0, y - spikeH/2, 6 * s, spikeH, 0x772200));
+        }
         // Head
-        container.add(this.add.rectangle(0, -42 * s, 32 * s, 26 * s, 0xFF5522));
-        container.add(this.add.rectangle(0, -40 * s, 28 * s, 20 * s, 0xFF6633));
+        container.add(this.add.rectangle(0, -38 * s, 28 * s, 22 * s, 0xCC2200));
+        container.add(this.add.rectangle(2 * s, -36 * s, 22 * s, 16 * s, 0xDD3311));
         // Snout
-        container.add(this.add.rectangle(0, -52 * s, 20 * s, 14 * s, 0xDD4411));
-        container.add(this.add.rectangle(0, -54 * s, 16 * s, 8 * s, 0xEE5522));
+        container.add(this.add.rectangle(0, -50 * s, 18 * s, 12 * s, 0xBB1100));
+        container.add(this.add.rectangle(0, -52 * s, 14 * s, 6 * s, 0xCC2200));
         // Nostrils
-        container.add(this.add.rectangle(-5 * s, -56 * s, 5 * s, 4 * s, 0x333333));
-        container.add(this.add.rectangle(5 * s, -56 * s, 5 * s, 4 * s, 0x333333));
-        // Horns
-        container.add(this.add.rectangle(-14 * s, -54 * s, 8 * s, 14 * s, 0x775533));
-        container.add(this.add.rectangle(-14 * s, -64 * s, 7 * s, 12 * s, 0x886644));
-        container.add(this.add.rectangle(-14 * s, -72 * s, 6 * s, 10 * s, 0x997755));
-        container.add(this.add.rectangle(14 * s, -54 * s, 8 * s, 14 * s, 0x775533));
-        container.add(this.add.rectangle(14 * s, -64 * s, 7 * s, 12 * s, 0x886644));
-        container.add(this.add.rectangle(14 * s, -72 * s, 6 * s, 10 * s, 0x997755));
-        // Eyes
-        container.add(this.add.rectangle(-9 * s, -44 * s, 12 * s, 10 * s, 0xFFFF44));
-        container.add(this.add.rectangle(9 * s, -44 * s, 12 * s, 10 * s, 0xFFFF44));
-        container.add(this.add.rectangle(-8 * s, -43 * s, 6 * s, 8 * s, 0x000000));
-        container.add(this.add.rectangle(10 * s, -43 * s, 6 * s, 8 * s, 0x000000));
+        container.add(this.add.rectangle(-4 * s, -54 * s, 4 * s, 3 * s, 0x220000));
+        container.add(this.add.rectangle(4 * s, -54 * s, 4 * s, 3 * s, 0x220000));
+        // Horns (curved)
+        container.add(this.add.rectangle(-12 * s, -48 * s, 6 * s, 12 * s, 0x332211));
+        container.add(this.add.rectangle(-14 * s, -58 * s, 5 * s, 10 * s, 0x443322));
+        container.add(this.add.rectangle(-16 * s, -66 * s, 4 * s, 8 * s, 0x554433));
+        container.add(this.add.rectangle(12 * s, -48 * s, 6 * s, 12 * s, 0x332211));
+        container.add(this.add.rectangle(14 * s, -58 * s, 5 * s, 10 * s, 0x443322));
+        container.add(this.add.rectangle(16 * s, -66 * s, 4 * s, 8 * s, 0x554433));
+        // Eyes (glowing)
+        container.add(this.add.rectangle(-8 * s, -40 * s, 10 * s, 8 * s, 0x110000));
+        container.add(this.add.rectangle(8 * s, -40 * s, 10 * s, 8 * s, 0x110000));
+        container.add(this.add.rectangle(-8 * s, -40 * s, 8 * s, 6 * s, 0xFFAA00));
+        container.add(this.add.rectangle(8 * s, -40 * s, 8 * s, 6 * s, 0xFFAA00));
+        container.add(this.add.rectangle(-8 * s, -40 * s, 3 * s, 5 * s, 0x000000));
+        container.add(this.add.rectangle(8 * s, -40 * s, 3 * s, 5 * s, 0x000000));
+        // Fangs
+        container.add(this.add.rectangle(-4 * s, -42 * s, 2 * s, 4 * s, 0xFFFFEE));
+        container.add(this.add.rectangle(4 * s, -42 * s, 2 * s, 4 * s, 0xFFFFEE));
     }
 
     createPreviewDarkKnight(container) {

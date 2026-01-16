@@ -142,7 +142,16 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.6)
+## Recent Updates (v1.35.7)
+
+### v1.35.7
+- **Dragon Boss Redesign**: Menacing pixel art dragon
+  - Bat-like wings with dark membrane
+  - Deep crimson color palette
+  - Curved horns and dorsal spikes
+  - Glowing orange eyes with slit pupils
+  - Animated smoke from nostrils
+  - Curved tail with arrow spike
 
 ### v1.35.6
 - **Improved In-Game Messages**: All notifications now have styled boxes
@@ -222,4 +231,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.6)*
+*Last updated: January 2026 (v1.35.7)*
