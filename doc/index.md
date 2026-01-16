@@ -142,9 +142,12 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.17)
+## Recent Updates (v1.35.18)
 
-### v1.35.17
+### v1.35.18
+- **Audio**: New unit spawn sound (pop + shimmer + whoosh)
+
+### v1.35.18
 - **Smarter Units**: Redesigned with wing-based system (Left, Free, Top, Bottom, Right)
 - **Reinforcements**: War horn sound replaces text message
 - **Promotions**: Notification shows for shorter time (2.4s)
@@ -282,4 +285,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.17)*
+*Last updated: January 2026 (v1.35.18)*

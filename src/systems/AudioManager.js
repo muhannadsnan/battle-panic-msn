@@ -446,26 +446,60 @@ class AudioManager {
         noise.start();
     }
 
-    // Play spawn sound
+    // Play spawn sound - satisfying pop/whoosh for unit appearing
     playSpawn() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
         this.resume();
 
-        const osc = this.audioContext.createOscillator();
-        const gain = this.audioContext.createGain();
+        const now = this.audioContext.currentTime;
 
-        osc.connect(gain);
-        gain.connect(this.sfxGain);
+        // Low thump - impact of unit appearing
+        const thump = this.audioContext.createOscillator();
+        const thumpGain = this.audioContext.createGain();
+        thump.connect(thumpGain);
+        thumpGain.connect(this.sfxGain);
+        thump.frequency.setValueAtTime(150, now);
+        thump.frequency.exponentialRampToValueAtTime(60, now + 0.1);
+        thump.type = 'sine';
+        thumpGain.gain.setValueAtTime(0.2, now);
+        thumpGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        thump.start(now);
+        thump.stop(now + 0.12);
 
-        osc.frequency.setValueAtTime(200, this.audioContext.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.15);
-        osc.type = 'sine';
+        // Rising shimmer - magical appearance
+        const shimmer = this.audioContext.createOscillator();
+        const shimmerGain = this.audioContext.createGain();
+        shimmer.connect(shimmerGain);
+        shimmerGain.connect(this.sfxGain);
+        shimmer.frequency.setValueAtTime(800, now);
+        shimmer.frequency.exponentialRampToValueAtTime(1200, now + 0.08);
+        shimmer.type = 'sine';
+        shimmerGain.gain.setValueAtTime(0.08, now);
+        shimmerGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        shimmer.start(now);
+        shimmer.stop(now + 0.1);
 
-        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
-
-        osc.start();
-        osc.stop(this.audioContext.currentTime + 0.15);
+        // Whoosh noise - air displacement
+        const noiseLength = this.audioContext.sampleRate * 0.1;
+        const noiseBuffer = this.audioContext.createBuffer(1, noiseLength, this.audioContext.sampleRate);
+        const noiseData = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < noiseLength; i++) {
+            const env = 1 - (i / noiseLength);
+            noiseData[i] = (Math.random() * 2 - 1) * env * 0.3;
+        }
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        noise.buffer = noiseBuffer;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.setValueAtTime(2000, now);
+        noiseFilter.frequency.exponentialRampToValueAtTime(500, now + 0.1);
+        noiseFilter.Q.value = 1;
+        noiseGain.gain.setValueAtTime(0.12, now);
+        noise.start(now);
     }
 
     // Play wave start sound
