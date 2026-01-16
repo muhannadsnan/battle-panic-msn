@@ -3046,16 +3046,8 @@ Lv.${level + 1}`;
             duration: 150,
             ease: 'Back.easeOut',
             onComplete: () => {
-                // Float up and fade out (doubled time)
-                this.tweens.add({
-                    targets: container,
-                    y: 110,
-                    alpha: 0,
-                    duration: 2400,
-                    delay: 800,
-                    ease: 'Power2',
-                    onComplete: () => container.destroy()
-                });
+                // Stay visible then destroy instantly (no fade)
+                this.time.delayedCall(3200, () => container.destroy());
             }
         });
     }
@@ -3228,16 +3220,8 @@ Lv.${level + 1}`;
             duration: 250,
             ease: 'Back.easeOut',
             onComplete: () => {
-                // Fade out after delay (doubled time)
-                this.tweens.add({
-                    targets: container,
-                    alpha: 0,
-                    y: 80,
-                    duration: 800,
-                    delay: 4000,
-                    ease: 'Power2',
-                    onComplete: () => container.destroy()
-                });
+                // Stay visible then destroy instantly (no fade)
+                this.time.delayedCall(4800, () => container.destroy());
             }
         });
     }

@@ -142,7 +142,12 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.13)
+## Recent Updates (v1.35.14)
+
+### v1.35.14
+- **Upgrades**: Button hides during glow animation, reappears when glow ends
+- **In-game**: Messages disappear instantly (no fade out)
+- **Robinhood**: Fixed crossbow orientation (limbs now at front)
 
 ### v1.35.13
 - **Upgrade Glow Fix**: Glow effect now appears on the correct card when upgrading from side cards
@@ -265,4 +270,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.13)*
+*Last updated: January 2026 (v1.35.14)*

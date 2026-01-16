@@ -560,22 +560,22 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts.rightArm = scene.add.container(12, 0);
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 7, 14, 0x2E7D32));
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 10, 7, 7, 0xF5CBA7));
-        // Crossbow - horizontal bow on stock
+        // Crossbow - horizontal bow on stock (limbs at front, stock extends back)
         this.bodyParts.weapon = scene.add.container(8, 0);
-        // Stock (main body)
-        this.bodyParts.weapon.add(scene.add.rectangle(12, 0, 28, 6, 0x5D4037)); // wooden stock
-        this.bodyParts.weapon.add(scene.add.rectangle(14, 0, 24, 4, 0x6D5047)); // highlight
-        // Bow limbs (horizontal)
-        this.bodyParts.weapon.add(scene.add.rectangle(2, -10, 5, 16, 0x795548)); // top limb
-        this.bodyParts.weapon.add(scene.add.rectangle(2, 10, 5, 16, 0x795548));  // bottom limb
-        // Golden tips
-        this.bodyParts.weapon.add(scene.add.rectangle(2, -17, 4, 5, 0xFFC107));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, 17, 4, 5, 0xFFC107));
-        // String (horizontal, pulled back)
-        this.bodyParts.weapon.add(scene.add.rectangle(6, 0, 8, 2, 0xE0E0E0));
-        // Bolt loaded
-        this.bodyParts.weapon.add(scene.add.rectangle(16, 0, 18, 3, 0x8B4513)); // bolt shaft
-        this.bodyParts.weapon.add(scene.add.rectangle(26, 0, 6, 4, 0xC0C0C0));  // bolt tip
+        // Stock (main body) - extends backward
+        this.bodyParts.weapon.add(scene.add.rectangle(4, 0, 28, 6, 0x5D4037)); // wooden stock
+        this.bodyParts.weapon.add(scene.add.rectangle(2, 0, 24, 4, 0x6D5047)); // highlight
+        // Bow limbs at front (horizontal)
+        this.bodyParts.weapon.add(scene.add.rectangle(18, -10, 5, 16, 0x795548)); // top limb
+        this.bodyParts.weapon.add(scene.add.rectangle(18, 10, 5, 16, 0x795548));  // bottom limb
+        // Golden tips at front
+        this.bodyParts.weapon.add(scene.add.rectangle(18, -17, 4, 5, 0xFFC107));
+        this.bodyParts.weapon.add(scene.add.rectangle(18, 17, 4, 5, 0xFFC107));
+        // String at front
+        this.bodyParts.weapon.add(scene.add.rectangle(14, 0, 8, 2, 0xE0E0E0));
+        // Bolt loaded (pointing forward from string)
+        this.bodyParts.weapon.add(scene.add.rectangle(24, 0, 18, 3, 0x8B4513)); // bolt shaft
+        this.bodyParts.weapon.add(scene.add.rectangle(34, 0, 6, 4, 0xC0C0C0));  // bolt tip
         this.bodyParts.rightArm.add(this.bodyParts.weapon);
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 

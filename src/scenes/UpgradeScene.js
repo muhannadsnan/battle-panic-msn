@@ -1565,8 +1565,12 @@ class UpgradeScene extends Phaser.Scene {
                     }
                 }
 
-                // Track which card was clicked for glow effect
+                // Track which card and button was clicked for glow effect
                 this.lastClickedCard = parentCard;
+                this.lastClickedButton = container;
+                
+                // Hide button during glow period
+                container.setVisible(false);
 
                 if (typeof audioManager !== 'undefined') {
                     audioManager.playClick();
@@ -1743,13 +1747,19 @@ class UpgradeScene extends Phaser.Scene {
             glow.strokeRoundedRect(-140, -200, 280, 400, 12);
             currentCard.add(glow);
 
-            // Animate glow pulsing
+            // Animate glow pulsing, show button again when done
             this.tweens.add({
                 targets: glow,
                 alpha: { from: 0.8, to: 0.3 },
                 duration: 400,
                 yoyo: true,
-                repeat: 2
+                repeat: 2,
+                onComplete: () => {
+                    // Show button again when glow finishes
+                    if (this.lastClickedButton) {
+                        this.lastClickedButton.setVisible(true);
+                    }
+                }
             });
         }
 
