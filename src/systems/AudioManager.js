@@ -59,8 +59,8 @@ class AudioManager {
         filter.type = 'lowpass';
         filter.frequency.value = 300;
 
-        gain.gain.setValueAtTime(0.25, this.audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.004, this.audioContext.currentTime + 0.1);
 
         osc.start();
         osc.stop(this.audioContext.currentTime + 0.1);
@@ -81,7 +81,7 @@ class AudioManager {
         noise.connect(noiseFilter);
         noiseFilter.connect(noiseGain);
         noiseGain.connect(this.sfxGain);
-        noiseGain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        noiseGain.gain.setValueAtTime(0.04, this.audioContext.currentTime);
         noise.start();
     }
 

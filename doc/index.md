@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.19)
+## Recent Updates (v1.35.20)
+
+### v1.35.20
+- **Audio**: Reduced hit sound volume by 60% (less annoying with large armies)
 
 ### v1.35.19
 - **Audio**: New castle arrow sound (bow twang + whoosh)
@@ -288,4 +291,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.19)*
+*Last updated: January 2026 (v1.35.20)*
