@@ -142,7 +142,16 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.5)
+## Recent Updates (v1.35.6)
+
+### v1.35.6
+- **Improved In-Game Messages**: All notifications now have styled boxes
+  - Rounded corners, semi-transparent backgrounds (0.7 opacity)
+  - Colored borders matching message theme
+  - Pop-in animations and smooth fade-outs
+  - Mobile-friendly sizing
+- **Rank Display**: Player rank now shows next to wave count (bottom right)
+- **Wave Announcements**: Styled boxes for wave start and rewards
 
 ### v1.35.5
 - **Unit Visual Improvements**:
@@ -213,4 +222,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.5)*
+*Last updated: January 2026 (v1.35.6)*

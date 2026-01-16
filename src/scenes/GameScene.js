@@ -1138,6 +1138,9 @@ Lv.${level + 1}`;
     createUI() {
         // Wave display (bottom right corner, always on top)
         this.waveDisplay = new WaveDisplay(this, GAME_WIDTH - 10, GAME_HEIGHT - 10);
+        // Show rank next to wave count
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        this.waveDisplay.setRank(rankInfo);
 
         // Resource display (gold and wood) - center top
         this.resourceDisplay = new ResourceDisplay(this, 150, 30);  // Top bar
@@ -2934,20 +2937,59 @@ Lv.${level + 1}`;
     }
 
     showMessage(text, color = '#ffffff') {
-        const message = this.add.text(GAME_WIDTH / 2, 150, text, {
-            fontSize: '24px',
+        // Create container for message box
+        const container = this.add.container(GAME_WIDTH / 2, 150);
+        container.setDepth(1000);
+
+        // Create text first to measure it
+        const message = this.add.text(0, 0, text, {
+            fontSize: '22px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: color,
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5).setDepth(1000);
+            strokeThickness: 2
+        }).setOrigin(0.5);
+
+        // Create rounded background box with padding
+        const padding = { x: 20, y: 12 };
+        const boxWidth = message.width + padding.x * 2;
+        const boxHeight = message.height + padding.y * 2;
+
+        const bg = this.add.graphics();
+        bg.fillStyle(0x000000, 0.7);
+        bg.fillRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 12);
+
+        // Add subtle border
+        bg.lineStyle(2, Phaser.Display.Color.HexStringToColor(color).color, 0.5);
+        bg.strokeRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 12);
+
+        container.add(bg);
+        container.add(message);
+
+        // Pop-in animation
+        container.setScale(0.8);
+        container.setAlpha(0);
 
         this.tweens.add({
-            targets: message,
-            y: 120,
-            alpha: 0,
-            duration: 1500,
-            onComplete: () => message.destroy()
+            targets: container,
+            scaleX: 1,
+            scaleY: 1,
+            alpha: 1,
+            duration: 150,
+            ease: 'Back.easeOut',
+            onComplete: () => {
+                // Float up and fade out
+                this.tweens.add({
+                    targets: container,
+                    y: 110,
+                    alpha: 0,
+                    duration: 1200,
+                    delay: 400,
+                    ease: 'Power2',
+                    onComplete: () => container.destroy()
+                });
+            }
         });
     }
 
@@ -3048,62 +3090,88 @@ Lv.${level + 1}`;
     showPromotionNotification(unitType, level) {
         const badgeInfo = this.getPromotionBadgeInfo(level);
         const unitName = UNIT_TYPES[unitType].name;
-        const color = badgeInfo.color === 'gold' ? '#ffd700' : '#c0c0c0';
+        const isGold = badgeInfo.color === 'gold';
+        const color = isGold ? '#ffd700' : '#c0c0c0';
+        const borderColor = isGold ? 0xffd700 : 0xc0c0c0;
         // Level 3 and 6 show a star, others show chevrons
         const signs = badgeInfo.isStar ? '★' : '▲'.repeat(badgeInfo.signs);
 
-        // Position right below top bar
-        const yPos = 70;
+        // Create container for promotion box
+        const container = this.add.container(GAME_WIDTH / 2, 100);
+        container.setDepth(1100);
 
-        const message = this.add.text(GAME_WIDTH / 2, yPos,
-            `${unitName} PROMOTED!`, {
-            fontSize: '32px',
+        // Create text elements first to measure
+        const message = this.add.text(0, -25, `${unitName} PROMOTED!`, {
+            fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: color,
             stroke: '#000000',
-            strokeThickness: 4
-        }).setOrigin(0.5).setDepth(1100);
+            strokeThickness: 2
+        }).setOrigin(0.5);
 
-        const badge = this.add.text(GAME_WIDTH / 2, yPos + 35, signs, {
-            fontSize: '28px',
+        const badge = this.add.text(0, 8, signs, {
+            fontSize: '24px',
             color: color,
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5).setDepth(1100);
+            strokeThickness: 2
+        }).setOrigin(0.5);
 
         const bonus = Math.round((this.getPromotionBonus(level) - 1) * 100);
-        const bonusText = this.add.text(GAME_WIDTH / 2, yPos + 70,
-            `+${bonus}% Stats!`, {
-            fontSize: '20px',
+        const bonusText = this.add.text(0, 38, `+${bonus}% Stats!`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#4ade80',
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5).setDepth(1100);
+            strokeThickness: 2
+        }).setOrigin(0.5);
+
+        // Calculate box dimensions
+        const padding = { x: 30, y: 20 };
+        const boxWidth = Math.max(message.width, bonusText.width) + padding.x * 2;
+        const boxHeight = 110;
+
+        // Create rounded background
+        const bg = this.add.graphics();
+        bg.fillStyle(0x000000, 0.75);
+        bg.fillRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 16);
+        bg.lineStyle(3, borderColor, 0.8);
+        bg.strokeRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 16);
+
+        container.add(bg);
+        container.add(message);
+        container.add(badge);
+        container.add(bonusText);
 
         // Play promotion fanfare sound
         if (typeof audioManager !== 'undefined') {
             audioManager.playPromotion();
         }
 
-        // Scale in animation
-        message.setScale(0);
-        badge.setScale(0);
-        bonusText.setScale(0);
-        
-        this.tweens.add({
-            targets: [message, badge, bonusText],
-            scale: 1,
-            duration: 300,
-            ease: 'Back.easeOut'
-        });
+        // Pop-in animation
+        container.setScale(0);
+        container.setAlpha(0);
 
-        // Remove after delay (no fade)
-        this.time.delayedCall(2500, () => {
-            message.destroy();
-            badge.destroy();
-            bonusText.destroy();
+        this.tweens.add({
+            targets: container,
+            scaleX: 1,
+            scaleY: 1,
+            alpha: 1,
+            duration: 250,
+            ease: 'Back.easeOut',
+            onComplete: () => {
+                // Fade out after delay
+                this.tweens.add({
+                    targets: container,
+                    alpha: 0,
+                    y: 80,
+                    duration: 400,
+                    delay: 2000,
+                    ease: 'Power2',
+                    onComplete: () => container.destroy()
+                });
+            }
         });
     }
 

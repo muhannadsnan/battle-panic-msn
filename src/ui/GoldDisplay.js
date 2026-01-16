@@ -135,6 +135,17 @@ class WaveDisplay extends Phaser.GameObjects.Container {
 
         this.scene = scene;
 
+        // Rank text (left of wave)
+        this.rankText = scene.add.text(-10, 0, '', {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#aaaaaa',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(1, 1).setAlpha(0.8);
+        this.add(this.rankText);
+
         // Big wave number text with opacity
         this.waveText = scene.add.text(0, 0, 'Wave 0', {
             fontSize: '32px',
@@ -150,67 +161,130 @@ class WaveDisplay extends Phaser.GameObjects.Container {
         this.setDepth(900);  // Always on top of gameplay
     }
 
+    setRank(rankInfo) {
+        if (rankInfo && rankInfo.rank) {
+            const rank = rankInfo.rank;
+            const gradeNum = rank.grade ? ` ${['I', 'II', 'III'][rank.grade - 1] || rank.grade}` : '';
+            this.rankText.setText(`${rank.name}${gradeNum}  |`);
+            this.rankText.setColor(rank.color || '#aaaaaa');
+            // Reposition rank text to be left of wave text
+            this.rankText.setX(-this.waveText.width - 10);
+        }
+    }
+
     setWave(waveNumber, enemiesRemaining = 0) {
         this.waveText.setText(`Wave ${waveNumber}`);
+        // Reposition rank after wave text changes
+        this.rankText.setX(-this.waveText.width - 10);
     }
 
     showWaveStart(waveNumber) {
-        // Big wave announcement - no zoom, just fade out
-        const announcement = this.scene.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2, `WAVE ${waveNumber}`, {
-            fontSize: '64px',
+        // Container for wave announcement box
+        const container = this.scene.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        container.setDepth(1000);
+
+        // Create text first to measure
+        const announcement = this.scene.add.text(0, 0, `WAVE ${waveNumber}`, {
+            fontSize: '52px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ff4444',
             stroke: '#000000',
-            strokeThickness: 4
-        }).setOrigin(0.5).setDepth(1000);
+            strokeThickness: 3
+        }).setOrigin(0.5);
+
+        // Rounded background box
+        const padding = { x: 40, y: 20 };
+        const boxWidth = announcement.width + padding.x * 2;
+        const boxHeight = announcement.height + padding.y * 2;
+
+        const bg = this.scene.add.graphics();
+        bg.fillStyle(0x000000, 0.7);
+        bg.fillRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 16);
+        bg.lineStyle(3, 0xff4444, 0.6);
+        bg.strokeRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 16);
+
+        container.add(bg);
+        container.add(announcement);
 
         // Play wave start sound
         if (typeof audioManager !== 'undefined') {
             audioManager.playWaveStart();
         }
 
-        // Simple fade out, no zoom
+        // Pop-in then fade out
+        container.setScale(0.8);
+        container.setAlpha(0);
+
         this.scene.tweens.add({
-            targets: announcement,
-            alpha: 0,
-            duration: 1500,
-            ease: 'Power2',
-            onComplete: () => announcement.destroy()
+            targets: container,
+            scaleX: 1,
+            scaleY: 1,
+            alpha: 1,
+            duration: 200,
+            ease: 'Back.easeOut',
+            onComplete: () => {
+                this.scene.tweens.add({
+                    targets: container,
+                    alpha: 0,
+                    duration: 1000,
+                    delay: 500,
+                    ease: 'Power2',
+                    onComplete: () => container.destroy()
+                });
+            }
         });
     }
 
     showWaveComplete(waveNumber, goldReward, woodReward) {
-        // Show rewards below resource display (ResourceDisplay is at 150, 30)
-        // Gold reward below gold value
-        const goldBonusText = this.scene.add.text(165, 55, `+${goldReward}`, {
-            fontSize: '20px',
+        // Container for rewards notification
+        const container = this.scene.add.container(220, 58);
+        container.setDepth(1000);
+
+        // Create reward text
+        const rewardText = this.scene.add.text(0, 0, `+${goldReward}g  +${woodReward}w`, {
+            fontSize: '18px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#44ff44',
+            color: '#4ade80',
             stroke: '#000000',
             strokeThickness: 2
-        }).setOrigin(0.5).setDepth(1000);
+        }).setOrigin(0.5);
 
-        // Wood reward below wood value
-        const woodBonusText = this.scene.add.text(280, 55, `+${woodReward}`, {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#44ff44',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5).setDepth(1000);
+        // Small rounded background
+        const padding = { x: 12, y: 6 };
+        const boxWidth = rewardText.width + padding.x * 2;
+        const boxHeight = rewardText.height + padding.y * 2;
 
-        // Stay visible for 3 seconds, then fade out
+        const bg = this.scene.add.graphics();
+        bg.fillStyle(0x000000, 0.6);
+        bg.fillRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 8);
+
+        container.add(bg);
+        container.add(rewardText);
+
+        // Pop in
+        container.setScale(0.8);
+        container.setAlpha(0);
+
         this.scene.tweens.add({
-            targets: [goldBonusText, woodBonusText],
-            alpha: 0,
-            delay: 3000,        // Wait 3 seconds before fading
-            duration: 500,      // Quick fade out
-            ease: 'Power2',
+            targets: container,
+            scaleX: 1,
+            scaleY: 1,
+            alpha: 1,
+            duration: 150,
+            ease: 'Back.easeOut',
             onComplete: () => {
-                goldBonusText.destroy();
-                woodBonusText.destroy();
+                // Stay visible then fade out
+                this.scene.tweens.add({
+                    targets: container,
+                    alpha: 0,
+                    y: 48,
+                    delay: 2500,
+                    duration: 400,
+                    ease: 'Power2',
+                    onComplete: () => container.destroy()
+                });
             }
         });
     }
