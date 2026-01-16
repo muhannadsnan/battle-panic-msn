@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.10)
+## Recent Updates (v1.35.11)
+
+### v1.35.11
+- **UI**: Reinforce button moved to bottom of unit bar
 
 ### v1.35.10
 - **Repair Exploit Fix**: Can't repair castle when enemies are too close
@@ -254,4 +257,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.10)*
+*Last updated: January 2026 (v1.35.11)*

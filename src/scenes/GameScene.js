@@ -1338,9 +1338,9 @@ Lv.${level + 1}`;
             return;
         }
 
-        // Position below the unit buttons
+        // Position at the bottom of the screen
         const panelX = 50;
-        const buttonY = 420; // Below horseman button (60 + 3 * 120)
+        const buttonY = 540; // All the way to bottom
 
         const buttonWidth = 110;
         const buttonHeight = 100;
