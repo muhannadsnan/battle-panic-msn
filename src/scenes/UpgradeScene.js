@@ -1555,11 +1555,14 @@ class UpgradeScene extends Phaser.Scene {
             });
 
             bg.on('pointerdown', () => {
-                // Only allow click if this button's card is the currently centered card
+                // Allow click if this button's card is visible (within 1 card of center)
                 const parentCard = container.parentContainer;
-                if (parentCard && parentCard.cardIndex !== undefined && parentCard.cardIndex !== this.currentCardIndex) {
-                    // Wrong card - ignore click
-                    return;
+                if (parentCard && parentCard.cardIndex !== undefined) {
+                    const diff = Math.abs(parentCard.cardIndex - this.currentCardIndex);
+                    if (diff > 1) {
+                        // Card is too far from center - ignore click
+                        return;
+                    }
                 }
 
                 if (typeof audioManager !== 'undefined') {

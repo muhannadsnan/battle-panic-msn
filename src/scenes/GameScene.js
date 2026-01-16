@@ -840,6 +840,22 @@ class GameScene extends Phaser.Scene {
         return castleNeedsFix || fenceNeedsFix;
     }
 
+    canRepair() {
+        // Can't repair if enemies are too close to castle (prevents fence exploit)
+        if (!this.enemies) return true;
+
+        const castleX = this.playerCastle.x;
+        const fenceX = castleX + 150; // Fence position
+
+        for (const enemy of this.enemies.getChildren()) {
+            if (enemy.active && !enemy.isDead && enemy.x < fenceX + 50) {
+                // Enemy is at or past where fence would be
+                return false;
+            }
+        }
+        return true;
+    }
+
     getRepairCost() {
         // Tiered repair cost based on damage state (at max level)
         const castle = this.playerCastle;
@@ -894,12 +910,23 @@ class GameScene extends Phaser.Scene {
         const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
         const isMaxLevel = currentLevel >= effectiveMaxLevel;
         const needsRepair = isMaxLevel && this.needsRepair();
+        const repairBlocked = isMaxLevel && needsRepair && !this.canRepair();
 
         // At max level with no damage, hide repair option
         if (isMaxLevel && !needsRepair) {
             this.castleUpgradeCostText.setText('MAX');
             this.castleCostGlow.setText('MAX');
             this.castleUpgradeCostText.setStyle({ color: '#ffd700' });
+            this.castleCostGlow.setAlpha(0);
+            this.drawCastleSpinner();
+            return;
+        }
+
+        // Repair blocked - enemies too close
+        if (repairBlocked) {
+            this.castleUpgradeCostText.setText('CLEAR ENEMIES');
+            this.castleCostGlow.setText('CLEAR ENEMIES');
+            this.castleUpgradeCostText.setStyle({ color: '#ff6666' });
             this.castleCostGlow.setAlpha(0);
             this.drawCastleSpinner();
             return;
@@ -992,6 +1019,12 @@ Lv.${currentLevel + 1}`;
         const currentLevel = this.castleLevel || 1;
         const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
         const isMaxLevel = currentLevel >= effectiveMaxLevel;
+
+        // Can't repair if enemies are too close (prevents fence exploit)
+        if (isMaxLevel && !this.canRepair()) {
+            this.showMessage('Clear enemies first!', '#ff6666');
+            return;
+        }
 
         // Cost depends on whether upgrading or repairing
         const cost = isMaxLevel
@@ -1150,9 +1183,6 @@ Lv.${level + 1}`;
         // Keep goldDisplay for backwards compatibility
         this.goldDisplay = this.resourceDisplay;
 
-        // Rank display (top left corner)
-        this.createRankBadge();
-
         // Unit buttons panel
         this.createUnitButtons();
 
@@ -1167,25 +1197,6 @@ Lv.${level + 1}`;
 
         // Unit count display (top right area)
         this.createUnitCountDisplay();
-    }
-
-    createRankBadge() {
-        const rankInfo = saveSystem.getRankInfo(this.saveData);
-
-        // Container for rank badge - above wave count, no background
-        this.rankBadge = this.add.container(GAME_WIDTH - 10, GAME_HEIGHT - 60);  // Higher above wave
-        this.rankBadge.setDepth(900);
-
-        // Rank icon and full name with grade - no background, with opacity
-        this.rankText = this.add.text(0, 0, `${rankInfo.rank.icon} ${rankInfo.rank.fullName}`, {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: rankInfo.rank.color,
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(1, 0.5).setAlpha(0.8);  // Right-aligned, less opacity
-        this.rankBadge.add(this.rankText);
     }
 
     createUnitCountDisplay() {

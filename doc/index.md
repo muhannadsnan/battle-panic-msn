@@ -142,7 +142,15 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.9)
+## Recent Updates (v1.35.10)
+
+### v1.35.10
+- **Repair Exploit Fix**: Can't repair castle when enemies are too close
+  - Shows "CLEAR ENEMIES" in red when repair is blocked
+  - Prevents fence recreation exploit
+- **Upgrade Cards Fix**: All visible cards (±1 from center) are now clickable
+- **Menu Transition Fix**: Prevents accidental Play button clicks when switching scenes
+- **Rank Display Fix**: Removed duplicate rank badge, added icon to wave display
 
 ### v1.35.9
 - **Smarter Units Upgrade Rework**:
@@ -246,4 +254,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.9)*
+*Last updated: January 2026 (v1.35.10)*

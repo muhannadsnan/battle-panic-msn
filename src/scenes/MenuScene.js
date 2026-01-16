@@ -8,6 +8,9 @@ class MenuScene extends Phaser.Scene {
         const width = GAME_WIDTH;
         const height = GAME_HEIGHT;
 
+        // Prevent input during scene transitions
+        this.transitioning = false;
+
         // Hide default cursor
         this.input.setDefaultCursor('none');
 
@@ -109,11 +112,17 @@ class MenuScene extends Phaser.Scene {
 
         // Play button - GOLD and BIGGER (moved down for rank display)
         this.createPlayButton(width / 2, 370, () => {
+            if (this.transitioning) return;
+            this.transitioning = true;
+            this.input.enabled = false;
             this.scene.start('GameScene');
         });
 
         // Upgrades button with XP notification
         this.createUpgradesButton(width / 2, 440, saveData.xp || 0, () => {
+            if (this.transitioning) return;
+            this.transitioning = true;
+            this.input.enabled = false;
             this.scene.start('UpgradeScene');
         });
 

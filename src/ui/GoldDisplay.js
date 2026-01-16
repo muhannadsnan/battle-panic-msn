@@ -165,17 +165,18 @@ class WaveDisplay extends Phaser.GameObjects.Container {
         if (rankInfo && rankInfo.rank) {
             const rank = rankInfo.rank;
             const gradeNum = rank.grade ? ` ${['I', 'II', 'III'][rank.grade - 1] || rank.grade}` : '';
-            this.rankText.setText(`${rank.name}${gradeNum}  |`);
+            // Show icon + rank name (no separator)
+            this.rankText.setText(`${rank.icon || '⭐'} ${rank.name}${gradeNum}`);
             this.rankText.setColor(rank.color || '#aaaaaa');
-            // Reposition rank text to be left of wave text
-            this.rankText.setX(-this.waveText.width - 10);
+            // Reposition rank text to be left of wave text with spacing
+            this.rankText.setX(-this.waveText.width - 15);
         }
     }
 
     setWave(waveNumber, enemiesRemaining = 0) {
         this.waveText.setText(`Wave ${waveNumber}`);
         // Reposition rank after wave text changes
-        this.rankText.setX(-this.waveText.width - 10);
+        this.rankText.setX(-this.waveText.width - 15);
     }
 
     showWaveStart(waveNumber) {
