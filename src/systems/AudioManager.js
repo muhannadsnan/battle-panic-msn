@@ -182,26 +182,45 @@ class AudioManager {
         });
     }
 
-    // Play arrow/projectile sound
+    // Play arrow/projectile sound - bow twang with whoosh
     playArrow() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
         this.resume();
 
-        const osc = this.audioContext.createOscillator();
-        const gain = this.audioContext.createGain();
+        const now = this.audioContext.currentTime;
 
-        osc.connect(gain);
-        gain.connect(this.sfxGain);
+        // Bow string twang - quick snap
+        const twang = this.audioContext.createOscillator();
+        const twangGain = this.audioContext.createGain();
+        twang.connect(twangGain);
+        twangGain.connect(this.sfxGain);
+        twang.frequency.setValueAtTime(880, now);
+        twang.frequency.exponentialRampToValueAtTime(220, now + 0.06);
+        twang.type = 'triangle';
+        twangGain.gain.setValueAtTime(0.12, now);
+        twangGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        twang.start(now);
+        twang.stop(now + 0.08);
 
-        osc.frequency.setValueAtTime(600, this.audioContext.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.15);
-        osc.type = 'sine';
-
-        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
-
-        osc.start();
-        osc.stop(this.audioContext.currentTime + 0.15);
+        // Arrow whoosh - quick air sound
+        const noiseLen = this.audioContext.sampleRate * 0.06;
+        const noiseBuf = this.audioContext.createBuffer(1, noiseLen, this.audioContext.sampleRate);
+        const noiseData = noiseBuf.getChannelData(0);
+        for (let i = 0; i < noiseLen; i++) {
+            const env = 1 - (i / noiseLen);
+            noiseData[i] = (Math.random() * 2 - 1) * env * 0.2;
+        }
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+        noise.buffer = noiseBuf;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+        noiseFilter.type = 'highpass';
+        noiseFilter.frequency.value = 2000;
+        noiseGain.gain.setValueAtTime(0.1, now);
+        noise.start(now);
     }
 
     // Play magic sound
