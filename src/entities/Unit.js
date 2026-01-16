@@ -291,27 +291,27 @@ class Unit extends Phaser.GameObjects.Container {
     }
 
     createArcher(scene) {
-        // ARCHER - Hooded ranger with bow, clean angular design
+        // ARCHER - Hooded ranger with bow, clean angular design (gray for lvl 1-3)
         // Shadow
         this.spriteContainer.add(scene.add.rectangle(0, 26, 24, 6, 0x000000, 0.25));
 
         // Legs
         this.bodyParts.leftLeg = scene.add.container(-5, 16);
-        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x2D5A30)); // green pants
+        this.bodyParts.leftLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x505050)); // gray pants
         this.bodyParts.leftLeg.add(scene.add.rectangle(0, 9, 10, 8, 0x5A3A20)); // boot
         this.spriteContainer.add(this.bodyParts.leftLeg);
 
         this.bodyParts.rightLeg = scene.add.container(5, 16);
-        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x3D6A40));
+        this.bodyParts.rightLeg.add(scene.add.rectangle(0, 0, 8, 14, 0x606060));
         this.bodyParts.rightLeg.add(scene.add.rectangle(0, 9, 10, 8, 0x6A4A30));
         this.spriteContainer.add(this.bodyParts.rightLeg);
 
         this.bodyParts.torso = scene.add.container(0, 0);
 
-        // Body - forest green tunic
-        const body = scene.add.rectangle(0, 2, 20, 20, 0x2E7D32);
+        // Body - gray tunic
+        const body = scene.add.rectangle(0, 2, 20, 20, 0x5A5A5A);
         this.bodyParts.torso.add(body);
-        this.bodyParts.torso.add(scene.add.rectangle(2, 2, 14, 16, 0x43A047)); // highlight
+        this.bodyParts.torso.add(scene.add.rectangle(2, 2, 14, 16, 0x6A6A6A)); // highlight
         // Belt
         this.bodyParts.torso.add(scene.add.rectangle(0, 10, 22, 4, 0x5D4037));
 
@@ -322,38 +322,46 @@ class Unit extends Phaser.GameObjects.Container {
 
         // Arms
         this.bodyParts.leftArm = scene.add.container(-12, 0);
-        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 7, 14, 0x43A047));
+        this.bodyParts.leftArm.add(scene.add.rectangle(0, 0, 7, 14, 0x6A6A6A));
         this.bodyParts.leftArm.add(scene.add.rectangle(0, 9, 7, 7, 0xF5CBA7)); // hand
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
         // Right arm with bow attached
         this.bodyParts.rightArm = scene.add.container(12, 0);
-        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 7, 14, 0x2E7D32));
+        this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 7, 14, 0x5A5A5A));
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 9, 7, 7, 0xF5CBA7));
-        // Bow attached to arm
+        // Bow attached to arm - string pulled back (ready to fire)
         this.bodyParts.weapon = scene.add.container(6, -2);
         this.bodyParts.weapon.add(scene.add.rectangle(2, -14, 5, 12, 0x795548)); // top limb
         this.bodyParts.weapon.add(scene.add.rectangle(4, -4, 5, 8, 0x8D6E63));
         this.bodyParts.weapon.add(scene.add.rectangle(5, 4, 6, 8, 0x8D6E63)); // grip
         this.bodyParts.weapon.add(scene.add.rectangle(4, 12, 5, 8, 0x8D6E63));
         this.bodyParts.weapon.add(scene.add.rectangle(2, 20, 5, 12, 0x795548)); // bottom limb
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 2, 2, 36, 0xE0E0E0)); // string
+        // Drawn bowstring (V-shape pulled back)
+        const stringGraphics = scene.add.graphics();
+        stringGraphics.lineStyle(2, 0xE0E0E0, 1);
+        stringGraphics.beginPath();
+        stringGraphics.moveTo(0, -16);  // top of bow
+        stringGraphics.lineTo(-8, 2);   // pulled back to hand
+        stringGraphics.lineTo(0, 20);   // bottom of bow
+        stringGraphics.strokePath();
+        this.bodyParts.weapon.add(stringGraphics);
         this.bodyParts.rightArm.add(this.bodyParts.weapon);
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
-        // Hood
-        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 24, 18, 0x1B5E20));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -22, 18, 10, 0x2E7D32));
-        this.bodyParts.torso.add(scene.add.rectangle(0, -28, 10, 8, 0x388E3C)); // hood point
+        // Hood - gray
+        this.bodyParts.torso.add(scene.add.rectangle(0, -14, 24, 18, 0x484848));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -22, 18, 10, 0x5A5A5A));
+        this.bodyParts.torso.add(scene.add.rectangle(0, -28, 10, 8, 0x686868)); // hood point
 
         // Face under hood
         this.bodyParts.torso.add(scene.add.rectangle(0, -10, 16, 14, 0xF5CBA7));
         this.bodyParts.torso.add(scene.add.rectangle(2, -10, 12, 10, 0xFFDDBB));
-        // Eyes - green, focused
+        // Eyes - gray, focused
         this.bodyParts.torso.add(scene.add.rectangle(-4, -10, 5, 5, 0xFFFFFF));
         this.bodyParts.torso.add(scene.add.rectangle(4, -10, 5, 5, 0xFFFFFF));
-        this.bodyParts.torso.add(scene.add.rectangle(-3, -9, 4, 4, 0x2E7D32));
-        this.bodyParts.torso.add(scene.add.rectangle(5, -9, 4, 4, 0x2E7D32));
+        this.bodyParts.torso.add(scene.add.rectangle(-3, -9, 4, 4, 0x4A4A4A));
+        this.bodyParts.torso.add(scene.add.rectangle(5, -9, 4, 4, 0x4A4A4A));
         // Smirk
         this.bodyParts.torso.add(scene.add.rectangle(2, -4, 6, 2, 0xC08060));
 
@@ -415,12 +423,13 @@ class Unit extends Phaser.GameObjects.Container {
         // Right arm with sword attached
         this.bodyParts.rightArm = scene.add.container(10, -10);
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 2, 7, 14, 0xF5CBA7));
-        // Sword attached to arm
+        // Sword attached to arm - angled slightly forward (ready stance)
         this.bodyParts.weapon = scene.add.container(6, -8);
         this.bodyParts.weapon.add(scene.add.rectangle(8, -8, 6, 30, 0xC0C0C0)); // blade
         this.bodyParts.weapon.add(scene.add.rectangle(9, -8, 3, 26, 0xE0E0E0)); // shine
         this.bodyParts.weapon.add(scene.add.rectangle(8, 8, 14, 5, 0xD4A020)); // crossguard
         this.bodyParts.weapon.add(scene.add.rectangle(8, 14, 5, 10, 0x5D4037)); // handle
+        this.bodyParts.weapon.rotation = -0.2; // slight forward angle
         this.bodyParts.rightArm.add(this.bodyParts.weapon);
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
@@ -475,13 +484,14 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts.rightArm = scene.add.container(14, 4);
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 2, 8, 16, 0x1976D2));
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 12, 8, 8, 0xF5CBA7)); // hand
-        // Sword attached to arm
+        // Sword attached to arm - angled slightly forward (ready stance)
         this.bodyParts.weapon = scene.add.container(8, -12);
         this.bodyParts.weapon.add(scene.add.rectangle(0, -8, 6, 32, 0xE0E0E0)); // blade
         this.bodyParts.weapon.add(scene.add.rectangle(1, -8, 3, 28, 0xFFFFFF)); // shine
         this.bodyParts.weapon.add(scene.add.rectangle(0, 10, 16, 5, 0xFFC107)); // crossguard
         this.bodyParts.weapon.add(scene.add.rectangle(0, 16, 5, 10, 0x5D4037)); // handle
         this.bodyParts.weapon.add(scene.add.rectangle(0, 22, 6, 5, 0xFFC107)); // pommel
+        this.bodyParts.weapon.rotation = -0.25; // slight forward angle
         this.bodyParts.rightArm.add(this.bodyParts.weapon);
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
@@ -544,22 +554,26 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts.leftArm.add(scene.add.rectangle(0, 10, 7, 7, 0xF5CBA7));
         this.bodyParts.torso.add(this.bodyParts.leftArm);
 
-        // Right arm with legendary bow attached
+        // Right arm with crossbow attached
         this.bodyParts.rightArm = scene.add.container(12, 0);
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 0, 7, 14, 0x2E7D32));
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 10, 7, 7, 0xF5CBA7));
-        // Legendary bow with golden tips attached to arm
-        this.bodyParts.weapon = scene.add.container(8, -2);
-        this.bodyParts.weapon.add(scene.add.rectangle(2, -16, 5, 14, 0x795548)); // top limb
-        this.bodyParts.weapon.add(scene.add.rectangle(4, -4, 5, 10, 0x8D6E63));
-        this.bodyParts.weapon.add(scene.add.rectangle(5, 6, 6, 10, 0x8D6E63)); // grip
-        this.bodyParts.weapon.add(scene.add.rectangle(4, 16, 5, 10, 0x8D6E63));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, 26, 5, 14, 0x795548)); // bottom
+        // Crossbow - horizontal bow on stock
+        this.bodyParts.weapon = scene.add.container(8, 0);
+        // Stock (main body)
+        this.bodyParts.weapon.add(scene.add.rectangle(12, 0, 28, 6, 0x5D4037)); // wooden stock
+        this.bodyParts.weapon.add(scene.add.rectangle(14, 0, 24, 4, 0x6D5047)); // highlight
+        // Bow limbs (horizontal)
+        this.bodyParts.weapon.add(scene.add.rectangle(2, -10, 5, 16, 0x795548)); // top limb
+        this.bodyParts.weapon.add(scene.add.rectangle(2, 10, 5, 16, 0x795548));  // bottom limb
         // Golden tips
-        this.bodyParts.weapon.add(scene.add.rectangle(2, -22, 4, 5, 0xFFC107));
-        this.bodyParts.weapon.add(scene.add.rectangle(2, 32, 4, 5, 0xFFC107));
-        // Bowstring
-        this.bodyParts.weapon.add(scene.add.rectangle(0, 4, 2, 42, 0xE0E0E0));
+        this.bodyParts.weapon.add(scene.add.rectangle(2, -17, 4, 5, 0xFFC107));
+        this.bodyParts.weapon.add(scene.add.rectangle(2, 17, 4, 5, 0xFFC107));
+        // String (horizontal, pulled back)
+        this.bodyParts.weapon.add(scene.add.rectangle(6, 0, 8, 2, 0xE0E0E0));
+        // Bolt loaded
+        this.bodyParts.weapon.add(scene.add.rectangle(16, 0, 18, 3, 0x8B4513)); // bolt shaft
+        this.bodyParts.weapon.add(scene.add.rectangle(26, 0, 6, 4, 0xC0C0C0));  // bolt tip
         this.bodyParts.rightArm.add(this.bodyParts.weapon);
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 
@@ -651,7 +665,7 @@ class Unit extends Phaser.GameObjects.Container {
         // Right arm with Excalibur attached
         this.bodyParts.rightArm = scene.add.container(12, -12);
         this.bodyParts.rightArm.add(scene.add.rectangle(0, 4, 7, 16, 0xF5CBA7));
-        // Excalibur - legendary sword attached to arm
+        // Excalibur - legendary sword attached to arm - angled slightly forward (ready stance)
         this.bodyParts.weapon = scene.add.container(6, -10);
         this.bodyParts.weapon.add(scene.add.rectangle(8, -10, 7, 36, 0xFAFAFA)); // blade
         this.bodyParts.weapon.add(scene.add.rectangle(9, -10, 4, 32, 0xFFFFFF)); // shine
@@ -659,6 +673,7 @@ class Unit extends Phaser.GameObjects.Container {
         this.bodyParts.weapon.add(scene.add.rectangle(8, 16, 5, 12, 0x5D4037)); // handle
         this.bodyParts.weapon.add(scene.add.rectangle(8, 24, 8, 6, 0xFFC107)); // pommel
         this.bodyParts.weapon.add(scene.add.rectangle(8, 24, 4, 4, 0x1565C0)); // gem
+        this.bodyParts.weapon.rotation = -0.2; // slight forward angle
         this.bodyParts.rightArm.add(this.bodyParts.weapon);
         this.bodyParts.torso.add(this.bodyParts.rightArm);
 

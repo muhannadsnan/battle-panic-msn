@@ -115,6 +115,22 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
+## Play Online
+
+| Platform | URL | Status |
+|----------|-----|--------|
+| **Official Site** | https://battle-panic-msn.netlify.app/ | ✅ Live |
+| **itch.io** | https://muhannadsnan.itch.io/battle-panic-msn | ✅ Live |
+| **Newgrounds** | https://www.newgrounds.com/portal/view/1014822 | ✅ Live |
+| **Poki** | Submitted | ⏳ Under Review |
+| **Reddit** | r/WebGames, r/IndieGaming, r/playmygame | 📢 Posted |
+
+**Third-party site behavior:**
+- "Play on Official Site" button appears when embedded on other platforms
+- Login, Buy XP, and Coffee buttons remain visible (monetization priority)
+
+---
+
 ## Monetization
 
 - **Buy XP** button in main menu (Stripe Checkout)
@@ -126,8 +142,17 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.25.0)
+## Recent Updates (v1.35.5)
 
+### v1.35.5
+- **Unit Visual Improvements**:
+  - Archer (lvl 1-3): Gray color scheme, bow string pulled back (ready stance)
+  - Robinhood (lvl 4-6): Now uses crossbow instead of bow
+  - Knight (lvl 4-6): Sword angled slightly forward (ready stance)
+  - All Horsemen: Sword angled slightly forward (ready stance)
+- **Wave Tips Rank-Based**: Experienced players (Commander I+) skip wave tips
+
+### v1.25.0
 - **Buy XP with Stripe**: In-game XP purchases now available!
   - 3 packages: 25 XP ($2.99), 50 XP ($4.50), 100 XP ($7.99)
   - Secure Stripe Checkout integration
@@ -188,4 +213,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.25.0)*
+*Last updated: January 2026 (v1.35.5)*

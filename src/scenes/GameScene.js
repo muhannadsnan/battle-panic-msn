@@ -2157,7 +2157,13 @@ Lv.${level + 1}`;
     onWaveStart(waveNumber, enemyCount) {
         // Check if there's a tip for this wave
         const tip = this.getWaveTip(waveNumber);
-        if (tip) {
+
+        // Skip tips for experienced players (Commander I and above)
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        const experiencedRanks = ['Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+        const isExperienced = experiencedRanks.includes(rankInfo.rank.name);
+
+        if (tip && !isExperienced) {
             this.showWaveTip(tip, waveNumber, () => {
                 this.waveDisplay.showWaveStart(waveNumber);
             });
