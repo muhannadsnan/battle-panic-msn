@@ -879,6 +879,7 @@ class Castle extends Phaser.GameObjects.Container {
                 color: 0xFFAA00,
                 isPlayerProjectile: true,
                 projectileType: 'arrow',
+                isCastleArrow: true,  // Castle arrows play sound on shoot, not hit
                 scale: 1.5  // 50% bigger castle arrows
             }
         );
