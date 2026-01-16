@@ -1380,11 +1380,12 @@ Lv.${level + 1}`;
 
         // Timer text (shows when charging)
         this.reinforcementTimerText = this.add.text(0, 48, '', {
-            fontSize: '12px',
+            fontSize: '20px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#aaaaaa',
             stroke: '#000000',
-            strokeThickness: 1
+            strokeThickness: 2
         }).setOrigin(0.5);
         this.reinforcementButtonContainer.add(this.reinforcementTimerText);
 
@@ -1794,7 +1795,8 @@ Lv.${level + 1}`;
             if (this.reinforcementTimer >= this.reinforcementCooldown) {
                 this.reinforcementTimer = this.reinforcementCooldown;
                 this.reinforcementReady = true;
-                this.showMessage('Reinforcements READY!', '#4ade80');
+                // Start glowing effect on button
+                this.startReinforcementGlow();
             }
         }
 
@@ -1844,6 +1846,41 @@ Lv.${level + 1}`;
         }
     }
 
+    startReinforcementGlow() {
+        if (!this.reinforcementButtonContainer) return;
+
+        // Create glow effect behind the button
+        if (this.reinforcementGlow) {
+            this.reinforcementGlow.destroy();
+        }
+
+        this.reinforcementGlow = this.add.graphics();
+        this.reinforcementGlow.setPosition(this.reinforcementButtonContainer.x, this.reinforcementButtonContainer.y);
+        this.reinforcementGlow.setDepth(899); // Behind button
+
+        // Draw glow rectangle
+        this.reinforcementGlow.fillStyle(0x4ade80, 0.4);
+        this.reinforcementGlow.fillRoundedRect(-60, -55, 120, 110, 10);
+
+        // Pulsing animation
+        this.tweens.add({
+            targets: this.reinforcementGlow,
+            alpha: { from: 0.8, to: 0.3 },
+            duration: 600,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+    }
+
+    stopReinforcementGlow() {
+        if (this.reinforcementGlow) {
+            this.tweens.killTweensOf(this.reinforcementGlow);
+            this.reinforcementGlow.destroy();
+            this.reinforcementGlow = null;
+        }
+    }
+
     spawnReinforcements() {
         if (!this.reinforcementReady) return;
 
@@ -1884,9 +1921,10 @@ Lv.${level + 1}`;
             this.spawnReinforcementUnit('HORSEMAN', 6);
         }
 
-        // Reset timer
+        // Reset timer and stop glow
         this.reinforcementTimer = 0;
         this.reinforcementReady = false;
+        this.stopReinforcementGlow();
 
         // Visual feedback
         this.showMessage('Reinforcements arrived!', '#4ade80');
@@ -3004,17 +3042,17 @@ Lv.${level + 1}`;
             targets: container,
             scaleX: 1,
             scaleY: 1,
-            alpha: 1,
+            alpha: 0.6,
             duration: 150,
             ease: 'Back.easeOut',
             onComplete: () => {
-                // Float up and fade out
+                // Float up and fade out (doubled time)
                 this.tweens.add({
                     targets: container,
                     y: 110,
                     alpha: 0,
-                    duration: 1200,
-                    delay: 400,
+                    duration: 2400,
+                    delay: 800,
                     ease: 'Power2',
                     onComplete: () => container.destroy()
                 });
@@ -3186,17 +3224,17 @@ Lv.${level + 1}`;
             targets: container,
             scaleX: 1,
             scaleY: 1,
-            alpha: 1,
+            alpha: 0.6,
             duration: 250,
             ease: 'Back.easeOut',
             onComplete: () => {
-                // Fade out after delay
+                // Fade out after delay (doubled time)
                 this.tweens.add({
                     targets: container,
                     alpha: 0,
                     y: 80,
-                    duration: 400,
-                    delay: 2000,
+                    duration: 800,
+                    delay: 4000,
                     ease: 'Power2',
                     onComplete: () => container.destroy()
                 });

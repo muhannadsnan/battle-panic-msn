@@ -142,7 +142,12 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.11)
+## Recent Updates (v1.35.12)
+
+### v1.35.12
+- **UI**: Reinforce button timer enlarged (20px bold)
+- **UI**: In-game messages now stay 2x longer with 0.6 opacity
+- **UI**: Reinforce button glows when ready (no message popup)
 
 ### v1.35.11
 - **UI**: Reinforce button moved to bottom of unit bar
@@ -257,4 +262,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.11)*
+*Last updated: January 2026 (v1.35.12)*
