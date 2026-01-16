@@ -183,7 +183,8 @@ class AudioManager {
     }
 
     // Play arrow/projectile sound - bow twang with whoosh
-    playArrow() {
+    // volumeMultiplier: 1.0 = full volume, 0.4 = 60% quieter (for unit arrows)
+    playArrow(volumeMultiplier = 1.0) {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
         this.resume();
 
@@ -197,7 +198,7 @@ class AudioManager {
         twang.frequency.setValueAtTime(880, now);
         twang.frequency.exponentialRampToValueAtTime(220, now + 0.06);
         twang.type = 'triangle';
-        twangGain.gain.setValueAtTime(0.12, now);
+        twangGain.gain.setValueAtTime(0.12 * volumeMultiplier, now);
         twangGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
         twang.start(now);
         twang.stop(now + 0.08);
@@ -208,7 +209,7 @@ class AudioManager {
         const noiseData = noiseBuf.getChannelData(0);
         for (let i = 0; i < noiseLen; i++) {
             const env = 1 - (i / noiseLen);
-            noiseData[i] = (Math.random() * 2 - 1) * env * 0.2;
+            noiseData[i] = (Math.random() * 2 - 1) * env * 0.2 * volumeMultiplier;
         }
         const noise = this.audioContext.createBufferSource();
         const noiseGain = this.audioContext.createGain();
@@ -219,7 +220,7 @@ class AudioManager {
         noiseGain.connect(this.sfxGain);
         noiseFilter.type = 'highpass';
         noiseFilter.frequency.value = 2000;
-        noiseGain.gain.setValueAtTime(0.1, now);
+        noiseGain.gain.setValueAtTime(0.1 * volumeMultiplier, now);
         noise.start(now);
     }
 

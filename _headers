@@ -1,0 +1,20 @@
+# Battle Panic - Cache Control Headers
+# Disable caching for HTML and game code (always fresh)
+
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+
+/callback.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+
+/src/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+
+# Assets can be cached longer (images, audio) - 1 hour
+/assets/*
+  Cache-Control: public, max-age=3600
+
+# Keep external CDN resources cached (Phaser, Supabase are versioned)

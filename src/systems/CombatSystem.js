@@ -84,7 +84,7 @@ class CombatSystem {
         // Play hit sound based on attacker type
         if (typeof audioManager !== 'undefined') {
             if (attacker.isRanged) {
-                audioManager.playArrow();
+                audioManager.playArrow(0.4); // 60% quieter for unit arrows
             } else if (attacker.enemyType === 'ORC' || attacker.enemyType === 'TROLL') {
                 // Heavy hit for orcs and trolls
                 audioManager.playOrcHit();

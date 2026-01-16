@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.22)
+## Recent Updates (v1.35.23)
+
+### v1.35.23
+- **Audio**: Reduced archer unit arrow sound by 60% (less overwhelming with large armies)
+- **Cache**: Added Netlify cache headers to prevent stale content after updates
 
 ### v1.35.22
 - **Visual**: Castle arrows 50% bigger
@@ -297,4 +301,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.22)*
+*Last updated: January 2026 (v1.35.23)*
