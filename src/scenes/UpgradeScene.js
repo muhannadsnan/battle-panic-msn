@@ -4,10 +4,12 @@ class UpgradeScene extends Phaser.Scene {
         super({ key: 'UpgradeScene' });
     }
 
-    create() {
+    create(data) {
         this.saveData = saveSystem.load();
         this.sessionValid = true; // Assume valid, will be updated by validation
-        
+        this.upgradeThrottled = false; // Throttle for upgrade clicks
+        this.startCardIndex = data?.startCardIndex || 0; // Remember card position on restart
+
         // Validate session for logged-in users
         if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
             this.validateSession();
@@ -127,8 +129,8 @@ class UpgradeScene extends Phaser.Scene {
         // Setup drag/swipe
         this.setupDrag();
 
-        // Position slider to show first card
-        this.slideToCard(0, false);
+        // Position slider to show starting card (or first if no previous position)
+        this.slideToCard(this.startCardIndex, false);
     }
 
     createNavigationDots() {
@@ -1090,6 +1092,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
@@ -1099,8 +1102,8 @@ class UpgradeScene extends Phaser.Scene {
             saveSystem.save(this.saveData);
             this.syncToCloud();
 
-            // Refresh scene
-            this.scene.restart();
+            // Show notification and refresh scene (staying at current card)
+            this.showUpgradeNotification('Horseman Shield Unlocked!');
         }
     }
 
@@ -1171,6 +1174,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         const currentLevel = this.saveData.specialUpgrades?.[upgradeKey] || 0;
         if (currentLevel >= maxLevel) return;
 
@@ -1182,7 +1186,21 @@ class UpgradeScene extends Phaser.Scene {
             this.saveData.specialUpgrades[upgradeKey] = currentLevel + 1;
             saveSystem.save(this.saveData);
             this.syncToCloud();
-            this.scene.restart();
+
+            // Format upgrade name for notification
+            const names = {
+                productionSpeed: 'Production Speed',
+                productionCost: 'Production Cost',
+                unitSpeed: 'Unit Speed',
+                reinforcementLevel: 'Reinforcement Level',
+                peasantPromoSkip: 'Peasant Promo Skip',
+                archerPromoSkip: 'Archer Promo Skip',
+                horsemanPromoSkip: 'Horseman Promo Skip',
+                castleExtension: 'Castle Extension',
+                smarterUnits: 'Smarter Units'
+            };
+            const name = names[upgradeKey] || upgradeKey;
+            this.showUpgradeNotification(`${name} → Level ${currentLevel + 1}`);
         }
     }
 
@@ -1237,6 +1255,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
@@ -1245,7 +1264,7 @@ class UpgradeScene extends Phaser.Scene {
             this.saveData.specialUpgrades.reinforcements = true;
             saveSystem.save(this.saveData);
             this.syncToCloud();
-            this.scene.restart();
+            this.showUpgradeNotification('Reinforcements Unlocked!');
         }
     }
 
@@ -1429,6 +1448,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
@@ -1438,8 +1458,7 @@ class UpgradeScene extends Phaser.Scene {
             saveSystem.save(this.saveData);
             this.syncToCloud();
 
-            // Refresh scene
-            this.scene.restart();
+            this.showUpgradeNotification('Emergency Reinforcement Unlocked!');
         }
     }
 
@@ -1510,6 +1529,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
@@ -1519,8 +1539,7 @@ class UpgradeScene extends Phaser.Scene {
             saveSystem.save(this.saveData);
             this.syncToCloud();
 
-            // Refresh scene
-            this.scene.restart();
+            this.showUpgradeNotification('Half Price Gold Tier Unlocked!');
         }
     }
 
@@ -1672,6 +1691,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         const xp = this.saveData.xp || 0;
         if (xp >= cost) {
             this.saveData.xp = xp - cost;
@@ -1691,6 +1711,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         const xp = this.saveData.xp || 0;
         if (xp >= cost) {
             this.saveData.xp = xp - cost;
@@ -1709,6 +1730,7 @@ class UpgradeScene extends Phaser.Scene {
             this.showSessionError();
             return;
         }
+        if (this.upgradeThrottled) return;
         const xp = this.saveData.xp || 0;
         if (xp >= cost) {
             this.saveData.xp = xp - cost;
@@ -1724,8 +1746,30 @@ class UpgradeScene extends Phaser.Scene {
         }
     }
 
-    // Show upgrade success notification (green popup)
+    // Show upgrade success notification (green popup) with card glow and throttle
     showUpgradeNotification(message) {
+        // Enable throttle to prevent multiple clicks
+        this.upgradeThrottled = true;
+
+        // Get current card and add glow effect
+        const currentCard = this.cardContainers[this.currentCardIndex];
+        if (currentCard) {
+            // Create glow effect around the card
+            const glow = this.add.graphics();
+            glow.lineStyle(8, 0x44FF44, 0.8);
+            glow.strokeRoundedRect(-140, -200, 280, 400, 12);
+            currentCard.add(glow);
+
+            // Animate glow pulsing
+            this.tweens.add({
+                targets: glow,
+                alpha: { from: 0.8, to: 0.3 },
+                duration: 400,
+                yoyo: true,
+                repeat: 2
+            });
+        }
+
         const container = this.add.container(GAME_WIDTH / 2, 120);
         container.setDepth(9999);
 
@@ -1752,9 +1796,9 @@ class UpgradeScene extends Phaser.Scene {
             ease: 'Back.easeOut'
         });
 
-        // Restart scene after notification
-        this.time.delayedCall(800, () => {
-            this.scene.restart();
+        // Restart scene after 2 second throttle, staying at current card
+        this.time.delayedCall(2000, () => {
+            this.scene.restart({ startCardIndex: this.currentCardIndex });
         });
     }
 

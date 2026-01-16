@@ -142,7 +142,14 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.7)
+## Recent Updates (v1.35.8)
+
+### v1.35.8
+- **Upgrade Card UX Improvements**:
+  - Cards now stay at current position after upgrading (no jump to first card)
+  - Green glow effect pulses around card after upgrade
+  - 2-second throttle prevents accidental multiple clicks
+  - All upgrade types now use consistent notification system
 
 ### v1.35.7
 - **Dragon Boss Redesign**: Menacing pixel art dragon
@@ -231,4 +238,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.7)*
+*Last updated: January 2026 (v1.35.8)*
