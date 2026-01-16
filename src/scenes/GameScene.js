@@ -2677,7 +2677,6 @@ Lv.${level + 1}`;
             this.playerCastle.maxHealth += hpGain;
             this.playerCastle.currentHealth += hpGain;
             this.playerCastle.updateHealthBar();
-            this.showMessage(`Castle +${hpGain} HP!`, '#00d26a');
         }
 
         // Bonus message for milestone waves

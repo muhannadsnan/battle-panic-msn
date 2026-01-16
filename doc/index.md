@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.15)
+## Recent Updates (v1.35.16)
+
+### v1.35.16
+- **Messages**: Removed "Castle +X HP" wave message
 
 ### v1.35.15
 - **Messages**: Queue system - one message at a time, 25% shorter duration, higher position
@@ -274,4 +277,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.15)*
+*Last updated: January 2026 (v1.35.16)*
