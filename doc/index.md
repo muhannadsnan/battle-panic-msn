@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.21)
+## Recent Updates (v1.35.22)
+
+### v1.35.22
+- **Visual**: Castle arrows 50% bigger
 
 ### v1.35.21
 - **UI**: Removed floating +gold/+wood text on kills (cleaner battles)
@@ -294,4 +297,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.21)*
+*Last updated: January 2026 (v1.35.22)*

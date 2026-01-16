@@ -30,6 +30,11 @@ class Projectile extends Phaser.GameObjects.Container {
 
         // Create projectile visual based on type
         this.createProjectileSprite();
+        
+        // Apply scale if specified
+        if (config.scale) {
+            this.setScale(config.scale);
+        }
 
         // Calculate velocity
         const dx = this.targetX - x;

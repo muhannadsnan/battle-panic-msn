@@ -878,7 +878,8 @@ class Castle extends Phaser.GameObjects.Container {
                 speed: 2000,  // Fast castle arrows
                 color: 0xFFAA00,
                 isPlayerProjectile: true,
-                projectileType: 'arrow'
+                projectileType: 'arrow',
+                scale: 1.5  // 50% bigger castle arrows
             }
         );
 
