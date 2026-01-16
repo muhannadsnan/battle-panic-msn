@@ -75,12 +75,10 @@ class ResourceDisplay extends Phaser.GameObjects.Container {
 
     addGold(amount) {
         this.setGold(this.currentGold + amount);
-        this.showFloatingText(-20, 0, `+${amount}`, '#ffd700');
     }
 
     addWood(amount) {
         this.setWood(this.currentWood + amount);
-        this.showFloatingText(60, 0, `+${amount}`, '#8B4513');
     }
 
     subtractGold(amount) {

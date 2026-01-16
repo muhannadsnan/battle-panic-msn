@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.20)
+## Recent Updates (v1.35.21)
+
+### v1.35.21
+- **UI**: Removed floating +gold/+wood text on kills (cleaner battles)
 
 ### v1.35.20
 - **Audio**: Reduced hit sound volume by 60% (less annoying with large armies)
@@ -291,4 +294,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.20)*
+*Last updated: January 2026 (v1.35.21)*
