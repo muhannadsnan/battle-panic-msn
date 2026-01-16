@@ -119,6 +119,8 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createSmarterUnitsCard(x, y);
             }
 
+            // Store card index on the container for button validation
+            card.cardIndex = index;
             this.cardContainers.push(card);
             this.sliderContainer.add(card);
         });
@@ -218,15 +220,13 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     setupDrag() {
-        // Use scene-level input events so buttons still work
+        // Simplified swipe - move 3 cards at a time
         let startX = 0;
-        let startContainerX = 0;
         let startTime = 0;
-        let lastX = 0;
-        let lastTime = 0;
-        let velocity = 0;
         let isDragging = false;
         let hasMoved = false;
+        const swipeThreshold = 50; // Minimum pixels to trigger swipe
+        const cardsPerSwipe = 3;   // Move 3 cards at a time
 
         this.input.on('pointerdown', (pointer) => {
             // Only start drag if in the slider area (y between 100 and 520)
@@ -236,81 +236,44 @@ class UpgradeScene extends Phaser.Scene {
             if (pointer.x < 70 || pointer.x > GAME_WIDTH - 80) return;
 
             startX = pointer.x;
-            lastX = pointer.x;
-            lastTime = Date.now();
-            startContainerX = this.sliderContainer.x;
             startTime = Date.now();
-            velocity = 0;
             isDragging = true;
             hasMoved = false;
-            // Stop any ongoing tween
-            this.tweens.killTweensOf(this.sliderContainer);
         });
 
         this.input.on('pointermove', (pointer) => {
             if (!isDragging) return;
 
             const deltaX = pointer.x - startX;
-            const now = Date.now();
-            const timeDelta = now - lastTime;
 
-            // Only start actual dragging after moving more than 5px (allows button clicks)
-            if (Math.abs(deltaX) > 5) {
+            // Only mark as moved after passing threshold (allows button clicks)
+            if (Math.abs(deltaX) > 10) {
                 hasMoved = true;
             }
-
-            if (!hasMoved) return;
-
-            // Calculate velocity for momentum (smoothed)
-            if (timeDelta > 0) {
-                const instantVelocity = (pointer.x - lastX) / timeDelta;
-                velocity = velocity * 0.6 + instantVelocity * 0.4; // Smooth velocity
-            }
-            lastX = pointer.x;
-            lastTime = now;
-
-            // Apply drag with slight resistance at edges
-            let newX = startContainerX + deltaX;
-            const minX = -(this.totalCards - 1) * (this.cardWidth + this.cardSpacing);
-            const maxX = 0;
-
-            // Rubber band effect at edges
-            if (newX > maxX) {
-                newX = maxX + (newX - maxX) * 0.3;
-            } else if (newX < minX) {
-                newX = minX + (newX - minX) * 0.3;
-            }
-
-            this.sliderContainer.x = newX;
         });
 
         this.input.on('pointerup', (pointer) => {
             if (!isDragging) return;
             isDragging = false;
 
-            // If we didn't actually drag, don't snap (allow button click to process)
+            // If we didn't actually drag, don't process (allow button click)
             if (!hasMoved) return;
 
             const deltaX = pointer.x - startX;
             const elapsed = Date.now() - startTime;
-            const speed = Math.abs(deltaX) / elapsed;
 
-            // Determine target card based on position and velocity
+            // Determine swipe direction and move 3 cards
             let targetIndex = this.currentCardIndex;
 
-            // Quick flick detection (more sensitive)
-            if (speed > 0.3 && Math.abs(velocity) > 0.3) {
-                if (velocity < 0 && this.currentCardIndex < this.totalCards - 1) {
-                    targetIndex = this.currentCardIndex + 1;
-                } else if (velocity > 0 && this.currentCardIndex > 0) {
-                    targetIndex = this.currentCardIndex - 1;
+            if (Math.abs(deltaX) > swipeThreshold || (elapsed < 300 && Math.abs(deltaX) > 30)) {
+                // Swipe detected
+                if (deltaX < 0) {
+                    // Swipe left - go forward 3 cards
+                    targetIndex = Math.min(this.currentCardIndex + cardsPerSwipe, this.totalCards - 1);
+                } else {
+                    // Swipe right - go back 3 cards
+                    targetIndex = Math.max(this.currentCardIndex - cardsPerSwipe, 0);
                 }
-            } else {
-                // Slow drag - snap to nearest
-                const cardSize = this.cardWidth + this.cardSpacing;
-                const currentOffset = -this.sliderContainer.x;
-                targetIndex = Math.round(currentOffset / cardSize);
-                targetIndex = Phaser.Math.Clamp(targetIndex, 0, this.totalCards - 1);
             }
 
             this.slideToCard(targetIndex);
@@ -322,15 +285,13 @@ class UpgradeScene extends Phaser.Scene {
         const targetX = -this.currentCardIndex * (this.cardWidth + this.cardSpacing);
 
         if (animate) {
-            // Calculate distance for dynamic duration (smoother feel)
-            const distance = Math.abs(this.sliderContainer.x - targetX);
-            const duration = Math.min(400, Math.max(200, distance * 1.2));
-
+            // Smooth animation with consistent timing
+            this.tweens.killTweensOf(this.sliderContainer);
             this.tweens.add({
                 targets: this.sliderContainer,
                 x: targetX,
-                duration: duration,
-                ease: 'Cubic.easeOut'  // Smoother deceleration
+                duration: 350,
+                ease: 'Cubic.easeOut'
             });
         } else {
             this.sliderContainer.x = targetX;
@@ -1467,9 +1428,10 @@ class UpgradeScene extends Phaser.Scene {
         const xp = this.saveData.xp || 0;
         const currentLevel = this.saveData.specialUpgrades?.smarterUnits || 0;
         const maxLevel = 5;
-        const costPerLevel = 5;
+        const costPerLevel = 20; // Premium upgrade - 20 XP per level
         const cost = costPerLevel;
         const isMaxLevel = currentLevel >= maxLevel;
+        const hasAnyLevel = currentLevel > 0;
 
         // Background - blue/purple tactical theme
         const bg = this.add.rectangle(0, 0, 260, 380, 0x2a2a4a);
@@ -1497,28 +1459,36 @@ class UpgradeScene extends Phaser.Scene {
         const nextDesc = currentLevel < maxLevel ? levelDescs[currentLevel] : 'All groups active';
 
         // Level indicator
-        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+        const levelText = this.add.text(0, -5, `Level ${currentLevel}/${maxLevel}`, {
             fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
         }).setOrigin(0.5);
         card.add(levelText);
 
         // Description
-        const desc = this.add.text(0, 40, `Units form defense groups\n${nextDesc}`, {
+        const desc = this.add.text(0, 30, `Units form defense groups\n${nextDesc}`, {
             fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
         }).setOrigin(0.5);
         card.add(desc);
 
         if (isMaxLevel) {
-            const maxText = this.add.text(0, 100, 'MAX LEVEL', {
+            const maxText = this.add.text(0, 85, 'MAX LEVEL', {
                 fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(maxText);
         } else {
             const canAfford = xp >= cost;
-            const btn = this.createCardButton(0, 100, `Upgrade\n${cost} XP`, () => {
+            const btn = this.createCardButton(0, 85, `Upgrade\n${cost} XP`, () => {
                 this.purchaseMultiLevelUpgrade('smarterUnits', cost, maxLevel);
             }, canAfford, 150, 55);
             card.add(btn);
+        }
+
+        // Show toggle hint if player owns any level
+        if (hasAnyLevel) {
+            const toggleHint = this.add.text(0, 150, '⚙️ Toggle in Settings', {
+                fontSize: '12px', fontFamily: 'Arial', color: '#888888', align: 'center'
+            }).setOrigin(0.5);
+            card.add(toggleHint);
         }
 
         return card;
@@ -1585,6 +1555,13 @@ class UpgradeScene extends Phaser.Scene {
             });
 
             bg.on('pointerdown', () => {
+                // Only allow click if this button's card is the currently centered card
+                const parentCard = container.parentContainer;
+                if (parentCard && parentCard.cardIndex !== undefined && parentCard.cardIndex !== this.currentCardIndex) {
+                    // Wrong card - ignore click
+                    return;
+                }
+
                 if (typeof audioManager !== 'undefined') {
                     audioManager.playClick();
                 }

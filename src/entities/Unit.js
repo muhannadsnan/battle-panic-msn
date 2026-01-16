@@ -127,8 +127,10 @@ class Unit extends Phaser.GameObjects.Container {
         const maxY = CASTLE_CONFIG.defenseMaxY;
         const midY = (minY + maxY) / 2;
 
-        // Get smarter units upgrade level (0-5)
-        const smarterLevel = this.scene.saveData?.specialUpgrades?.smarterUnits || 0;
+        // Get smarter units upgrade level (0-5) - respects toggle setting
+        const smarterUpgradeLevel = this.scene.saveData?.specialUpgrades?.smarterUnits || 0;
+        const smarterEnabled = this.scene.saveData?.settings?.smarterUnitsEnabled !== false; // Default true
+        const smarterLevel = smarterEnabled ? smarterUpgradeLevel : 0;
 
         // Define defense groups based on upgrade level
         // Level 0: Single default group

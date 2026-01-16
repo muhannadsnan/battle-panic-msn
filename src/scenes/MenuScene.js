@@ -1899,19 +1899,22 @@ class MenuScene extends Phaser.Scene {
 
     showSettingsPanel() {
         const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        const saveData = saveSystem.load();
+        const hasSmarterUnits = (saveData.specialUpgrades?.smarterUnits || 0) > 0;
 
         // Overlay
         const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.85);
         overlay.setInteractive(); // Block clicks behind
         dialog.add(overlay);
 
-        // Panel background - taller to fit more buttons
-        const panel = this.add.rectangle(0, 0, 360, 300, 0x2a2a3e);
+        // Panel background - taller if player has Smarter Units
+        const panelHeight = hasSmarterUnits ? 360 : 300;
+        const panel = this.add.rectangle(0, 0, 360, panelHeight, 0x2a2a3e);
         panel.setStrokeStyle(3, 0x4169E1);
         dialog.add(panel);
 
         // Title - renamed to SETTINGS
-        const title = this.add.text(0, -120, 'SETTINGS', {
+        const title = this.add.text(0, -panelHeight/2 + 30, 'SETTINGS', {
             fontSize: '32px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -1923,28 +1926,36 @@ class MenuScene extends Phaser.Scene {
 
         // User status
         const isLoggedIn = supabaseClient && supabaseClient.isLoggedIn();
-        const statusText = this.add.text(0, -75, isLoggedIn ? `Account: ${supabaseClient.getDisplayName()}` : 'Guest Account', {
+        const statusText = this.add.text(0, -panelHeight/2 + 75, isLoggedIn ? `Account: ${supabaseClient.getDisplayName()}` : 'Guest Account', {
             fontSize: '18px',
             fontFamily: 'Arial',
             color: isLoggedIn ? '#4ade80' : '#888888'
         }).setOrigin(0.5);
         dialog.add(statusText);
 
+        // Smarter Units toggle (only shown if player owns it)
+        let yOffset = -35;
+        if (hasSmarterUnits) {
+            const smarterUnitsToggle = this.createSettingsToggle(0, yOffset, '🧠 Smarter Units', 'smarterUnitsEnabled', saveData);
+            dialog.add(smarterUnitsToggle);
+            yOffset += 60;
+        }
+
         // Reset Upgrades button (moved here from main menu)
-        const resetUpgradesBtn = this.createSettingsButton(0, -35, 'Reset Upgrades (2 XP)', 0x665500, () => {
+        const resetUpgradesBtn = this.createSettingsButton(0, yOffset, 'Reset Upgrades (2 XP)', 0x665500, () => {
             dialog.destroy();
             this.confirmResetUpgrades();
         }, false);
         dialog.add(resetUpgradesBtn);
 
         // Delete Account / Reset Progress button - bigger gap
-        const deleteBtn = this.createSettingsButton(0, 35, 'Delete Account', 0x8B0000, () => {
+        const deleteBtn = this.createSettingsButton(0, yOffset + 70, 'Delete Account', 0x8B0000, () => {
             this.confirmDeleteAccount(dialog);
         }, false);
         dialog.add(deleteBtn);
 
         // Warning text
-        const warning = this.add.text(0, 80, 'Delete resets all progress to Rank 0', {
+        const warning = this.add.text(0, yOffset + 115, 'Delete resets all progress to Rank 0', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ff6666'
@@ -1952,12 +1963,12 @@ class MenuScene extends Phaser.Scene {
         dialog.add(warning);
 
         // Close button (X in top-right corner) - larger touch target
-        const closeBtnBg = this.add.rectangle(165, -135, 50, 50, 0x442222, 0.8);
+        const closeBtnBg = this.add.rectangle(165, -panelHeight/2 + 15, 50, 50, 0x442222, 0.8);
         closeBtnBg.setStrokeStyle(2, 0x664444);
         closeBtnBg.setInteractive({ useHandCursor: true });
         dialog.add(closeBtnBg);
 
-        const closeBtn = this.add.text(165, -135, '✕', {
+        const closeBtn = this.add.text(165, -panelHeight/2 + 15, '✕', {
             fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -1977,6 +1988,88 @@ class MenuScene extends Phaser.Scene {
 
         dialog.setDepth(1000);
         this.settingsDialog = dialog;
+    }
+
+    createSettingsToggle(x, y, labelText, settingKey, saveData) {
+        const container = this.add.container(x, y);
+
+        // Initialize settings if not exists
+        if (!saveData.settings) {
+            saveData.settings = {};
+        }
+        // Default to enabled if not set
+        if (saveData.settings[settingKey] === undefined) {
+            saveData.settings[settingKey] = true;
+        }
+        let isEnabled = saveData.settings[settingKey];
+
+        // Label
+        const label = this.add.text(-100, 0, labelText, {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0, 0.5);
+        container.add(label);
+
+        // Toggle track (pill shape)
+        const trackWidth = 60;
+        const trackHeight = 28;
+        const track = this.add.graphics();
+        const drawTrack = (enabled) => {
+            track.clear();
+            track.fillStyle(enabled ? 0x44AA44 : 0x444444, 1);
+            track.fillRoundedRect(70, -trackHeight/2, trackWidth, trackHeight, trackHeight/2);
+            track.lineStyle(2, enabled ? 0x66CC66 : 0x666666, 1);
+            track.strokeRoundedRect(70, -trackHeight/2, trackWidth, trackHeight, trackHeight/2);
+        };
+        drawTrack(isEnabled);
+        container.add(track);
+
+        // Toggle knob
+        const knobX = isEnabled ? 70 + trackWidth - trackHeight/2 - 2 : 70 + trackHeight/2 + 2;
+        const knob = this.add.circle(knobX, 0, 10, 0xffffff);
+        knob.setStrokeStyle(2, 0xcccccc);
+        container.add(knob);
+
+        // Status text
+        const statusLabel = this.add.text(145, 0, isEnabled ? 'ON' : 'OFF', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: isEnabled ? '#44AA44' : '#888888',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        container.add(statusLabel);
+
+        // Hit area for toggle
+        const hitArea = this.add.rectangle(100, 0, trackWidth + 20, trackHeight + 10, 0x000000, 0);
+        hitArea.setInteractive({ useHandCursor: true });
+        container.add(hitArea);
+
+        hitArea.on('pointerdown', () => {
+            isEnabled = !isEnabled;
+            saveData.settings[settingKey] = isEnabled;
+            saveSystem.save(saveData);
+
+            // Animate knob
+            const newKnobX = isEnabled ? 70 + trackWidth - trackHeight/2 - 2 : 70 + trackHeight/2 + 2;
+            this.tweens.add({
+                targets: knob,
+                x: newKnobX,
+                duration: 150,
+                ease: 'Cubic.easeOut'
+            });
+
+            // Update visuals
+            drawTrack(isEnabled);
+            statusLabel.setText(isEnabled ? 'ON' : 'OFF');
+            statusLabel.setColor(isEnabled ? '#44AA44' : '#888888');
+
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playClick();
+            }
+        });
+
+        return container;
     }
 
     createSettingsButton(x, y, text, bgColor, callback, disabled = false) {

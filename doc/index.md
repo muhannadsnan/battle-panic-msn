@@ -142,7 +142,15 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.8)
+## Recent Updates (v1.35.9)
+
+### v1.35.9
+- **Smarter Units Upgrade Rework**:
+  - Cost increased to 20 XP per level (premium upgrade)
+  - Now toggleable from Settings gear in main menu
+  - Shows "Toggle in Settings" hint on card when owned
+- **Upgrade Card Bug Fix**: Buttons only work on centered card (no more accidental wrong upgrades)
+- **Improved Slider**: Swipe now moves 3 cards at a time, smoother animation
 
 ### v1.35.8
 - **Upgrade Card UX Improvements**:
@@ -238,4 +246,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.8)*
+*Last updated: January 2026 (v1.35.9)*
