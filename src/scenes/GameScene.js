@@ -1934,9 +1934,10 @@ Lv.${level + 1}`;
         this.reinforcementReady = false;
         this.stopReinforcementGlow();
 
-        // Visual feedback
-        this.showMessage('Reinforcements arrived!', '#4ade80');
-        audioManager.playGold();
+        // Audio feedback - war horn for reinforcements
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playReinforcement();
+        }
     }
 
     spawnReinforcementUnit(unitType, forcedPromotionLevel) {
@@ -3244,8 +3245,8 @@ Lv.${level + 1}`;
             duration: 250,
             ease: 'Back.easeOut',
             onComplete: () => {
-                // Stay visible then destroy instantly (no fade)
-                this.time.delayedCall(4800, () => container.destroy());
+                // Stay visible then destroy instantly (shorter time)
+                this.time.delayedCall(2400, () => container.destroy());
             }
         });
     }

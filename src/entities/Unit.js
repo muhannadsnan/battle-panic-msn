@@ -129,67 +129,85 @@ class Unit extends Phaser.GameObjects.Container {
 
         // Get smarter units upgrade level (0-5) - respects toggle setting
         const smarterUpgradeLevel = this.scene.saveData?.specialUpgrades?.smarterUnits || 0;
-        const smarterEnabled = this.scene.saveData?.settings?.smarterUnitsEnabled !== false; // Default true
+        const smarterEnabled = this.scene.saveData?.settings?.smarterUnitsEnabled !== false;
         const smarterLevel = smarterEnabled ? smarterUpgradeLevel : 0;
 
-        // Define defense groups based on upgrade level
-        // Level 0: Single default group
-        // Level 1: Castle group (close to castle)
-        // Level 2: + Top group
-        // Level 3: + Bottom group
-        // Level 4: + Middle group
-        // Level 5: + Front group (further right)
-        const groups = [];
+        // Wing-based defense system
+        // Level 0: All units near castle (no wings)
+        // Level 1: 2 wings - Left (50%), Free (50%)
+        // Level 2: 3 wings - Left (33%), Free (33%), Top (33%)
+        // Level 3: 4 wings - Left (25%), Free (25%), Top (25%), Bottom (25%)
+        // Level 4: 5 wings - Left (20%), Free (20%), Top (20%), Bottom (20%), Right (20%)
+        // Level 5: Same as 4, but archers on top/bottom/right back up toward middle
 
-        // Base group (always available) - near castle
-        groups.push({ xOffset: 0, yMin: minY, yMax: maxY, name: 'castle' });
+        const wings = [];
 
-        if (smarterLevel >= 1) {
-            // Castle group already added as base
-        }
-        if (smarterLevel >= 2) {
-            // Top group - upper portion of screen
-            groups.push({ xOffset: 40, yMin: minY, yMax: minY + 100, name: 'top' });
-        }
-        if (smarterLevel >= 3) {
-            // Bottom group - lower portion of screen
-            groups.push({ xOffset: 40, yMin: maxY - 100, yMax: maxY, name: 'bottom' });
-        }
-        if (smarterLevel >= 4) {
-            // Middle group - center of screen
-            groups.push({ xOffset: 60, yMin: midY - 60, yMax: midY + 60, name: 'middle' });
-        }
-        if (smarterLevel >= 5) {
-            // Front group - further toward enemies
-            groups.push({ xOffset: 120, yMin: minY + 50, yMax: maxY - 50, name: 'front' });
+        if (smarterLevel === 0) {
+            // Default: all near castle
+            wings.push({ name: 'castle', xMin: baseX - 20, xMax: baseX + 40, yMin: minY, yMax: maxY });
+        } else if (smarterLevel === 1) {
+            // 2 wings: Left, Free
+            wings.push({ name: 'left', xMin: baseX - 30, xMax: baseX + 20, yMin: minY, yMax: maxY });
+            wings.push({ name: 'free', xMin: baseX + 30, xMax: baseX + 120, yMin: minY + 50, yMax: maxY - 50 });
+        } else if (smarterLevel === 2) {
+            // 3 wings: Left, Free, Top
+            wings.push({ name: 'left', xMin: baseX - 30, xMax: baseX + 20, yMin: minY, yMax: maxY });
+            wings.push({ name: 'free', xMin: baseX + 30, xMax: baseX + 100, yMin: midY - 80, yMax: midY + 80 });
+            wings.push({ name: 'top', xMin: baseX + 20, xMax: baseX + 80, yMin: minY, yMax: minY + 120 });
+        } else if (smarterLevel === 3) {
+            // 4 wings: Left, Free, Top, Bottom
+            wings.push({ name: 'left', xMin: baseX - 30, xMax: baseX + 20, yMin: minY, yMax: maxY });
+            wings.push({ name: 'free', xMin: baseX + 30, xMax: baseX + 100, yMin: midY - 60, yMax: midY + 60 });
+            wings.push({ name: 'top', xMin: baseX + 20, xMax: baseX + 80, yMin: minY, yMax: minY + 120 });
+            wings.push({ name: 'bottom', xMin: baseX + 20, xMax: baseX + 80, yMin: maxY - 120, yMax: maxY });
+        } else {
+            // Level 4-5: 5 wings: Left, Free, Top, Bottom, Right
+            wings.push({ name: 'left', xMin: baseX - 30, xMax: baseX + 20, yMin: minY, yMax: maxY });
+            wings.push({ name: 'free', xMin: baseX + 30, xMax: baseX + 80, yMin: midY - 60, yMax: midY + 60 });
+            wings.push({ name: 'top', xMin: baseX + 20, xMax: baseX + 80, yMin: minY, yMax: minY + 120 });
+            wings.push({ name: 'bottom', xMin: baseX + 20, xMax: baseX + 80, yMin: maxY - 120, yMax: maxY });
+            wings.push({ name: 'right', xMin: baseX + 80, xMax: baseX + 150, yMin: minY + 80, yMax: maxY - 80 });
         }
 
-        // Pick a random group for this unit
-        const group = groups[Phaser.Math.Between(0, groups.length - 1)];
-
-        // Position units based on their role within the group
+        // Pick a random wing for this unit
+        const wing = wings[Phaser.Math.Between(0, wings.length - 1)];
         const type = this.unitType.toUpperCase();
 
+        // Position based on unit type and wing
         if (this.isRanged) {
-            // Ranged units: stay behind in their group
-            this.defenseX = baseX - Phaser.Math.Between(30, 60) + group.xOffset;
-            this.defenseY = Phaser.Math.Between(group.yMin, group.yMax);
+            // Archers stay behind melee units
+            let archerX = Phaser.Math.Between(wing.xMin, wing.xMin + 30);
+            let archerY = Phaser.Math.Between(wing.yMin, wing.yMax);
+
+            // Level 5: Archers on exposed wings (top/bottom/right) back up toward middle
+            if (smarterLevel >= 5 && (wing.name === 'top' || wing.name === 'bottom' || wing.name === 'right')) {
+                // Move Y toward middle to stay protected
+                if (wing.name === 'top') {
+                    archerY = Phaser.Math.Between(wing.yMax - 40, wing.yMax + 30); // Shift down
+                } else if (wing.name === 'bottom') {
+                    archerY = Phaser.Math.Between(wing.yMin - 30, wing.yMin + 40); // Shift up
+                }
+                // Also back up X a bit on right wing
+                if (wing.name === 'right') {
+                    archerX = Phaser.Math.Between(wing.xMin - 20, wing.xMin + 20);
+                }
+            }
+
+            this.defenseX = archerX;
+            this.defenseY = archerY;
         } else {
-            // Melee units form front line based on their tankiness
+            // Melee units form front line
             switch (type) {
                 case 'HORSEMAN':
-                    // Horsemen are cavalry - charge to front of group
-                    this.defenseX = baseX + Phaser.Math.Between(50, 80) + group.xOffset;
-                    this.defenseY = Phaser.Math.Between(
-                        Math.max(group.yMin, minY + 20),
-                        Math.min(group.yMax, maxY - 20)
-                    );
+                    // Horsemen charge to front of wing
+                    this.defenseX = Phaser.Math.Between(wing.xMax - 30, wing.xMax + 20);
+                    this.defenseY = Phaser.Math.Between(wing.yMin + 10, wing.yMax - 10);
                     break;
                 case 'PEASANT':
                 default:
-                    // Peasants - middle ground within group
-                    this.defenseX = baseX + Phaser.Math.Between(10, 40) + group.xOffset;
-                    this.defenseY = Phaser.Math.Between(group.yMin, group.yMax);
+                    // Peasants in middle of wing
+                    this.defenseX = Phaser.Math.Between(wing.xMin + 20, wing.xMax - 20);
+                    this.defenseY = Phaser.Math.Between(wing.yMin, wing.yMax);
                     break;
             }
         }

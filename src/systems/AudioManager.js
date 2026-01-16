@@ -1105,6 +1105,83 @@ class AudioManager {
 
         breath.start(now);
     }
+    // Play reinforcement horn - cavalry charge war horn
+    playReinforcement() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // War horn blast - deep, resonant, powerful
+        // Two-note horn call: low rumble then rising note
+        const notes = [
+            { freq: 130, start: 0, duration: 0.3 },       // Low rumble (C3)
+            { freq: 175, start: 0.25, duration: 0.5 }     // Rising note (F3)
+        ];
+
+        notes.forEach(note => {
+            // Main horn tone
+            const osc = this.audioContext.createOscillator();
+            const osc2 = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+            const filter = this.audioContext.createBiquadFilter();
+
+            osc.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.sfxGain);
+
+            // Deep horn sound with detune for richness
+            osc.frequency.setValueAtTime(note.freq, now + note.start);
+            osc2.frequency.setValueAtTime(note.freq * 1.5, now + note.start); // Fifth harmonic
+            osc.type = 'sawtooth';
+            osc2.type = 'triangle';
+
+            // Low-pass filter for warm horn sound
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, now + note.start);
+            filter.Q.value = 2;
+
+            // Horn envelope - swell up then sustain
+            gain.gain.setValueAtTime(0, now + note.start);
+            gain.gain.linearRampToValueAtTime(0.18, now + note.start + 0.08);
+            gain.gain.setValueAtTime(0.15, now + note.start + note.duration * 0.6);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.duration);
+
+            osc.start(now + note.start);
+            osc2.start(now + note.start);
+            osc.stop(now + note.start + note.duration + 0.1);
+            osc2.stop(now + note.start + note.duration + 0.1);
+        });
+
+        // Add rumble/gallop effect
+        const noiseLength = this.audioContext.sampleRate * 0.4;
+        const noiseBuffer = this.audioContext.createBuffer(1, noiseLength, this.audioContext.sampleRate);
+        const noiseData = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < noiseLength; i++) {
+            // Rhythmic gallop pattern
+            const t = i / this.audioContext.sampleRate;
+            const gallop = Math.sin(t * 25) > 0 ? 1 : 0.3;
+            noiseData[i] = (Math.random() * 2 - 1) * 0.1 * gallop;
+        }
+
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+
+        noise.buffer = noiseBuffer;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+
+        noiseFilter.type = 'lowpass';
+        noiseFilter.frequency.value = 300;
+
+        noiseGain.gain.setValueAtTime(0.1, now + 0.1);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+        noise.start(now + 0.1);
+    }
 }
 
 // Global instance

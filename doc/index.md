@@ -142,7 +142,12 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.16)
+## Recent Updates (v1.35.17)
+
+### v1.35.17
+- **Smarter Units**: Redesigned with wing-based system (Left, Free, Top, Bottom, Right)
+- **Reinforcements**: War horn sound replaces text message
+- **Promotions**: Notification shows for shorter time (2.4s)
 
 ### v1.35.16
 - **Messages**: Removed "Castle +X HP" wave message
@@ -277,4 +282,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.16)*
+*Last updated: January 2026 (v1.35.17)*
