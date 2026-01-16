@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.12)
+## Recent Updates (v1.35.13)
+
+### v1.35.13
+- **Upgrade Glow Fix**: Glow effect now appears on the correct card when upgrading from side cards
 
 ### v1.35.12
 - **UI**: Reinforce button timer enlarged (20px bold)
@@ -262,4 +265,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.12)*
+*Last updated: January 2026 (v1.35.13)*

@@ -1565,6 +1565,9 @@ class UpgradeScene extends Phaser.Scene {
                     }
                 }
 
+                // Track which card was clicked for glow effect
+                this.lastClickedCard = parentCard;
+
                 if (typeof audioManager !== 'undefined') {
                     audioManager.playClick();
                 }
@@ -1731,8 +1734,8 @@ class UpgradeScene extends Phaser.Scene {
         // Enable throttle to prevent multiple clicks
         this.upgradeThrottled = true;
 
-        // Get current card and add glow effect
-        const currentCard = this.cardContainers[this.currentCardIndex];
+        // Get clicked card and add glow effect (use lastClickedCard if available)
+        const currentCard = this.lastClickedCard || this.cardContainers[this.currentCardIndex];
         if (currentCard) {
             // Create glow effect around the card
             const glow = this.add.graphics();
