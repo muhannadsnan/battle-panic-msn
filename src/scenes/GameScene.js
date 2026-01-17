@@ -521,49 +521,48 @@ class GameScene extends Phaser.Scene {
         container.glowRing = glowRing;
 
         if (isGold) {
-            // TREASURE CHEST with gold coins!
-            // Chest base (dark wood)
-            container.add(this.add.rectangle(0, 20, 70, 40, 0x5D3A1A));
-            container.add(this.add.rectangle(0, 22, 66, 36, 0x7D4A2A));
-            // Chest front panel
-            container.add(this.add.rectangle(0, 25, 60, 28, 0x8B5A3A));
+            // GOLD ORE PILE - rocky pile with gold veins and nuggets
+            // Base rocks (gray stone)
+            container.add(this.add.rectangle(0, 30, 80, 25, 0x555566));
+            container.add(this.add.rectangle(-20, 28, 30, 20, 0x666677));
+            container.add(this.add.rectangle(22, 26, 28, 22, 0x5A5A6B));
+            container.add(this.add.rectangle(0, 35, 70, 15, 0x4A4A5B));
 
-            // Chest lid (open, tilted back)
-            container.add(this.add.rectangle(0, -8, 70, 24, 0x6D4A2A));
-            container.add(this.add.rectangle(0, -6, 66, 20, 0x8D5A3A));
-            container.add(this.add.rectangle(0, -14, 64, 8, 0x9D6A4A)); // lid top
+            // Middle layer rocks
+            container.add(this.add.rectangle(-15, 15, 35, 25, 0x606071));
+            container.add(this.add.rectangle(18, 12, 32, 28, 0x555566));
+            container.add(this.add.rectangle(0, 18, 28, 22, 0x6A6A7B));
 
-            // Gold metal bands
-            container.add(this.add.rectangle(0, 8, 72, 6, 0xDAA520));
-            container.add(this.add.rectangle(0, 32, 72, 6, 0xDAA520));
-            container.add(this.add.rectangle(-30, 20, 6, 44, 0xDAA520));
-            container.add(this.add.rectangle(30, 20, 6, 44, 0xDAA520));
+            // Top rocks
+            container.add(this.add.rectangle(-8, -2, 26, 22, 0x5A5A6B));
+            container.add(this.add.rectangle(12, 0, 24, 20, 0x606071));
+            container.add(this.add.rectangle(0, -12, 20, 16, 0x666677));
 
-            // Lock (golden)
-            container.add(this.add.rectangle(0, 20, 14, 18, 0xFFD700));
-            container.add(this.add.rectangle(0, 16, 10, 8, 0xFFE855));
-            container.add(this.add.rectangle(0, 24, 6, 6, 0x222222)); // keyhole
+            // Gold veins on rocks (bright gold streaks)
+            container.add(this.add.rectangle(-18, 22, 18, 4, 0xFFD700));
+            container.add(this.add.rectangle(20, 18, 14, 3, 0xDAA520));
+            container.add(this.add.rectangle(-5, 8, 12, 4, 0xFFE855));
+            container.add(this.add.rectangle(15, -2, 10, 3, 0xFFD700));
+            container.add(this.add.rectangle(-12, -5, 8, 4, 0xDAA520));
 
-            // Overflowing gold coins!
-            const coinPositions = [
-                {x: -20, y: -2}, {x: -8, y: -5}, {x: 5, y: -3}, {x: 18, y: -4},
-                {x: -14, y: -12}, {x: 0, y: -14}, {x: 12, y: -10},
-                {x: -6, y: -20}, {x: 8, y: -18}
+            // Gold nuggets scattered on pile
+            const nuggetPositions = [
+                {x: -25, y: 20, s: 10}, {x: -8, y: 25, s: 8}, {x: 28, y: 22, s: 9},
+                {x: -18, y: 5, s: 11}, {x: 8, y: 8, s: 10}, {x: 22, y: 3, s: 8},
+                {x: -5, y: -8, s: 9}, {x: 10, y: -5, s: 7}, {x: -15, y: 12, s: 8}
             ];
-            coinPositions.forEach((pos, i) => {
-                // Coin base
-                container.add(this.add.rectangle(pos.x, pos.y, 14, 14, 0xDAA520));
-                // Coin shine
-                container.add(this.add.rectangle(pos.x - 2, pos.y - 2, 6, 6, 0xFFE855));
-                // Coin edge
-                container.add(this.add.rectangle(pos.x, pos.y, 10, 10, 0xFFD700));
+            nuggetPositions.forEach((nug) => {
+                // Nugget body
+                container.add(this.add.rectangle(nug.x, nug.y, nug.s, nug.s * 0.8, 0xFFD700));
+                // Nugget highlight
+                container.add(this.add.rectangle(nug.x - 2, nug.y - 2, nug.s * 0.4, nug.s * 0.4, 0xFFE855));
             });
 
-            // Sparkle effects on coins
+            // Sparkle effects on gold
             for (let i = 0; i < 5; i++) {
                 const sparkle = this.add.rectangle(
-                    Phaser.Math.Between(-25, 25),
-                    Phaser.Math.Between(-25, 5),
+                    Phaser.Math.Between(-30, 30),
+                    Phaser.Math.Between(-15, 25),
                     4, 4, 0xFFFFFF
                 );
                 container.add(sparkle);
@@ -613,15 +612,6 @@ class GameScene extends Phaser.Scene {
             container.add(this.add.rectangle(-30, 10, 24, 10, 0x6B3A1A));
             container.add(this.add.rectangle(-30, 10, 20, 6, 0x7B4A2A));
             container.add(this.add.rectangle(-40, 10, 6, 10, 0xA47544)); // end
-
-            // Saw leaning on logs
-            container.add(this.add.rectangle(-15, 15, 4, 35, 0x8B7355)); // handle
-            container.add(this.add.rectangle(-15, -5, 30, 8, 0xA0A0B0)); // blade
-            container.add(this.add.rectangle(-15, -5, 28, 4, 0xC0C0D0)); // blade shine
-            // Saw teeth
-            for (let i = 0; i < 6; i++) {
-                container.add(this.add.rectangle(-28 + i * 5, -10, 3, 4, 0x808090));
-            }
         }
 
         // No spinner - just axe cursor and glow
@@ -740,20 +730,10 @@ class GameScene extends Phaser.Scene {
         frameBg.setStrokeStyle(3, this.hero.color);
         this.heroPortraitContainer.add(frameBg);
 
-        // Portrait inner (hero color)
-        const portrait = this.add.rectangle(0, 0, 50, 50, this.hero.color);
-        this.heroPortraitContainer.add(portrait);
-
-        // Hero initial
-        const initial = this.add.text(0, 0, this.hero.name.charAt(0), {
-            fontSize: '32px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        this.heroPortraitContainer.add(initial);
+        // Draw pixel art hero portrait
+        const heroArt = this.add.graphics();
+        this.drawPixelArtHero(heroArt, this.heroKey, 0, 0, 48);
+        this.heroPortraitContainer.add(heroArt);
 
         // Hero name below portrait
         const nameText = this.add.text(0, 40, this.hero.name, {
@@ -765,6 +745,233 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 2
         }).setOrigin(0.5);
         this.heroPortraitContainer.add(nameText);
+    }
+
+    // Draw pixel-art hero portrait
+    drawPixelArtHero(graphics, heroKey, centerX, centerY, size) {
+        const px = size / 16;  // Pixel size for 16x16 grid
+        const startX = centerX - size / 2;
+        const startY = centerY - size / 2;
+
+        // Helper to draw a pixel
+        const drawPx = (x, y, color) => {
+            graphics.fillStyle(color, 1);
+            graphics.fillRect(startX + x * px, startY + y * px, px, px);
+        };
+
+        if (heroKey === 'DRUID') {
+            // Druid - Green hooded nature mage with leafy details
+            const skinColor = 0xd4a574;      // Tan skin
+            const hoodColor = 0x228B22;       // Forest green hood
+            const hoodDark = 0x1a6b1a;        // Darker green for shadow
+            const hoodLight = 0x32cd32;       // Lighter green highlight
+            const eyeColor = 0x00ff00;        // Glowing green eyes
+            const beardColor = 0x654321;      // Brown beard
+            const leafColor = 0x90ee90;       // Light green for leaves
+
+            // Hood top (rows 1-3)
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 1, hoodColor));
+            [4,5,6,7,8,9,10,11].forEach(x => drawPx(x, 2, hoodColor));
+            [3,4,5,6,7,8,9,10,11,12].forEach(x => drawPx(x, 3, hoodColor));
+
+            // Hood sides and face area (rows 4-7)
+            [2,3,4].forEach(x => drawPx(x, 4, hoodColor));
+            [11,12,13].forEach(x => drawPx(x, 4, hoodColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 4, hoodDark)); // Shadow under hood
+
+            [2,3].forEach(x => drawPx(x, 5, hoodColor));
+            [12,13].forEach(x => drawPx(x, 5, hoodColor));
+            [4,5].forEach(x => drawPx(x, 5, hoodDark));
+            [10,11].forEach(x => drawPx(x, 5, hoodDark));
+            [6,7,8,9].forEach(x => drawPx(x, 5, skinColor)); // Forehead
+
+            [2,3].forEach(x => drawPx(x, 6, hoodColor));
+            [12,13].forEach(x => drawPx(x, 6, hoodColor));
+            [4].forEach(x => drawPx(x, 6, hoodDark));
+            [11].forEach(x => drawPx(x, 6, hoodDark));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 6, skinColor)); // Face
+            drawPx(6, 6, eyeColor); // Left eye
+            drawPx(9, 6, eyeColor); // Right eye
+
+            // Face and hood (rows 7-9)
+            [2,3].forEach(x => drawPx(x, 7, hoodColor));
+            [12,13].forEach(x => drawPx(x, 7, hoodColor));
+            [4,5,6,7,8,9,10,11].forEach(x => drawPx(x, 7, skinColor));
+
+            [2,3].forEach(x => drawPx(x, 8, hoodColor));
+            [12,13].forEach(x => drawPx(x, 8, hoodColor));
+            [4,5].forEach(x => drawPx(x, 8, skinColor));
+            [10,11].forEach(x => drawPx(x, 8, skinColor));
+            [6,7,8,9].forEach(x => drawPx(x, 8, beardColor)); // Beard
+
+            // Beard and robe (rows 9-11)
+            [3,4].forEach(x => drawPx(x, 9, hoodColor));
+            [11,12].forEach(x => drawPx(x, 9, hoodColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 9, beardColor));
+
+            [4,5].forEach(x => drawPx(x, 10, hoodColor));
+            [10,11].forEach(x => drawPx(x, 10, hoodColor));
+            [6,7,8,9].forEach(x => drawPx(x, 10, beardColor));
+
+            // Robe/shoulders (rows 11-14)
+            [3,4,5,6,7,8,9,10,11,12].forEach(x => drawPx(x, 11, hoodColor));
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 12, hoodColor));
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 13, hoodColor));
+            [3,4,5,6,7,8,9,10,11,12].forEach(x => drawPx(x, 14, hoodColor));
+
+            // Leaf decorations
+            drawPx(4, 3, leafColor);
+            drawPx(11, 3, leafColor);
+            drawPx(3, 11, leafColor);
+            drawPx(12, 11, leafColor);
+            drawPx(7, 12, hoodLight);
+            drawPx(8, 12, hoodLight);
+
+        } else if (heroKey === 'WARLORD') {
+            // Warlord - Red armored warrior with helmet
+            const skinColor = 0xd4a574;       // Tan skin
+            const helmetColor = 0xb22222;     // Firebrick red
+            const helmetDark = 0x8b0000;      // Dark red shadow
+            const helmetLight = 0xff4444;     // Light red highlight
+            const steelColor = 0x808080;      // Gray steel
+            const steelLight = 0xc0c0c0;      // Light steel
+            const eyeColor = 0x000000;        // Dark eyes
+            const scarColor = 0x8b4513;       // Scar
+
+            // Helmet crest (rows 0-2)
+            [7,8].forEach(x => drawPx(x, 0, helmetLight));
+            [6,7,8,9].forEach(x => drawPx(x, 1, helmetColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 2, helmetColor));
+
+            // Helmet main (rows 3-5)
+            [3,4,5,6,7,8,9,10,11,12].forEach(x => drawPx(x, 3, helmetColor));
+            [2,3].forEach(x => drawPx(x, 3, helmetDark));
+            [12,13].forEach(x => drawPx(x, 3, helmetDark));
+
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 4, helmetColor));
+            drawPx(3, 4, steelColor); // Steel band
+            drawPx(12, 4, steelColor);
+
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 5, helmetColor));
+            [4,5,6].forEach(x => drawPx(x, 5, steelColor)); // Eye slit frame
+            [9,10,11].forEach(x => drawPx(x, 5, steelColor));
+
+            // Face through helmet visor (rows 6-8)
+            [2,3].forEach(x => drawPx(x, 6, helmetColor));
+            [12,13].forEach(x => drawPx(x, 6, helmetColor));
+            [4].forEach(x => drawPx(x, 6, steelColor));
+            [11].forEach(x => drawPx(x, 6, steelColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 6, skinColor)); // Face visible
+            drawPx(6, 6, eyeColor); // Left eye
+            drawPx(9, 6, eyeColor); // Right eye
+
+            [2,3].forEach(x => drawPx(x, 7, helmetColor));
+            [12,13].forEach(x => drawPx(x, 7, helmetColor));
+            [4].forEach(x => drawPx(x, 7, steelColor));
+            [11].forEach(x => drawPx(x, 7, steelColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 7, skinColor));
+            drawPx(10, 7, scarColor); // Battle scar
+
+            [2,3].forEach(x => drawPx(x, 8, helmetColor));
+            [12,13].forEach(x => drawPx(x, 8, helmetColor));
+            [4,5].forEach(x => drawPx(x, 8, steelColor));
+            [10,11].forEach(x => drawPx(x, 8, steelColor));
+            [6,7,8,9].forEach(x => drawPx(x, 8, skinColor));
+
+            // Chin guard (rows 9-10)
+            [3,4,5].forEach(x => drawPx(x, 9, steelColor));
+            [10,11,12].forEach(x => drawPx(x, 9, steelColor));
+            [6,7,8,9].forEach(x => drawPx(x, 9, helmetDark));
+
+            [4,5,6,7,8,9,10,11].forEach(x => drawPx(x, 10, steelColor));
+
+            // Armor shoulders (rows 11-14)
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 11, helmetColor));
+            drawPx(4, 11, steelLight); // Shoulder plate shine
+            drawPx(11, 11, steelLight);
+
+            [1,2,3,4].forEach(x => drawPx(x, 12, helmetColor));
+            [11,12,13,14].forEach(x => drawPx(x, 12, helmetColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 12, helmetDark)); // Chest
+
+            [1,2,3].forEach(x => drawPx(x, 13, helmetColor));
+            [12,13,14].forEach(x => drawPx(x, 13, helmetColor));
+            [4,5,6,7,8,9,10,11].forEach(x => drawPx(x, 13, helmetDark));
+            drawPx(7, 13, steelColor); // Belt buckle
+            drawPx(8, 13, steelColor);
+
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 14, helmetDark));
+
+        } else if (heroKey === 'ALCHEMIST') {
+            // Alchemist - Gold-robed scholar with goggles
+            const skinColor = 0xd4a574;       // Tan skin
+            const robeColor = 0xffd700;       // Gold
+            const robeDark = 0xdaa520;        // Darker gold
+            const robeLight = 0xffec8b;       // Light gold
+            const goggleColor = 0x4169e1;     // Royal blue goggles
+            const goggleFrame = 0x696969;     // Gray frame
+            const hairColor = 0x2f2f2f;       // Dark hair
+            const potionColor = 0x00ff7f;     // Green potion glow
+
+            // Hair/head top (rows 1-3)
+            [6,7,8,9].forEach(x => drawPx(x, 1, hairColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 2, hairColor));
+            [4,5,6,7,8,9,10,11].forEach(x => drawPx(x, 3, hairColor));
+
+            // Forehead and goggles (rows 4-6)
+            [3,4].forEach(x => drawPx(x, 4, hairColor));
+            [11,12].forEach(x => drawPx(x, 4, hairColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 4, skinColor));
+
+            [3].forEach(x => drawPx(x, 5, hairColor));
+            [12].forEach(x => drawPx(x, 5, hairColor));
+            [4,5].forEach(x => drawPx(x, 5, goggleFrame)); // Goggle frame left
+            [10,11].forEach(x => drawPx(x, 5, goggleFrame)); // Goggle frame right
+            [6,7,8,9].forEach(x => drawPx(x, 5, skinColor));
+
+            [3].forEach(x => drawPx(x, 6, hairColor));
+            [12].forEach(x => drawPx(x, 6, hairColor));
+            [4].forEach(x => drawPx(x, 6, goggleFrame));
+            [5,6].forEach(x => drawPx(x, 6, goggleColor)); // Left goggle lens
+            [7,8].forEach(x => drawPx(x, 6, goggleFrame)); // Bridge
+            [9,10].forEach(x => drawPx(x, 6, goggleColor)); // Right goggle lens
+            [11].forEach(x => drawPx(x, 6, goggleFrame));
+
+            // Lower face (rows 7-9)
+            [3,4].forEach(x => drawPx(x, 7, skinColor));
+            [11,12].forEach(x => drawPx(x, 7, skinColor));
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 7, skinColor));
+
+            [4,5,6,7,8,9,10,11].forEach(x => drawPx(x, 8, skinColor));
+            drawPx(7, 8, 0xcc8866); // Nose shadow
+
+            [5,6,7,8,9,10].forEach(x => drawPx(x, 9, skinColor));
+            drawPx(6, 9, 0x000000); // Slight smile
+            drawPx(9, 9, 0x000000);
+
+            // Collar and robe (rows 10-14)
+            [4,5].forEach(x => drawPx(x, 10, robeColor));
+            [10,11].forEach(x => drawPx(x, 10, robeColor));
+            [6,7,8,9].forEach(x => drawPx(x, 10, skinColor)); // Neck
+
+            [3,4,5,6,7,8,9,10,11,12].forEach(x => drawPx(x, 11, robeColor));
+            drawPx(7, 11, robeDark); // Collar V
+            drawPx(8, 11, robeDark);
+
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 12, robeColor));
+            drawPx(6, 12, robeLight); // Highlight
+            drawPx(9, 12, robeLight);
+
+            [2,3,4,5,6,7,8,9,10,11,12,13].forEach(x => drawPx(x, 13, robeColor));
+            drawPx(4, 13, potionColor); // Potion vial glow
+            drawPx(11, 13, potionColor);
+
+            [3,4,5,6,7,8,9,10,11,12].forEach(x => drawPx(x, 14, robeDark));
+
+            // Goggle shine
+            drawPx(5, 6, 0x87ceeb); // Light reflection
+            drawPx(9, 6, 0x87ceeb);
+        }
     }
 
     activateHeroAbility() {
@@ -1694,29 +1901,36 @@ Lv.${level + 1}`;
         this.reinforcementButtonContainer.add(background);
 
         // Inner area
-        const innerBg = this.add.rectangle(0, -5, buttonWidth - 10, buttonHeight - 25, 0x3a4a5a, 0.7);
+        const innerBg = this.add.rectangle(0, 0, buttonWidth - 10, buttonHeight - 15, 0x3a4a5a, 0.7);
         this.reinforcementButtonContainer.add(innerBg);
 
         // Spinner graphics for timer progress
         this.reinforcementSpinner = this.add.graphics();
         this.reinforcementButtonContainer.add(this.reinforcementSpinner);
 
-        // Icon - shield/sword combo
-        const icon = this.add.text(0, -15, '⚔️', {
-            fontSize: '36px'
-        }).setOrigin(0.5);
-        this.reinforcementButtonContainer.add(icon);
+        // Pixel art reinforcement icon (soldiers/shield)
+        const iconGraphics = this.add.graphics();
+        this.drawReinforcementIcon(iconGraphics, 0, 0, 60);
+        this.reinforcementButtonContainer.add(iconGraphics);
 
-        // Label
-        const label = this.add.text(0, 30, 'REINFORCE', {
+        // Tooltip (shown on hover)
+        this.reinforcementTooltip = this.add.container(0, -70);
+        this.reinforcementTooltip.setDepth(1000);
+        this.reinforcementTooltip.setVisible(false);
+
+        const tooltipBg = this.add.rectangle(0, 0, 100, 28, 0x1a1a2e, 0.95);
+        tooltipBg.setStrokeStyle(2, 0x4a6a8a);
+        this.reinforcementTooltip.add(tooltipBg);
+
+        const tooltipText = this.add.text(0, 0, 'Reinforce', {
             fontSize: '14px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 2
+            color: '#ffffff'
         }).setOrigin(0.5);
-        this.reinforcementButtonContainer.add(label);
+        this.reinforcementTooltip.add(tooltipText);
+
+        this.reinforcementButtonContainer.add(this.reinforcementTooltip);
 
         // Make interactive
         background.setInteractive({});
@@ -1730,12 +1944,14 @@ Lv.${level + 1}`;
         });
 
         background.on('pointerover', () => {
+            this.reinforcementTooltip.setVisible(true);
             if (this.reinforcementReady) {
                 innerBg.setFillStyle(0x4a6a8a, 0.85);
             }
         });
 
         background.on('pointerout', () => {
+            this.reinforcementTooltip.setVisible(false);
             innerBg.setFillStyle(0x3a4a5a, 0.7);
         });
 
@@ -1743,9 +1959,91 @@ Lv.${level + 1}`;
             container: this.reinforcementButtonContainer,
             background,
             innerBg,
-            icon,
-            label
+            iconGraphics
         };
+    }
+
+    // Draw pixel-art reinforcement icon (group of soldiers)
+    drawReinforcementIcon(graphics, centerX, centerY, size) {
+        const px = size / 12;  // Pixel size for 12x12 grid
+        const startX = centerX - size / 2;
+        const startY = centerY - size / 2;
+
+        // Helper to draw a pixel
+        const drawPx = (x, y, color) => {
+            graphics.fillStyle(color, 1);
+            graphics.fillRect(startX + x * px, startY + y * px, px, px);
+        };
+
+        // Colors
+        const helmetColor = 0x808080;    // Steel helmet
+        const helmetLight = 0xc0c0c0;    // Helmet shine
+        const skinColor = 0xd4a574;      // Skin
+        const armorColor = 0x4169e1;     // Blue armor
+        const armorDark = 0x2a4a9a;      // Dark blue
+        const shieldColor = 0xdaa520;    // Gold shield
+        const swordColor = 0xc0c0c0;     // Sword
+
+        // Left soldier (smaller, background)
+        // Helmet
+        drawPx(1, 2, helmetColor);
+        drawPx(2, 2, helmetLight);
+        drawPx(1, 3, helmetColor);
+        drawPx(2, 3, helmetColor);
+        // Face
+        drawPx(1, 4, skinColor);
+        drawPx(2, 4, skinColor);
+        // Body
+        drawPx(1, 5, armorDark);
+        drawPx(2, 5, armorDark);
+        drawPx(1, 6, armorDark);
+        drawPx(2, 6, armorDark);
+
+        // Center soldier (main, larger)
+        // Helmet
+        [4,5,6,7].forEach(x => drawPx(x, 0, helmetColor));
+        [4,5,6,7].forEach(x => drawPx(x, 1, helmetColor));
+        drawPx(5, 0, helmetLight);
+        drawPx(6, 0, helmetLight);
+        // Face
+        [4,5,6,7].forEach(x => drawPx(x, 2, skinColor));
+        drawPx(5, 2, 0x000000); // Eyes
+        drawPx(6, 2, 0x000000);
+        [4,5,6,7].forEach(x => drawPx(x, 3, skinColor));
+        // Armor body
+        [3,4,5,6,7,8].forEach(x => drawPx(x, 4, armorColor));
+        [3,4,5,6,7,8].forEach(x => drawPx(x, 5, armorColor));
+        [4,5,6,7].forEach(x => drawPx(x, 6, armorColor));
+        [4,5,6,7].forEach(x => drawPx(x, 7, armorDark));
+        // Shield (left side)
+        drawPx(2, 4, shieldColor);
+        drawPx(2, 5, shieldColor);
+        drawPx(3, 4, shieldColor);
+        drawPx(3, 5, shieldColor);
+        // Sword (right side)
+        drawPx(8, 3, swordColor);
+        drawPx(9, 2, swordColor);
+        drawPx(9, 3, swordColor);
+
+        // Right soldier (smaller, background)
+        // Helmet
+        drawPx(9, 2, helmetColor);
+        drawPx(10, 2, helmetLight);
+        drawPx(9, 3, helmetColor);
+        drawPx(10, 3, helmetColor);
+        // Face
+        drawPx(9, 4, skinColor);
+        drawPx(10, 4, skinColor);
+        // Body
+        drawPx(9, 5, armorDark);
+        drawPx(10, 5, armorDark);
+        drawPx(9, 6, armorDark);
+        drawPx(10, 6, armorDark);
+
+        // Legs for all
+        [1,2].forEach(x => drawPx(x, 7, 0x4a3728));
+        [4,5,6,7].forEach(x => drawPx(x, 8, 0x4a3728));
+        [9,10].forEach(x => drawPx(x, 7, 0x4a3728));
     }
 
     createHeroAbilityButton() {
@@ -1771,16 +2069,10 @@ Lv.${level + 1}`;
         this.heroAbilitySpinner = this.add.graphics();
         this.heroAbilityButtonContainer.add(this.heroAbilitySpinner);
 
-        // Hero icon (first letter)
-        const icon = this.add.text(0, 0, this.hero.name.charAt(0), {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        this.heroAbilityButtonContainer.add(icon);
+        // Hero pixel art icon (smaller version)
+        const heroIcon = this.add.graphics();
+        this.drawPixelArtHero(heroIcon, this.heroKey, 0, 0, 32);
+        this.heroAbilityButtonContainer.add(heroIcon);
 
         // Lock icon (shown until wave 20)
         this.heroAbilityLock = this.add.text(0, 0, '🔒', {
@@ -1808,7 +2100,7 @@ Lv.${level + 1}`;
         this.heroAbilityButton = {
             container: this.heroAbilityButtonContainer,
             background,
-            icon
+            heroIcon
         };
     }
 
