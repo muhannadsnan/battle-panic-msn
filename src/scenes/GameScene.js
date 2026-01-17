@@ -127,10 +127,12 @@ class GameScene extends Phaser.Scene {
         this.castleEmergencyUsed = false;
         this.castleEmergencyActive = false;
 
-        // Hero ability state (unlocks at wave 20)
+        // Hero ability state (unlocks at wave 20, recharges every 2 minutes)
+        this.heroAbilityUnlocked = false;
         this.heroAbilityReady = false;
-        this.heroAbilityUsed = false;
         this.heroAbilityActive = false;  // For Warlord's timed buff
+        this.heroAbilityTimer = 0;
+        this.heroAbilityCooldown = 120000;  // 2 minutes in ms
 
         // Resource tracking
         this.goldCollectedThisRun = 0;
@@ -745,7 +747,8 @@ class GameScene extends Phaser.Scene {
         // Hero initial
         const initial = this.add.text(0, 0, this.hero.name.charAt(0), {
             fontSize: '32px',
-            fontFamily: 'Georgia, serif',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
@@ -755,31 +758,25 @@ class GameScene extends Phaser.Scene {
         // Hero name below portrait
         const nameText = this.add.text(0, 40, this.hero.name, {
             fontSize: '12px',
-            fontFamily: 'Georgia, serif',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
         }).setOrigin(0.5);
         this.heroPortraitContainer.add(nameText);
-
-        // Ability indicator (shows when wave 20 reached and ability ready)
-        this.heroAbilityIndicator = this.add.circle(25, -25, 8, 0x333333);
-        this.heroAbilityIndicator.setStrokeStyle(2, 0x666666);
-        this.heroPortraitContainer.add(this.heroAbilityIndicator);
-
-        // Make portrait interactive for ability
-        frameBg.setInteractive({ useHandCursor: true });
-        frameBg.on('pointerdown', () => {
-            this.activateHeroAbility();
-        });
     }
 
     activateHeroAbility() {
-        // Check if ability is ready and not used
-        if (!this.heroAbilityReady || this.heroAbilityUsed) return;
-
-        const waveInfo = this.waveSystem.getWaveInfo();
-        if (waveInfo.waveNumber < this.hero.abilityWave) return;
+        // Check if ability is unlocked and ready
+        if (!this.heroAbilityUnlocked || !this.heroAbilityReady) {
+            if (!this.heroAbilityUnlocked) {
+                this.showMessage('Ability unlocks at Wave ' + this.hero.abilityWave, '#ffaa00');
+            } else {
+                this.showMessage('Ability recharging...', '#ffaa00');
+            }
+            return;
+        }
 
         // Different abilities for different heroes
         if (this.heroKey === 'WARLORD') {
@@ -809,12 +806,9 @@ class GameScene extends Phaser.Scene {
 
     executeTargetedAbility(x, y) {
         this.heroAbilityTargeting = false;
-        this.heroAbilityUsed = true;
+        this.heroAbilityReady = false;
+        this.heroAbilityTimer = 0;  // Reset cooldown timer
         this.input.setDefaultCursor('default');
-
-        // Update indicator
-        this.heroAbilityIndicator.setFillStyle(0x666666);
-        this.heroAbilityIndicator.setStrokeStyle(2, 0x333333);
 
         // Create visual effect and deal damage
         this.createHeroAbilityEffect(x, y);
@@ -913,12 +907,9 @@ class GameScene extends Phaser.Scene {
     }
 
     activateWarlordAbility() {
-        this.heroAbilityUsed = true;
+        this.heroAbilityReady = false;
+        this.heroAbilityTimer = 0;  // Reset cooldown timer
         this.heroAbilityActive = true;
-
-        // Update indicator
-        this.heroAbilityIndicator.setFillStyle(0x666666);
-        this.heroAbilityIndicator.setStrokeStyle(2, 0x333333);
 
         // Visual effect - red pulse on all units
         this.units.getChildren().forEach(unit => {
@@ -951,27 +942,98 @@ class GameScene extends Phaser.Scene {
     }
 
     checkHeroAbilityUnlock() {
-        if (this.heroAbilityReady || this.heroAbilityUsed) return;
+        // Check if we should unlock the ability
+        if (!this.heroAbilityUnlocked) {
+            const waveInfo = this.waveSystem.getWaveInfo();
+            if (waveInfo.waveNumber >= this.hero.abilityWave) {
+                this.heroAbilityUnlocked = true;
+                this.heroAbilityReady = true;
+                this.heroAbilityTimer = this.heroAbilityCooldown;  // Start ready
 
-        const waveInfo = this.waveSystem.getWaveInfo();
-        if (waveInfo.waveNumber >= this.hero.abilityWave) {
-            this.heroAbilityReady = true;
+                // Hide lock icon
+                if (this.heroAbilityLock) {
+                    this.heroAbilityLock.setVisible(false);
+                }
 
-            // Update indicator to show ability is ready
-            this.heroAbilityIndicator.setFillStyle(0xffaa00);
-            this.heroAbilityIndicator.setStrokeStyle(2, 0xffff00);
-
-            // Pulse animation
-            this.tweens.add({
-                targets: this.heroAbilityIndicator,
-                scale: 1.3,
-                duration: 500,
-                yoyo: true,
-                repeat: -1
-            });
-
-            this.showMessage(this.hero.abilityName + ' UNLOCKED! Click hero portrait to use.', '#ffaa00');
+                this.showMessage(this.hero.abilityName + ' UNLOCKED!', '#ffaa00');
+                this.startHeroAbilityGlow();
+            }
         }
+    }
+
+    updateHeroAbilityTimer(delta) {
+        // Skip if not unlocked
+        if (!this.heroAbilityUnlocked) return;
+
+        // Update timer if not ready
+        if (!this.heroAbilityReady) {
+            this.heroAbilityTimer += delta;
+
+            if (this.heroAbilityTimer >= this.heroAbilityCooldown) {
+                this.heroAbilityTimer = this.heroAbilityCooldown;
+                this.heroAbilityReady = true;
+                this.startHeroAbilityGlow();
+            }
+        }
+
+        // Update visual spinner
+        this.drawHeroAbilitySpinner();
+    }
+
+    drawHeroAbilitySpinner() {
+        if (!this.heroAbilitySpinner) return;
+
+        const graphics = this.heroAbilitySpinner;
+        graphics.clear();
+
+        const progress = this.heroAbilityTimer / this.heroAbilityCooldown;
+        const radius = 20;
+
+        if (progress > 0) {
+            const startAngle = -Math.PI / 2;
+            const endAngle = startAngle + progress * Math.PI * 2;
+            const color = this.heroAbilityReady ? 0x4ade80 : 0xffa500;
+
+            // Progress arc
+            graphics.lineStyle(3, color, 0.8);
+            graphics.beginPath();
+            graphics.arc(0, 0, radius, startAngle, endAngle, false);
+            graphics.strokePath();
+
+            // Glow when ready
+            if (this.heroAbilityReady) {
+                graphics.lineStyle(5, 0x4ade80, 0.3);
+                graphics.beginPath();
+                graphics.arc(0, 0, radius + 2, startAngle, endAngle, false);
+                graphics.strokePath();
+            }
+        }
+    }
+
+    startHeroAbilityGlow() {
+        if (!this.heroAbilityButtonContainer) return;
+
+        // Create glow effect behind the button
+        if (this.heroAbilityGlow) {
+            this.heroAbilityGlow.destroy();
+        }
+
+        this.heroAbilityGlow = this.add.graphics();
+        this.heroAbilityGlow.setPosition(this.heroAbilityButtonContainer.x, this.heroAbilityButtonContainer.y);
+        this.heroAbilityGlow.setDepth(899);
+
+        // Draw glow circle
+        this.heroAbilityGlow.fillStyle(this.hero.color, 0.4);
+        this.heroAbilityGlow.fillCircle(0, 0, 30);
+
+        // Pulsing animation
+        this.tweens.add({
+            targets: this.heroAbilityGlow,
+            alpha: 0.2,
+            duration: 600,
+            yoyo: true,
+            repeat: -1
+        });
     }
 
     createCastleUpgradeZone() {
@@ -1456,6 +1518,9 @@ Lv.${level + 1}`;
         // Reinforcements button (if unlocked)
         this.createReinforcementButton();
 
+        // Hero ability button (next to wood resource)
+        this.createHeroAbilityButton();
+
         // Pause button
         this.createPauseButton();
 
@@ -1653,17 +1718,6 @@ Lv.${level + 1}`;
         }).setOrigin(0.5);
         this.reinforcementButtonContainer.add(label);
 
-        // Timer text (shows when charging)
-        this.reinforcementTimerText = this.add.text(0, 48, '', {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#aaaaaa',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        this.reinforcementButtonContainer.add(this.reinforcementTimerText);
-
         // Make interactive
         background.setInteractive({});
 
@@ -1691,6 +1745,70 @@ Lv.${level + 1}`;
             innerBg,
             icon,
             label
+        };
+    }
+
+    createHeroAbilityButton() {
+        // Position to the right of wood resource (resource display is at x=150)
+        const buttonX = 320;
+        const buttonY = 30;
+        const buttonSize = 50;
+
+        // Container for the button
+        this.heroAbilityButtonContainer = this.add.container(buttonX, buttonY);
+        this.heroAbilityButtonContainer.setDepth(900);
+
+        // Background circle
+        const background = this.add.circle(0, 0, buttonSize / 2, 0x2a3a4a, 0.9);
+        background.setStrokeStyle(3, this.hero.color);
+        this.heroAbilityButtonContainer.add(background);
+
+        // Inner circle (hero color)
+        this.heroAbilityInnerBg = this.add.circle(0, 0, buttonSize / 2 - 5, 0x3a4a5a, 0.7);
+        this.heroAbilityButtonContainer.add(this.heroAbilityInnerBg);
+
+        // Spinner graphics for timer progress
+        this.heroAbilitySpinner = this.add.graphics();
+        this.heroAbilityButtonContainer.add(this.heroAbilitySpinner);
+
+        // Hero icon (first letter)
+        const icon = this.add.text(0, 0, this.hero.name.charAt(0), {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        this.heroAbilityButtonContainer.add(icon);
+
+        // Lock icon (shown until wave 20)
+        this.heroAbilityLock = this.add.text(0, 0, '🔒', {
+            fontSize: '20px'
+        }).setOrigin(0.5);
+        this.heroAbilityButtonContainer.add(this.heroAbilityLock);
+
+        // Make interactive
+        background.setInteractive({ useHandCursor: true });
+
+        background.on('pointerdown', () => {
+            this.activateHeroAbility();
+        });
+
+        background.on('pointerover', () => {
+            if (this.heroAbilityReady) {
+                this.heroAbilityInnerBg.setFillStyle(0x4a6a8a, 0.9);
+            }
+        });
+
+        background.on('pointerout', () => {
+            this.heroAbilityInnerBg.setFillStyle(0x3a4a5a, 0.7);
+        });
+
+        this.heroAbilityButton = {
+            container: this.heroAbilityButtonContainer,
+            background,
+            icon
         };
     }
 
@@ -2003,6 +2121,9 @@ Lv.${level + 1}`;
         // Check hero ability unlock (wave 20)
         this.checkHeroAbilityUnlock();
 
+        // Update hero ability timer
+        this.updateHeroAbilityTimer(delta);
+
         // Update wave display
         const waveInfo = this.waveSystem.getWaveInfo();
         this.waveDisplay.setWave(waveInfo.currentWave, waveInfo.enemiesRemaining);
@@ -2088,18 +2209,6 @@ Lv.${level + 1}`;
 
         // Update visual
         this.drawReinforcementSpinner();
-
-        // Update timer text
-        if (this.reinforcementReady) {
-            this.reinforcementTimerText.setText('READY!');
-            this.reinforcementTimerText.setColor('#4ade80');
-        } else {
-            const remaining = Math.ceil((this.reinforcementCooldown - this.reinforcementTimer) / 1000);
-            const minutes = Math.floor(remaining / 60);
-            const seconds = remaining % 60;
-            this.reinforcementTimerText.setText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
-            this.reinforcementTimerText.setColor('#aaaaaa');
-        }
     }
 
     drawReinforcementSpinner() {

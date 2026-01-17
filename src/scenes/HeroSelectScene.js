@@ -13,17 +13,18 @@ class HeroSelectScene extends Phaser.Scene {
 
         // Title
         this.add.text(width / 2, 50, 'CHOOSE YOUR HERO', {
-            fontSize: '36px',
-            fontFamily: 'Georgia, serif',
+            fontSize: '40px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffd700',
             stroke: '#000000',
             strokeThickness: 4
         }).setOrigin(0.5);
 
         // Subtitle
-        this.add.text(width / 2, 90, 'Your hero leads the battle with unique powers', {
-            fontSize: '16px',
-            fontFamily: 'Georgia, serif',
+        this.add.text(width / 2, 95, 'Your hero leads the battle with unique powers', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
             color: '#cccccc'
         }).setOrigin(0.5);
 
@@ -39,21 +40,21 @@ class HeroSelectScene extends Phaser.Scene {
 
         heroes.forEach((heroKey, index) => {
             const x = startX + index * (cardWidth + cardSpacing);
-            const card = this.createHeroCard(x, 300, heroKey);
+            const card = this.createHeroCard(x, 310, heroKey);
             this.heroCards.push(card);
         });
 
         // Battle button (disabled until hero selected)
-        this.createBattleButton(width / 2, height - 70);
+        this.createBattleButton(width / 2, height - 60);
 
         // Back button
-        this.createBackButton(80, height - 40);
+        this.createBackButton(80, height - 35);
     }
 
     createHeroCard(x, y, heroKey) {
         const hero = HERO_TYPES[heroKey];
         const cardWidth = 280;
-        const cardHeight = 320;
+        const cardHeight = 330;
 
         // Card container
         const container = this.add.container(x, y);
@@ -64,44 +65,47 @@ class HeroSelectScene extends Phaser.Scene {
         container.add(bg);
 
         // Hero portrait area (pixel art placeholder - colored square with initial)
-        const portraitSize = 80;
+        const portraitSize = 90;
         const portrait = this.add.rectangle(0, -100, portraitSize, portraitSize, hero.color);
-        portrait.setStrokeStyle(2, 0xffffff);
+        portrait.setStrokeStyle(3, 0xffffff);
         container.add(portrait);
 
         // Hero initial letter
         const initial = this.add.text(0, -100, hero.name.charAt(0), {
-            fontSize: '48px',
-            fontFamily: 'Georgia, serif',
+            fontSize: '56px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 4
         }).setOrigin(0.5);
         container.add(initial);
 
         // Hero name
-        const nameText = this.add.text(0, -40, hero.name.toUpperCase(), {
-            fontSize: '24px',
-            fontFamily: 'Georgia, serif',
+        const nameText = this.add.text(0, -35, hero.name.toUpperCase(), {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffd700',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 3
         }).setOrigin(0.5);
         container.add(nameText);
 
         // Hero quote
-        const quoteText = this.add.text(0, -10, hero.quote, {
-            fontSize: '12px',
-            fontFamily: 'Georgia, serif',
+        const quoteText = this.add.text(0, -5, hero.quote, {
+            fontSize: '14px',
+            fontFamily: 'Arial',
             color: '#aaaaaa',
             fontStyle: 'italic'
         }).setOrigin(0.5);
         container.add(quoteText);
 
         // Passive effects header
-        const passiveHeader = this.add.text(0, 20, '~ Passive Powers ~', {
-            fontSize: '14px',
-            fontFamily: 'Georgia, serif',
+        const passiveHeader = this.add.text(0, 25, '~ Passive Powers ~', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#88aaff'
         }).setOrigin(0.5);
         container.add(passiveHeader);
@@ -109,8 +113,8 @@ class HeroSelectScene extends Phaser.Scene {
         // Passive effects list
         const passives = this.getPassiveDescriptions(heroKey);
         passives.forEach((passive, i) => {
-            const passiveText = this.add.text(0, 45 + i * 22, passive, {
-                fontSize: '13px',
+            const passiveText = this.add.text(0, 50 + i * 24, passive, {
+                fontSize: '15px',
                 fontFamily: 'Arial',
                 color: '#ccffcc'
             }).setOrigin(0.5);
@@ -118,23 +122,24 @@ class HeroSelectScene extends Phaser.Scene {
         });
 
         // Wave 20 ability
-        const abilityHeader = this.add.text(0, 100, '~ Wave 20 Ability ~', {
-            fontSize: '14px',
-            fontFamily: 'Georgia, serif',
+        const abilityHeader = this.add.text(0, 110, '~ Wave 20 Ability ~', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffaa44'
         }).setOrigin(0.5);
         container.add(abilityHeader);
 
-        const abilityName = this.add.text(0, 122, hero.abilityName, {
-            fontSize: '15px',
-            fontFamily: 'Georgia, serif',
-            color: '#ffffff',
-            fontStyle: 'bold'
+        const abilityName = this.add.text(0, 135, hero.abilityName, {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff'
         }).setOrigin(0.5);
         container.add(abilityName);
 
-        const abilityDesc = this.add.text(0, 142, hero.abilityDescription, {
-            fontSize: '11px',
+        const abilityDesc = this.add.text(0, 158, hero.abilityDescription, {
+            fontSize: '13px',
             fontFamily: 'Arial',
             color: '#cccccc'
         }).setOrigin(0.5);
@@ -218,17 +223,18 @@ class HeroSelectScene extends Phaser.Scene {
         const container = this.add.container(x, y);
 
         // Button background (initially disabled/gray)
-        const bg = this.add.rectangle(0, 0, 200, 50, 0x555555);
+        const bg = this.add.rectangle(0, 0, 220, 55, 0x555555);
         bg.setStrokeStyle(3, 0x333333);
         container.add(bg);
 
         // Button text
         const text = this.add.text(0, 0, 'BATTLE!', {
-            fontSize: '24px',
-            fontFamily: 'Georgia, serif',
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#888888',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 3
         }).setOrigin(0.5);
         container.add(text);
 
@@ -259,9 +265,12 @@ class HeroSelectScene extends Phaser.Scene {
 
     createBackButton(x, y) {
         const text = this.add.text(x, y, '< Back', {
-            fontSize: '18px',
-            fontFamily: 'Georgia, serif',
-            color: '#aaaaaa'
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#aaaaaa',
+            stroke: '#000000',
+            strokeThickness: 2
         }).setOrigin(0.5);
 
         text.setInteractive({ useHandCursor: true });
