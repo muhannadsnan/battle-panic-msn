@@ -880,7 +880,8 @@ class Castle extends Phaser.GameObjects.Container {
                 isPlayerProjectile: true,
                 projectileType: 'arrow',
                 isCastleArrow: true,  // Castle arrows play sound on shoot, not hit
-                scale: 1.5  // 50% bigger castle arrows
+                scale: 1.5,  // 50% bigger castle arrows
+                maxDistance: this.attackRange + 100  // Match castle's attack range
             }
         );
 
