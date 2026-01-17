@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.23)
+## Recent Updates (v1.35.24)
+
+### v1.35.24
+- **Audio**: Fixed archer arrow sound - now plays on shoot at 60% volume (was playing on hit)
+- **Fix**: Castle arrows now reach targets at all castle levels (maxDistance matches attackRange)
 
 ### v1.35.23
 - **Audio**: Reduced archer unit arrow sound by 60% (less overwhelming with large armies)
@@ -301,4 +305,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.23)*
+*Last updated: January 2026 (v1.35.24)*

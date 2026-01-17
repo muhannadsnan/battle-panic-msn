@@ -13,6 +13,7 @@ class Projectile extends Phaser.GameObjects.Container {
         this.splashRadius = config.splashRadius || 0;
         this.projectileType = config.projectileType || 'arrow';
         this.isCastleArrow = config.isCastleArrow || false;
+        this.isUnitArrow = config.isUnitArrow || false;
         this.maxDistance = config.maxDistance || 500; // Max travel distance (half screen)
 
         this.hasHit = false;

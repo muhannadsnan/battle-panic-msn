@@ -83,10 +83,10 @@ class CombatSystem {
 
         // Play hit sound based on attacker type
         if (typeof audioManager !== 'undefined') {
-            if (attacker.isCastleArrow) {
-                // Castle arrows already play sound on shoot, skip hit sound
+            if (attacker.isCastleArrow || attacker.isUnitArrow) {
+                // Castle/unit arrows already play sound on shoot, skip hit sound
             } else if (attacker.isRanged || attacker.projectileType === 'arrow') {
-                audioManager.playArrow(0.4); // 60% quieter for unit arrows
+                audioManager.playArrow(0.4); // 60% quieter for enemy arrows
             } else if (attacker.enemyType === 'ORC' || attacker.enemyType === 'TROLL') {
                 // Heavy hit for orcs and trolls
                 audioManager.playOrcHit();

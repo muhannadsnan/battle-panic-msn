@@ -893,6 +893,11 @@ class Unit extends Phaser.GameObjects.Container {
         });
 
         if (this.isRanged) {
+            // Play arrow sound on shoot (60% quieter for unit arrows)
+            if (typeof audioManager !== 'undefined') {
+                audioManager.playArrow(0.4);
+            }
+
             // Create projectile with max distance based on unit range (+ 100 buffer)
             const projectile = new Projectile(
                 this.scene,
@@ -907,6 +912,7 @@ class Unit extends Phaser.GameObjects.Container {
                     splashDamage: this.splashDamage,
                     splashRadius: this.splashRadius,
                     projectileType: 'arrow',
+                    isUnitArrow: true,  // Mark as unit arrow to skip hit sound
                     maxDistance: this.range + 100 // Arrow travels slightly past attack range
                 }
             );
