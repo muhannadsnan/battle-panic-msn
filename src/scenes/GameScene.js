@@ -1786,13 +1786,27 @@ Lv.${level + 1}`;
                 container.add(this.add.rectangle(0, 10, 3, 6, 0x8B4513)); // handle
                 break;
             case 'ARCHER':
-                // Bow & arrow pointing right
-                container.add(this.add.rectangle(-6, -8, 3, 6, 0x8B4513).setAngle(15)); // top bow
-                container.add(this.add.rectangle(-8, 0, 3, 8, 0x9B5523)); // mid bow
-                container.add(this.add.rectangle(-6, 8, 3, 6, 0x8B4513).setAngle(-15)); // bottom bow
-                container.add(this.add.rectangle(-3, 0, 2, 20, 0xEEDDCC)); // bowstring
-                container.add(this.add.rectangle(4, 0, 16, 2, 0x8B6B4A)); // arrow
-                container.add(this.add.rectangle(12, 0, 4, 4, 0xC0C0C0).setAngle(45)); // arrowhead right
+                // Improved bow with arrow - cleaner pixel art style
+                // Bow limbs (curved shape using multiple pieces)
+                container.add(this.add.rectangle(-6, -10, 3, 5, 0x6B3A0A)); // top limb outer
+                container.add(this.add.rectangle(-8, -6, 3, 4, 0x7B4A1A));  // top limb curve
+                container.add(this.add.rectangle(-9, -2, 3, 4, 0x8B5A2A));  // top limb inner
+                container.add(this.add.rectangle(-9, 2, 3, 4, 0x8B5A2A));   // bottom limb inner
+                container.add(this.add.rectangle(-8, 6, 3, 4, 0x7B4A1A));   // bottom limb curve
+                container.add(this.add.rectangle(-6, 10, 3, 5, 0x6B3A0A));  // bottom limb outer
+                // Bow grip (center, darker)
+                container.add(this.add.rectangle(-9, 0, 4, 3, 0x4B2A0A));
+                // Bowstring (taut)
+                container.add(this.add.rectangle(-4, 0, 2, 22, 0xCCBBAA));
+                // Arrow shaft
+                container.add(this.add.rectangle(5, 0, 18, 2, 0x9B7B5B));
+                container.add(this.add.rectangle(5, -1, 16, 1, 0xAB8B6B)); // highlight
+                // Arrow fletching (feathers at back)
+                container.add(this.add.rectangle(-4, -2, 4, 2, 0x228B22)); // green feather top
+                container.add(this.add.rectangle(-4, 2, 4, 2, 0x228B22));  // green feather bottom
+                // Arrowhead (sharp triangular)
+                container.add(this.add.rectangle(14, 0, 5, 3, 0xA0A0A0));  // head base
+                container.add(this.add.rectangle(17, 0, 3, 2, 0xC0C0C0));  // head tip
                 break;
             case 'HORSEMAN':
                 // Horse head profile facing right
