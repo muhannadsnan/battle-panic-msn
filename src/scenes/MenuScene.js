@@ -2279,7 +2279,7 @@ class MenuScene extends Phaser.Scene {
                     { icon: '👹', text: 'Orcs (Wave 2+): Stronger melee fighters' },
                     { icon: '💀', text: 'Skeletons (Wave 4+): Medium threat' },
                     { icon: '🏹', text: 'Skeleton Archers (Wave 6+): Ranged enemies!' },
-                    { icon: '🐉', text: 'DRAGON BOSS every 10 waves - very dangerous!' }
+                    { icon: '🐉', text: 'DRAGON BOSS every 10 waves - ring of fire hits groups!' }
                 ]
             },
             {

@@ -105,7 +105,7 @@ BootScene → PreloadScene → MenuScene
 - **Troll** (Wave 8+) - High HP tank
 - **Dark Knight** (Wave 12+) - Strong melee
 - **Demon** (Wave 18+) - Very strong
-- **Dragon** (Every 10 waves) - BOSS, ranged, flies
+- **Dragon** (Every 10 waves) - BOSS, ring of fire area attack, flies
 
 ### Upgrades (Permanent)
 - Unit upgrades: Increase HP and damage per level
@@ -142,7 +142,14 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.24)
+## Recent Updates (v1.35.25)
+
+### v1.35.25
+- **Dragon Rework**: Ring of fire attack replaces fireballs
+  - Area damage hits groups of units
+  - 2x slower attack rate (8s cooldown)
+  - Spread your units to minimize damage!
+- Updated all dragon tips and messages
 
 ### v1.35.24
 - **Audio**: Fixed archer arrow sound - now plays on shoot at 60% volume (was playing on hit)
@@ -305,4 +312,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.24)*
+*Last updated: January 2026 (v1.35.25)*

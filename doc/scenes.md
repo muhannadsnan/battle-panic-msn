@@ -323,10 +323,10 @@ Tips appear before challenging waves to help players prepare:
 |------|--------|-----|
 | 6 | Skeleton Archers | Ranged enemies, position tanks in front |
 | 8 | Trolls | One-shot peasants, use Knights |
-| 10 | Dragon Boss | Use Knights to tank, mix ranged DPS |
+| 10 | Dragon Boss | Ring of fire hits groups, spread units out |
 | 12 | Dark Knights | High damage, use multiple Archers |
 | 18 | Demons | Need balanced army |
-| 20, 30 | Scaled Dragons | Max promotion units needed |
+| 20, 30 | Scaled Dragons | Spread army to avoid ring of fire, use tanks |
 
 - Game pauses when tip appears
 - 3 second countdown before can close

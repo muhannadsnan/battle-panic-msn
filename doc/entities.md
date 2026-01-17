@@ -227,7 +227,7 @@ Each enemy type has unique visuals:
 - `createTroll()` - Massive beast with wooden club
 - `createDarkKnight()` - Evil armored knight with dark sword
 - `createDemon()` - Winged demon with horns and claws
-- `createDragon()` - Boss with crown, breathes fire
+- `createDragon()` - Boss with crown, ring of fire area attack
 
 ---
 
@@ -383,9 +383,10 @@ new Projectile(scene, x, y, target, options)
 - Simple pointed shaft with feathers
 - Fast, single target
 
-**Fireball** (Dragon Boss)
-- Large flaming sphere
-- Animated glow effect
+**Ring of Fire** (Dragon Boss)
+- Expanding fire ring area attack
+- Damages all units in radius
+- Slower attack rate but devastating
 
 **Spear** (Spear Monster)
 - Big wooden shaft with stone spearhead

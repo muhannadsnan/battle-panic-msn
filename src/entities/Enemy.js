@@ -1127,33 +1127,140 @@ class Enemy extends Phaser.GameObjects.Container {
         });
 
         if (this.isRanged) {
-            // Create projectile based on enemy type
-            let projectileType = 'arrow';
-            if (this.isBoss) {
-                projectileType = 'fireball';
-            } else if (this.enemyType.toUpperCase() === 'SPEAR_MONSTER') {
-                projectileType = 'spear';
-            }
-            const projectile = new Projectile(
-                this.scene,
-                this.x,
-                this.y,
-                this.target,
-                {
-                    damage: this.damage,
-                    speed: 350,
-                    color: this.color,
-                    isPlayerProjectile: false,
-                    projectileType: projectileType
+            // Dragon boss uses ring of fire (area damage)
+            if (this.isBoss && this.enemyType.toUpperCase() === 'DRAGON') {
+                this.createRingOfFire();
+            } else {
+                // Create projectile based on enemy type
+                let projectileType = 'arrow';
+                if (this.isBoss) {
+                    projectileType = 'fireball';
+                } else if (this.enemyType.toUpperCase() === 'SPEAR_MONSTER') {
+                    projectileType = 'spear';
                 }
-            );
-            this.scene.projectiles.add(projectile);
+                const projectile = new Projectile(
+                    this.scene,
+                    this.x,
+                    this.y,
+                    this.target,
+                    {
+                        damage: this.damage,
+                        speed: 350,
+                        color: this.color,
+                        isPlayerProjectile: false,
+                        projectileType: projectileType
+                    }
+                );
+                this.scene.projectiles.add(projectile);
+            }
         } else {
             // Melee attack
             if (this.target.takeDamage) {
                 this.scene.combatSystem.dealDamage(this, this.target, this.damage);
             }
         }
+    }
+
+    // Dragon's ring of fire attack - damages all units in area
+    createRingOfFire() {
+        const ringRadius = 120;  // Radius of the fire ring
+        const targetX = this.target ? this.target.x : this.x - 200;
+        const targetY = this.target ? this.target.y : this.y;
+
+        // Play fire sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playMagic();
+        }
+
+        // Create expanding ring of fire visual
+        const ring = this.scene.add.circle(targetX, targetY, 20, 0xFF4500, 0.8);
+        ring.setStrokeStyle(8, 0xFF0000, 1);
+        ring.setDepth(100);
+
+        // Inner fire glow
+        const innerGlow = this.scene.add.circle(targetX, targetY, 15, 0xFFFF00, 0.6);
+        innerGlow.setDepth(101);
+
+        // Expand the ring
+        this.scene.tweens.add({
+            targets: ring,
+            radius: ringRadius,
+            alpha: 0.3,
+            duration: 400,
+            ease: 'Power2'
+        });
+
+        this.scene.tweens.add({
+            targets: innerGlow,
+            radius: ringRadius - 20,
+            alpha: 0,
+            duration: 400,
+            ease: 'Power2'
+        });
+
+        // Create fire particles around the ring
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const particleX = targetX + Math.cos(angle) * (ringRadius * 0.5);
+            const particleY = targetY + Math.sin(angle) * (ringRadius * 0.5);
+
+            const flame = this.scene.add.ellipse(particleX, particleY, 15, 20, 0xFF6600, 0.9);
+            flame.setDepth(102);
+
+            this.scene.tweens.add({
+                targets: flame,
+                x: targetX + Math.cos(angle) * ringRadius,
+                y: targetY + Math.sin(angle) * ringRadius,
+                scaleX: 0.3,
+                scaleY: 0.3,
+                alpha: 0,
+                duration: 500,
+                ease: 'Power2',
+                onComplete: () => flame.destroy()
+            });
+        }
+
+        // Damage all units in the ring area after a short delay
+        this.scene.time.delayedCall(200, () => {
+            if (!this.scene || !this.scene.units) return;
+
+            this.scene.units.getChildren().forEach(unit => {
+                if (!unit.active || unit.isDead) return;
+
+                const distance = Phaser.Math.Distance.Between(targetX, targetY, unit.x, unit.y);
+                if (distance <= ringRadius) {
+                    // Deal damage to unit
+                    this.scene.combatSystem.dealDamage(this, unit, this.damage);
+
+                    // Fire hit effect on unit
+                    const fireHit = this.scene.add.circle(unit.x, unit.y, 20, 0xFF4500, 0.7);
+                    this.scene.tweens.add({
+                        targets: fireHit,
+                        scale: 1.5,
+                        alpha: 0,
+                        duration: 300,
+                        onComplete: () => fireHit.destroy()
+                    });
+                }
+            });
+
+            // Also damage castle if in range
+            if (this.scene.playerCastle && !this.scene.playerCastle.isDead) {
+                const castleDist = Phaser.Math.Distance.Between(
+                    targetX, targetY,
+                    this.scene.playerCastle.x, this.scene.playerCastle.y
+                );
+                if (castleDist <= ringRadius + 50) {
+                    this.scene.combatSystem.dealDamage(this, this.scene.playerCastle, this.damage);
+                }
+            }
+        });
+
+        // Cleanup ring after animation
+        this.scene.time.delayedCall(600, () => {
+            ring.destroy();
+            innerGlow.destroy();
+        });
     }
 
     takeDamage(amount) {

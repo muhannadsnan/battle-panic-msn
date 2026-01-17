@@ -2513,8 +2513,8 @@ Lv.${level + 1}`;
             10: {
                 enemyType: 'DRAGON',
                 title: 'BOSS WAVE!',
-                message: 'A DRAGON is coming!\nExtremely high damage, ranged attacks.',
-                suggestion: 'Consider: Horsemen to tank, mix ranged DPS'
+                message: 'A DRAGON is coming!\nRing of fire damages groups of units!',
+                suggestion: 'Consider: Spread units out, use Horsemen to tank'
             },
             12: {
                 enemyType: 'DARK_KNIGHT',
@@ -2531,14 +2531,14 @@ Lv.${level + 1}`;
             20: {
                 enemyType: 'DRAGON',
                 title: 'SECOND DRAGON!',
-                message: 'Another Dragon boss!\nEnemies are much stronger now.',
-                suggestion: 'Consider: Multiple Horsemen, strong ranged'
+                message: 'Another Dragon boss!\nRing of fire hits harder now.',
+                suggestion: 'Consider: Spread army, avoid clustering'
             },
             30: {
                 enemyType: 'DRAGON',
                 title: 'THIRD DRAGON!',
-                message: 'Dragon boss with scaled-up enemies!\nThis will be a tough fight.',
-                suggestion: 'Consider: Max promotion units, full army'
+                message: 'Powerful Dragon with devastating ring of fire!\nThis will be a tough fight.',
+                suggestion: 'Consider: Keep units spread, use promoted tanks'
             }
         };
 

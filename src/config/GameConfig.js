@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.35.24';
+const GAME_VERSION = 'v1.35.25';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -154,7 +154,7 @@ const ENEMY_TYPES = {
         health: 300,
         damage: 200,
         speed: 40,
-        attackSpeed: 4000,  // Attacks half as often
+        attackSpeed: 8000,  // Ring of fire - slow but devastating area attack
         range: 150,
         isRanged: true,
         goldReward: 15,
