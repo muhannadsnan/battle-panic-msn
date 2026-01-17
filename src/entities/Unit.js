@@ -51,6 +51,18 @@ class Unit extends Phaser.GameObjects.Container {
         this.currentHealth = promotedHealth;
         this.damage = promotedDamage;
 
+        // Apply hero damage bonuses
+        if (scene.hero) {
+            // Druid: +10% archer damage
+            if (scene.hero.archerDamageBonus && unitType.toUpperCase() === 'ARCHER') {
+                this.damage = Math.floor(this.damage * (1 + scene.hero.archerDamageBonus));
+            }
+            // Warlord: +15% melee damage (peasants, horsemen)
+            if (scene.hero.meleeDamageBonus && (unitType.toUpperCase() === 'PEASANT' || unitType.toUpperCase() === 'HORSEMAN')) {
+                this.damage = Math.floor(this.damage * (1 + scene.hero.meleeDamageBonus));
+            }
+        }
+
         // Apply unit speed bonus from special upgrade: +5% per level
         const unitSpeedBonus = 1 + (scene.saveData?.specialUpgrades?.unitSpeed || 0) * 0.05;
         this.speed = Math.floor(promotedSpeed * unitSpeedBonus);
@@ -808,15 +820,34 @@ class Unit extends Phaser.GameObjects.Container {
         }
     }
 
+    getEffectiveSpeed() {
+        let effectiveSpeed = this.speed;
+        // Apply Warlord Battle Charge speed buff (+50%)
+        if (this.scene.heroAbilityActive && this.scene.hero?.abilitySpeedBoost) {
+            effectiveSpeed = Math.floor(effectiveSpeed * (1 + this.scene.hero.abilitySpeedBoost));
+        }
+        return effectiveSpeed;
+    }
+
+    getEffectiveDamage() {
+        let effectiveDamage = this.damage;
+        // Apply Warlord Battle Charge damage buff (+25%)
+        if (this.scene.heroAbilityActive && this.scene.hero?.abilityDamageBoost) {
+            effectiveDamage = Math.floor(effectiveDamage * (1 + this.scene.hero.abilityDamageBoost));
+        }
+        return effectiveDamage;
+    }
+
     moveTowardTarget(target, delta) {
         const dx = target.x - this.x;
         const dy = target.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+        const effectiveSpeed = this.getEffectiveSpeed();
 
         if (distance > 0) {
             // Move in all directions freely toward target
-            const moveX = (dx / distance) * this.speed * (delta / 1000);
-            const moveY = (dy / distance) * this.speed * (delta / 1000);
+            const moveX = (dx / distance) * effectiveSpeed * (delta / 1000);
+            const moveY = (dy / distance) * effectiveSpeed * (delta / 1000);
 
             this.x += moveX;
             // Allow units to move across full battlefield to engage all enemies
@@ -839,13 +870,14 @@ class Unit extends Phaser.GameObjects.Container {
         const dx = this.defenseX - this.x;
         const dy = this.defenseY - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+        const effectiveSpeed = this.getEffectiveSpeed();
 
         // Only move if not already at defense position
         if (distance > 10) {
             this.isReturningToBase = true;
 
-            const moveX = (dx / distance) * this.speed * (delta / 1000);
-            const moveY = (dy / distance) * this.speed * (delta / 1000);
+            const moveX = (dx / distance) * effectiveSpeed * (delta / 1000);
+            const moveY = (dy / distance) * effectiveSpeed * (delta / 1000);
 
             this.x += moveX;
             this.y = Phaser.Math.Clamp(this.y + moveY, 50, GAME_HEIGHT - 50);
@@ -892,6 +924,9 @@ class Unit extends Phaser.GameObjects.Container {
             }
         });
 
+        // Get effective damage (includes Warlord Battle Charge buff)
+        const effectiveDamage = this.getEffectiveDamage();
+
         if (this.isRanged) {
             // Play arrow sound on shoot (60% quieter for unit arrows)
             if (typeof audioManager !== 'undefined') {
@@ -905,7 +940,7 @@ class Unit extends Phaser.GameObjects.Container {
                 this.y,
                 this.target,
                 {
-                    damage: this.damage,
+                    damage: effectiveDamage,
                     speed: 800,  // 2x faster arrows
                     color: this.color,
                     isPlayerProjectile: true,
@@ -919,7 +954,7 @@ class Unit extends Phaser.GameObjects.Container {
             this.scene.projectiles.add(projectile);
         } else {
             // Melee attack
-            this.scene.combatSystem.dealDamage(this, this.target, this.damage);
+            this.scene.combatSystem.dealDamage(this, this.target, effectiveDamage);
         }
     }
 

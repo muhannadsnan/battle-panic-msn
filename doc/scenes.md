@@ -7,14 +7,17 @@ Phaser scenes that control different game states and screens.
 ## Scene Flow
 
 ```
-BootScene → PreloadScene → MenuScene ←──────────────┐
-                              │                      │
-                    ┌─────────┼─────────┐           │
-                    ↓         ↓         ↓           │
-              UpgradeScene AuthScene GameScene      │
-                    │         │         │           │
-                    │         │         ↓           │
-                    │         │  GameOverScene ─────┘
+BootScene → PreloadScene → MenuScene ←──────────────────┐
+                              │                          │
+                    ┌─────────┼─────────┐               │
+                    ↓         ↓         ↓               │
+              UpgradeScene AuthScene HeroSelectScene    │
+                    │         │         │               │
+                    │         │         ↓               │
+                    │         │     GameScene           │
+                    │         │         │               │
+                    │         │         ↓               │
+                    │         │  GameOverScene ─────────┘
                     │         │         │
                     └─────────┴─────────┘
 ```
@@ -220,6 +223,41 @@ window.addEventListener('authStateChanged', (event) => {
     // Load cloud data on login
 });
 ```
+
+---
+
+## HeroSelectScene
+
+**File:** `src/scenes/HeroSelectScene.js`
+
+Hero selection screen before battle.
+
+### Purpose
+- Allow player to choose a hero before starting battle
+- Display hero information, passives, and abilities
+- Pass selected hero to GameScene
+
+### Heroes
+
+| Hero | Color | Passive Effects | Wave 20 Ability |
+|------|-------|-----------------|-----------------|
+| Druid | Green | +10% archer damage, -10% enemy speed | Nature's Wrath (AoE kill) |
+| Warlord | Red | +15% melee damage, -15% production time | Battle Charge (8s buff) |
+| Alchemist | Gold | +20% resource income, -10% unit costs | Volatile Concoction (AoE) |
+
+### Flow
+```javascript
+// From MenuScene
+this.scene.start('HeroSelectScene');
+
+// To GameScene with hero
+this.scene.start('GameScene', { heroKey: 'DRUID' });
+```
+
+### Hero Effects in GameScene
+- **Passives** - Applied automatically when units spawn, enemies spawn, or resources are collected
+- **Portrait** - Displayed below castle with ability indicator
+- **Wave 20 Ability** - Click portrait to activate; one-time use per battle
 
 ---
 

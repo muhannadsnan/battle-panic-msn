@@ -115,7 +115,7 @@ class MenuScene extends Phaser.Scene {
             if (this.transitioning) return;
             this.transitioning = true;
             this.input.enabled = false;
-            this.scene.start('GameScene');
+            this.scene.start('HeroSelectScene');
         });
 
         // Upgrades button with XP notification

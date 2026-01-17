@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.36.0';
+const GAME_VERSION = 'v1.37.0';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -258,4 +258,54 @@ const AUDIO_CONFIG = {
     waveStartSound: 'waveStart',
     victorySound: 'victory',
     defeatSound: 'defeat'
+};
+
+// Hero Configuration
+const HERO_TYPES = {
+    DRUID: {
+        key: 'druid',
+        name: 'Druid',
+        quote: '"The forest answers my call."',
+        color: 0x228B22,  // Forest green
+        // Passive effects
+        archerDamageBonus: 0.10,      // +10% archer damage
+        enemySpeedReduction: 0.10,    // -10% enemy speed
+        // Wave 20 ability
+        abilityName: "Nature's Wrath",
+        abilityDescription: 'Click to strike enemies with nature',
+        abilityWave: 20,
+        abilityRadius: 120,
+        abilityDamage: 9999  // Instant kill
+    },
+    WARLORD: {
+        key: 'warlord',
+        name: 'Warlord',
+        quote: '"Victory through steel and courage!"',
+        color: 0xB22222,  // Firebrick red
+        // Passive effects
+        meleeDamageBonus: 0.15,       // +15% melee damage (peasants, horsemen)
+        productionSpeedBonus: 0.15,   // -15% production time
+        // Wave 20 ability
+        abilityName: 'Battle Charge',
+        abilityDescription: 'All units gain speed and damage',
+        abilityWave: 20,
+        abilitySpeedBoost: 0.50,      // +50% speed
+        abilityDamageBoost: 0.25,     // +25% damage
+        abilityDuration: 8000         // 8 seconds
+    },
+    ALCHEMIST: {
+        key: 'alchemist',
+        name: 'Alchemist',
+        quote: '"Gold flows like water in capable hands."',
+        color: 0xFFD700,  // Gold
+        // Passive effects
+        resourceBonus: 0.20,          // +20% gold and wood income
+        unitCostReduction: 0.10,      // -10% unit costs
+        // Wave 20 ability
+        abilityName: 'Volatile Concoction',
+        abilityDescription: 'Click to throw explosive potion',
+        abilityWave: 20,
+        abilityRadius: 150,
+        abilityDamage: 9999  // Instant kill
+    }
 };

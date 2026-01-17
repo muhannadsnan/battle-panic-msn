@@ -68,6 +68,12 @@ class Enemy extends Phaser.GameObjects.Container {
         this.currentHealth = this.maxHealth;
         this.damage = Math.floor(baseStats.damage * damageMult);
         this.speed = Math.min(baseStats.speed * waveSpeedMultiplier, baseStats.speed * 1.5);
+
+        // Apply Druid hero slow effect (-10% enemy speed)
+        if (scene.hero?.enemySpeedReduction) {
+            this.speed = Math.floor(this.speed * (1 - scene.hero.enemySpeedReduction));
+        }
+
         this.attackSpeed = Math.floor(baseStats.attackSpeed * attackSpeedMult);
         this.range = baseStats.range;
         this.isRanged = baseStats.isRanged || false;

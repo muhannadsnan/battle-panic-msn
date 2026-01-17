@@ -17,7 +17,13 @@ class UnitButton extends Phaser.GameObjects.Container {
         // Apply production speed bonus: -5% spawn time per level = faster progress
         const saveData = saveSystem.load();
         const productionSpeedLevel = saveData.specialUpgrades?.productionSpeed || 0;
-        const timeReduction = 1 - (productionSpeedLevel * 0.05); // 0.5 at level 10
+        let timeReduction = 1 - (productionSpeedLevel * 0.05); // 0.5 at level 10
+
+        // Apply Warlord hero production speed bonus (-15% spawn time)
+        if (scene.hero?.productionSpeedBonus) {
+            timeReduction *= (1 - scene.hero.productionSpeedBonus);
+        }
+
         this.spawnSpeed = Math.floor(100 / timeReduction); // 200 at level 10
 
         const stats = UNIT_TYPES[unitType.toUpperCase()];

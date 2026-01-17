@@ -4,6 +4,12 @@ class GameScene extends Phaser.Scene {
         super({ key: 'GameScene' });
     }
 
+    init(data) {
+        // Receive hero selection from HeroSelectScene
+        this.heroKey = data?.heroKey || 'DRUID';  // Default to Druid if not selected
+        this.hero = HERO_TYPES[this.heroKey];
+    }
+
     create() {
         // Check session validity before starting game (logged-in users only)
         if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
@@ -121,6 +127,11 @@ class GameScene extends Phaser.Scene {
         this.castleEmergencyUsed = false;
         this.castleEmergencyActive = false;
 
+        // Hero ability state (unlocks at wave 20)
+        this.heroAbilityReady = false;
+        this.heroAbilityUsed = false;
+        this.heroAbilityActive = false;  // For Warlord's timed buff
+
         // Resource tracking
         this.goldCollectedThisRun = 0;
         this.woodCollectedThisRun = 0;
@@ -140,6 +151,9 @@ class GameScene extends Phaser.Scene {
 
         // Create player castle only (survival mode)
         this.createCastle();
+
+        // Create hero portrait below castle
+        this.createHeroPortrait();
 
         // Create UI
         this.createUI();
@@ -709,6 +723,255 @@ class GameScene extends Phaser.Scene {
 
         // Create castle upgrade hover zone with spinner
         this.createCastleUpgradeZone();
+    }
+
+    createHeroPortrait() {
+        const heroX = CASTLE_CONFIG.playerX;
+        const heroY = 530;  // Below castle
+
+        // Hero portrait container
+        this.heroPortraitContainer = this.add.container(heroX, heroY);
+        this.heroPortraitContainer.setDepth(100);
+
+        // Portrait background (frame)
+        const frameBg = this.add.rectangle(0, 0, 60, 60, 0x1a1a2e);
+        frameBg.setStrokeStyle(3, this.hero.color);
+        this.heroPortraitContainer.add(frameBg);
+
+        // Portrait inner (hero color)
+        const portrait = this.add.rectangle(0, 0, 50, 50, this.hero.color);
+        this.heroPortraitContainer.add(portrait);
+
+        // Hero initial
+        const initial = this.add.text(0, 0, this.hero.name.charAt(0), {
+            fontSize: '32px',
+            fontFamily: 'Georgia, serif',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        this.heroPortraitContainer.add(initial);
+
+        // Hero name below portrait
+        const nameText = this.add.text(0, 40, this.hero.name, {
+            fontSize: '12px',
+            fontFamily: 'Georgia, serif',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        this.heroPortraitContainer.add(nameText);
+
+        // Ability indicator (shows when wave 20 reached and ability ready)
+        this.heroAbilityIndicator = this.add.circle(25, -25, 8, 0x333333);
+        this.heroAbilityIndicator.setStrokeStyle(2, 0x666666);
+        this.heroPortraitContainer.add(this.heroAbilityIndicator);
+
+        // Make portrait interactive for ability
+        frameBg.setInteractive({ useHandCursor: true });
+        frameBg.on('pointerdown', () => {
+            this.activateHeroAbility();
+        });
+    }
+
+    activateHeroAbility() {
+        // Check if ability is ready and not used
+        if (!this.heroAbilityReady || this.heroAbilityUsed) return;
+
+        const waveInfo = this.waveSystem.getWaveInfo();
+        if (waveInfo.waveNumber < this.hero.abilityWave) return;
+
+        // Different abilities for different heroes
+        if (this.heroKey === 'WARLORD') {
+            // Warlord: instant buff to all units
+            this.activateWarlordAbility();
+        } else {
+            // Druid/Alchemist: click-to-target ability
+            this.startAbilityTargeting();
+        }
+    }
+
+    startAbilityTargeting() {
+        // Enter targeting mode
+        this.heroAbilityTargeting = true;
+        this.showMessage('Click on the battlefield to use ' + this.hero.abilityName, '#ffaa00');
+
+        // Change cursor style
+        this.input.setDefaultCursor('crosshair');
+
+        // Listen for click
+        this.input.once('pointerdown', (pointer) => {
+            if (this.heroAbilityTargeting) {
+                this.executeTargetedAbility(pointer.x, pointer.y);
+            }
+        });
+    }
+
+    executeTargetedAbility(x, y) {
+        this.heroAbilityTargeting = false;
+        this.heroAbilityUsed = true;
+        this.input.setDefaultCursor('default');
+
+        // Update indicator
+        this.heroAbilityIndicator.setFillStyle(0x666666);
+        this.heroAbilityIndicator.setStrokeStyle(2, 0x333333);
+
+        // Create visual effect and deal damage
+        this.createHeroAbilityEffect(x, y);
+
+        // Play sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playMagic();
+        }
+
+        this.showMessage(this.hero.abilityName + '!', '#ffaa00');
+    }
+
+    createHeroAbilityEffect(x, y) {
+        const radius = this.hero.abilityRadius;
+
+        // Visual effect based on hero
+        if (this.heroKey === 'DRUID') {
+            // Nature effect - green expanding ring
+            const ring = this.add.circle(x, y, 10, 0x228B22, 0.7);
+            ring.setDepth(1600);
+
+            this.tweens.add({
+                targets: ring,
+                scaleX: radius / 10,
+                scaleY: radius / 10,
+                alpha: 0,
+                duration: 500,
+                ease: 'Quad.easeOut',
+                onComplete: () => ring.destroy()
+            });
+
+            // Leaf particles
+            for (let i = 0; i < 15; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * radius * 0.8;
+                const leaf = this.add.circle(x, y, 4, 0x44ff44);
+                leaf.setDepth(1601);
+
+                this.tweens.add({
+                    targets: leaf,
+                    x: x + Math.cos(angle) * dist,
+                    y: y + Math.sin(angle) * dist,
+                    alpha: 0,
+                    scale: 0.3,
+                    duration: 400,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => leaf.destroy()
+                });
+            }
+        } else if (this.heroKey === 'ALCHEMIST') {
+            // Explosion effect - gold/orange
+            const explosion = this.add.circle(x, y, 10, 0xFFD700, 0.8);
+            explosion.setDepth(1600);
+
+            this.tweens.add({
+                targets: explosion,
+                scaleX: radius / 10,
+                scaleY: radius / 10,
+                alpha: 0,
+                duration: 400,
+                ease: 'Quad.easeOut',
+                onComplete: () => explosion.destroy()
+            });
+
+            // Fire particles
+            for (let i = 0; i < 20; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * radius;
+                const particle = this.add.circle(x, y, 5, 0xff6600);
+                particle.setDepth(1601);
+
+                this.tweens.add({
+                    targets: particle,
+                    x: x + Math.cos(angle) * dist,
+                    y: y + Math.sin(angle) * dist,
+                    alpha: 0,
+                    scale: 0.2,
+                    duration: 350,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => particle.destroy()
+                });
+            }
+        }
+
+        // Deal damage to enemies in radius
+        if (this.enemies) {
+            this.enemies.getChildren().forEach(enemy => {
+                if (!enemy.active || enemy.isDead) return;
+
+                const distance = Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y);
+                if (distance <= radius) {
+                    enemy.takeDamage(this.hero.abilityDamage);
+                }
+            });
+        }
+    }
+
+    activateWarlordAbility() {
+        this.heroAbilityUsed = true;
+        this.heroAbilityActive = true;
+
+        // Update indicator
+        this.heroAbilityIndicator.setFillStyle(0x666666);
+        this.heroAbilityIndicator.setStrokeStyle(2, 0x333333);
+
+        // Visual effect - red pulse on all units
+        this.units.getChildren().forEach(unit => {
+            if (!unit.active || unit.isDead) return;
+
+            // Flash effect
+            const flash = this.add.circle(unit.x, unit.y, 20, 0xff4444, 0.6);
+            flash.setDepth(1500);
+            this.tweens.add({
+                targets: flash,
+                scale: 2,
+                alpha: 0,
+                duration: 300,
+                onComplete: () => flash.destroy()
+            });
+        });
+
+        // Play sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playMagic();
+        }
+
+        this.showMessage('BATTLE CHARGE! +50% Speed, +25% Damage for 8s', '#ff4444');
+
+        // End ability after duration
+        this.time.delayedCall(this.hero.abilityDuration, () => {
+            this.heroAbilityActive = false;
+            this.showMessage('Battle Charge ended', '#aaaaaa');
+        });
+    }
+
+    checkHeroAbilityUnlock() {
+        if (this.heroAbilityReady || this.heroAbilityUsed) return;
+
+        const waveInfo = this.waveSystem.getWaveInfo();
+        if (waveInfo.waveNumber >= this.hero.abilityWave) {
+            this.heroAbilityReady = true;
+
+            // Update indicator to show ability is ready
+            this.heroAbilityIndicator.setFillStyle(0xffaa00);
+            this.heroAbilityIndicator.setStrokeStyle(2, 0xffff00);
+
+            // Pulse animation
+            this.tweens.add({
+                targets: this.heroAbilityIndicator,
+                scale: 1.3,
+                duration: 500,
+                yoyo: true,
+                repeat: -1
+            });
+
+            this.showMessage(this.hero.abilityName + ' UNLOCKED! Click hero portrait to use.', '#ffaa00');
+        }
     }
 
     createCastleUpgradeZone() {
@@ -1737,6 +2000,9 @@ Lv.${level + 1}`;
         // Update reinforcement timer
         this.updateReinforcementTimer(delta);
 
+        // Check hero ability unlock (wave 20)
+        this.checkHeroAbilityUnlock();
+
         // Update wave display
         const waveInfo = this.waveSystem.getWaveInfo();
         this.waveDisplay.setWave(waveInfo.currentWave, waveInfo.enemiesRemaining);
@@ -1778,6 +2044,12 @@ Lv.${level + 1}`;
             const costReduction = 1 - (this.saveData.specialUpgrades?.productionCost || 0) * 0.05;
             totalGoldCost = Math.ceil(totalGoldCost * costReduction);
             totalWoodCost = Math.ceil(totalWoodCost * costReduction);
+
+            // Apply Alchemist hero cost reduction (-10%)
+            if (this.hero?.unitCostReduction) {
+                totalGoldCost = Math.ceil(totalGoldCost * (1 - this.hero.unitCostReduction));
+                totalWoodCost = Math.ceil(totalWoodCost * (1 - this.hero.unitCostReduction));
+            }
 
             const canAfford = this.gold >= totalGoldCost && this.wood >= totalWoodCost;
             button.setEnabled(canAfford && button.isUnlocked);
@@ -2159,6 +2431,12 @@ Lv.${level + 1}`;
         totalGoldCost = Math.ceil(totalGoldCost * costReduction);
         totalWoodCost = Math.ceil(totalWoodCost * costReduction);
 
+        // Apply Alchemist hero cost reduction (-10%)
+        if (this.hero?.unitCostReduction) {
+            totalGoldCost = Math.ceil(totalGoldCost * (1 - this.hero.unitCostReduction));
+            totalWoodCost = Math.ceil(totalWoodCost * (1 - this.hero.unitCostReduction));
+        }
+
         // Check costs (includes double spawn cost)
         if (this.gold < totalGoldCost) {
             this.showMessage('Not enough gold!', '#ff4444');
@@ -2251,16 +2529,26 @@ Lv.${level + 1}`;
         this.enemies.add(enemy);
     }
 
-    addGold(amount) {
-        this.gold += amount;
-        this.goldEarnedThisRun += amount;
-        this.resourceDisplay.addGold(amount);
+    addGold(amount, applyHeroBonus = true) {
+        // Apply Alchemist hero resource bonus (+20%)
+        let finalAmount = amount;
+        if (applyHeroBonus && this.hero?.resourceBonus) {
+            finalAmount = Math.ceil(amount * (1 + this.hero.resourceBonus));
+        }
+        this.gold += finalAmount;
+        this.goldEarnedThisRun += finalAmount;
+        this.resourceDisplay.addGold(finalAmount);
     }
 
-    addWood(amount) {
-        this.wood += amount;
-        this.woodEarnedThisRun += amount;
-        this.resourceDisplay.addWood(amount);
+    addWood(amount, applyHeroBonus = true) {
+        // Apply Alchemist hero resource bonus (+20%)
+        let finalAmount = amount;
+        if (applyHeroBonus && this.hero?.resourceBonus) {
+            finalAmount = Math.ceil(amount * (1 + this.hero.resourceBonus));
+        }
+        this.wood += finalAmount;
+        this.woodEarnedThisRun += finalAmount;
+        this.resourceDisplay.addWood(finalAmount);
     }
 
     onUnitDied(unit) {
