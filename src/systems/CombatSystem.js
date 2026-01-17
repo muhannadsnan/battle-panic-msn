@@ -61,11 +61,12 @@ class CombatSystem {
                 finalDamage = Math.floor(damage * (1 - reduction));
             }
 
-            // Horseman Shield upgrade: 50% damage reduction
+            // Horseman Shield upgrade: 10% damage reduction per level (max 50% at level 5)
             const saveData = typeof saveSystem !== 'undefined' ? saveSystem.load() : null;
-            const hasShield = saveData?.specialUpgrades?.horsemanShield || false;
-            if (hasShield) {
-                finalDamage = Math.floor(finalDamage * 0.5);
+            const shieldLevel = saveData?.specialUpgrades?.horsemanShield || 0;
+            if (shieldLevel > 0) {
+                const shieldReduction = shieldLevel * 0.1; // 10% per level
+                finalDamage = Math.floor(finalDamage * (1 - shieldReduction));
             }
         }
         // Knight armor: gold tier peasants (lvl 4+) get 25% damage reduction

@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.35.25';
+const GAME_VERSION = 'v1.36.0';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -234,10 +234,10 @@ const RESOURCE_CONFIG = {
 // Spawn Configuration - enemies spawn from edges, closer to center for visibility
 const SPAWN_CONFIG = {
     rightSpawn: { x: GAME_WIDTH - 20, minY: 180, maxY: 450 },  // Closer, narrower Y range
-    topRightSpawn: { minX: 400, maxX: GAME_WIDTH - 150, y: 100 },  // On-screen, more left
-    topSpawn: { minX: 350, maxX: GAME_WIDTH - 200, y: 120 },  // On-screen, centered
-    bottomRightSpawn: { minX: 400, maxX: GAME_WIDTH - 150, y: 500 },  // On-screen, more left
-    bottomSpawn: { minX: 350, maxX: GAME_WIDTH - 200, y: 480 }  // On-screen, centered
+    topRightSpawn: { minX: 400, maxX: GAME_WIDTH - 150, y: 100 },  // On-screen, more left (unused)
+    topSpawn: { x: 600, y: 120 },  // Fixed X near right side
+    bottomRightSpawn: { minX: 400, maxX: GAME_WIDTH - 150, y: 500 },  // On-screen, more left (unused)
+    bottomSpawn: { x: 600, y: 480 }  // Fixed X near right side
 };
 
 // Boss Configuration

@@ -117,8 +117,9 @@ class GameScene extends Phaser.Scene {
         this.reinforcementCooldown = 120000; // 2 minutes in ms
         this.reinforcementReady = false;
 
-        // Emergency reinforcement (one-time per battle when HP < 50%)
-        this.emergencyReinforcementUsed = false;
+        // Castle emergency (one-time per battle when HP < 25%)
+        this.castleEmergencyUsed = false;
+        this.castleEmergencyActive = false;
 
         // Resource tracking
         this.goldCollectedThisRun = 0;
@@ -841,6 +842,9 @@ class GameScene extends Phaser.Scene {
     }
 
     canRepair() {
+        // Can't repair if castle emergency was used (no repair for rest of battle)
+        if (this.castleEmergencyUsed) return false;
+
         // Can't repair if enemies are too close to castle (prevents fence exploit)
         if (!this.enemies) return true;
 
@@ -1708,6 +1712,8 @@ Lv.${level + 1}`;
         // Update castle (shoots arrows at enemies)
         if (this.playerCastle && !this.playerCastle.isDead) {
             this.playerCastle.update(time, delta);
+            // Check for castle emergency trigger (HP < 25%)
+            this.checkCastleEmergency();
         }
 
         // Update all units
@@ -1892,41 +1898,35 @@ Lv.${level + 1}`;
     spawnReinforcements() {
         if (!this.reinforcementReady) return;
 
-        // Get reinforcement level (affects unit count and quality)
-        const reinfLevel = this.saveData.specialUpgrades?.reinforcementLevel || 0;
+        // Get reinforcement level (1-5)
+        const reinfLevel = this.saveData.specialUpgrades?.reinforcements || 0;
+        if (reinfLevel <= 0) return;
 
-        // Base units: 5 peasants + 5 archers + 1 horseman
-        // +10% per level (rounded)
-        const baseMultiplier = 1 + (reinfLevel * 0.1);
-        const peasantCount = Math.round(5 * baseMultiplier);
-        const archerCount = Math.round(5 * baseMultiplier);
-        const horsemanCount = Math.round(1 * baseMultiplier);
+        // Unit counts per level:
+        // Lv1: 5P + 3A + 1H
+        // Lv2: 6P + 4A + 2H
+        // Lv3: 7P + 5A + 3H
+        // Lv4: 8P + 6A + 4H
+        // Lv5: 10P + 8A + 5H
+        const unitCounts = {
+            1: { peasant: 5, archer: 3, horseman: 1 },
+            2: { peasant: 6, archer: 4, horseman: 2 },
+            3: { peasant: 7, archer: 5, horseman: 3 },
+            4: { peasant: 8, archer: 6, horseman: 4 },
+            5: { peasant: 10, archer: 8, horseman: 5 }
+        };
 
-        // Spawn base units at promotion level 0
-        for (let i = 0; i < peasantCount; i++) {
+        const counts = unitCounts[reinfLevel] || unitCounts[1];
+
+        // Spawn units at promotion level 0
+        for (let i = 0; i < counts.peasant; i++) {
             this.spawnReinforcementUnit('PEASANT', 0);
         }
-        for (let i = 0; i < archerCount; i++) {
+        for (let i = 0; i < counts.archer; i++) {
             this.spawnReinforcementUnit('ARCHER', 0);
         }
-        for (let i = 0; i < horsemanCount; i++) {
+        for (let i = 0; i < counts.horseman; i++) {
             this.spawnReinforcementUnit('HORSEMAN', 0);
-        }
-
-        // Level 5+: Spawn 2 promotion-3 units of each type
-        if (reinfLevel >= 5) {
-            for (let i = 0; i < 2; i++) {
-                this.spawnReinforcementUnit('PEASANT', 3);
-                this.spawnReinforcementUnit('ARCHER', 3);
-                this.spawnReinforcementUnit('HORSEMAN', 3);
-            }
-        }
-
-        // Level 10: Spawn 1 promotion-6 (max tier) unit of each type
-        if (reinfLevel >= 10) {
-            this.spawnReinforcementUnit('PEASANT', 6);
-            this.spawnReinforcementUnit('ARCHER', 6);
-            this.spawnReinforcementUnit('HORSEMAN', 6);
         }
 
         // Reset timer and stop glow
@@ -1969,79 +1969,144 @@ Lv.${level + 1}`;
         });
     }
 
-    checkEmergencyReinforcement() {
+    checkCastleEmergency() {
         // Skip if not unlocked
-        if (!this.saveData.specialUpgrades?.emergencyReinforcement) return;
+        if (!this.saveData.specialUpgrades?.castleEmergency) return;
 
         // Skip if already used this battle
-        if (this.emergencyReinforcementUsed) return;
+        if (this.castleEmergencyUsed) return;
 
-        // Check if castle HP is below 50%
+        // Check if castle HP is below 25%
         const castle = this.playerCastle;
         if (!castle || castle.isDead) return;
 
         const hpPercent = castle.currentHealth / castle.maxHealth;
-        if (hpPercent >= 0.5) return;
+        if (hpPercent >= 0.25) return;
 
-        // Trigger emergency reinforcement!
-        this.emergencyReinforcementUsed = true;
+        // Trigger castle emergency!
+        this.castleEmergencyUsed = true;
+        this.castleEmergencyActive = true;
 
         // Big warning message
-        this.showMessage('⚠️ EMERGENCY REINFORCEMENTS! ⚠️', '#ff6600');
-
-        // Spawn units based on regular reinforcement level
-        const reinfLevel = this.saveData.specialUpgrades?.reinforcementLevel || 0;
-
-        // Base units: 5 peasants + 5 archers + 1 horseman (same as regular reinforcement)
-        const baseMultiplier = 1 + (reinfLevel * 0.1);
-        const peasantCount = Math.round(5 * baseMultiplier);
-        const archerCount = Math.round(5 * baseMultiplier);
-        const horsemanCount = Math.round(1 * baseMultiplier);
-
-        // Spawn with slight delay staggering for visual effect
-        for (let i = 0; i < peasantCount; i++) {
-            this.time.delayedCall(i * 50, () => this.spawnReinforcementUnit('PEASANT', 0));
-        }
-        for (let i = 0; i < archerCount; i++) {
-            this.time.delayedCall(peasantCount * 50 + i * 50, () => this.spawnReinforcementUnit('ARCHER', 0));
-        }
-        for (let i = 0; i < horsemanCount; i++) {
-            this.time.delayedCall((peasantCount + archerCount) * 50 + i * 50, () => this.spawnReinforcementUnit('HORSEMAN', 0));
-        }
-
-        // Level 5+: Also spawn elite units
-        if (reinfLevel >= 5) {
-            const eliteDelay = (peasantCount + archerCount + horsemanCount) * 50;
-            for (let i = 0; i < 2; i++) {
-                this.time.delayedCall(eliteDelay + i * 100, () => {
-                    this.spawnReinforcementUnit('PEASANT', 3);
-                    this.spawnReinforcementUnit('ARCHER', 3);
-                    this.spawnReinforcementUnit('HORSEMAN', 3);
-                });
-            }
-        }
-
-        // Level 10: Spawn max tier units
-        if (reinfLevel >= 10) {
-            this.time.delayedCall(1500, () => {
-                this.spawnReinforcementUnit('PEASANT', 6);
-                this.spawnReinforcementUnit('ARCHER', 6);
-                this.spawnReinforcementUnit('HORSEMAN', 6);
-            });
-        }
+        this.showMessage('💥 CASTLE EMERGENCY! 💥', '#ff3300');
 
         // Play dramatic sound
-        audioManager.playGold();
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playMagic();
+        }
 
         // Screen flash effect
-        const flash = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xff6600, 0.3);
+        const flash = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xff3300, 0.4);
         flash.setDepth(2000);
         this.tweens.add({
             targets: flash,
             alpha: 0,
-            duration: 500,
+            duration: 300,
             onComplete: () => flash.destroy()
         });
+
+        // Launch explosives for 5 seconds (10 waves of explosions)
+        for (let i = 0; i < 10; i++) {
+            this.time.delayedCall(i * 500, () => {
+                this.launchCastleExplosive();
+            });
+        }
+
+        // End emergency mode after 5 seconds
+        this.time.delayedCall(5000, () => {
+            this.castleEmergencyActive = false;
+            this.showMessage('Emergency Over - No Repair Available', '#ff9900');
+        });
+    }
+
+    launchCastleExplosive() {
+        if (!this.playerCastle || this.playerCastle.isDead) return;
+
+        // Pick random target area on the battlefield
+        const targetX = Phaser.Math.Between(400, GAME_WIDTH - 50);
+        const targetY = Phaser.Math.Between(100, GAME_HEIGHT - 100);
+
+        // Create explosive projectile from castle
+        const explosive = this.add.circle(this.playerCastle.x, this.playerCastle.y, 8, 0xff6600);
+        explosive.setDepth(1500);
+
+        // Add glow effect
+        const glow = this.add.circle(this.playerCastle.x, this.playerCastle.y, 12, 0xffff00, 0.5);
+        glow.setDepth(1499);
+
+        // Animate to target
+        this.tweens.add({
+            targets: [explosive, glow],
+            x: targetX,
+            y: targetY,
+            duration: 400,
+            ease: 'Quad.easeIn',
+            onComplete: () => {
+                explosive.destroy();
+                glow.destroy();
+                this.createExplosion(targetX, targetY);
+            }
+        });
+
+        // Play launch sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playArrow(0.6);
+        }
+    }
+
+    createExplosion(x, y) {
+        const explosionRadius = 150;
+
+        // Visual explosion effect
+        const explosion = this.add.circle(x, y, 10, 0xff4400);
+        explosion.setDepth(1600);
+
+        // Expanding ring
+        this.tweens.add({
+            targets: explosion,
+            scaleX: explosionRadius / 10,
+            scaleY: explosionRadius / 10,
+            alpha: 0,
+            duration: 400,
+            ease: 'Quad.easeOut',
+            onComplete: () => explosion.destroy()
+        });
+
+        // Fire particles
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const particle = this.add.circle(x, y, 4, 0xffaa00);
+            particle.setDepth(1601);
+
+            this.tweens.add({
+                targets: particle,
+                x: x + Math.cos(angle) * explosionRadius * 0.8,
+                y: y + Math.sin(angle) * explosionRadius * 0.8,
+                alpha: 0,
+                scale: 0.3,
+                duration: 350,
+                ease: 'Quad.easeOut',
+                onComplete: () => particle.destroy()
+            });
+        }
+
+        // Play explosion sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playMagic();
+        }
+
+        // Kill all enemies in radius
+        if (this.enemies) {
+            this.enemies.getChildren().forEach(enemy => {
+                if (!enemy.active || enemy.isDead) return;
+
+                const distance = Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y);
+                if (distance <= explosionRadius) {
+                    // Instant kill - deal massive damage
+                    enemy.takeDamage(9999);
+                }
+            });
+        }
     }
 
     spawnUnit(unitType) {
@@ -2160,11 +2225,11 @@ Lv.${level + 1}`;
 
         switch (direction) {
             case 'top':
-                spawnX = Phaser.Math.Between(SPAWN_CONFIG.topSpawn.minX, SPAWN_CONFIG.topSpawn.maxX);
+                spawnX = SPAWN_CONFIG.topSpawn.x;
                 spawnY = SPAWN_CONFIG.topSpawn.y;
                 break;
             case 'bottom':
-                spawnX = Phaser.Math.Between(SPAWN_CONFIG.bottomSpawn.minX, SPAWN_CONFIG.bottomSpawn.maxX);
+                spawnX = SPAWN_CONFIG.bottomSpawn.x;
                 spawnY = SPAWN_CONFIG.bottomSpawn.y;
                 break;
             case 'right':

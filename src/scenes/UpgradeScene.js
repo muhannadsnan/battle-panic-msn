@@ -67,12 +67,11 @@ class UpgradeScene extends Phaser.Scene {
             { type: 'productionCost' },
             { type: 'unitSpeed' },
             { type: 'reinforcements' },
-            { type: 'reinforcementLevel' },
             { type: 'peasantPromoSkip' },
             { type: 'archerPromoSkip' },
             { type: 'horsemanPromoSkip' },
             { type: 'castleExtension' },
-            { type: 'emergencyReinforcement' },
+            { type: 'castleEmergency' },
             { type: 'smarterUnits' }
         ];
         this.totalCards = this.allCards.length;
@@ -103,8 +102,6 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createMultiLevelCard(x, y, 'unitSpeed', '🏃', 'UNIT\nSPEED', '+5% movement', 10, 3);
             } else if (cardData.type === 'reinforcements') {
                 card = this.createReinforcementsCard(x, y);
-            } else if (cardData.type === 'reinforcementLevel') {
-                card = this.createReinforcementLevelCard(x, y);
             } else if (cardData.type === 'peasantPromoSkip') {
                 card = this.createPromoSkipCard(x, y, 'peasant', '🗡️', 0xD4A855);
             } else if (cardData.type === 'archerPromoSkip') {
@@ -113,8 +110,8 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createPromoSkipCard(x, y, 'horseman', '🐴', 0x8B4513);
             } else if (cardData.type === 'castleExtension') {
                 card = this.createMultiLevelCard(x, y, 'castleExtension', '🏰', 'CASTLE\nEXTENSION', '+5 max level', 10, 5);
-            } else if (cardData.type === 'emergencyReinforcement') {
-                card = this.createEmergencyReinforcementCard(x, y);
+            } else if (cardData.type === 'castleEmergency') {
+                card = this.createCastleEmergencyCard(x, y);
             } else if (cardData.type === 'smarterUnits') {
                 card = this.createSmarterUnitsCard(x, y);
             }
@@ -888,7 +885,7 @@ class UpgradeScene extends Phaser.Scene {
         const allUnitsLevel5 = peasantLevel >= 5 && archerLevel >= 5 && horsemanUnlocked && horsemanLevel >= 5;
 
         const xp = this.saveData.xp || 0;
-        const eliteDiscountCost = 15;
+        const eliteDiscountCost = 50;
 
         // Background - sized for slider with gold border
         const bg = this.add.rectangle(0, 0, 260, 380, hasEliteDiscount ? 0x2a4a2a : 0x2a2a3a);
@@ -973,19 +970,22 @@ class UpgradeScene extends Phaser.Scene {
     createHorsemanShieldCard(x, y) {
         const card = this.add.container(x, y);
 
-        // Check if already unlocked
         const specialUpgrades = this.saveData.specialUpgrades || {};
-        const hasHorsemanShield = specialUpgrades.horsemanShield || false;
+        const currentLevel = specialUpgrades.horsemanShield || 0;
+        const maxLevel = 5;
+        const isMaxLevel = currentLevel >= maxLevel;
 
         // Check requirements: horseman must be unlocked
         const horsemanUnlocked = this.saveData.upgrades.horseman.unlocked;
 
         const xp = this.saveData.xp || 0;
-        const shieldCost = 10;
+        // Cost: 10, 20, 30, 40, 50 XP per level
+        const costs = [10, 20, 30, 40, 50];
+        const cost = costs[currentLevel] || 50;
 
         // Background - sized for slider with blue/steel border
-        const bg = this.add.rectangle(0, 0, 260, 380, hasHorsemanShield ? 0x2a4a4a : 0x2a3a4a);
-        bg.setStrokeStyle(3, hasHorsemanShield ? 0x88ffff : 0x4488ff);
+        const bg = this.add.rectangle(0, 0, 260, 380, isMaxLevel ? 0x2a4a4a : 0x2a3a4a);
+        bg.setStrokeStyle(3, isMaxLevel ? 0x88ffff : 0x4488ff);
         card.add(bg);
 
         // Shield icon at top
@@ -995,8 +995,8 @@ class UpgradeScene extends Phaser.Scene {
         card.add(iconText);
 
         // Title
-        const cardTitle = this.add.text(0, -50, 'HORSEMAN\nSHIELD', {
-            fontSize: '24px',
+        const cardTitle = this.add.text(0, -55, 'HORSEMAN\nSHIELD', {
+            fontSize: '22px',
             fontFamily: 'Arial',
             color: '#4488ff',
             fontStyle: 'bold',
@@ -1004,43 +1004,46 @@ class UpgradeScene extends Phaser.Scene {
         }).setOrigin(0.5);
         card.add(cardTitle);
 
+        // Level display
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        // Current bonus
+        const bonusPercent = currentLevel * 10;
+        const bonusText = this.add.text(0, 30, `Damage reduction: ${bonusPercent}%`, {
+            fontSize: '16px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0.5);
+        card.add(bonusText);
+
         // Description
-        const desc = this.add.text(0, 15, 'Horsemen take\n50% less damage!', {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            color: '#ffffff',
-            align: 'center'
+        const desc = this.add.text(0, 60, '+10% per level\n(visual shield added)', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
         }).setOrigin(0.5);
         card.add(desc);
 
-        if (hasHorsemanShield) {
-            // Already unlocked
-            const unlockedText = this.add.text(0, 80, '✓ UNLOCKED', {
-                fontSize: '24px',
-                fontFamily: 'Arial',
-                color: '#88ffff',
-                fontStyle: 'bold'
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
             }).setOrigin(0.5);
-            card.add(unlockedText);
+            card.add(maxText);
         } else if (!horsemanUnlocked) {
             // Requirements not met
-            const reqTitle = this.add.text(0, 70, 'Requirements:', {
-                fontSize: '14px',
-                fontFamily: 'Arial',
-                color: '#ffaa00',
-                fontStyle: 'bold'
+            const reqTitle = this.add.text(0, 100, 'Requirements:', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(reqTitle);
 
-            const req1 = this.add.text(0, 95, '✗ Unlock Horseman first', {
+            const req1 = this.add.text(0, 125, '✗ Unlock Horseman first', {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ff8888'
             }).setOrigin(0.5);
             card.add(req1);
         } else {
             // Can purchase
-            const canAfford = xp >= shieldCost;
-            const btn = this.createCardButton(0, 100, `Unlock\n${shieldCost} XP`, () => {
-                this.purchaseHorsemanShield(shieldCost);
+            const canAfford = xp >= cost;
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                this.purchaseHorsemanShield(cost);
             }, canAfford, 150, 55);
             card.add(btn);
         }
@@ -1054,17 +1057,20 @@ class UpgradeScene extends Phaser.Scene {
             return;
         }
         if (this.upgradeThrottled) return;
+        const currentLevel = this.saveData.specialUpgrades?.horsemanShield || 0;
+        if (currentLevel >= 5) return;
+
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
                 this.saveData.specialUpgrades = {};
             }
-            this.saveData.specialUpgrades.horsemanShield = true;
+            this.saveData.specialUpgrades.horsemanShield = currentLevel + 1;
             saveSystem.save(this.saveData);
             this.syncToCloud();
 
             // Show notification and refresh scene (staying at current card)
-            this.showUpgradeNotification('Horseman Shield Unlocked!');
+            this.showUpgradeNotification(`Horseman Shield → Level ${currentLevel + 1}`);
         }
     }
 
@@ -1165,17 +1171,21 @@ class UpgradeScene extends Phaser.Scene {
         }
     }
 
-    // Reinforcements unlock card
+    // Reinforcements 5-level card
     createReinforcementsCard(x, y) {
         const card = this.add.container(x, y);
         const specialUpgrades = this.saveData.specialUpgrades || {};
-        const hasReinforcements = specialUpgrades.reinforcements || false;
+        const currentLevel = specialUpgrades.reinforcements || 0;
+        const maxLevel = 5;
+        const isMaxLevel = currentLevel >= maxLevel;
         const xp = this.saveData.xp || 0;
-        const cost = 15;
+        // Cost: 15, 25, 35, 45, 55 XP per level
+        const costs = [15, 25, 35, 45, 55];
+        const cost = costs[currentLevel] || 55;
 
         // Background
-        const bg = this.add.rectangle(0, 0, 260, 380, hasReinforcements ? 0x2a4a2a : 0x3a2a3a);
-        bg.setStrokeStyle(3, hasReinforcements ? 0x88ff88 : 0xff88ff);
+        const bg = this.add.rectangle(0, 0, 260, 380, isMaxLevel ? 0x2a4a2a : 0x3a2a3a);
+        bg.setStrokeStyle(3, isMaxLevel ? 0x88ff88 : 0xff88ff);
         card.add(bg);
 
         // Icon
@@ -1183,26 +1193,55 @@ class UpgradeScene extends Phaser.Scene {
         card.add(iconText);
 
         // Title
-        const cardTitle = this.add.text(0, -50, 'REINFORCE-\nMENTS', {
+        const cardTitle = this.add.text(0, -55, 'REINFORCE-\nMENTS', {
             fontSize: '22px', fontFamily: 'Arial', color: '#ff88ff',
             fontStyle: 'bold', align: 'center'
         }).setOrigin(0.5);
         card.add(cardTitle);
 
-        // Description
-        const desc = this.add.text(0, 20, 'Every 2 minutes:\n5 Peasants\n5 Archers\n1 Horseman', {
-            fontSize: '14px', fontFamily: 'Arial', color: '#ffffff', align: 'center'
+        // Level display
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        // Level benefits description
+        const levelDescs = [
+            'Not unlocked',
+            'Lv1: 5P + 3A + 1H',
+            'Lv2: 6P + 4A + 2H',
+            'Lv3: 7P + 5A + 3H',
+            'Lv4: 8P + 6A + 4H',
+            'Lv5: 10P + 8A + 5H'
+        ];
+        const currentDesc = levelDescs[currentLevel] || levelDescs[0];
+        const nextDesc = currentLevel < maxLevel ? levelDescs[currentLevel + 1] : '';
+
+        const desc = this.add.text(0, 35, `Current: ${currentDesc}`, {
+            fontSize: '14px', fontFamily: 'Arial', color: '#88ff88', align: 'center'
         }).setOrigin(0.5);
         card.add(desc);
 
-        if (hasReinforcements) {
-            const unlockedText = this.add.text(0, 100, '✓ UNLOCKED', {
-                fontSize: '24px', fontFamily: 'Arial', color: '#88ff88', fontStyle: 'bold'
+        if (nextDesc) {
+            const nextText = this.add.text(0, 60, `Next: ${nextDesc}`, {
+                fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
             }).setOrigin(0.5);
-            card.add(unlockedText);
+            card.add(nextText);
+        }
+
+        const timerText = this.add.text(0, 85, '2-min cooldown in battle', {
+            fontSize: '12px', fontFamily: 'Arial', color: '#888888', align: 'center'
+        }).setOrigin(0.5);
+        card.add(timerText);
+
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(maxText);
         } else {
             const canAfford = xp >= cost;
-            const btn = this.createCardButton(0, 100, `Unlock\n${cost} XP`, () => {
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
                 this.purchaseReinforcements(cost);
             }, canAfford, 150, 55);
             card.add(btn);
@@ -1217,76 +1256,19 @@ class UpgradeScene extends Phaser.Scene {
             return;
         }
         if (this.upgradeThrottled) return;
+        const currentLevel = this.saveData.specialUpgrades?.reinforcements || 0;
+        if (currentLevel >= 5) return;
+
         if (this.saveData.xp >= cost) {
             this.saveData.xp -= cost;
             if (!this.saveData.specialUpgrades) {
                 this.saveData.specialUpgrades = {};
             }
-            this.saveData.specialUpgrades.reinforcements = true;
+            this.saveData.specialUpgrades.reinforcements = currentLevel + 1;
             saveSystem.save(this.saveData);
             this.syncToCloud();
-            this.showUpgradeNotification('Reinforcements Unlocked!');
+            this.showUpgradeNotification(`Reinforcements → Level ${currentLevel + 1}`);
         }
-    }
-
-    // Reinforcement Level card
-    createReinforcementLevelCard(x, y) {
-        const card = this.add.container(x, y);
-        const specialUpgrades = this.saveData.specialUpgrades || {};
-        const hasReinforcements = specialUpgrades.reinforcements || false;
-        const currentLevel = specialUpgrades.reinforcementLevel || 0;
-        const maxLevel = 10;
-        const isMaxLevel = currentLevel >= maxLevel;
-        const xp = this.saveData.xp || 0;
-        const cost = 5 * (currentLevel + 1);
-
-        // Background
-        const bg = this.add.rectangle(0, 0, 260, 380, isMaxLevel ? 0x2a4a2a : 0x2a2a4a);
-        bg.setStrokeStyle(3, isMaxLevel ? 0x88ff88 : 0x88ffff);
-        card.add(bg);
-
-        // Icon
-        const iconText = this.add.text(0, -120, '⬆️', { fontSize: '60px' }).setOrigin(0.5);
-        card.add(iconText);
-
-        // Title
-        const cardTitle = this.add.text(0, -50, 'REINFORCE\nLEVEL', {
-            fontSize: '22px', fontFamily: 'Arial', color: '#88ffff',
-            fontStyle: 'bold', align: 'center'
-        }).setOrigin(0.5);
-        card.add(cardTitle);
-
-        // Level display
-        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
-            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
-        }).setOrigin(0.5);
-        card.add(levelText);
-
-        // Description
-        const desc = this.add.text(0, 40, '+10% units/lvl\nLvl5+: +2 Tier3 each\nLvl10: +1 Tier6 each', {
-            fontSize: '12px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
-        }).setOrigin(0.5);
-        card.add(desc);
-
-        if (!hasReinforcements) {
-            const reqText = this.add.text(0, 110, '⚠️ Unlock Reinforcements first', {
-                fontSize: '12px', fontFamily: 'Arial', color: '#ff8888'
-            }).setOrigin(0.5);
-            card.add(reqText);
-        } else if (isMaxLevel) {
-            const maxText = this.add.text(0, 110, 'MAX LEVEL', {
-                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
-            }).setOrigin(0.5);
-            card.add(maxText);
-        } else {
-            const canAfford = xp >= cost;
-            const btn = this.createCardButton(0, 110, `Upgrade\n${cost} XP`, () => {
-                this.purchaseMultiLevelUpgrade('reinforcementLevel', cost, maxLevel);
-            }, canAfford, 150, 55);
-            card.add(btn);
-        }
-
-        return card;
     }
 
     // Promotion Skip card
@@ -1361,42 +1343,42 @@ class UpgradeScene extends Phaser.Scene {
         return card;
     }
 
-    createEmergencyReinforcementCard(x, y) {
+    createCastleEmergencyCard(x, y) {
         const card = this.add.container(x, y);
         const xp = this.saveData.xp || 0;
-        const isPurchased = this.saveData.specialUpgrades?.emergencyReinforcement || false;
-        const cost = 20; // XP cost
+        const isPurchased = this.saveData.specialUpgrades?.castleEmergency || false;
+        const cost = 30; // XP cost
 
         // Background - red/orange theme for emergency
-        const bg = this.add.rectangle(0, 0, 260, 380, 0x3a2a1a);
-        bg.setStrokeStyle(3, isPurchased ? 0xffd700 : 0xff6600);
+        const bg = this.add.rectangle(0, 0, 260, 380, 0x3a1a1a);
+        bg.setStrokeStyle(3, isPurchased ? 0xffd700 : 0xff4400);
         card.add(bg);
 
         // Icon
-        const icon = this.add.text(0, -120, '🚨', { fontSize: '60px' }).setOrigin(0.5);
+        const icon = this.add.text(0, -120, '💥', { fontSize: '60px' }).setOrigin(0.5);
         card.add(icon);
 
         // Title
-        const title = this.add.text(0, -50, 'EMERGENCY\nREINFORCE', {
-            fontSize: '22px', fontFamily: 'Arial', color: '#ff8844', fontStyle: 'bold', align: 'center'
+        const title = this.add.text(0, -50, 'CASTLE\nEMERGENCY', {
+            fontSize: '22px', fontFamily: 'Arial', color: '#ff4444', fontStyle: 'bold', align: 'center'
         }).setOrigin(0.5);
         card.add(title);
 
         // Description
-        const desc = this.add.text(0, 20, 'When castle HP drops\nbelow 50%, auto-spawn\nreinforcements (1x/battle)', {
-            fontSize: '14px', fontFamily: 'Arial', color: '#cccccc', align: 'center'
+        const desc = this.add.text(0, 25, 'When castle HP < 25%:\nExplosives rain for 5s\nkilling ALL monsters!\n\n⚠️ No castle repair after', {
+            fontSize: '13px', fontFamily: 'Arial', color: '#cccccc', align: 'center'
         }).setOrigin(0.5);
         card.add(desc);
 
         if (isPurchased) {
-            const owned = this.add.text(0, 80, '✓ UNLOCKED', {
+            const owned = this.add.text(0, 110, '✓ UNLOCKED', {
                 fontSize: '24px', fontFamily: 'Arial', color: '#88ff88', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(owned);
         } else {
             const canAfford = xp >= cost;
-            const btn = this.createCardButton(0, 100, `Unlock\n${cost} XP`, () => {
-                this.purchaseEmergencyReinforcement(cost);
+            const btn = this.createCardButton(0, 110, `Unlock\n${cost} XP`, () => {
+                this.purchaseCastleEmergency(cost);
             }, canAfford, 150, 55);
             card.add(btn);
         }
@@ -1404,7 +1386,7 @@ class UpgradeScene extends Phaser.Scene {
         return card;
     }
 
-    purchaseEmergencyReinforcement(cost) {
+    purchaseCastleEmergency(cost) {
         if (!this.sessionValid) {
             this.showSessionError();
             return;
@@ -1415,11 +1397,11 @@ class UpgradeScene extends Phaser.Scene {
             if (!this.saveData.specialUpgrades) {
                 this.saveData.specialUpgrades = {};
             }
-            this.saveData.specialUpgrades.emergencyReinforcement = true;
+            this.saveData.specialUpgrades.castleEmergency = true;
             saveSystem.save(this.saveData);
             this.syncToCloud();
 
-            this.showUpgradeNotification('Emergency Reinforcement Unlocked!');
+            this.showUpgradeNotification('Castle Emergency Unlocked!');
         }
     }
 

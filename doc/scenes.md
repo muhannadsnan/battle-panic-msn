@@ -412,19 +412,18 @@ Advanced upgrades that modify gameplay mechanics.
 
 | Upgrade | Cost | Effect |
 |---------|------|--------|
-| Elite Mastery | 25 XP | Gold tier spawns 2 units for cost of 1 |
-| Horseman Shield | 15 XP | Horsemen take 50% less damage |
-| Reinforcements | 15 XP | Unlocks reinforcement button (2-min timer) |
-| Emergency Reinforcement | 20 XP | Auto-spawn when castle HP < 50% (1x/battle) |
+| Elite Mastery | 50 XP | Gold tier spawns 2 units for cost of 1 |
+| Castle Emergency | 30 XP | Explosives at 25% HP, kills all monsters for 5s, no repair |
 
 #### Multi-Level Upgrades
 
 | Upgrade | Max | Cost/Lvl | Effect per Level |
 |---------|-----|----------|------------------|
+| Horseman Shield | 5 | 10/20/30/40/50 XP | -10% damage per level (max -50%) |
+| Reinforcements | 5 | 10/20/30/40/50 XP | Better reinforcement units |
 | Production Speed | 10 | 3 XP | -5% unit spawn time |
 | Production Cost | 10 | 3 XP | -5% unit cost |
 | Unit Speed | 10 | 3 XP | +5% movement speed |
-| Reinforcement Level | 10 | 5 XP | Better reinforcement units |
 | Peasant Promo Skip | 5 | 8 XP | Start peasants at higher promotion |
 | Archer Promo Skip | 5 | 8 XP | Start archers at higher promotion |
 | Horseman Promo Skip | 5 | 10 XP | Start horsemen at higher promotion |
@@ -433,16 +432,19 @@ Advanced upgrades that modify gameplay mechanics.
 
 #### Reinforcements System
 - **Timer**: 2-minute cooldown fills during gameplay
-- **Base units**: 5 peasants + 5 archers + 1 horseman
-- **Level scaling**: +10% more units per reinforcement level
-- **Level 5+**: Also spawns 2 promotion-3 units of each type
-- **Level 10**: Also spawns 1 promotion-6 (max) unit of each type
+- **Level-based units**:
+  - Level 1: 5 peasants, 3 archers, 1 horseman
+  - Level 2: 6 peasants, 4 archers, 2 horsemen
+  - Level 3: 7 peasants, 5 archers, 3 horsemen
+  - Level 4: 8 peasants, 6 archers, 4 horsemen
+  - Level 5: 10 peasants, 8 archers, 5 horsemen
 
-#### Emergency Reinforcement
-- Triggers automatically when castle HP drops below 50%
+#### Castle Emergency
+- Triggers automatically when castle HP drops below 25%
 - One-time use per battle (clutch save mechanic)
-- Spawns same units as regular reinforcements
-- Orange screen flash effect
+- Launches explosives for 5 seconds, killing all monsters in blast radius
+- Castle repair is disabled for rest of battle after triggering
+- Red screen flash effect
 
 #### Smarter Units (Defense Groups)
 Units organize into multiple defense positions:

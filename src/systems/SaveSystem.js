@@ -99,18 +99,17 @@ class SaveSystem {
             // Special upgrades
             specialUpgrades: {
                 eliteDiscount: false,  // Gold tier spawns 2 units for the cost of 1
-                horsemanShield: false, // Horsemen take 50% less damage (x2 tankier)
+                horsemanShield: 0,     // 0-5: Horsemen take 10% less damage per level (max 50%)
                 // Multi-level upgrades (0 = not purchased)
                 productionSpeed: 0,    // 0-10: -5% spawn time per level
                 productionCost: 0,     // 0-10: -5% unit cost per level
                 unitSpeed: 0,          // 0-10: +5% movement speed per level
-                reinforcements: false, // Enables reinforcement button (2-min timer)
-                reinforcementLevel: 0, // 0-10: Better reinforcement units
+                reinforcements: 0,     // 0-5: Reinforcement levels (0=disabled, 1-5=enabled with better units)
                 peasantPromoSkip: 0,   // 0-5: Skip promotion tiers for peasants
                 archerPromoSkip: 0,    // 0-5: Skip promotion tiers for archers
                 horsemanPromoSkip: 0,  // 0-5: Skip promotion tiers for horsemen
                 castleExtension: 0,    // 0-10: +5 castle max level per level
-                emergencyReinforcement: false, // One-time emergency when castle HP < 50%
+                castleEmergency: false, // When HP < 25%, explosives kill all monsters for 5s
                 smarterUnits: 0        // 0-5: Units form multiple defense groups
             },
             castleUpgrades: {
