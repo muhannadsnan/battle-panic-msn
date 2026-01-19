@@ -740,9 +740,9 @@ class GameScene extends Phaser.Scene {
         this.heroAbilitySpinner = this.add.graphics();
         this.heroPortraitContainer.add(this.heroAbilitySpinner);
 
-        // Lock icon (shown until ability unlocks at wave 20)
-        this.heroAbilityLock = this.add.text(0, 0, '🔒', {
-            fontSize: '20px'
+        // Lock icon (shown until ability unlocks at wave 20) - bottom-right corner
+        this.heroAbilityLock = this.add.text(20, 20, '🔒', {
+            fontSize: '14px'
         }).setOrigin(0.5);
         this.heroPortraitContainer.add(this.heroAbilityLock);
 
@@ -2128,9 +2128,9 @@ Lv.${level + 1}`;
         this.drawPixelArtHero(heroIcon, this.heroKey, 0, 0, 32);
         this.heroAbilityButtonContainer.add(heroIcon);
 
-        // Lock icon (shown until wave 20)
-        this.heroAbilityLock = this.add.text(0, 0, '🔒', {
-            fontSize: '20px'
+        // Lock icon (shown until wave 20) - bottom-right corner
+        this.heroAbilityLock = this.add.text(15, 15, '🔒', {
+            fontSize: '12px'
         }).setOrigin(0.5);
         this.heroAbilityButtonContainer.add(this.heroAbilityLock);
 
