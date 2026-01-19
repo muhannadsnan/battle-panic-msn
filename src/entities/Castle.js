@@ -13,7 +13,7 @@ class Castle extends Phaser.GameObjects.Container {
         this.waveHealthBonus = 0; // Tracks HP gained from completing waves
 
         // Castle arrow attack properties
-        this.attackRange = 300;      // How far castle can shoot
+        this.attackRange = 150;      // Base range at level 1 (~18% of track)
         this.attackSpeed = 700;      // Attack every 0.7 seconds
         this.arrowDamage = 8;        // Base arrow damage
         this.lastAttackTime = 0;
@@ -336,7 +336,11 @@ class Castle extends Phaser.GameObjects.Container {
         // Scale attack stats with level
         this.arrowDamage = 8 + (this.level - 1) * 3;        // +3 damage per level
         this.attackSpeed = Math.max(150, 700 - (this.level - 1) * 40);    // Faster attacks (min 150ms at high levels)
-        this.attackRange = 300 * (1 + (this.level - 1) * 0.1);  // +10% range per level
+        // Range scales from 150 (18% of track) to 780 (95% of track) at max level
+        const baseRange = 150;
+        const maxRange = 780;
+        const rangeProgress = effectiveMaxLevel > 1 ? (this.level - 1) / (effectiveMaxLevel - 1) : 0;
+        this.attackRange = baseRange + (maxRange - baseRange) * rangeProgress;
 
         // Fence system - unlocks at level 3
         // HP progression: 100 to 500 for levels 3-10, +100 per level beyond 10
