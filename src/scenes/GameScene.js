@@ -1674,9 +1674,9 @@ Lv.${currentLevel + 1}`;
             // Update mining speed
             this.updateMiningSpeed();
 
-            // Play sound
+            // Play upgrade sound
             if (typeof audioManager !== 'undefined') {
-                audioManager.playGold();
+                audioManager.playPromotion();
             }
 
             // Visual feedback
