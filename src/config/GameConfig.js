@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.38.7';
+const GAME_VERSION = 'v1.38.8';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -155,8 +155,8 @@ const ENEMY_TYPES = {
         damage: 200,
         speed: 40,
         attackSpeed: 8000,  // Ring of fire - slow but devastating area attack
-        range: 150,
-        isRanged: true,
+        range: 120,         // Close range - ring of fire radius
+        isRanged: false,    // Ring of fire is a close-range area attack
         goldReward: 15,
         woodReward: 10,
         color: 0xFF4500,

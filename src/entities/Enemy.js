@@ -1166,11 +1166,12 @@ class Enemy extends Phaser.GameObjects.Container {
         }
     }
 
-    // Dragon's ring of fire attack - damages all units in area
+    // Dragon's ring of fire attack - damages all units in area around the dragon
     createRingOfFire() {
         const ringRadius = 120;  // Radius of the fire ring
-        const targetX = this.target ? this.target.x : this.x - 200;
-        const targetY = this.target ? this.target.y : this.y;
+        // Ring centered on dragon (close-range area attack)
+        const targetX = this.x;
+        const targetY = this.y;
 
         // Play fire sound
         if (typeof audioManager !== 'undefined') {
