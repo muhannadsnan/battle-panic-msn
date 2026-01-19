@@ -1131,33 +1131,31 @@ class Enemy extends Phaser.GameObjects.Container {
             }
         });
 
-        if (this.isRanged) {
-            // Dragon boss uses ring of fire (area damage)
-            if (this.isBoss && this.enemyType.toUpperCase() === 'DRAGON') {
-                this.createRingOfFire();
-            } else {
-                // Create projectile based on enemy type
-                let projectileType = 'arrow';
-                if (this.isBoss) {
-                    projectileType = 'fireball';
-                } else if (this.enemyType.toUpperCase() === 'SPEAR_MONSTER') {
-                    projectileType = 'spear';
-                }
-                const projectile = new Projectile(
-                    this.scene,
-                    this.x,
-                    this.y,
-                    this.target,
-                    {
-                        damage: this.damage,
-                        speed: 350,
-                        color: this.color,
-                        isPlayerProjectile: false,
-                        projectileType: projectileType
-                    }
-                );
-                this.scene.projectiles.add(projectile);
+        // Dragon boss always uses ring of fire (close-range area attack)
+        if (this.isBoss && this.enemyType.toUpperCase() === 'DRAGON') {
+            this.createRingOfFire();
+        } else if (this.isRanged) {
+            // Create projectile based on enemy type
+            let projectileType = 'arrow';
+            if (this.isBoss) {
+                projectileType = 'fireball';
+            } else if (this.enemyType.toUpperCase() === 'SPEAR_MONSTER') {
+                projectileType = 'spear';
             }
+            const projectile = new Projectile(
+                this.scene,
+                this.x,
+                this.y,
+                this.target,
+                {
+                    damage: this.damage,
+                    speed: 350,
+                    color: this.color,
+                    isPlayerProjectile: false,
+                    projectileType: projectileType
+                }
+            );
+            this.scene.projectiles.add(projectile);
         } else {
             // Melee attack
             if (this.target.takeDamage) {
