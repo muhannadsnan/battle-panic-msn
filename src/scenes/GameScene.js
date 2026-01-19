@@ -1391,9 +1391,8 @@ class GameScene extends Phaser.Scene {
     }
 
     getCastleUpgradeTime(level) {
-        // Base time: 5 seconds, +10% per level
-        const baseTime = 5000; // 5 seconds in ms
-        return baseTime * Math.pow(1.1, level - 1);
+        // Formula: (level/10) + 5 seconds
+        return ((level / 10) + 5) * 1000; // Convert to ms
     }
 
     getEffectiveMaxCastleLevel() {
