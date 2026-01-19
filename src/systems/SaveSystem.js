@@ -218,6 +218,12 @@ class SaveSystem {
         newData.settings = data.settings; // Keep audio settings
 
         this.save(newData);
+
+        // Sync reset to cloud
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
+            supabaseClient.saveToCloud(newData).catch(err => console.warn('Cloud sync failed:', err));
+        }
+
         return { success: true, legacy: legacy };
     }
 
@@ -375,6 +381,7 @@ class SaveSystem {
         const defaults = this.getDefaultData();
         data.upgrades = { ...defaults.upgrades };
         data.castleUpgrades = { ...defaults.castleUpgrades };
+        data.specialUpgrades = { ...defaults.specialUpgrades };
         data.xp = newXP;
 
         this.save(data);
