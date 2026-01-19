@@ -14,28 +14,27 @@ class Enemy extends Phaser.GameObjects.Container {
             return;
         }
 
-        // Scale stats with wave number - tiered scaling system
-        // Waves 1-20: +3%, 21-40: +6%, 41-60: +9%, 61-80: +12%, etc.
+        // Scale stats with wave number
+        // Health: tiered scaling system (waves 1-20: +3%, 21-40: +6%, etc.)
         const tierSize = WAVE_CONFIG.scalingTierSize || 20;
         const baseScale = WAVE_CONFIG.baseScalingPercent || 0.03;
         const scaleIncrement = WAVE_CONFIG.scalingIncrement || 0.03;
 
         let waveHealthMultiplier = 1;
-        let waveDamageMultiplier = 1;
-
         for (let w = 1; w < waveNumber; w++) {
-            const tier = Math.floor((w - 1) / tierSize); // Tier 0 for waves 1-20, tier 1 for 21-40, etc.
+            const tier = Math.floor((w - 1) / tierSize);
             const tierScale = baseScale + (tier * scaleIncrement);
             waveHealthMultiplier += tierScale;
-            waveDamageMultiplier += tierScale;
         }
 
-        // Early game reduction: waves 1-10 are 50% easier for fresh players
-        // Gradually scales from 50% reduction at wave 1 to full strength at wave 11
+        // Damage: simple formula - wave/10 (min 1x)
+        // Wave 10: 1x, Wave 20: 2x, Wave 30: 3x, etc.
+        let waveDamageMultiplier = Math.max(1, waveNumber / 10);
+
+        // Early game health reduction: waves 1-10 are easier
         if (waveNumber <= 10) {
-            const earlyGameReduction = 0.5 + (waveNumber - 1) * 0.05; // 0.5 at wave 1, 0.95 at wave 10
+            const earlyGameReduction = 0.5 + (waveNumber - 1) * 0.05;
             waveHealthMultiplier *= earlyGameReduction;
-            waveDamageMultiplier *= earlyGameReduction;
         }
 
         const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.015; // Slight speed increase
