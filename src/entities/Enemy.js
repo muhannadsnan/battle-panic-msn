@@ -1173,52 +1173,65 @@ class Enemy extends Phaser.GameObjects.Container {
         const targetX = this.x;
         const targetY = this.y;
 
-        // Play fire sound
+        // Play explosion sound for dramatic effect
         if (typeof audioManager !== 'undefined') {
-            audioManager.playMagic();
+            audioManager.playExplosion();
         }
 
-        // Create expanding ring of fire visual
-        const ring = this.scene.add.circle(targetX, targetY, 20, 0xFF4500, 0.8);
-        ring.setStrokeStyle(8, 0xFF0000, 1);
-        ring.setDepth(100);
+        // Create expanding ring of fire visual using graphics
+        const ringGraphics = this.scene.add.graphics();
+        ringGraphics.setDepth(200);
 
-        // Inner fire glow
-        const innerGlow = this.scene.add.circle(targetX, targetY, 15, 0xFFFF00, 0.6);
-        innerGlow.setDepth(101);
+        // Animate the ring expansion
+        let progress = 0;
+        const expandDuration = 400;
+        const startTime = this.scene.time.now;
 
-        // Expand the ring
-        this.scene.tweens.add({
-            targets: ring,
-            radius: ringRadius,
-            alpha: 0.3,
-            duration: 400,
-            ease: 'Power2'
-        });
+        const updateRing = () => {
+            if (!this.scene) return;
 
-        this.scene.tweens.add({
-            targets: innerGlow,
-            radius: ringRadius - 20,
-            alpha: 0,
-            duration: 400,
-            ease: 'Power2'
-        });
+            const elapsed = this.scene.time.now - startTime;
+            progress = Math.min(elapsed / expandDuration, 1);
+
+            const currentRadius = 20 + (ringRadius - 20) * progress;
+            const alpha = 0.8 - (0.5 * progress);
+
+            ringGraphics.clear();
+
+            // Outer ring
+            ringGraphics.lineStyle(10, 0xFF0000, alpha);
+            ringGraphics.strokeCircle(targetX, targetY, currentRadius);
+
+            // Inner fire fill
+            ringGraphics.fillStyle(0xFF4500, alpha * 0.5);
+            ringGraphics.fillCircle(targetX, targetY, currentRadius);
+
+            // Inner glow
+            ringGraphics.fillStyle(0xFFFF00, alpha * 0.3);
+            ringGraphics.fillCircle(targetX, targetY, currentRadius * 0.6);
+
+            if (progress < 1) {
+                this.scene.time.delayedCall(16, updateRing);
+            }
+        };
+        updateRing();
 
         // Create fire particles around the ring
-        for (let i = 0; i < 12; i++) {
-            const angle = (i / 12) * Math.PI * 2;
-            const particleX = targetX + Math.cos(angle) * (ringRadius * 0.5);
-            const particleY = targetY + Math.sin(angle) * (ringRadius * 0.5);
+        for (let i = 0; i < 16; i++) {
+            const angle = (i / 16) * Math.PI * 2;
+            const startRadius = 30;
+            const particleX = targetX + Math.cos(angle) * startRadius;
+            const particleY = targetY + Math.sin(angle) * startRadius;
 
-            const flame = this.scene.add.ellipse(particleX, particleY, 15, 20, 0xFF6600, 0.9);
-            flame.setDepth(102);
+            const flame = this.scene.add.ellipse(particleX, particleY, 12, 18, 0xFF6600, 0.9);
+            flame.setDepth(201);
 
             this.scene.tweens.add({
                 targets: flame,
                 x: targetX + Math.cos(angle) * ringRadius,
                 y: targetY + Math.sin(angle) * ringRadius,
-                scaleX: 0.3,
-                scaleY: 0.3,
+                scaleX: 0.5,
+                scaleY: 0.5,
                 alpha: 0,
                 duration: 500,
                 ease: 'Power2',
@@ -1264,8 +1277,7 @@ class Enemy extends Phaser.GameObjects.Container {
 
         // Cleanup ring after animation
         this.scene.time.delayedCall(600, () => {
-            ring.destroy();
-            innerGlow.destroy();
+            if (ringGraphics) ringGraphics.destroy();
         });
     }
 
