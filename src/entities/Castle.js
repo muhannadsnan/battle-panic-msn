@@ -336,11 +336,12 @@ class Castle extends Phaser.GameObjects.Container {
         // Scale attack stats with level
         this.arrowDamage = 8 + (this.level - 1) * 3;        // +3 damage per level
         this.attackSpeed = Math.max(150, 700 - (this.level - 1) * 40);    // Faster attacks (min 150ms at high levels)
-        // Range scales from 150 (18% of track) to 780 (95% of track) at max level
+        // Range: base 150, +15% of base every 10 levels, max 90% of track (742px)
         const baseRange = 150;
-        const maxRange = 780;
-        const rangeProgress = effectiveMaxLevel > 1 ? (this.level - 1) / (effectiveMaxLevel - 1) : 0;
-        this.attackRange = baseRange + (maxRange - baseRange) * rangeProgress;
+        const maxRange = 742;  // 90% of track (824px)
+        const rangeIncrements = Math.floor(this.level / 10);  // Every 10 levels
+        const rangeBonus = rangeIncrements * (baseRange * 0.15);  // +15% of base per increment
+        this.attackRange = Math.min(baseRange + rangeBonus, maxRange);
 
         // Fence system - unlocks at level 3
         // HP progression: 100 to 500 for levels 3-10, +100 per level beyond 10
