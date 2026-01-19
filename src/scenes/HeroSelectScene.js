@@ -54,7 +54,7 @@ class HeroSelectScene extends Phaser.Scene {
     createHeroCard(x, y, heroKey) {
         const hero = HERO_TYPES[heroKey];
         const cardWidth = 280;
-        const cardHeight = 330;
+        const cardHeight = 380;
 
         // Card container
         const container = this.add.container(x, y);
@@ -179,8 +179,8 @@ class HeroSelectScene extends Phaser.Scene {
                 ];
             case 'ALCHEMIST':
                 return [
-                    'Resource income +20%',
-                    'Unit costs reduced by 10%'
+                    'Horsemen deal +10% damage',
+                    'Unit costs reduced by 5%'
                 ];
             default:
                 return [];

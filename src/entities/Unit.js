@@ -61,6 +61,10 @@ class Unit extends Phaser.GameObjects.Container {
             if (scene.hero.meleeDamageBonus && (unitType.toUpperCase() === 'PEASANT' || unitType.toUpperCase() === 'HORSEMAN')) {
                 this.damage = Math.floor(this.damage * (1 + scene.hero.meleeDamageBonus));
             }
+            // Alchemist: +10% horsemen damage
+            if (scene.hero.horsemenDamageBonus && unitType.toUpperCase() === 'HORSEMAN') {
+                this.damage = Math.floor(this.damage * (1 + scene.hero.horsemenDamageBonus));
+            }
         }
 
         // Apply unit speed bonus from special upgrade: +5% per level

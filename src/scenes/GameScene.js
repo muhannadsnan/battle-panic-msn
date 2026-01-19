@@ -725,18 +725,29 @@ class GameScene extends Phaser.Scene {
         this.heroPortraitContainer = this.add.container(heroX, heroY);
         this.heroPortraitContainer.setDepth(100);
 
-        // Portrait background (frame)
-        const frameBg = this.add.rectangle(0, 0, 60, 60, 0x1a1a2e);
+        // Portrait background (frame) - make it a circle for ability button look
+        const frameBg = this.add.circle(0, 0, 35, 0x1a1a2e);
         frameBg.setStrokeStyle(3, this.hero.color);
         this.heroPortraitContainer.add(frameBg);
+        this.heroPortraitBg = frameBg;
 
         // Draw pixel art hero portrait
         const heroArt = this.add.graphics();
         this.drawPixelArtHero(heroArt, this.heroKey, 0, 0, 48);
         this.heroPortraitContainer.add(heroArt);
 
+        // Pie timer spinner overlay (on top of hero art)
+        this.heroAbilitySpinner = this.add.graphics();
+        this.heroPortraitContainer.add(this.heroAbilitySpinner);
+
+        // Lock icon (shown until ability unlocks at wave 20)
+        this.heroAbilityLock = this.add.text(0, 0, '🔒', {
+            fontSize: '20px'
+        }).setOrigin(0.5);
+        this.heroPortraitContainer.add(this.heroAbilityLock);
+
         // Hero name below portrait
-        const nameText = this.add.text(0, 40, this.hero.name, {
+        const nameText = this.add.text(0, 50, this.hero.name, {
             fontSize: '12px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -745,6 +756,23 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 2
         }).setOrigin(0.5);
         this.heroPortraitContainer.add(nameText);
+
+        // Make interactive for ability activation
+        frameBg.setInteractive({ useHandCursor: true });
+
+        frameBg.on('pointerdown', () => {
+            this.activateHeroAbility();
+        });
+
+        frameBg.on('pointerover', () => {
+            if (this.heroAbilityReady) {
+                frameBg.setFillStyle(0x2a3a4a);
+            }
+        });
+
+        frameBg.on('pointerout', () => {
+            frameBg.setFillStyle(0x1a1a2e);
+        });
     }
 
     // Draw pixel-art hero portrait
@@ -1193,45 +1221,44 @@ class GameScene extends Phaser.Scene {
         const graphics = this.heroAbilitySpinner;
         graphics.clear();
 
+        // Don't show spinner until ability is unlocked
+        if (!this.heroAbilityUnlocked) return;
+
         const progress = this.heroAbilityTimer / this.heroAbilityCooldown;
-        const radius = 20;
+        const radius = 33;  // Match hero portrait circle
 
-        if (progress > 0) {
-            const startAngle = -Math.PI / 2;
-            const endAngle = startAngle + progress * Math.PI * 2;
-            const color = this.heroAbilityReady ? 0x4ade80 : 0xffa500;
+        // Pie timer effect: draw remaining cooldown as a filled pie slice
+        // When charging: dark overlay shrinks from full circle to nothing
+        if (progress < 1) {
+            const remainingProgress = 1 - progress;
+            const startAngle = -Math.PI / 2;  // Start from top
+            const endAngle = startAngle + remainingProgress * Math.PI * 2;
 
-            // Progress arc
-            graphics.lineStyle(3, color, 0.8);
+            // Draw dark overlay pie slice (remaining cooldown)
+            graphics.fillStyle(0x000000, 0.6);
             graphics.beginPath();
+            graphics.moveTo(0, 0);
             graphics.arc(0, 0, radius, startAngle, endAngle, false);
-            graphics.strokePath();
-
-            // Glow when ready
-            if (this.heroAbilityReady) {
-                graphics.lineStyle(5, 0x4ade80, 0.3);
-                graphics.beginPath();
-                graphics.arc(0, 0, radius + 2, startAngle, endAngle, false);
-                graphics.strokePath();
-            }
+            graphics.closePath();
+            graphics.fillPath();
         }
     }
 
     startHeroAbilityGlow() {
-        if (!this.heroAbilityButtonContainer) return;
+        if (!this.heroPortraitContainer) return;
 
-        // Create glow effect behind the button
+        // Create glow effect behind the hero portrait
         if (this.heroAbilityGlow) {
             this.heroAbilityGlow.destroy();
         }
 
         this.heroAbilityGlow = this.add.graphics();
-        this.heroAbilityGlow.setPosition(this.heroAbilityButtonContainer.x, this.heroAbilityButtonContainer.y);
-        this.heroAbilityGlow.setDepth(899);
+        this.heroAbilityGlow.setPosition(this.heroPortraitContainer.x, this.heroPortraitContainer.y);
+        this.heroAbilityGlow.setDepth(99);  // Just behind the portrait
 
         // Draw glow circle
-        this.heroAbilityGlow.fillStyle(this.hero.color, 0.4);
-        this.heroAbilityGlow.fillCircle(0, 0, 30);
+        this.heroAbilityGlow.fillStyle(this.hero.color, 0.5);
+        this.heroAbilityGlow.fillCircle(0, 0, 45);
 
         // Pulsing animation
         this.tweens.add({
@@ -1514,26 +1541,26 @@ Lv.${currentLevel + 1}`;
     drawCastleSpinner() {
         const graphics = this.castleSpinnerGraphics;
         const percent = Math.floor((this.castleUpgradeProgress / this.castleUpgradeTarget) * 100);
+        const progress = this.castleUpgradeProgress / this.castleUpgradeTarget;
 
         graphics.clear();
 
-        if (this.castleUpgradeProgress > 0) {
-            const startAngle = -Math.PI / 2;
-            const endAngle = startAngle + (this.castleUpgradeProgress / this.castleUpgradeTarget) * Math.PI * 2;
+        // Pie timer effect: dark overlay shrinks as progress fills
+        if (progress < 1) {
+            const remainingProgress = 1 - progress;
+            const startAngle = -Math.PI / 2;  // Start from top
+            const endAngle = startAngle + remainingProgress * Math.PI * 2;
 
-            graphics.lineStyle(6, 0x4ade80, 1);
+            // Draw dark overlay pie slice (remaining progress)
+            graphics.fillStyle(0x000000, 0.6);
             graphics.beginPath();
-            graphics.arc(0, this.castleSpinnerY, this.castleSpinnerRadius - 2, startAngle, endAngle, false);
-            graphics.strokePath();
+            graphics.moveTo(0, this.castleSpinnerY);
+            graphics.arc(0, this.castleSpinnerY, this.castleSpinnerRadius, startAngle, endAngle, false);
+            graphics.closePath();
+            graphics.fillPath();
+        }
 
-            // Glow when near completion
-            if (percent >= 80) {
-                graphics.lineStyle(10, 0x4ade80, 0.3);
-                graphics.beginPath();
-                graphics.arc(0, this.castleSpinnerY, this.castleSpinnerRadius + 3, startAngle, endAngle, false);
-                graphics.strokePath();
-            }
-
+        if (this.castleUpgradeProgress > 0) {
             // Keep spinner visible while there's progress
             this.castleSpinnerContainer.setVisible(true);
         } else if (!this.castleUpgradeHovering) {
@@ -1724,9 +1751,6 @@ Lv.${level + 1}`;
 
         // Reinforcements button (if unlocked)
         this.createReinforcementButton();
-
-        // Hero ability button (next to wood resource)
-        this.createHeroAbilityButton();
 
         // Pause button
         this.createPauseButton();
@@ -2472,7 +2496,7 @@ Lv.${level + 1}`;
             totalGoldCost = Math.ceil(totalGoldCost * costReduction);
             totalWoodCost = Math.ceil(totalWoodCost * costReduction);
 
-            // Apply Alchemist hero cost reduction (-10%)
+            // Apply Alchemist hero cost reduction (-5%)
             if (this.hero?.unitCostReduction) {
                 totalGoldCost = Math.ceil(totalGoldCost * (1 - this.hero.unitCostReduction));
                 totalWoodCost = Math.ceil(totalWoodCost * (1 - this.hero.unitCostReduction));
@@ -2524,26 +2548,22 @@ Lv.${level + 1}`;
         graphics.clear();
 
         const progress = this.reinforcementTimer / this.reinforcementCooldown;
-        const radius = 35;
+        const radius = 38;
+        const centerY = -10;
 
-        if (progress > 0) {
-            const startAngle = -Math.PI / 2;
-            const endAngle = startAngle + progress * Math.PI * 2;
-            const color = this.reinforcementReady ? 0x4ade80 : 0xffa500;
+        // Pie timer effect: dark overlay shrinks as timer fills
+        if (progress < 1) {
+            const remainingProgress = 1 - progress;
+            const startAngle = -Math.PI / 2;  // Start from top
+            const endAngle = startAngle + remainingProgress * Math.PI * 2;
 
-            // Progress arc
-            graphics.lineStyle(4, color, 0.8);
+            // Draw dark overlay pie slice (remaining cooldown)
+            graphics.fillStyle(0x000000, 0.6);
             graphics.beginPath();
-            graphics.arc(0, -10, radius, startAngle, endAngle, false);
-            graphics.strokePath();
-
-            // Glow when ready
-            if (this.reinforcementReady) {
-                graphics.lineStyle(6, 0x4ade80, 0.3);
-                graphics.beginPath();
-                graphics.arc(0, -10, radius + 3, startAngle, endAngle, false);
-                graphics.strokePath();
-            }
+            graphics.moveTo(0, centerY);
+            graphics.arc(0, centerY, radius, startAngle, endAngle, false);
+            graphics.closePath();
+            graphics.fillPath();
         }
     }
 
@@ -2846,7 +2866,7 @@ Lv.${level + 1}`;
         totalGoldCost = Math.ceil(totalGoldCost * costReduction);
         totalWoodCost = Math.ceil(totalWoodCost * costReduction);
 
-        // Apply Alchemist hero cost reduction (-10%)
+        // Apply Alchemist hero cost reduction (-5%)
         if (this.hero?.unitCostReduction) {
             totalGoldCost = Math.ceil(totalGoldCost * (1 - this.hero.unitCostReduction));
             totalWoodCost = Math.ceil(totalWoodCost * (1 - this.hero.unitCostReduction));
@@ -2944,26 +2964,16 @@ Lv.${level + 1}`;
         this.enemies.add(enemy);
     }
 
-    addGold(amount, applyHeroBonus = true) {
-        // Apply Alchemist hero resource bonus (+20%)
-        let finalAmount = amount;
-        if (applyHeroBonus && this.hero?.resourceBonus) {
-            finalAmount = Math.ceil(amount * (1 + this.hero.resourceBonus));
-        }
-        this.gold += finalAmount;
-        this.goldEarnedThisRun += finalAmount;
-        this.resourceDisplay.addGold(finalAmount);
+    addGold(amount) {
+        this.gold += amount;
+        this.goldEarnedThisRun += amount;
+        this.resourceDisplay.addGold(amount);
     }
 
-    addWood(amount, applyHeroBonus = true) {
-        // Apply Alchemist hero resource bonus (+20%)
-        let finalAmount = amount;
-        if (applyHeroBonus && this.hero?.resourceBonus) {
-            finalAmount = Math.ceil(amount * (1 + this.hero.resourceBonus));
-        }
-        this.wood += finalAmount;
-        this.woodEarnedThisRun += finalAmount;
-        this.resourceDisplay.addWood(finalAmount);
+    addWood(amount) {
+        this.wood += amount;
+        this.woodEarnedThisRun += amount;
+        this.resourceDisplay.addWood(amount);
     }
 
     onUnitDied(unit) {

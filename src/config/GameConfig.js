@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.37.3';
+const GAME_VERSION = 'v1.37.4';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -299,8 +299,8 @@ const HERO_TYPES = {
         quote: '"Gold flows like water in capable hands."',
         color: 0xFFD700,  // Gold
         // Passive effects
-        resourceBonus: 0.20,          // +20% gold and wood income
-        unitCostReduction: 0.10,      // -10% unit costs
+        horsemenDamageBonus: 0.10,    // +10% horsemen damage
+        unitCostReduction: 0.05,      // -5% unit costs
         // Wave 20 ability
         abilityName: 'Volatile Concoction',
         abilityDescription: 'Click to throw explosive potion',

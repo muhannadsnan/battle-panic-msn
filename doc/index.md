@@ -142,7 +142,16 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.35.25)
+## Recent Updates (v1.37.4)
+
+### v1.37.4
+- **Hero Ability UI**: Moved ability from top bar to hero portrait below castle
+  - Hero portrait glows when ability is ready
+  - Click portrait to activate ability
+- **Pie Timer Effect**: All spinners now use radial wipe (pie chart) style
+  - Hero ability, reinforcement button, castle upgrade all use new effect
+- **Alchemist Rebalance**: Changed passive from +5% resource income to +10% horsemen damage
+- **Hero Cards**: Increased card height for better proportions
 
 ### v1.35.25
 - **Dragon Rework**: Ring of fire attack replaces fireballs
