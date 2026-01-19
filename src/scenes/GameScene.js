@@ -1005,10 +1005,19 @@ class GameScene extends Phaser.Scene {
     activateHeroAbility() {
         // Check if ability is unlocked and ready
         if (!this.heroAbilityUnlocked || !this.heroAbilityReady) {
-            if (!this.heroAbilityUnlocked) {
-                this.showMessage('Ability unlocks at Wave ' + this.hero.abilityWave, '#ffaa00');
-            } else {
-                this.showMessage('Ability recharging...', '#ffaa00');
+            // Just shake the icon instead of showing message repeatedly
+            if (this.heroPortraitContainer && !this.heroPortraitShaking) {
+                this.heroPortraitShaking = true;
+                this.tweens.add({
+                    targets: this.heroPortraitContainer,
+                    x: this.heroPortraitContainer.x + 5,
+                    duration: 50,
+                    yoyo: true,
+                    repeat: 3,
+                    onComplete: () => {
+                        this.heroPortraitShaking = false;
+                    }
+                });
             }
             return;
         }
