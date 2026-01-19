@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.37.9';
+const GAME_VERSION = 'v1.38.0';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -243,7 +243,7 @@ const SPAWN_CONFIG = {
 // Boss Configuration
 const BOSS_CONFIG = {
     spawnEveryWaves: 10,
-    healthMultiplier: 1.25, // Halved - bosses much easier now
+    healthMultiplier: 3.75, // 3x stronger bosses
     damageMultiplier: 1.25, // Dragon hits castle less hard
     sizeMultiplier: 0.75   // Half size (reduced from 1.5)
 };
