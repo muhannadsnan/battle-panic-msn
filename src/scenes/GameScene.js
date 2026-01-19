@@ -1381,6 +1381,12 @@ class GameScene extends Phaser.Scene {
         };
     }
 
+    getCastleUpgradeTime(level) {
+        // Base time: 5 seconds, +10% per level
+        const baseTime = 5000; // 5 seconds in ms
+        return baseTime * Math.pow(1.1, level - 1);
+    }
+
     getEffectiveMaxCastleLevel() {
         // Castle extension upgrade adds +5 max level per upgrade level
         const castleExtension = this.saveData.specialUpgrades?.castleExtension || 0;
@@ -1523,7 +1529,9 @@ Lv.${currentLevel + 1}`;
         if (this.castleUpgradeHovering && canAfford) {
             const hoverDuration = Date.now() - this.castleHoverStartTime;
             if (hoverDuration >= this.castleHoverDelay) {
-                const progressPerFrame = (this.miningSpeed * delta) / 1000;
+                // Castle upgrade: 5 seconds base, +10% per level
+                const upgradeTime = this.getCastleUpgradeTime(currentLevel);
+                const progressPerFrame = (this.castleUpgradeTarget / upgradeTime) * delta;
                 this.castleUpgradeProgress += progressPerFrame;
 
                 if (this.castleUpgradeProgress >= this.castleUpgradeTarget) {
