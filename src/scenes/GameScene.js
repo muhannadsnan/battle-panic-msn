@@ -4017,7 +4017,7 @@ Lv.${level + 1}`;
             targets: container,
             scaleX: 1,
             scaleY: 1,
-            alpha: 0.6,
+            alpha: 0.7,
             duration: 250,
             ease: 'Back.easeOut',
             onComplete: () => {

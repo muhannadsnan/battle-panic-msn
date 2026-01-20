@@ -192,7 +192,7 @@ class SaveSystem {
         return newData;
     }
 
-    // Reset account - preserves legacy achievements
+    // Reset account - preserves legacy achievements and XP
     resetAccount() {
         const data = this.load();
 
@@ -216,7 +216,7 @@ class SaveSystem {
         const newData = this.getDefaultData();
         newData.legacy = legacy;
         newData.settings = data.settings; // Keep audio settings
-        newData.xp = data.xp || 0;         // Keep XP (can be purchased with money)
+        newData.xp = data.xp || 0;         // Keep current XP balance
         newData.purchasedXP = data.purchasedXP || 0; // Keep purchased XP tracking
 
         this.save(newData);
