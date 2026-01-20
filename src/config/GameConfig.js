@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.38.17';
+const GAME_VERSION = 'v1.38.18';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -152,9 +152,9 @@ const ENEMY_TYPES = {
         name: 'Dragon',
         oneHitKill: true,
         health: 300,
-        damage: 200,
+        damage: 50,         // Ring of fire base damage (scales with wave/boss)
         speed: 40,
-        attackSpeed: 8000,  // Ring of fire - slow but devastating area attack
+        attackSpeed: 4000,  // Ring of fire every 4 seconds
         range: 120,         // Close range - ring of fire radius
         isRanged: false,    // Ring of fire is a close-range area attack
         goldReward: 15,

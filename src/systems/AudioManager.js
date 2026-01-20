@@ -1284,6 +1284,85 @@ class AudioManager {
         shimmer.start(now + 0.3);
         shimmer.stop(now + 0.7);
     }
+
+    // Dragon roar/fire breath - deep rumbling roar with fiery crackle
+    playDragonRoar() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // Deep rumbling roar (low frequency sweep)
+        const roar = this.audioContext.createOscillator();
+        const roarGain = this.audioContext.createGain();
+        const roarFilter = this.audioContext.createBiquadFilter();
+
+        roar.connect(roarFilter);
+        roarFilter.connect(roarGain);
+        roarGain.connect(this.sfxGain);
+
+        roar.type = 'sawtooth';
+        roar.frequency.setValueAtTime(80, now);
+        roar.frequency.exponentialRampToValueAtTime(40, now + 0.6);
+
+        roarFilter.type = 'lowpass';
+        roarFilter.frequency.setValueAtTime(200, now);
+        roarFilter.Q.value = 5;
+
+        roarGain.gain.setValueAtTime(0, now);
+        roarGain.gain.linearRampToValueAtTime(0.25, now + 0.1);
+        roarGain.gain.setValueAtTime(0.2, now + 0.3);
+        roarGain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+
+        roar.start(now);
+        roar.stop(now + 0.8);
+
+        // Fire whoosh/crackle (noise burst with bandpass)
+        const bufferSize = this.audioContext.sampleRate * 0.5;
+        const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const noiseData = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            noiseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 0.5);
+        }
+
+        const noise = this.audioContext.createBufferSource();
+        const noiseGain = this.audioContext.createGain();
+        const noiseFilter = this.audioContext.createBiquadFilter();
+
+        noise.buffer = noiseBuffer;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.sfxGain);
+
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.setValueAtTime(800, now);
+        noiseFilter.frequency.exponentialRampToValueAtTime(2000, now + 0.3);
+        noiseFilter.Q.value = 1;
+
+        noiseGain.gain.setValueAtTime(0, now + 0.05);
+        noiseGain.gain.linearRampToValueAtTime(0.15, now + 0.15);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+        noise.start(now + 0.05);
+
+        // High sizzle for fire effect
+        const sizzle = this.audioContext.createOscillator();
+        const sizzleGain = this.audioContext.createGain();
+
+        sizzle.connect(sizzleGain);
+        sizzleGain.connect(this.sfxGain);
+
+        sizzle.type = 'sawtooth';
+        sizzle.frequency.setValueAtTime(1200, now + 0.1);
+        sizzle.frequency.exponentialRampToValueAtTime(400, now + 0.4);
+
+        sizzleGain.gain.setValueAtTime(0, now + 0.1);
+        sizzleGain.gain.linearRampToValueAtTime(0.06, now + 0.15);
+        sizzleGain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+
+        sizzle.start(now + 0.1);
+        sizzle.stop(now + 0.5);
+    }
 }
 
 // Global instance

@@ -66,6 +66,12 @@ class Enemy extends Phaser.GameObjects.Container {
         this.maxHealth = Math.floor(baseStats.health * healthMult);
         this.currentHealth = this.maxHealth;
         this.damage = Math.floor(baseStats.damage * damageMult);
+
+        // Cap dragon ring of fire damage at 150
+        if (this.isBoss && this.enemyType.toUpperCase() === 'DRAGON') {
+            this.damage = Math.min(this.damage, 150);
+        }
+
         this.speed = Math.min(baseStats.speed * waveSpeedMultiplier, baseStats.speed * 1.5);
 
         // Apply Druid hero slow effect (-10% enemy speed)
@@ -1171,9 +1177,9 @@ class Enemy extends Phaser.GameObjects.Container {
         const targetX = this.x;
         const targetY = this.y;
 
-        // Play explosion sound for dramatic effect
+        // Play dragon roar sound
         if (typeof audioManager !== 'undefined') {
-            audioManager.playExplosion();
+            audioManager.playDragonRoar();
         }
 
         // Create expanding ring of fire visual using graphics

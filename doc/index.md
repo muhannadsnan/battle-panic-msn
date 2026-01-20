@@ -142,7 +142,14 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.17)
+## Recent Updates (v1.38.18)
+
+### v1.38.18
+- **Dragon Rebalance**:
+  - Ring of fire base damage: 200 → 50
+  - Ring damage capped at 150 HP max
+  - Attack speed: 8s → 4s
+- **Dragon Roar Sound**: New deep rumbling roar with fiery crackle
 
 ### v1.38.17
 - **Castle Spinner**: Changed to circular background (was square), rotates clockwise
