@@ -1303,10 +1303,10 @@ class GameScene extends Phaser.Scene {
         this.castleSpinnerContainer.setVisible(false);
         this.updateCastleSpinnerPosition(); // Set initial position
 
-        // Spinner background
+        // Spinner background - circular
         const spinnerRadius = 28;
-        this.castleSpinnerContainer.add(this.add.rectangle(0, 0, 64, 64, 0x2A3A4A, 0.85));
-        this.castleSpinnerContainer.add(this.add.rectangle(0, 0, 58, 58, 0x3A4A5A, 0.9));
+        this.castleSpinnerContainer.add(this.add.circle(0, 0, 32, 0x2A3A4A, 0.85));
+        this.castleSpinnerContainer.add(this.add.circle(0, 0, 29, 0x3A4A5A, 0.9));
 
         // Graphics for spinner arc
         this.castleSpinnerGraphics = this.add.graphics();
@@ -1561,17 +1561,17 @@ Lv.${currentLevel + 1}`;
 
         graphics.clear();
 
-        // Pie timer effect: dark overlay shrinks as progress fills
+        // Pie timer effect: dark overlay shrinks clockwise as progress fills
         if (progress < 1) {
             const remainingProgress = 1 - progress;
             const startAngle = -Math.PI / 2;  // Start from top
-            const endAngle = startAngle + remainingProgress * Math.PI * 2;
+            const endAngle = startAngle - remainingProgress * Math.PI * 2;  // Go clockwise (negative)
 
             // Draw dark overlay pie slice (remaining progress)
             graphics.fillStyle(0x000000, 0.6);
             graphics.beginPath();
             graphics.moveTo(0, this.castleSpinnerY);
-            graphics.arc(0, this.castleSpinnerY, this.castleSpinnerRadius, startAngle, endAngle, false);
+            graphics.arc(0, this.castleSpinnerY, this.castleSpinnerRadius, startAngle, endAngle, true);  // true = anticlockwise draw
             graphics.closePath();
             graphics.fillPath();
         }
@@ -3604,7 +3604,7 @@ Lv.${level + 1}`;
         this.pauseOverlay.add(fullScreenHit);
 
         // Clean panel with proper padding
-        const bg = this.add.rectangle(0, 10, 300, 290, 0x1a2a3a, 0.95);
+        const bg = this.add.rectangle(0, 10, 300, 310, 0x1a2a3a, 0.95);
         this.pauseOverlay.add(bg);
 
         const title = this.add.text(0, -95, 'PAUSED', {

@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.16)
+## Recent Updates (v1.38.17)
+
+### v1.38.17
+- **Castle Spinner**: Changed to circular background (was square), rotates clockwise
+- **Pause Dialog**: Increased height for better spacing
 
 ### v1.38.16
 - **Pause Menu**: Added proper bottom padding to dialog
