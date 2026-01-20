@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.13)
+## Recent Updates (v1.38.14)
+
+### v1.38.14
+- **Hero Lock Icon**: Larger (2x) and positioned in corner for mobile friendliness
 
 ### v1.38.13
 - **Welcome Sound**: Pleasant chime plays when profile loads for logged-in users

@@ -740,9 +740,9 @@ class GameScene extends Phaser.Scene {
         this.heroAbilitySpinner = this.add.graphics();
         this.heroPortraitContainer.add(this.heroAbilitySpinner);
 
-        // Lock icon (shown until ability unlocks at wave 20) - bottom-right corner
-        this.heroAbilityLock = this.add.text(20, 20, '🔒', {
-            fontSize: '14px'
+        // Lock icon (shown until ability unlocks at wave 20) - bottom-right corner, larger for mobile
+        this.heroAbilityLock = this.add.text(22, 22, '🔒', {
+            fontSize: '28px'
         }).setOrigin(0.5);
         this.heroPortraitContainer.add(this.heroAbilityLock);
 
