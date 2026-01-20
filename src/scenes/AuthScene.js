@@ -274,6 +274,11 @@ class AuthScene extends Phaser.Scene {
         const { width, height } = this.scale;
         this.panelContainer = this.add.container(width / 2, height / 2);
 
+        // Play welcome chime when profile loads
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playWelcome();
+        }
+
         const user = supabaseClient.getUser();
         const displayName = supabaseClient.getDisplayName();
 

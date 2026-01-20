@@ -1236,6 +1236,54 @@ class AudioManager {
 
         noise.start(now + 0.1);
     }
+
+    // Play welcome/login chime - soft, pleasant notification
+    playWelcome() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // Gentle ascending chime: C5 -> E5 -> G5 (major chord arpeggio)
+        const notes = [
+            { freq: 523, start: 0, duration: 0.25 },      // C5
+            { freq: 659, start: 0.12, duration: 0.25 },   // E5
+            { freq: 784, start: 0.24, duration: 0.4 }     // G5 - longer
+        ];
+
+        notes.forEach(note => {
+            // Soft sine wave for gentle chime
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+
+            osc.connect(gain);
+            gain.connect(this.sfxGain);
+
+            osc.frequency.setValueAtTime(note.freq, now + note.start);
+            osc.type = 'sine';
+
+            // Soft attack, gentle decay (bell-like)
+            gain.gain.setValueAtTime(0, now + note.start);
+            gain.gain.linearRampToValueAtTime(0.15, now + note.start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.duration);
+
+            osc.start(now + note.start);
+            osc.stop(now + note.start + note.duration + 0.1);
+        });
+
+        // Add subtle shimmer/sparkle
+        const shimmer = this.audioContext.createOscillator();
+        const shimmerGain = this.audioContext.createGain();
+        shimmer.connect(shimmerGain);
+        shimmerGain.connect(this.sfxGain);
+        shimmer.frequency.setValueAtTime(1568, now + 0.3); // G6 - high sparkle
+        shimmer.type = 'sine';
+        shimmerGain.gain.setValueAtTime(0, now + 0.3);
+        shimmerGain.gain.linearRampToValueAtTime(0.08, now + 0.32);
+        shimmerGain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        shimmer.start(now + 0.3);
+        shimmer.stop(now + 0.7);
+    }
 }
 
 // Global instance

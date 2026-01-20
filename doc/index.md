@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.37.4)
+## Recent Updates (v1.38.13)
+
+### v1.38.13
+- **Welcome Sound**: Pleasant chime plays when profile loads for logged-in users
+  - Gentle ascending major chord arpeggio with sparkle effect
 
 ### v1.37.4
 - **Hero Ability UI**: Moved ability from top bar to hero portrait below castle
