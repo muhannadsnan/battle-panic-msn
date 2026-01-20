@@ -40,12 +40,12 @@ class UnitButton extends Phaser.GameObjects.Container {
         const buttonWidth = 110;
         const buttonHeight = 120;
 
-        // Light background for visibility
-        this.background = scene.add.rectangle(0, 0, buttonWidth, buttonHeight, 0x2a3a4a, 0.85);
+        // Clean single background
+        this.background = scene.add.rectangle(0, 0, buttonWidth, buttonHeight, 0x2a3a4a, 0.9);
         this.add(this.background);
 
-        // Inner lighter area
-        this.innerBg = scene.add.rectangle(0, -8, buttonWidth - 10, buttonHeight - 28, 0x3a4a5a, 0.7);
+        // Subtle inner area for unit icon
+        this.innerBg = scene.add.rectangle(0, -8, buttonWidth - 8, buttonHeight - 30, 0x2a3a4a, 0);
         this.add(this.innerBg);
 
         const spinnerRadius = 38;  // Bigger spinner
@@ -140,7 +140,7 @@ class UnitButton extends Phaser.GameObjects.Container {
                 this.scene.activeInteraction = this;
                 this.isHovering = true;
                 this.hoverStartTime = Date.now(); // Record when hover started
-                this.innerBg.setFillStyle(0x4a6a8a, 0.85);
+                this.background.setFillStyle(0x3a4a5a, 1);
                 this.showTooltip();
             }
         };
@@ -149,7 +149,7 @@ class UnitButton extends Phaser.GameObjects.Container {
         const stopSpawning = () => {
             this.isHovering = false;
             this.hoverStartTime = 0;
-            this.innerBg.setFillStyle(0x3a4a5a, 0.7);
+            this.background.setFillStyle(0x2a3a4a, 0.9);
             this.percentText.setVisible(false);
             this.hideTooltip();
             // Release interaction lock
@@ -428,14 +428,12 @@ class UnitButton extends Phaser.GameObjects.Container {
         this.isEnabled = enabled;
 
         if (enabled && this.isUnlocked) {
-            this.background.setFillStyle(0x2a3a4a, 0.85);
-            this.innerBg.setFillStyle(0x3a4a5a, 0.7);
+            this.background.setFillStyle(0x2a3a4a, 0.9);
             this.iconContainer.setAlpha(1);
             this.goldCostText.setAlpha(1);
             this.woodCostText.setAlpha(1);
         } else {
-            this.background.setFillStyle(0x1a1a2a, 0.7);
-            this.innerBg.setFillStyle(0x2a2a3a, 0.5);
+            this.background.setFillStyle(0x1a2a3a, 0.7);
             this.iconContainer.setAlpha(0.4);
             this.goldCostText.setAlpha(0.4);
             this.woodCostText.setAlpha(0.4);

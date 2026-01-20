@@ -142,7 +142,15 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.14)
+## Recent Updates (v1.38.15)
+
+### v1.38.15
+- **Pause Menu UI**: Cleaner design
+  - Darker transparent overlay (0.2 opacity)
+  - Removed wave number and "Sound:" label
+  - Removed double borders from dialog and buttons
+  - Larger button text (22px)
+- **Unit Buttons**: Cleaner single background, removed odd inner borders
 
 ### v1.38.14
 - **Hero Lock Icon**: Larger (2x) and positioned in corner for mobile friendliness

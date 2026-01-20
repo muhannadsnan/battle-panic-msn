@@ -3593,8 +3593,8 @@ Lv.${level + 1}`;
     showPauseMenu() {
         this.pauseOverlay = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 
-        // Full screen clickable area for right-click to resume
-        const fullScreenHit = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.01);
+        // Darker transparent overlay
+        const fullScreenHit = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.2);
         fullScreenHit.setInteractive();
         fullScreenHit.on('pointerdown', (pointer) => {
             if (pointer.rightButtonDown()) {
@@ -3603,15 +3603,11 @@ Lv.${level + 1}`;
         });
         this.pauseOverlay.add(fullScreenHit);
 
-        // Modern panel - no border
-        const bg = this.add.rectangle(0, 0, 300, 280, 0x0a1520, 0.95);
+        // Clean panel
+        const bg = this.add.rectangle(0, 0, 300, 260, 0x1a2a3a, 0.95);
         this.pauseOverlay.add(bg);
-        const inner = this.add.rectangle(0, 0, 296, 276, 0x1a2a3a, 0.9);
-        this.pauseOverlay.add(inner);
-        // Accent line at top
-        this.pauseOverlay.add(this.add.rectangle(0, -130, 280, 4, 0x4a7aba, 0.8));
 
-        const title = this.add.text(0, -105, 'PAUSED', {
+        const title = this.add.text(0, -95, 'PAUSED', {
             fontSize: '36px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -3619,25 +3615,9 @@ Lv.${level + 1}`;
         }).setOrigin(0.5);
         this.pauseOverlay.add(title);
 
-        // Wave info
-        const waveInfo = this.add.text(0, -65, `Wave: ${this.waveSystem.currentWave}`, {
-            fontSize: '18px',
-            fontFamily: 'Arial',
-            color: '#aaaaaa'
-        }).setOrigin(0.5);
-        this.pauseOverlay.add(waveInfo);
-
-        // Sound controls
-        const soundLabel = this.add.text(-60, -40, 'Sound:', {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            color: '#aaaaaa'
-        }).setOrigin(0, 0.5);
-        this.pauseOverlay.add(soundLabel);
-
-        // Music toggle button
-        const musicBtn = this.add.text(10, -40, '🎵', {
-            fontSize: '28px'
+        // Sound controls - centered
+        const musicBtn = this.add.text(-30, -50, '🎵', {
+            fontSize: '32px'
         }).setOrigin(0.5).setInteractive({});
         musicBtn.setAlpha(typeof audioManager !== 'undefined' && audioManager.musicEnabled ? 1 : 0.4);
         musicBtn.on('pointerdown', () => {
@@ -3650,8 +3630,8 @@ Lv.${level + 1}`;
 
         // Volume toggle button
         const volumeIcons = ['🔊', '🔉', '🔇'];
-        const volumeBtn = this.add.text(60, -40, volumeIcons[this.volumeState || 0], {
-            fontSize: '28px'
+        const volumeBtn = this.add.text(30, -50, volumeIcons[this.volumeState || 0], {
+            fontSize: '32px'
         }).setOrigin(0.5).setInteractive({});
         volumeBtn.on('pointerdown', () => {
             if (typeof audioManager !== 'undefined') {
@@ -3660,7 +3640,6 @@ Lv.${level + 1}`;
                 audioManager.setMasterVolume(volumes[this.volumeState]);
                 volumeBtn.setText(volumeIcons[this.volumeState]);
                 musicBtn.setAlpha(volumes[this.volumeState] > 0 ? 1 : 0.3);
-                // Also update the top bar icons
                 if (this.muteIcon) this.muteIcon.setText(volumeIcons[this.volumeState]);
                 if (this.musicIcon) this.musicIcon.setAlpha(volumes[this.volumeState] > 0 ? 1 : 0.3);
             }
@@ -3703,17 +3682,13 @@ Lv.${level + 1}`;
     createPauseMenuButton(x, y, text, callback) {
         const container = this.add.container(x, y);
 
-        // Modern button - no border
-        const bg = this.add.rectangle(0, 0, 200, 42, 0x2a4a6a, 0.9);
+        // Clean button - single background
+        const bg = this.add.rectangle(0, 0, 200, 42, 0x3a5a7a, 0.9);
         bg.setInteractive({});
         container.add(bg);
-        const inner = this.add.rectangle(0, 0, 196, 38, 0x3a5a7a, 0.8);
-        container.add(inner);
-        // Highlight at top
-        container.add(this.add.rectangle(0, -14, 190, 4, 0x4a7aba, 0.4));
 
         const label = this.add.text(0, 0, text, {
-            fontSize: '18px',
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff'
@@ -3721,11 +3696,11 @@ Lv.${level + 1}`;
         container.add(label);
 
         bg.on('pointerover', () => {
-            inner.setFillStyle(0x4a7aba, 0.9);
+            bg.setFillStyle(0x4a7aba, 1);
         });
 
         bg.on('pointerout', () => {
-            inner.setFillStyle(0x3a5a7a, 0.8);
+            bg.setFillStyle(0x3a5a7a, 0.9);
         });
 
         bg.on('pointerdown', callback);
