@@ -3544,7 +3544,7 @@ Lv.${level + 1}`;
             color: '#ff4444',
             stroke: '#000000',
             strokeThickness: 4
-        }).setOrigin(0.5).setDepth(1000);
+        }).setOrigin(0.5).setDepth(1000).setAlpha(0.5);
 
         const waveText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, `You survived ${finalWave} waves!`, {
             fontSize: '24px',
@@ -3553,7 +3553,7 @@ Lv.${level + 1}`;
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2
-        }).setOrigin(0.5).setDepth(1000);
+        }).setOrigin(0.5).setDepth(1000).setAlpha(0.5);
 
         // Transition to game over scene
         this.time.delayedCall(2500, () => {
