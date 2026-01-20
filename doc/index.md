@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.15)
+## Recent Updates (v1.38.16)
+
+### v1.38.16
+- **Pause Menu**: Added proper bottom padding to dialog
 
 ### v1.38.15
 - **Pause Menu UI**: Cleaner design

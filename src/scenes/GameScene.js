@@ -3603,8 +3603,8 @@ Lv.${level + 1}`;
         });
         this.pauseOverlay.add(fullScreenHit);
 
-        // Clean panel
-        const bg = this.add.rectangle(0, 0, 300, 260, 0x1a2a3a, 0.95);
+        // Clean panel with proper padding
+        const bg = this.add.rectangle(0, 10, 300, 290, 0x1a2a3a, 0.95);
         this.pauseOverlay.add(bg);
 
         const title = this.add.text(0, -95, 'PAUSED', {
