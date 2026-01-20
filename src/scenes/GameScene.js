@@ -3532,10 +3532,15 @@ Lv.${level + 1}`;
             this.syncAndValidateAfterBattle();
         }
 
+        // Show dark overlay
+        this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.2)
+            .setDepth(999);
+
         // Show game over text
         const gameOverText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50, 'CASTLE DESTROYED!', {
             fontSize: '48px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ff4444',
             stroke: '#000000',
             strokeThickness: 4
@@ -3544,6 +3549,7 @@ Lv.${level + 1}`;
         const waveText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, `You survived ${finalWave} waves!`, {
             fontSize: '24px',
             fontFamily: 'Arial',
+            fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2

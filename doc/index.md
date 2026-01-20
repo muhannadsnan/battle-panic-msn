@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.18)
+## Recent Updates (v1.38.19)
+
+### v1.38.19
+- **Game Over Screen**: Dark overlay (0.2 opacity) and bold font for "Castle Destroyed" message
 
 ### v1.38.18
 - **Dragon Rebalance**:
@@ -350,4 +353,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.35.25)*
+*Last updated: January 2026 (v1.38.19)*
