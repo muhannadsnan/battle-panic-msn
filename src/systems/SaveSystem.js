@@ -439,19 +439,10 @@ class SaveSystem {
         return divisors[rankName] || 3;
     }
 
-    // Calculate total rank score based on all achievements
-    // Designed for LONG-TERM progression - takes many hours/days to rank up
-    // Note: Purchased XP is excluded to prevent pay-to-rank
+    // Calculate total rank score based on gameplay only
+    // XP is NOT included - ranking is purely from playing, not upgrades/purchases
     calculateRankScore(data) {
-        const spentXP = this.calculateSpentXP(data);
-        const totalXP = (data.xp || 0) + spentXP;
-        const purchasedXP = data.purchasedXP || 0;
-        const earnedXP = totalXP - purchasedXP; // Only earned XP counts for rank
-
         let score = 0;
-
-        // XP contribution (x5 weight) - main progression (earned only, not purchased)
-        score += earnedXP * 5;
 
         // Kills contribution (x0.1) - grinding matters
         score += (data.totalEnemiesKilled || 0) * 0.1;
