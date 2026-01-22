@@ -67,6 +67,7 @@ class UpgradeScene extends Phaser.Scene {
             // New multi-level special upgrades
             { type: 'productionSpeed' },
             { type: 'productionCost' },
+            { type: 'monsterLoot' },
             { type: 'unitSpeed' },
             { type: 'reinforcements' },
             { type: 'peasantPromoSkip' },
@@ -101,6 +102,8 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createMultiLevelCard(x, y, 'productionSpeed', '⚡', 'PRODUCTION\nSPEED', '-5% spawn time', 10, 3);
             } else if (cardData.type === 'productionCost') {
                 card = this.createProductionCostCard(x, y);
+            } else if (cardData.type === 'monsterLoot') {
+                card = this.createMonsterLootCard(x, y);
             } else if (cardData.type === 'unitSpeed') {
                 card = this.createUnitSpeedCard(x, y);
             } else if (cardData.type === 'reinforcements') {
@@ -1357,6 +1360,7 @@ class UpgradeScene extends Phaser.Scene {
             const names = {
                 productionSpeed: 'Production Speed',
                 productionCost: 'Production Cost',
+                monsterLoot: 'Monster Loot',
                 unitSpeed: 'Unit Speed',
                 reinforcementLevel: 'Reinforcement Level',
                 peasantPromoSkip: 'Peasant Promo Skip',
@@ -1443,6 +1447,93 @@ class UpgradeScene extends Phaser.Scene {
             const canAfford = xp >= cost;
             const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
                 this.purchaseMultiLevelUpgrade('productionCost', cost, maxLevel);
+            }, canAfford, 150, 55);
+            card.add(btn);
+        }
+
+        return card;
+    }
+
+    // Monster Loot card - requires Mining Speed Lv.10 AND Production Cost Lv.10
+    createMonsterLootCard(x, y) {
+        const card = this.add.container(x, y);
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const currentLevel = specialUpgrades.monsterLoot || 0;
+        const maxLevel = 20;
+        const isMaxLevel = currentLevel >= maxLevel;
+        const xp = this.saveData.xp || 0;
+        const costPerLevel = 2;
+        const cost = costPerLevel * (currentLevel + 1);
+
+        // Check requirements: Mining Speed Lv.10 AND Production Cost Lv.10
+        const miningSpeedLevel = this.saveData.castleUpgrades?.goldIncome || 1;
+        const productionCostLevel = specialUpgrades.productionCost || 0;
+        const miningReqMet = miningSpeedLevel >= 10;
+        const prodCostReqMet = productionCostLevel >= 10;
+        const requirementMet = miningReqMet && prodCostReqMet;
+
+        // Background - gold theme for loot
+        const bgColor = isMaxLevel ? 0x4a4a2a : 0x3a3a1a;
+        const borderColor = isMaxLevel ? 0xffd700 : 0xddaa00;
+        const bg = this.add.rectangle(0, 0, 260, 380, bgColor);
+        bg.setStrokeStyle(3, borderColor);
+        card.add(bg);
+
+        // Icon
+        const iconText = this.add.text(0, -120, '💀', { fontSize: '60px' }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -50, 'MONSTER\nLOOT', {
+            fontSize: '22px', fontFamily: 'Arial', color: '#ddaa00',
+            fontStyle: 'bold', align: 'center'
+        }).setOrigin(0.5);
+        card.add(cardTitle);
+
+        // Level display
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        // Current bonus
+        const bonusPercent = currentLevel;
+        const bonusText = this.add.text(0, 30, `Current: +${bonusPercent}% loot`, {
+            fontSize: '16px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0.5);
+        card.add(bonusText);
+
+        // Description
+        const desc = this.add.text(0, 60, '+1% gold/wood from kills\nper level', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(maxText);
+        } else if (!requirementMet) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 95, 'Requirements:', {
+                fontSize: '12px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const miningOk = miningReqMet ? '✓' : '✗';
+            const prodOk = prodCostReqMet ? '✓' : '✗';
+
+            const reqs = this.add.text(0, 125,
+                `${miningOk} Mining Speed Lv.10 (${miningSpeedLevel})\n${prodOk} Production Cost Lv.10 (${productionCostLevel})`, {
+                fontSize: '11px', fontFamily: 'Arial',
+                color: '#ff8888', align: 'center'
+            }).setOrigin(0.5);
+            card.add(reqs);
+        } else {
+            const canAfford = xp >= cost;
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                this.purchaseMultiLevelUpgrade('monsterLoot', cost, maxLevel);
             }, canAfford, 150, 55);
             card.add(btn);
         }

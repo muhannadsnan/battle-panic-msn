@@ -1339,6 +1339,15 @@ class Enemy extends Phaser.GameObjects.Container {
             woodReward = this.woodReward * this.scene.currentWave;
         }
 
+        // Monster Loot upgrade: +1% gold/wood per level (max 20%)
+        const saveData = typeof saveSystem !== 'undefined' ? saveSystem.load() : null;
+        const lootLevel = saveData?.specialUpgrades?.monsterLoot || 0;
+        if (lootLevel > 0) {
+            const lootBonus = 1 + (lootLevel * 0.01); // 1% per level
+            goldReward = Math.floor(goldReward * lootBonus);
+            woodReward = Math.floor(woodReward * lootBonus);
+        }
+
         // Give gold/wood rewards based on enemy type
         if (this.scene.gold !== undefined && goldReward > 0) {
             this.scene.gold += goldReward;

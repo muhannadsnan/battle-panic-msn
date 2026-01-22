@@ -142,7 +142,12 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.34)
+## Recent Updates (v1.38.35)
+
+### v1.38.35
+- **Upgrades**: New Monster Loot upgrade
+  - +1% gold/wood from monster kills per level (max 20 levels = +20%)
+  - Requires Mining Speed Lv.10 AND Production Cost Lv.10
 
 ### v1.38.34
 - **Upgrades**: Progressive unlock system for special upgrades
@@ -400,4 +405,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.34)*
+*Last updated: January 2026 (v1.38.35)*

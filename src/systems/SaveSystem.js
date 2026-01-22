@@ -104,6 +104,7 @@ class SaveSystem {
                 // Multi-level upgrades (0 = not purchased)
                 productionSpeed: 0,    // 0-10: -5% spawn time per level
                 productionCost: 0,     // 0-10: -5% unit cost per level
+                monsterLoot: 0,        // 0-20: +1% gold/wood from kills per level
                 unitSpeed: 0,          // 0-10: +5% movement speed per level
                 reinforcements: 0,     // 0-5: Reinforcement levels (0=disabled, 1-5=enabled with better units)
                 peasantPromoSkip: 0,   // 0-5: Skip promotion tiers for peasants
