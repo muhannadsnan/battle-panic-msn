@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.23)
+## Recent Updates (v1.38.24)
+
+### v1.38.24
+- **Bug Fix**: Hero ability now unlocks correctly at wave 20
 
 ### v1.38.23
 - **Wave Tips**: Now skip for Knight rank and above (was Commander+)
@@ -356,4 +359,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.23)*
+*Last updated: January 2026 (v1.38.24)*

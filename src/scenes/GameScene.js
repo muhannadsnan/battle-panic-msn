@@ -1189,7 +1189,7 @@ class GameScene extends Phaser.Scene {
         // Check if we should unlock the ability
         if (!this.heroAbilityUnlocked) {
             const waveInfo = this.waveSystem.getWaveInfo();
-            if (waveInfo.waveNumber >= this.hero.abilityWave) {
+            if (waveInfo.currentWave >= this.hero.abilityWave) {
                 this.heroAbilityUnlocked = true;
                 this.heroAbilityReady = true;
                 this.heroAbilityTimer = this.heroAbilityCooldown;  // Start ready
