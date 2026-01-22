@@ -1068,73 +1068,42 @@ class GameScene extends Phaser.Scene {
     createHeroAbilityEffect(x, y) {
         const radius = this.hero.abilityRadius;
 
-        // Visual effect based on hero
-        if (this.heroKey === 'DRUID') {
-            // Nature effect - green expanding ring
-            const ring = this.add.circle(x, y, 10, 0x228B22, 0.7);
-            ring.setDepth(1600);
+        // Blue circle effect - visible and clear
+        const circle = this.add.circle(x, y, radius, 0x4488ff, 0.4);
+        circle.setDepth(1600);
+        circle.setStrokeStyle(4, 0x66aaff, 1);
 
-            this.tweens.add({
-                targets: ring,
-                scaleX: radius / 10,
-                scaleY: radius / 10,
-                alpha: 0,
-                duration: 500,
-                ease: 'Quad.easeOut',
-                onComplete: () => ring.destroy()
-            });
-
-            // Leaf particles
-            for (let i = 0; i < 15; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const dist = Math.random() * radius * 0.8;
-                const leaf = this.add.circle(x, y, 4, 0x44ff44);
-                leaf.setDepth(1601);
-
+        // Pulse effect then fade
+        this.tweens.add({
+            targets: circle,
+            alpha: 0.6,
+            duration: 150,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
                 this.tweens.add({
-                    targets: leaf,
-                    x: x + Math.cos(angle) * dist,
-                    y: y + Math.sin(angle) * dist,
+                    targets: circle,
                     alpha: 0,
-                    scale: 0.3,
-                    duration: 400,
-                    ease: 'Quad.easeOut',
-                    onComplete: () => leaf.destroy()
+                    duration: 300,
+                    onComplete: () => circle.destroy()
                 });
             }
-        } else if (this.heroKey === 'ALCHEMIST') {
-            // Explosion effect - gold/orange
-            const explosion = this.add.circle(x, y, 10, 0xFFD700, 0.8);
-            explosion.setDepth(1600);
+        });
+
+        // Blue particles
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            const particle = this.add.circle(x + Math.cos(angle) * radius * 0.7, y + Math.sin(angle) * radius * 0.7, 6, 0x66aaff);
+            particle.setDepth(1601);
 
             this.tweens.add({
-                targets: explosion,
-                scaleX: radius / 10,
-                scaleY: radius / 10,
+                targets: particle,
                 alpha: 0,
+                scale: 0.3,
                 duration: 400,
                 ease: 'Quad.easeOut',
-                onComplete: () => explosion.destroy()
+                onComplete: () => particle.destroy()
             });
-
-            // Fire particles
-            for (let i = 0; i < 20; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const dist = Math.random() * radius;
-                const particle = this.add.circle(x, y, 5, 0xff6600);
-                particle.setDepth(1601);
-
-                this.tweens.add({
-                    targets: particle,
-                    x: x + Math.cos(angle) * dist,
-                    y: y + Math.sin(angle) * dist,
-                    alpha: 0,
-                    scale: 0.2,
-                    duration: 350,
-                    ease: 'Quad.easeOut',
-                    onComplete: () => particle.destroy()
-                });
-            }
         }
 
         // Deal damage to enemies in radius

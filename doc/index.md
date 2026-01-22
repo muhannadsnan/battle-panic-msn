@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.26)
+## Recent Updates (v1.38.27)
+
+### v1.38.27
+- **Hero Ability Visual**: Blue circle effect with pulse animation
+- **Hero Ability Damage**: Changed from instant kill to 100 damage per enemy
 
 ### v1.38.26
 - **Rank-Based Difficulty**: Enemies gain +5% HP and damage per primary rank
@@ -368,4 +372,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.26)*
+*Last updated: January 2026 (v1.38.27)*

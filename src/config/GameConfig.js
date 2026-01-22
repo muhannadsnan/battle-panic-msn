@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.38.26';
+const GAME_VERSION = 'v1.38.27';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -275,7 +275,7 @@ const HERO_TYPES = {
         abilityDescription: 'Click to strike enemies with nature',
         abilityWave: 20,
         abilityRadius: 120,
-        abilityDamage: 9999  // Instant kill
+        abilityDamage: 100
     },
     WARLORD: {
         key: 'warlord',
@@ -306,6 +306,6 @@ const HERO_TYPES = {
         abilityDescription: 'Click to throw explosive potion',
         abilityWave: 20,
         abilityRadius: 150,
-        abilityDamage: 9999  // Instant kill
+        abilityDamage: 100
     }
 };
