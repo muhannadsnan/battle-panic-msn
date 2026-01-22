@@ -1060,7 +1060,7 @@ class GameScene extends Phaser.Scene {
 
         // Play sound
         if (typeof audioManager !== 'undefined') {
-            audioManager.playMagic();
+            audioManager.playHeroAbility();
         }
 
         this.showMessage(this.hero.abilityName + '!', '#ffaa00');
@@ -1144,7 +1144,7 @@ class GameScene extends Phaser.Scene {
 
         // Play sound
         if (typeof audioManager !== 'undefined') {
-            audioManager.playMagic();
+            audioManager.playHeroAbility();
         }
 
         this.showMessage('BATTLE CHARGE! +50% Speed, +25% Damage for 8s', '#ff4444');
@@ -1631,7 +1631,7 @@ Lv.${currentLevel + 1}`;
 
             // Play sound
             if (typeof audioManager !== 'undefined') {
-                audioManager.playGold();
+                audioManager.playCastleUpgrade();
             }
 
             // Visual feedback
@@ -1660,10 +1660,9 @@ Lv.${currentLevel + 1}`;
             // Update mining speed
             this.updateMiningSpeed();
 
-            // Play upgrade sound (gold + click for clear feedback)
+            // Play upgrade sound
             if (typeof audioManager !== 'undefined') {
-                audioManager.playGold();
-                audioManager.playClick();
+                audioManager.playCastleUpgrade();
             }
 
             // Visual feedback

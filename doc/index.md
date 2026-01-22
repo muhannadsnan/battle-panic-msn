@@ -142,7 +142,11 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.28)
+## Recent Updates (v1.38.29)
+
+### v1.38.29
+- **Audio**: New hero ability activation sound (power-up with magical shimmer)
+- **Audio**: New castle upgrade/repair sound (triumphant ascending notes)
 
 ### v1.38.28
 - **Hero Ability Glow**: Only glows when ready, stops during cooldown
@@ -375,4 +379,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.28)*
+*Last updated: January 2026 (v1.38.29)*

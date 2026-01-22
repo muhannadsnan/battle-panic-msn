@@ -1363,6 +1363,117 @@ class AudioManager {
         sizzle.start(now + 0.1);
         sizzle.stop(now + 0.5);
     }
+
+    // Hero ability activation - powerful magical energy burst
+    playHeroAbility() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // Deep power-up sweep
+        const sweep = this.audioContext.createOscillator();
+        const sweepGain = this.audioContext.createGain();
+
+        sweep.connect(sweepGain);
+        sweepGain.connect(this.sfxGain);
+
+        sweep.type = 'sine';
+        sweep.frequency.setValueAtTime(150, now);
+        sweep.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+
+        sweepGain.gain.setValueAtTime(0.2, now);
+        sweepGain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+        sweep.start(now);
+        sweep.stop(now + 0.35);
+
+        // Magical shimmer overlay
+        const shimmer = this.audioContext.createOscillator();
+        const shimmerGain = this.audioContext.createGain();
+
+        shimmer.connect(shimmerGain);
+        shimmerGain.connect(this.sfxGain);
+
+        shimmer.type = 'triangle';
+        shimmer.frequency.setValueAtTime(800, now + 0.1);
+        shimmer.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
+
+        shimmerGain.gain.setValueAtTime(0, now + 0.1);
+        shimmerGain.gain.linearRampToValueAtTime(0.15, now + 0.15);
+        shimmerGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+        shimmer.start(now + 0.1);
+        shimmer.stop(now + 0.45);
+
+        // Impact thump
+        const thump = this.audioContext.createOscillator();
+        const thumpGain = this.audioContext.createGain();
+
+        thump.connect(thumpGain);
+        thumpGain.connect(this.sfxGain);
+
+        thump.type = 'sine';
+        thump.frequency.setValueAtTime(80, now + 0.15);
+        thump.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+
+        thumpGain.gain.setValueAtTime(0.25, now + 0.15);
+        thumpGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+        thump.start(now + 0.15);
+        thump.stop(now + 0.4);
+    }
+
+    // Castle upgrade complete - satisfying construction/level-up sound
+    playCastleUpgrade() {
+        if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
+        this.resume();
+
+        const now = this.audioContext.currentTime;
+
+        // Ascending triumphant notes: C4 -> E4 -> G4 -> C5
+        const notes = [
+            { freq: 262, start: 0, duration: 0.12 },      // C4
+            { freq: 330, start: 0.08, duration: 0.12 },   // E4
+            { freq: 392, start: 0.16, duration: 0.12 },   // G4
+            { freq: 523, start: 0.24, duration: 0.3 }     // C5 - longer final note
+        ];
+
+        notes.forEach(note => {
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+
+            osc.connect(gain);
+            gain.connect(this.sfxGain);
+
+            osc.frequency.setValueAtTime(note.freq, now + note.start);
+            osc.type = 'triangle';
+
+            gain.gain.setValueAtTime(0, now + note.start);
+            gain.gain.linearRampToValueAtTime(0.18, now + note.start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + note.start + note.duration);
+
+            osc.start(now + note.start);
+            osc.stop(now + note.start + note.duration + 0.05);
+        });
+
+        // Sparkle on top
+        const sparkle = this.audioContext.createOscillator();
+        const sparkleGain = this.audioContext.createGain();
+
+        sparkle.connect(sparkleGain);
+        sparkleGain.connect(this.sfxGain);
+
+        sparkle.type = 'sine';
+        sparkle.frequency.setValueAtTime(1047, now + 0.3); // C6
+
+        sparkleGain.gain.setValueAtTime(0, now + 0.3);
+        sparkleGain.gain.linearRampToValueAtTime(0.1, now + 0.32);
+        sparkleGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+        sparkle.start(now + 0.3);
+        sparkle.stop(now + 0.55);
+    }
 }
 
 // Global instance
