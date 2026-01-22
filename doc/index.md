@@ -142,7 +142,16 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.33)
+## Recent Updates (v1.38.34)
+
+### v1.38.34
+- **Upgrades**: Progressive unlock system for special upgrades
+  - New Peasant Shield upgrade (requires Peasant Lv.6)
+  - Horseman Shield now requires Horseman Lv.6 (was just unlock)
+  - Production Cost requires Mining Speed at same level
+  - Unit Speed requires all units at Lv.6
+  - Reinforcements requires Commander rank
+  - Castle Emergency requires Castle Health Lv.6
 
 ### v1.38.33
 - **Upgrades**: Half Price Gold Tier now requires all units at Lv.6 (was Lv.5)
@@ -391,4 +400,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.33)*
+*Last updated: January 2026 (v1.38.34)*

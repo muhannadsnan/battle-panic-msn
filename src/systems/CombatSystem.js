@@ -69,10 +69,21 @@ class CombatSystem {
                 finalDamage = Math.floor(finalDamage * (1 - shieldReduction));
             }
         }
-        // Knight armor: gold tier peasants (lvl 4+) get 25% damage reduction
-        else if (target.unitType === 'PEASANT' && target.promotionLevel >= 4) {
-            const reduction = UNIT_TYPES.PEASANT.knightArmor || 0;
-            finalDamage = Math.floor(damage * (1 - reduction));
+        // Peasant damage reduction (Knight armor + Peasant Shield upgrade)
+        else if (target.unitType === 'PEASANT') {
+            // Knight armor: gold tier peasants (lvl 4+) get 25% damage reduction
+            if (target.promotionLevel >= 4) {
+                const reduction = UNIT_TYPES.PEASANT.knightArmor || 0;
+                finalDamage = Math.floor(damage * (1 - reduction));
+            }
+
+            // Peasant Shield upgrade: 8% damage reduction per level (max 40% at level 5)
+            const saveData = typeof saveSystem !== 'undefined' ? saveSystem.load() : null;
+            const shieldLevel = saveData?.specialUpgrades?.peasantShield || 0;
+            if (shieldLevel > 0) {
+                const shieldReduction = shieldLevel * 0.08; // 8% per level
+                finalDamage = Math.floor(finalDamage * (1 - shieldReduction));
+            }
         }
         // Robinhood armor: gold tier archers (lvl 4+) get 15% damage reduction
         else if (target.unitType === 'ARCHER' && target.promotionLevel >= 4) {

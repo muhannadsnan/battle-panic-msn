@@ -99,6 +99,7 @@ class SaveSystem {
             // Special upgrades
             specialUpgrades: {
                 eliteDiscount: false,  // Gold tier spawns 2 units for the cost of 1
+                peasantShield: 0,      // 0-5: Peasants take 8% less damage per level (max 40%)
                 horsemanShield: 0,     // 0-5: Horsemen take 10% less damage per level (max 50%)
                 // Multi-level upgrades (0 = not purchased)
                 productionSpeed: 0,    // 0-10: -5% spawn time per level

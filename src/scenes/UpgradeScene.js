@@ -62,6 +62,7 @@ class UpgradeScene extends Phaser.Scene {
             { type: 'castle', upgrade: { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' } },
             { type: 'castle', upgrade: { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' } },
             { type: 'special' },
+            { type: 'peasantShield' },
             { type: 'horsemanShield' },
             // New multi-level special upgrades
             { type: 'productionSpeed' },
@@ -92,14 +93,16 @@ class UpgradeScene extends Phaser.Scene {
                 card = this.createCastleUpgradeCard(x, y, cardData.upgrade);
             } else if (cardData.type === 'special') {
                 card = this.createSpecialUpgradeCard(x, y);
+            } else if (cardData.type === 'peasantShield') {
+                card = this.createPeasantShieldCard(x, y);
             } else if (cardData.type === 'horsemanShield') {
                 card = this.createHorsemanShieldCard(x, y);
             } else if (cardData.type === 'productionSpeed') {
                 card = this.createMultiLevelCard(x, y, 'productionSpeed', '⚡', 'PRODUCTION\nSPEED', '-5% spawn time', 10, 3);
             } else if (cardData.type === 'productionCost') {
-                card = this.createMultiLevelCard(x, y, 'productionCost', '💎', 'PRODUCTION\nCOST', '-5% unit cost', 10, 3);
+                card = this.createProductionCostCard(x, y);
             } else if (cardData.type === 'unitSpeed') {
-                card = this.createMultiLevelCard(x, y, 'unitSpeed', '🏃', 'UNIT\nSPEED', '+5% movement', 10, 3);
+                card = this.createUnitSpeedCard(x, y);
             } else if (cardData.type === 'reinforcements') {
                 card = this.createReinforcementsCard(x, y);
             } else if (cardData.type === 'peasantPromoSkip') {
@@ -975,8 +978,9 @@ class UpgradeScene extends Phaser.Scene {
         const maxLevel = 5;
         const isMaxLevel = currentLevel >= maxLevel;
 
-        // Check requirements: horseman must be unlocked
-        const horsemanUnlocked = this.saveData.upgrades.horseman.unlocked;
+        // Check requirements: horseman must be Lv.6+
+        const horsemanLevel = this.saveData.upgrades.horseman.level;
+        const requirementMet = horsemanLevel >= 6;
 
         const xp = this.saveData.xp || 0;
         // Cost: 10, 20, 30, 40, 50 XP per level
@@ -1028,14 +1032,14 @@ class UpgradeScene extends Phaser.Scene {
                 fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(maxText);
-        } else if (!horsemanUnlocked) {
+        } else if (!requirementMet) {
             // Requirements not met
             const reqTitle = this.add.text(0, 100, 'Requirements:', {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(reqTitle);
 
-            const req1 = this.add.text(0, 125, '✗ Unlock Horseman first', {
+            const req1 = this.add.text(0, 125, `✗ Horseman Lv.6 (current: ${horsemanLevel})`, {
                 fontSize: '14px', fontFamily: 'Arial', color: '#ff8888'
             }).setOrigin(0.5);
             card.add(req1);
@@ -1071,6 +1075,114 @@ class UpgradeScene extends Phaser.Scene {
 
             // Show notification and refresh scene (staying at current card)
             this.showUpgradeNotification(`Horseman Shield → Level ${currentLevel + 1}`);
+        }
+    }
+
+    createPeasantShieldCard(x, y) {
+        const card = this.add.container(x, y);
+
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const currentLevel = specialUpgrades.peasantShield || 0;
+        const maxLevel = 5;
+        const isMaxLevel = currentLevel >= maxLevel;
+
+        // Check requirements: peasant must be Lv.6+
+        const peasantLevel = this.saveData.upgrades.peasant.level;
+        const requirementMet = peasantLevel >= 6;
+
+        const xp = this.saveData.xp || 0;
+        // Cost: 8, 16, 24, 32, 40 XP per level (cheaper than horseman)
+        const costs = [8, 16, 24, 32, 40];
+        const cost = costs[currentLevel] || 40;
+
+        // Background - sized for slider with tan/brown border (peasant colors)
+        const bg = this.add.rectangle(0, 0, 260, 380, isMaxLevel ? 0x2a4a4a : 0x3a3a2a);
+        bg.setStrokeStyle(3, isMaxLevel ? 0x88ffff : 0xD4A855);
+        card.add(bg);
+
+        // Shield icon at top
+        const iconText = this.add.text(0, -120, '🛡️', {
+            fontSize: '60px'
+        }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -55, 'PEASANT\nSHIELD', {
+            fontSize: '22px',
+            fontFamily: 'Arial',
+            color: '#D4A855',
+            fontStyle: 'bold',
+            align: 'center'
+        }).setOrigin(0.5);
+        card.add(cardTitle);
+
+        // Level display
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        // Current bonus
+        const bonusPercent = currentLevel * 8; // 8% per level
+        const bonusText = this.add.text(0, 30, `Damage reduction: ${bonusPercent}%`, {
+            fontSize: '16px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0.5);
+        card.add(bonusText);
+
+        // Description
+        const desc = this.add.text(0, 60, '+8% per level\n(visual shield added)', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa', align: 'center'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(maxText);
+        } else if (!requirementMet) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 100, 'Requirements:', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const req1 = this.add.text(0, 125, `✗ Peasant Lv.6 (current: ${peasantLevel})`, {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ff8888'
+            }).setOrigin(0.5);
+            card.add(req1);
+        } else {
+            // Can purchase
+            const canAfford = xp >= cost;
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                this.purchasePeasantShield(cost);
+            }, canAfford, 150, 55);
+            card.add(btn);
+        }
+
+        return card;
+    }
+
+    purchasePeasantShield(cost) {
+        if (!this.sessionValid) {
+            this.showSessionError();
+            return;
+        }
+        if (this.upgradeThrottled) return;
+        const currentLevel = this.saveData.specialUpgrades?.peasantShield || 0;
+        if (currentLevel >= 5) return;
+
+        if (this.saveData.xp >= cost) {
+            this.saveData.xp -= cost;
+            if (!this.saveData.specialUpgrades) {
+                this.saveData.specialUpgrades = {};
+            }
+            this.saveData.specialUpgrades.peasantShield = currentLevel + 1;
+            saveSystem.save(this.saveData);
+            this.syncToCloud();
+
+            // Show notification and refresh scene (staying at current card)
+            this.showUpgradeNotification(`Peasant Shield → Level ${currentLevel + 1}`);
         }
     }
 
@@ -1258,6 +1370,177 @@ class UpgradeScene extends Phaser.Scene {
         }
     }
 
+    // Production Cost card - requires Mining Speed at same level
+    createProductionCostCard(x, y) {
+        const card = this.add.container(x, y);
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const currentLevel = specialUpgrades.productionCost || 0;
+        const maxLevel = 10;
+        const isMaxLevel = currentLevel >= maxLevel;
+        const xp = this.saveData.xp || 0;
+        const costPerLevel = 3;
+        const cost = costPerLevel * (currentLevel + 1);
+
+        // Check if mining speed (goldIncome) is ahead - need goldIncome > productionCost level
+        const miningSpeedLevel = this.saveData.castleUpgrades?.goldIncome || 1;
+        // To upgrade productionCost to level N+1, need miningSpeed at N+1 or higher
+        const requirementMet = miningSpeedLevel > currentLevel;
+
+        // Background
+        const bgColor = isMaxLevel ? 0x2a4a2a : 0x2a2a4a;
+        const borderColor = isMaxLevel ? 0x88ff88 : 0x6688ff;
+        const bg = this.add.rectangle(0, 0, 260, 380, bgColor);
+        bg.setStrokeStyle(3, borderColor);
+        card.add(bg);
+
+        // Icon
+        const iconText = this.add.text(0, -120, '💎', { fontSize: '60px' }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -50, 'PRODUCTION\nCOST', {
+            fontSize: '22px', fontFamily: 'Arial', color: '#6688ff',
+            fontStyle: 'bold', align: 'center'
+        }).setOrigin(0.5);
+        card.add(cardTitle);
+
+        // Level display
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        // Current bonus
+        const bonusPercent = currentLevel * 5;
+        const bonusText = this.add.text(0, 30, `Current: -${bonusPercent}% cost`, {
+            fontSize: '16px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0.5);
+        card.add(bonusText);
+
+        // Description
+        const desc = this.add.text(0, 60, '-5% unit cost per level', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(maxText);
+        } else if (!requirementMet) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 100, 'Requirements:', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const req1 = this.add.text(0, 125, `✗ Mining Speed Lv.${currentLevel + 1}+ (current: ${miningSpeedLevel})`, {
+                fontSize: '12px', fontFamily: 'Arial', color: '#ff8888'
+            }).setOrigin(0.5);
+            card.add(req1);
+        } else {
+            const canAfford = xp >= cost;
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                this.purchaseMultiLevelUpgrade('productionCost', cost, maxLevel);
+            }, canAfford, 150, 55);
+            card.add(btn);
+        }
+
+        return card;
+    }
+
+    // Unit Speed card - requires all units at Lv.6
+    createUnitSpeedCard(x, y) {
+        const card = this.add.container(x, y);
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const currentLevel = specialUpgrades.unitSpeed || 0;
+        const maxLevel = 10;
+        const isMaxLevel = currentLevel >= maxLevel;
+        const xp = this.saveData.xp || 0;
+        const costPerLevel = 3;
+        const cost = costPerLevel * (currentLevel + 1);
+
+        // Check if all units are at Lv.6+
+        const peasantLevel = this.saveData.upgrades.peasant.level;
+        const archerLevel = this.saveData.upgrades.archer.level;
+        const horsemanLevel = this.saveData.upgrades.horseman.level;
+        const horsemanUnlocked = this.saveData.upgrades.horseman.unlocked;
+
+        // All units must be Lv.6+ (horseman only counts if unlocked)
+        const requirementMet = peasantLevel >= 6 && archerLevel >= 6 &&
+            (!horsemanUnlocked || horsemanLevel >= 6);
+
+        // Background
+        const bgColor = isMaxLevel ? 0x2a4a2a : 0x2a2a4a;
+        const borderColor = isMaxLevel ? 0x88ff88 : 0x6688ff;
+        const bg = this.add.rectangle(0, 0, 260, 380, bgColor);
+        bg.setStrokeStyle(3, borderColor);
+        card.add(bg);
+
+        // Icon
+        const iconText = this.add.text(0, -120, '💨', { fontSize: '60px' }).setOrigin(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -50, 'UNIT\nSPEED', {
+            fontSize: '22px', fontFamily: 'Arial', color: '#6688ff',
+            fontStyle: 'bold', align: 'center'
+        }).setOrigin(0.5);
+        card.add(cardTitle);
+
+        // Level display
+        const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+            fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+        }).setOrigin(0.5);
+        card.add(levelText);
+
+        // Current bonus
+        const bonusPercent = currentLevel * 5;
+        const bonusText = this.add.text(0, 30, `Current: +${bonusPercent}% speed`, {
+            fontSize: '16px', fontFamily: 'Arial', color: '#88ff88'
+        }).setOrigin(0.5);
+        card.add(bonusText);
+
+        // Description
+        const desc = this.add.text(0, 60, '+5% unit speed per level', {
+            fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+        }).setOrigin(0.5);
+        card.add(desc);
+
+        if (isMaxLevel) {
+            const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(maxText);
+        } else if (!requirementMet) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 95, 'Requires all units Lv.6:', {
+                fontSize: '12px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const peasantOk = peasantLevel >= 6 ? '✓' : '✗';
+            const archerOk = archerLevel >= 6 ? '✓' : '✗';
+            const horsemanOk = !horsemanUnlocked || horsemanLevel >= 6 ? '✓' : '✗';
+
+            const reqs = this.add.text(0, 125,
+                `${peasantOk} Peasant: ${peasantLevel}  ${archerOk} Archer: ${archerLevel}\n${horsemanOk} Horseman: ${horsemanUnlocked ? horsemanLevel : 'N/A'}`, {
+                fontSize: '12px', fontFamily: 'Arial',
+                color: '#ff8888', align: 'center'
+            }).setOrigin(0.5);
+            card.add(reqs);
+        } else {
+            const canAfford = xp >= cost;
+            const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                this.purchaseMultiLevelUpgrade('unitSpeed', cost, maxLevel);
+            }, canAfford, 150, 55);
+            card.add(btn);
+        }
+
+        return card;
+    }
+
     // Reinforcements 5-level card
     createReinforcementsCard(x, y) {
         const card = this.add.container(x, y);
@@ -1269,6 +1552,13 @@ class UpgradeScene extends Phaser.Scene {
         // Cost: 15, 25, 35, 45, 55 XP per level
         const costs = [15, 25, 35, 45, 55];
         const cost = costs[currentLevel] || 55;
+
+        // Check if rank is Commander or higher
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        const rankOrder = ['Recruit', 'Soldier', 'Warrior', 'Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+        const currentRankIndex = rankOrder.indexOf(rankInfo.rank.name);
+        const commanderIndex = rankOrder.indexOf('Commander');
+        const requirementMet = currentRankIndex >= commanderIndex;
 
         // Background
         const bg = this.add.rectangle(0, 0, 260, 380, isMaxLevel ? 0x2a4a2a : 0x3a2a3a);
@@ -1326,6 +1616,17 @@ class UpgradeScene extends Phaser.Scene {
                 fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(maxText);
+        } else if (!requirementMet) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 105, 'Requirements:', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const req1 = this.add.text(0, 130, `✗ Commander rank (current: ${rankInfo.rank.name})`, {
+                fontSize: '12px', fontFamily: 'Arial', color: '#ff8888'
+            }).setOrigin(0.5);
+            card.add(req1);
         } else {
             const canAfford = xp >= cost;
             const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
@@ -1436,6 +1737,10 @@ class UpgradeScene extends Phaser.Scene {
         const isPurchased = this.saveData.specialUpgrades?.castleEmergency || false;
         const cost = 30; // XP cost
 
+        // Check if castle health is Lv.6+ (required to unlock)
+        const castleHealthLevel = this.saveData.castleUpgrades?.health || 1;
+        const requirementMet = castleHealthLevel >= 6;
+
         // Background - red/orange theme for emergency
         const bg = this.add.rectangle(0, 0, 260, 380, 0x3a1a1a);
         bg.setStrokeStyle(3, isPurchased ? 0xffd700 : 0xff4400);
@@ -1462,6 +1767,17 @@ class UpgradeScene extends Phaser.Scene {
                 fontSize: '24px', fontFamily: 'Arial', color: '#88ff88', fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(owned);
+        } else if (!requirementMet) {
+            // Requirements not met
+            const reqTitle = this.add.text(0, 100, 'Requirements:', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#ffaa00', fontStyle: 'bold'
+            }).setOrigin(0.5);
+            card.add(reqTitle);
+
+            const req1 = this.add.text(0, 125, `✗ Castle Health Lv.6 (current: ${castleHealthLevel})`, {
+                fontSize: '12px', fontFamily: 'Arial', color: '#ff8888'
+            }).setOrigin(0.5);
+            card.add(req1);
         } else {
             const canAfford = xp >= cost;
             const btn = this.createCardButton(0, 110, `Unlock\n${cost} XP`, () => {
