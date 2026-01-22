@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.29)
+## Recent Updates (v1.38.30)
+
+### v1.38.30
+- **Warlord Ability**: Battle Charge now only boosts speed (+50%), removed damage boost
 
 ### v1.38.29
 - **Audio**: New hero ability activation sound (power-up with magical shimmer)
@@ -379,4 +382,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.29)*
+*Last updated: January 2026 (v1.38.30)*

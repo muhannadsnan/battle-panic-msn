@@ -1147,7 +1147,7 @@ class GameScene extends Phaser.Scene {
             audioManager.playHeroAbility();
         }
 
-        this.showMessage('BATTLE CHARGE! +50% Speed, +25% Damage for 8s', '#ff4444');
+        this.showMessage('BATTLE CHARGE! +50% Speed for 8s', '#ff4444');
 
         // End ability after duration
         this.time.delayedCall(this.hero.abilityDuration, () => {

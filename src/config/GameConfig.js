@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.38.29';
+const GAME_VERSION = 'v1.38.30';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -287,10 +287,9 @@ const HERO_TYPES = {
         productionSpeedBonus: 0.15,   // -15% production time
         // Wave 20 ability
         abilityName: 'Battle Charge',
-        abilityDescription: 'All units gain speed and damage',
+        abilityDescription: 'All units gain speed',
         abilityWave: 20,
         abilitySpeedBoost: 0.50,      // +50% speed
-        abilityDamageBoost: 0.25,     // +25% damage
         abilityDuration: 8000         // 8 seconds
     },
     ALCHEMIST: {
