@@ -3014,9 +3014,9 @@ Lv.${level + 1}`;
         // Check if there's a tip for this wave
         const tip = this.getWaveTip(waveNumber);
 
-        // Skip tips for experienced players (Commander I and above)
+        // Skip tips for experienced players (Knight and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const experiencedRanks = ['Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+        const experiencedRanks = ['Knight', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
         const isExperienced = experiencedRanks.includes(rankInfo.rank.name);
 
         if (tip && !isExperienced) {

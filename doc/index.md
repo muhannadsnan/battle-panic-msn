@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.19)
+## Recent Updates (v1.38.23)
+
+### v1.38.23
+- **Wave Tips**: Now skip for Knight rank and above (was Commander+)
 
 ### v1.38.19
 - **Game Over Screen**: Dark overlay (0.2 opacity) and bold font for "Castle Destroyed" message
@@ -353,4 +356,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.19)*
+*Last updated: January 2026 (v1.38.23)*
