@@ -1359,6 +1359,13 @@ class GameScene extends Phaser.Scene {
         hitArea.on('pointerover', () => {
             // Block if another interaction is active
             if (this.activeInteraction && this.activeInteraction !== 'castle') return;
+
+            // Don't show spinner if at max level and no repair needed
+            const currentLevel = this.castleLevel || 1;
+            const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
+            const isMaxLevel = currentLevel >= effectiveMaxLevel;
+            if (isMaxLevel && !this.needsRepair()) return;
+
             this.activeInteraction = 'castle';
             this.castleUpgradeHovering = true;
             this.castleHoverStartTime = Date.now(); // Record when hover started

@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.24)
+## Recent Updates (v1.38.25)
+
+### v1.38.25
+- **Castle Upgrade**: Spinner no longer shows on hover when castle is at max level
 
 ### v1.38.24
 - **Bug Fix**: Hero ability now unlocks correctly at wave 20
@@ -359,4 +362,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.24)*
+*Last updated: January 2026 (v1.38.25)*
