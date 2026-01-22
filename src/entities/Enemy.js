@@ -39,12 +39,23 @@ class Enemy extends Phaser.GameObjects.Container {
 
         const waveSpeedMultiplier = 1 + (waveNumber - 1) * 0.015; // Slight speed increase
 
+        // Rank-based scaling: +5% HP and damage per primary rank (Recruit = 0%)
+        let rankMultiplier = 1;
+        if (scene.saveData && typeof saveSystem !== 'undefined') {
+            const rankInfo = saveSystem.getRankInfo(scene.saveData);
+            const rankOrder = ['Recruit', 'Soldier', 'Warrior', 'Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+            const rankIndex = rankOrder.indexOf(rankInfo.rank.name);
+            if (rankIndex > 0) {
+                rankMultiplier = 1 + (rankIndex * 0.05); // +5% per rank after Recruit
+            }
+        }
+
         this.isBoss = baseStats.isBoss || false;
 
         // Apply boss multipliers - scales with boss number!
         // Boss 1 (wave 10) = 1x, Boss 2 (wave 20) = 2x, Boss 3 (wave 30) = 3x, etc.
-        let healthMult = waveHealthMultiplier;
-        let damageMult = waveDamageMultiplier;
+        let healthMult = waveHealthMultiplier * rankMultiplier;
+        let damageMult = waveDamageMultiplier * rankMultiplier;
         let sizeMult = 1;
 
         let attackSpeedMult = 1;

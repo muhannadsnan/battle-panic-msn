@@ -142,7 +142,13 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.25)
+## Recent Updates (v1.38.26)
+
+### v1.38.26
+- **Rank-Based Difficulty**: Enemies gain +5% HP and damage per primary rank
+  - Recruit: baseline, Soldier: +5%, Warrior: +10%, Knight: +15%
+  - Captain: +20%, Commander: +25%, General: +30%
+  - Champion: +35%, Legend: +40%, Immortal: +45%
 
 ### v1.38.25
 - **Castle Upgrade**: Spinner no longer shows on hover when castle is at max level
@@ -362,4 +368,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.25)*
+*Last updated: January 2026 (v1.38.26)*
