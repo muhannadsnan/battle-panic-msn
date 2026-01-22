@@ -96,26 +96,39 @@ class SupabaseClient {
     }
 
     // Send magic link to email
-    async sendMagicLink(email) {
+    async sendMagicLink(email, action = null) {
         if (!this.initialized) {
             return { success: false, error: 'Supabase not initialized' };
         }
 
         try {
+            let redirectUrl = window.location.origin + '/callback.html';
+            if (action) {
+                redirectUrl += '?action=' + action;
+            }
+
             const { data, error } = await this.supabase.auth.signInWithOtp({
                 email: email,
                 options: {
-                    emailRedirectTo: window.location.origin + '/callback.html'
+                    emailRedirectTo: redirectUrl
                 }
             });
 
             if (error) throw error;
 
-            return { success: true, message: 'Check your email for the login link!' };
+            return { success: true, message: 'Check your email for the verification link!' };
         } catch (error) {
             console.error('Magic link error:', error);
             return { success: false, error: error.message };
         }
+    }
+
+    // Send delete account verification link
+    async sendDeleteVerification() {
+        if (!this.user) {
+            return { success: false, error: 'Not logged in' };
+        }
+        return this.sendMagicLink(this.user.email, 'delete_account');
     }
 
     // Get current user

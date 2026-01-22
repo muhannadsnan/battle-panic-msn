@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.30)
+## Recent Updates (v1.38.31)
+
+### v1.38.31
+- **Security**: Delete account now requires magic link verification for logged-in users
 
 ### v1.38.30
 - **Warlord Ability**: Battle Charge now only boosts speed (+50%), removed damage boost
@@ -382,4 +385,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.30)*
+*Last updated: January 2026 (v1.38.31)*

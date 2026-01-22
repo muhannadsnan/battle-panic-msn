@@ -65,6 +65,20 @@
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // Check for delete account action
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+
+        if (action === 'delete_account') {
+            // Set flag for delete verification
+            localStorage.setItem('bp_delete_verified', 'true');
+            document.querySelector('.icon').textContent = '⚠️';
+            document.querySelector('h1').textContent = 'Delete Verified';
+            document.querySelector('h1').style.color = '#ff6666';
+            document.querySelector('.container').style.borderColor = '#ff6666';
+            document.querySelector('p').innerHTML = 'Account deletion verified.<br>Return to the game to complete deletion.';
+        }
+
         // The session is automatically processed from the URL hash by Supabase
         // Just need to wait a moment for it to complete, then close
         setTimeout(() => {

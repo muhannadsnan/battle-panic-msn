@@ -11,6 +11,9 @@ class MenuScene extends Phaser.Scene {
         // Prevent input during scene transitions
         this.transitioning = false;
 
+        // Check for pending delete account verification
+        this.checkPendingDeleteVerification();
+
         // Hide default cursor
         this.input.setDefaultCursor('none');
 
@@ -2129,6 +2132,99 @@ class MenuScene extends Phaser.Scene {
     confirmDeleteAccount(parentDialog) {
         parentDialog.destroy();
 
+        // Check if user is logged in - require magic link verification
+        const isLoggedIn = typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn();
+
+        if (isLoggedIn) {
+            this.showDeleteVerificationDialog();
+        } else {
+            this.showDeleteConfirmDialog();
+        }
+    }
+
+    showDeleteVerificationDialog() {
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+        overlay.setInteractive();
+        dialog.add(overlay);
+
+        const panel = this.add.rectangle(0, 0, 380, 220, 0x2a2a3e);
+        panel.setStrokeStyle(3, 0x8B0000);
+        dialog.add(panel);
+
+        const title = this.add.text(0, -70, 'VERIFY DELETE', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        const info = this.add.text(0, -15, 'For security, we\'ll send a verification\nemail to confirm account deletion.', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center'
+        }).setOrigin(0.5);
+        dialog.add(info);
+
+        // Send verification button
+        const sendBtn = this.add.text(-80, 60, 'SEND EMAIL', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        sendBtn.setInteractive({ useHandCursor: true });
+        dialog.add(sendBtn);
+
+        sendBtn.on('pointerover', () => sendBtn.setColor('#ff6666'));
+        sendBtn.on('pointerout', () => sendBtn.setColor('#ff4444'));
+        sendBtn.on('pointerdown', async () => {
+            sendBtn.setText('SENDING...');
+            sendBtn.disableInteractive();
+
+            const result = await supabaseClient.sendDeleteVerification();
+
+            if (result.success) {
+                info.setText('Verification email sent!\nClick the link, then return here.');
+                info.setColor('#44ff44');
+                sendBtn.setText('EMAIL SENT');
+            } else {
+                info.setText('Failed to send email.\nPlease try again.');
+                info.setColor('#ff6666');
+                sendBtn.setText('SEND EMAIL');
+                sendBtn.setInteractive({ useHandCursor: true });
+            }
+        });
+
+        // Cancel button
+        const cancelBtn = this.add.text(80, 60, 'CANCEL', {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#44ff44',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        cancelBtn.setInteractive({ useHandCursor: true });
+        dialog.add(cancelBtn);
+
+        cancelBtn.on('pointerover', () => cancelBtn.setColor('#66ff66'));
+        cancelBtn.on('pointerout', () => cancelBtn.setColor('#44ff44'));
+        cancelBtn.on('pointerdown', () => {
+            dialog.destroy();
+        });
+
+        dialog.setDepth(1001);
+    }
+
+    showDeleteConfirmDialog() {
         const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
 
         const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
@@ -2180,9 +2276,8 @@ class MenuScene extends Phaser.Scene {
         deleteBtn.on('pointerover', () => deleteBtn.setColor('#ff6666'));
         deleteBtn.on('pointerout', () => deleteBtn.setColor('#ff4444'));
         deleteBtn.on('pointerdown', () => {
-            saveSystem.resetAccount();
+            this.executeAccountDeletion();
             dialog.destroy();
-            this.scene.restart();
         });
 
         // Cancel button
@@ -2204,6 +2299,91 @@ class MenuScene extends Phaser.Scene {
         });
 
         dialog.setDepth(1001);
+    }
+
+    checkPendingDeleteVerification() {
+        const deleteVerified = localStorage.getItem('bp_delete_verified');
+        if (deleteVerified === 'true') {
+            localStorage.removeItem('bp_delete_verified');
+            // Show final confirmation after magic link verification
+            this.time.delayedCall(500, () => {
+                this.showVerifiedDeleteDialog();
+            });
+        }
+    }
+
+    showVerifiedDeleteDialog() {
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+        overlay.setInteractive();
+        dialog.add(overlay);
+
+        const panel = this.add.rectangle(0, 0, 380, 200, 0x2a2a3e);
+        panel.setStrokeStyle(3, 0x8B0000);
+        dialog.add(panel);
+
+        const title = this.add.text(0, -60, 'EMAIL VERIFIED', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        const info = this.add.text(0, -10, 'Click DELETE to permanently reset\nyour account to Recruit I.', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center'
+        }).setOrigin(0.5);
+        dialog.add(info);
+
+        // Delete button
+        const deleteBtn = this.add.text(-70, 60, 'DELETE', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff4444',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        deleteBtn.setInteractive({ useHandCursor: true });
+        dialog.add(deleteBtn);
+
+        deleteBtn.on('pointerover', () => deleteBtn.setColor('#ff6666'));
+        deleteBtn.on('pointerout', () => deleteBtn.setColor('#ff4444'));
+        deleteBtn.on('pointerdown', () => {
+            this.executeAccountDeletion();
+            dialog.destroy();
+        });
+
+        // Cancel button
+        const cancelBtn = this.add.text(70, 60, 'CANCEL', {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#44ff44',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        cancelBtn.setInteractive({ useHandCursor: true });
+        dialog.add(cancelBtn);
+
+        cancelBtn.on('pointerover', () => cancelBtn.setColor('#66ff66'));
+        cancelBtn.on('pointerout', () => cancelBtn.setColor('#44ff44'));
+        cancelBtn.on('pointerdown', () => {
+            dialog.destroy();
+        });
+
+        dialog.setDepth(1001);
+    }
+
+    executeAccountDeletion() {
+        saveSystem.resetAccount();
+        this.scene.restart();
     }
 
     showTipsPanel() {
