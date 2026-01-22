@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.31)
+## Recent Updates (v1.38.32)
+
+### v1.38.32
+- **Upgrades**: Castle Extension moved next to Castle Health, locked until Castle Health Lv.5
 
 ### v1.38.31
 - **Security**: Delete account now requires magic link verification for logged-in users
@@ -385,4 +388,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.31)*
+*Last updated: January 2026 (v1.38.32)*

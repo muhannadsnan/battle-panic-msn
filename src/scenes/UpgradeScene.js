@@ -58,6 +58,7 @@ class UpgradeScene extends Phaser.Scene {
             { type: 'unit', unitType: 'ARCHER' },
             { type: 'unit', unitType: 'HORSEMAN' },
             { type: 'castle', upgrade: { key: 'health', name: 'Castle Health', desc: '+20 HP, +20/wave at L2+', icon: '❤️' } },
+            { type: 'castleExtension' },
             { type: 'castle', upgrade: { key: 'armor', name: 'Castle Armor', desc: '-5% damage taken', icon: '🛡️' } },
             { type: 'castle', upgrade: { key: 'goldIncome', name: 'Mining Speed', desc: '+10% mining speed', icon: '💰' } },
             { type: 'special' },
@@ -70,7 +71,6 @@ class UpgradeScene extends Phaser.Scene {
             { type: 'peasantPromoSkip' },
             { type: 'archerPromoSkip' },
             { type: 'horsemanPromoSkip' },
-            { type: 'castleExtension' },
             { type: 'castleEmergency' },
             { type: 'smarterUnits' }
         ];
@@ -109,7 +109,7 @@ class UpgradeScene extends Phaser.Scene {
             } else if (cardData.type === 'horsemanPromoSkip') {
                 card = this.createPromoSkipCard(x, y, 'horseman', '🐴', 0x8B4513);
             } else if (cardData.type === 'castleExtension') {
-                card = this.createMultiLevelCard(x, y, 'castleExtension', '🏰', 'CASTLE\nEXTENSION', '+5 max level', 10, 5);
+                card = this.createCastleExtensionCard(x, y);
             } else if (cardData.type === 'castleEmergency') {
                 card = this.createCastleEmergencyCard(x, y);
             } else if (cardData.type === 'smarterUnits') {
@@ -1075,6 +1075,93 @@ class UpgradeScene extends Phaser.Scene {
     }
 
     // Generic multi-level upgrade card
+    createCastleExtensionCard(x, y) {
+        const card = this.add.container(x, y);
+        const specialUpgrades = this.saveData.specialUpgrades || {};
+        const currentLevel = specialUpgrades.castleExtension || 0;
+        const maxLevel = 10;
+        const costPerLevel = 5;
+        const isMaxLevel = currentLevel >= maxLevel;
+        const xp = this.saveData.xp || 0;
+        const cost = costPerLevel * (currentLevel + 1);
+
+        // Check if castle health is level 5+ (required to unlock)
+        const castleHealthLevel = this.saveData.castleUpgrades?.health || 1;
+        const isLocked = castleHealthLevel < 5;
+
+        // Background
+        const bgColor = isLocked ? 0x1a1a2a : (isMaxLevel ? 0x2a4a2a : 0x2a2a4a);
+        const borderColor = isLocked ? 0x444466 : (isMaxLevel ? 0x88ff88 : 0x6688ff);
+        const bg = this.add.rectangle(0, 0, 260, 380, bgColor);
+        bg.setStrokeStyle(3, borderColor);
+        card.add(bg);
+
+        // Icon
+        const iconText = this.add.text(0, -120, '🏰', { fontSize: '60px' }).setOrigin(0.5);
+        if (isLocked) iconText.setAlpha(0.5);
+        card.add(iconText);
+
+        // Title
+        const cardTitle = this.add.text(0, -50, 'CASTLE\nEXTENSION', {
+            fontSize: '22px', fontFamily: 'Arial', color: isLocked ? '#666688' : '#6688ff',
+            fontStyle: 'bold', align: 'center'
+        }).setOrigin(0.5);
+        card.add(cardTitle);
+
+        if (isLocked) {
+            // Lock icon
+            const lockIcon = this.add.text(0, 20, '🔒', { fontSize: '40px' }).setOrigin(0.5);
+            card.add(lockIcon);
+
+            // Requirement text
+            const reqText = this.add.text(0, 80, 'Requires:\nCastle Health Lv.5', {
+                fontSize: '16px', fontFamily: 'Arial', color: '#ff8888',
+                align: 'center'
+            }).setOrigin(0.5);
+            card.add(reqText);
+
+            // Current castle health
+            const currentText = this.add.text(0, 130, `Current: Lv.${castleHealthLevel}`, {
+                fontSize: '14px', fontFamily: 'Arial', color: '#888888'
+            }).setOrigin(0.5);
+            card.add(currentText);
+        } else {
+            // Level display
+            const levelText = this.add.text(0, 0, `Level ${currentLevel}/${maxLevel}`, {
+                fontSize: '20px', fontFamily: 'Arial', color: '#ffffff'
+            }).setOrigin(0.5);
+            card.add(levelText);
+
+            // Current bonus
+            const bonusLevels = currentLevel * 5;
+            const bonusText = this.add.text(0, 30, `Current: +${bonusLevels} max levels`, {
+                fontSize: '16px', fontFamily: 'Arial', color: '#88ff88'
+            }).setOrigin(0.5);
+            card.add(bonusText);
+
+            // Description
+            const desc = this.add.text(0, 60, '+5 max castle level per upgrade', {
+                fontSize: '14px', fontFamily: 'Arial', color: '#aaaaaa'
+            }).setOrigin(0.5);
+            card.add(desc);
+
+            if (isMaxLevel) {
+                const maxText = this.add.text(0, 120, 'MAX LEVEL', {
+                    fontSize: '24px', fontFamily: 'Arial', color: '#ffd700', fontStyle: 'bold'
+                }).setOrigin(0.5);
+                card.add(maxText);
+            } else {
+                const canAfford = xp >= cost;
+                const btn = this.createCardButton(0, 120, `Upgrade\n${cost} XP`, () => {
+                    this.purchaseMultiLevelUpgrade('castleExtension', cost, maxLevel);
+                }, canAfford, 150, 55);
+                card.add(btn);
+            }
+        }
+
+        return card;
+    }
+
     createMultiLevelCard(x, y, upgradeKey, icon, title, description, maxLevel, costPerLevel) {
         const card = this.add.container(x, y);
         const specialUpgrades = this.saveData.specialUpgrades || {};
