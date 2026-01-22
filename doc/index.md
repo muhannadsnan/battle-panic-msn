@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.27)
+## Recent Updates (v1.38.28)
+
+### v1.38.28
+- **Hero Ability Glow**: Only glows when ready, stops during cooldown
 
 ### v1.38.27
 - **Hero Ability Visual**: Blue circle effect with pulse animation
@@ -372,4 +375,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.27)*
+*Last updated: January 2026 (v1.38.28)*

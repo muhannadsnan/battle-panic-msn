@@ -1053,6 +1053,7 @@ class GameScene extends Phaser.Scene {
         this.heroAbilityReady = false;
         this.heroAbilityTimer = 0;  // Reset cooldown timer
         this.input.setDefaultCursor('default');
+        this.stopHeroAbilityGlow();  // Stop glow during cooldown
 
         // Create visual effect and deal damage
         this.createHeroAbilityEffect(x, y);
@@ -1123,6 +1124,7 @@ class GameScene extends Phaser.Scene {
         this.heroAbilityReady = false;
         this.heroAbilityTimer = 0;  // Reset cooldown timer
         this.heroAbilityActive = true;
+        this.stopHeroAbilityGlow();  // Stop glow during cooldown
 
         // Visual effect - red pulse on all units
         this.units.getChildren().forEach(unit => {
@@ -1246,6 +1248,14 @@ class GameScene extends Phaser.Scene {
             yoyo: true,
             repeat: -1
         });
+    }
+
+    stopHeroAbilityGlow() {
+        if (this.heroAbilityGlow) {
+            this.tweens.killTweensOf(this.heroAbilityGlow);
+            this.heroAbilityGlow.destroy();
+            this.heroAbilityGlow = null;
+        }
     }
 
     createCastleUpgradeZone() {
