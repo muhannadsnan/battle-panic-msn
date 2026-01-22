@@ -877,12 +877,12 @@ class UpgradeScene extends Phaser.Scene {
         const specialUpgrades = this.saveData.specialUpgrades || {};
         const hasEliteDiscount = specialUpgrades.eliteDiscount || false;
 
-        // Check requirements: all units must be level 5+
+        // Check requirements: all units must be level 6+
         const peasantLevel = this.saveData.upgrades.peasant.level;
         const archerLevel = this.saveData.upgrades.archer.level;
         const horsemanLevel = this.saveData.upgrades.horseman.level;
         const horsemanUnlocked = this.saveData.upgrades.horseman.unlocked;
-        const allUnitsLevel5 = peasantLevel >= 5 && archerLevel >= 5 && horsemanUnlocked && horsemanLevel >= 5;
+        const allUnitsLevel6 = peasantLevel >= 6 && archerLevel >= 6 && horsemanUnlocked && horsemanLevel >= 6;
 
         const xp = this.saveData.xp || 0;
         const eliteDiscountCost = 50;
@@ -926,7 +926,7 @@ class UpgradeScene extends Phaser.Scene {
                 fontStyle: 'bold'
             }).setOrigin(0.5);
             card.add(unlockedText);
-        } else if (!allUnitsLevel5) {
+        } else if (!allUnitsLevel6) {
             // Requirements not met
             const reqTitle = this.add.text(0, 60, 'Requirements:', {
                 fontSize: '14px',
@@ -936,20 +936,20 @@ class UpgradeScene extends Phaser.Scene {
             }).setOrigin(0.5);
             card.add(reqTitle);
 
-            const peasantStatus = peasantLevel >= 5 ? '✓' : '✗';
-            const archerStatus = archerLevel >= 5 ? '✓' : '✗';
-            const horsemanStatus = (horsemanUnlocked && horsemanLevel >= 5) ? '✓' : '✗';
-            const peasantColor = peasantLevel >= 5 ? '#88ff88' : '#ff8888';
-            const archerColor = archerLevel >= 5 ? '#88ff88' : '#ff8888';
-            const horsemanColor = (horsemanUnlocked && horsemanLevel >= 5) ? '#88ff88' : '#ff8888';
+            const peasantStatus = peasantLevel >= 6 ? '✓' : '✗';
+            const archerStatus = archerLevel >= 6 ? '✓' : '✗';
+            const horsemanStatus = (horsemanUnlocked && horsemanLevel >= 6) ? '✓' : '✗';
+            const peasantColor = peasantLevel >= 6 ? '#88ff88' : '#ff8888';
+            const archerColor = archerLevel >= 6 ? '#88ff88' : '#ff8888';
+            const horsemanColor = (horsemanUnlocked && horsemanLevel >= 6) ? '#88ff88' : '#ff8888';
 
-            const req1 = this.add.text(0, 85, `${peasantStatus} Peasant L${peasantLevel}/5`, {
+            const req1 = this.add.text(0, 85, `${peasantStatus} Peasant L${peasantLevel}/6`, {
                 fontSize: '14px', fontFamily: 'Arial', color: peasantColor
             }).setOrigin(0.5);
-            const req2 = this.add.text(0, 105, `${archerStatus} Archer L${archerLevel}/5`, {
+            const req2 = this.add.text(0, 105, `${archerStatus} Archer L${archerLevel}/6`, {
                 fontSize: '14px', fontFamily: 'Arial', color: archerColor
             }).setOrigin(0.5);
-            const req3 = this.add.text(0, 125, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/5' : '🔒'}`, {
+            const req3 = this.add.text(0, 125, `${horsemanStatus} Horseman ${horsemanUnlocked ? 'L' + horsemanLevel + '/6' : '🔒'}`, {
                 fontSize: '14px', fontFamily: 'Arial', color: horsemanColor
             }).setOrigin(0.5);
             card.add(req1);

@@ -142,7 +142,10 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-## Recent Updates (v1.38.32)
+## Recent Updates (v1.38.33)
+
+### v1.38.33
+- **Upgrades**: Half Price Gold Tier now requires all units at Lv.6 (was Lv.5)
 
 ### v1.38.32
 - **Upgrades**: Castle Extension moved next to Castle Health, locked until Castle Health Lv.5
@@ -388,4 +391,4 @@ BootScene → PreloadScene → MenuScene
 
 ---
 
-*Last updated: January 2026 (v1.38.32)*
+*Last updated: January 2026 (v1.38.33)*
