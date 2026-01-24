@@ -31,6 +31,9 @@ class WaveSystem {
             waveMultiplier = 1.94 + (effectiveWave - 10) * 0.18;  // Aggressive growth
         }
 
+        // Reduce enemy counts by 10%
+        waveMultiplier *= 0.9;
+
         // Wave 1 now starts with goblins + orcs
         // Each wave scales up from there
         const goblinCount = Math.max(3, Math.floor((2 + effectiveWave * 0.6) * waveMultiplier));

@@ -109,6 +109,7 @@ Creates enemy list for a wave. Uses `effectiveWave = waveNumber + 1` for wave of
 - Wave 1-3: Gentle (0.8 - 1.1)
 - Wave 4-10: Moderate (1.1 - 1.94)
 - Wave 11+: Aggressive (1.94+)
+- All counts reduced by 10% (multiplier × 0.9)
 
 **`getRandomSpawnDirection(waveNumber)`**
 Returns spawn direction:
