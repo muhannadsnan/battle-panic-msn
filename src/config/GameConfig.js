@@ -1,5 +1,5 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.38.46';
+const GAME_VERSION = 'v1.38.47';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
 
@@ -11,8 +11,8 @@ const UNIT_TYPES = {
         name: 'Peasant',
         goldCost: 10,
         woodCost: 10,
-        health: 14,
-        damage: 4,
+        health: 4,
+        damage: 14,
         speed: 88,      // 10% faster than orcs (55)
         attackSpeed: 1000,
         range: 30,
@@ -42,8 +42,8 @@ const UNIT_TYPES = {
         name: 'Horseman',
         goldCost: 60,
         woodCost: 40,
-        health: 35,
-        damage: 14,
+        health: 39,
+        damage: 15,
         speed: 176,     // 2x faster than peasants (cavalry charge!)
         attackSpeed: 800,  // Fast attacker, gets 25% faster per promotion level
         range: 40,
