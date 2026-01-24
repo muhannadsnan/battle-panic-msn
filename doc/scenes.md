@@ -103,9 +103,10 @@ Main menu with navigation and monetization.
 Shown when tapping the rank display panel:
 - Lists all 10 rank tiers with icons and colors
 - Shows grade indicators (I, II, III) for each rank
-- Current rank highlighted with arrow (▶)
+- Current rank highlighted with large pulsing arrow (▶)
 - Current grade circled
 - Completed ranks/grades shown dimmed
+- Future ranks grayed out (including icons)
 
 ### Methods
 

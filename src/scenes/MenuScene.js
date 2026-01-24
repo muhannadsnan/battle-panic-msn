@@ -1110,15 +1110,19 @@ class MenuScene extends Phaser.Scene {
         const currentGrade = currentRankInfo.rank.grade;
 
         // Display ranks
+        const currentTierIndex = rankTiers.findIndex(t => t.name === currentRankName);
+
         rankTiers.forEach((tier, index) => {
             const y = -185 + index * 42;
             const isCurrentTier = tier.name === currentRankName;
+            const isFutureTier = index > currentTierIndex;
 
             // Arrow indicator for current rank
             if (isCurrentTier) {
                 const arrow = this.add.text(-155, y, '▶', {
-                    fontSize: '18px',
+                    fontSize: '28px',
                     fontFamily: 'Arial',
+                    fontStyle: 'bold',
                     color: tier.color
                 }).setOrigin(0.5);
                 dialog.add(arrow);
@@ -1133,12 +1137,13 @@ class MenuScene extends Phaser.Scene {
                 });
             }
 
-            // Rank icon and name
+            // Rank icon and name - future ranks are gray
+            const displayColor = isFutureTier ? '#555555' : tier.color;
             const rankText = this.add.text(-130, y, `${tier.icon} ${tier.name}`, {
                 fontSize: '20px',
                 fontFamily: 'Arial',
                 fontStyle: isCurrentTier ? 'bold' : 'normal',
-                color: tier.color,
+                color: displayColor,
                 stroke: isCurrentTier ? '#000000' : undefined,
                 strokeThickness: isCurrentTier ? 2 : 0
             }).setOrigin(0, 0.5);
@@ -1149,9 +1154,9 @@ class MenuScene extends Phaser.Scene {
                 const gradeX = 70 + gradeIndex * 35;
                 const isCurrentGrade = isCurrentTier && (gradeIndex + 1) === currentGrade;
                 const isPastGrade = isCurrentTier && (gradeIndex + 1) < currentGrade;
-                const isPastTier = rankTiers.findIndex(t => t.name === currentRankName) > index;
+                const isPastTier = currentTierIndex > index;
 
-                let gradeColor = '#444444'; // Default dim
+                let gradeColor = '#444444'; // Default dim (future)
                 if (isCurrentGrade) {
                     gradeColor = tier.color; // Current grade highlighted
                 } else if (isPastGrade || isPastTier) {
