@@ -88,7 +88,7 @@ Main menu with navigation and monetization.
 |---------|----------|--------|
 | Title "BATTLE PANIC" | Top center | Animated bounce |
 | Subtitle | Below title | Static |
-| Rank display | Center | Shows rank, grade, progress |
+| Rank display | Center | Shows rank, grade, progress. **Tap to view All Ranks** |
 | Stats display | Center | Shows highest wave |
 | PLAY button | Center | Starts GameScene |
 | UPGRADES button | Center | Opens UpgradeScene |
@@ -98,6 +98,14 @@ Main menu with navigation and monetization.
 | Buy XP ($2) | Bottom left | Disabled (Coming Soon) |
 | Buy Me a Coffee | Bottom right | Opens donation page |
 | Battlefield characters | Left & right sides | Decorative enemies/units |
+
+### All Ranks Dialog
+Shown when tapping the rank display panel:
+- Lists all 10 rank tiers with icons and colors
+- Shows grade indicators (I, II, III) for each rank
+- Current rank highlighted with arrow (▶)
+- Current grade circled
+- Completed ranks/grades shown dimmed
 
 ### Methods
 
@@ -524,7 +532,7 @@ End screen showing results and stats.
 
 ### XP Award Display
 Shows "+X XP!" with star display (max 3 stars).
-XP earned based on rank divisor (Recruit: wave/3, Soldier: wave/6, etc.)
+XP earned based on rank divisor (Recruit: wave/2, Soldier/Warrior: wave/3, Knight: wave/6, etc.)
 
 ---
 

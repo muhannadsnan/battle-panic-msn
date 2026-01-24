@@ -307,16 +307,16 @@ Returns XP divisor based on player rank (easier for new players, harder for vete
 
 | Rank | Divisor | Min Wave for 1 XP |
 |------|---------|-------------------|
-| Recruit | 3 | 3 |
-| Soldier | 6 | 6 |
-| Warrior | 9 | 9 |
-| Knight | 12 | 12 |
-| Captain | 15 | 15 |
-| Commander | 18 | 18 |
-| General | 22 | 22 |
-| Champion | 25 | 25 |
-| Legend | 28 | 28 |
-| Immortal | 31 | 31 |
+| Recruit | 2 | 2 |
+| Soldier | 3 | 3 |
+| Warrior | 3 | 3 |
+| Knight | 6 | 6 |
+| Captain | 9 | 9 |
+| Commander | 12 | 12 |
+| General | 15 | 15 |
+| Champion | 18 | 18 |
+| Legend | 21 | 21 |
+| Immortal | 24 | 24 |
 
 **`calculateSpentXP(data)`**
 Calculates total XP invested in upgrades:
@@ -492,7 +492,7 @@ GameScene.onCastleDestroyed()
 SaveSystem.updateHighScore(wave, gold, kills)
       ↓
 Awards XP: floor(wave / divisor)
-  (divisor based on rank at game START: 3-31)
+  (divisor based on rank at game START: 2-24)
   (calculated before stats update to prevent rank-jump penalty)
       ↓
 Transition to GameOverScene

@@ -976,8 +976,9 @@ class MenuScene extends Phaser.Scene {
     createRankDisplay(x, y, rankInfo) {
         const container = this.add.container(x, y);
 
-        // Prestigious background panel (no border)
+        // Prestigious background panel (clickable)
         const panelBg = this.add.rectangle(0, 40, 320, 130, 0x1a1a2e, 0.8);
+        panelBg.setInteractive({ useHandCursor: true });
         container.add(panelBg);
 
         // Rank icon and full name with grade (e.g., "⚔️ Soldier II") - PRESTIGIOUS & LARGE
@@ -1041,7 +1042,166 @@ class MenuScene extends Phaser.Scene {
             container.add(progressText);
         }
 
+        // Tap to view hint
+        const hintText = this.add.text(0, 115, 'tap to view all ranks', {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#666666'
+        }).setOrigin(0.5);
+        container.add(hintText);
+
+        // Click to show all ranks
+        panelBg.on('pointerover', () => {
+            panelBg.setFillStyle(0x2a2a4e, 0.9);
+            hintText.setColor('#888888');
+        });
+        panelBg.on('pointerout', () => {
+            panelBg.setFillStyle(0x1a1a2e, 0.8);
+            hintText.setColor('#666666');
+        });
+        panelBg.on('pointerdown', () => {
+            this.showAllRanks(rankInfo);
+        });
+
         return container;
+    }
+
+    showAllRanks(currentRankInfo) {
+        const dialog = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+        dialog.setDepth(1000);
+
+        // Overlay
+        const overlay = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.9);
+        overlay.setInteractive();
+        dialog.add(overlay);
+
+        // Panel background
+        const panel = this.add.rectangle(0, 0, 340, 520, 0x1a1a2e);
+        panel.setStrokeStyle(3, 0x4169E1);
+        dialog.add(panel);
+
+        // Title
+        const title = this.add.text(0, -235, 'ALL RANKS', {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#4169E1',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        dialog.add(title);
+
+        // All rank tiers
+        const rankTiers = [
+            { name: 'Recruit', icon: '🔰', color: '#888888' },
+            { name: 'Soldier', icon: '⚔️', color: '#4a9c4a' },
+            { name: 'Warrior', icon: '🗡️', color: '#4169E1' },
+            { name: 'Knight', icon: '🛡️', color: '#9932CC' },
+            { name: 'Captain', icon: '⭐', color: '#ff6b6b' },
+            { name: 'Commander', icon: '🌟', color: '#ff4500' },
+            { name: 'General', icon: '👑', color: '#ffd700' },
+            { name: 'Champion', icon: '💎', color: '#00ffff' },
+            { name: 'Legend', icon: '🔥', color: '#ff00ff' },
+            { name: 'Immortal', icon: '⚡', color: '#ffffff' }
+        ];
+
+        const gradeNumerals = ['I', 'II', 'III'];
+        const currentRankName = currentRankInfo.rank.name;
+        const currentGrade = currentRankInfo.rank.grade;
+
+        // Display ranks
+        rankTiers.forEach((tier, index) => {
+            const y = -185 + index * 42;
+            const isCurrentTier = tier.name === currentRankName;
+
+            // Arrow indicator for current rank
+            if (isCurrentTier) {
+                const arrow = this.add.text(-155, y, '▶', {
+                    fontSize: '18px',
+                    fontFamily: 'Arial',
+                    color: tier.color
+                }).setOrigin(0.5);
+                dialog.add(arrow);
+
+                // Pulsing animation for arrow
+                this.tweens.add({
+                    targets: arrow,
+                    alpha: 0.5,
+                    duration: 500,
+                    yoyo: true,
+                    repeat: -1
+                });
+            }
+
+            // Rank icon and name
+            const rankText = this.add.text(-130, y, `${tier.icon} ${tier.name}`, {
+                fontSize: '20px',
+                fontFamily: 'Arial',
+                fontStyle: isCurrentTier ? 'bold' : 'normal',
+                color: tier.color,
+                stroke: isCurrentTier ? '#000000' : undefined,
+                strokeThickness: isCurrentTier ? 2 : 0
+            }).setOrigin(0, 0.5);
+            dialog.add(rankText);
+
+            // Grade indicators (I, II, III)
+            gradeNumerals.forEach((numeral, gradeIndex) => {
+                const gradeX = 70 + gradeIndex * 35;
+                const isCurrentGrade = isCurrentTier && (gradeIndex + 1) === currentGrade;
+                const isPastGrade = isCurrentTier && (gradeIndex + 1) < currentGrade;
+                const isPastTier = rankTiers.findIndex(t => t.name === currentRankName) > index;
+
+                let gradeColor = '#444444'; // Default dim
+                if (isCurrentGrade) {
+                    gradeColor = tier.color; // Current grade highlighted
+                } else if (isPastGrade || isPastTier) {
+                    gradeColor = '#666666'; // Completed grades
+                }
+
+                const gradeText = this.add.text(gradeX, y, numeral, {
+                    fontSize: '16px',
+                    fontFamily: 'Arial',
+                    fontStyle: isCurrentGrade ? 'bold' : 'normal',
+                    color: gradeColor
+                }).setOrigin(0.5);
+                dialog.add(gradeText);
+
+                // Circle around current grade
+                if (isCurrentGrade) {
+                    const circle = this.add.circle(gradeX, y, 14);
+                    circle.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(tier.color).color);
+                    dialog.add(circle);
+                }
+            });
+        });
+
+        // Close button
+        const closeBtnContainer = this.add.container(170 + 15, -260 + 15);
+        const closeBtnBg = this.add.circle(0, 0, 24, 0x442222);
+        closeBtnBg.setStrokeStyle(2, 0xff4444);
+        closeBtnContainer.add(closeBtnBg);
+        const closeBtnText = this.add.text(0, 0, '✕', {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        closeBtnContainer.add(closeBtnText);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        dialog.add(closeBtnContainer);
+
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtnText.setColor('#ff8888');
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtnText.setColor('#ff6666');
+        });
+        closeBtnBg.on('pointerdown', () => dialog.destroy());
+
+        // Also close on overlay click
+        overlay.on('pointerdown', () => dialog.destroy());
     }
 
     createSettingsGear(x, y) {

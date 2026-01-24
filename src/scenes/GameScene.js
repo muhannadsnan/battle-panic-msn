@@ -2467,9 +2467,9 @@ Lv.${level + 1}`;
     updateUnitButtons(delta) {
         const unitTypes = ['PEASANT', 'ARCHER', 'HORSEMAN'];
 
-        // Check if research cost applies (rank 4+: Knight rank and above)
+        // Check if research cost applies (Champion rank and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const isAdvancedRank = ['Knight', 'Commander', 'General', 'Champion', 'Legend'].includes(rankInfo.rank.name);
+        const isAdvancedRank = ['Champion', 'Legend', 'Immortal'].includes(rankInfo.rank.name);
 
         this.unitButtons.forEach((button, index) => {
             const type = unitTypes[index];
@@ -2852,9 +2852,9 @@ Lv.${level + 1}`;
         let totalGoldCost = Math.ceil(stats.goldCost * costMultiplier * costUnits);
         let totalWoodCost = Math.ceil(stats.woodCost * costMultiplier * costUnits);
 
-        // Research cost: first unit of each type costs double for rank 4+ (Knight and above)
+        // Research cost: first unit of each type costs double (Champion and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const isAdvancedRank = ['Knight', 'Commander', 'General', 'Champion', 'Legend'].includes(rankInfo.rank.name);
+        const isAdvancedRank = ['Champion', 'Legend', 'Immortal'].includes(rankInfo.rank.name);
         const isFirstSpawn = !this.firstSpawnDone[typeKey];
         const applyResearchCost = isAdvancedRank && isFirstSpawn;
 
@@ -3001,7 +3001,7 @@ Lv.${level + 1}`;
 
         // Skip tips for experienced players (Knight and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const experiencedRanks = ['Knight', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+        const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
         const isExperienced = experiencedRanks.includes(rankInfo.rank.name);
 
         if (tip && !isExperienced) {

@@ -429,13 +429,13 @@ class SaveSystem {
             'Recruit': 2,   // Dopamine boost: 1 XP per 2 waves
             'Soldier': 3,   // Dopamine club: 1 XP per 3 waves
             'Warrior': 3,   // Dopamine club: 1 XP per 3 waves
-            'Knight': 12,
-            'Captain': 15,
-            'Commander': 18,
-            'General': 22,
-            'Champion': 25,
-            'Legend': 28,
-            'Immortal': 31
+            'Knight': 6,
+            'Captain': 9,
+            'Commander': 12,
+            'General': 15,
+            'Champion': 18,
+            'Legend': 21,
+            'Immortal': 24
         };
 
         return divisors[rankName] || 3;
