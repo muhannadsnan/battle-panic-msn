@@ -1022,6 +1022,11 @@ class GameScene extends Phaser.Scene {
             return;
         }
 
+        // Play hero ability sound
+        if (typeof audioManager !== 'undefined') {
+            audioManager.playHeroAbility();
+        }
+
         // Different abilities for different heroes
         if (this.heroKey === 'WARLORD') {
             // Warlord: instant buff to all units
