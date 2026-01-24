@@ -1409,18 +1409,6 @@ class GameScene extends Phaser.Scene {
         // Can't repair if castle emergency was used (no repair for rest of battle)
         if (this.castleEmergencyUsed) return false;
 
-        // Can't repair if enemies are too close to castle (prevents fence exploit)
-        if (!this.enemies) return true;
-
-        const castleX = this.playerCastle.x;
-        const fenceX = castleX + 150; // Fence position
-
-        for (const enemy of this.enemies.getChildren()) {
-            if (enemy.active && !enemy.isDead && enemy.x < fenceX + 50) {
-                // Enemy is at or past where fence would be
-                return false;
-            }
-        }
         return true;
     }
 
@@ -1478,23 +1466,12 @@ class GameScene extends Phaser.Scene {
         const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
         const isMaxLevel = currentLevel >= effectiveMaxLevel;
         const needsRepair = isMaxLevel && this.needsRepair();
-        const repairBlocked = isMaxLevel && needsRepair && !this.canRepair();
 
         // At max level with no damage, hide repair option
         if (isMaxLevel && !needsRepair) {
             this.castleUpgradeCostText.setText('MAX');
             this.castleCostGlow.setText('MAX');
             this.castleUpgradeCostText.setStyle({ color: '#ffd700' });
-            this.castleCostGlow.setAlpha(0);
-            this.drawCastleSpinner();
-            return;
-        }
-
-        // Repair blocked - enemies too close
-        if (repairBlocked) {
-            this.castleUpgradeCostText.setText('CLEAR ENEMIES');
-            this.castleCostGlow.setText('CLEAR ENEMIES');
-            this.castleUpgradeCostText.setStyle({ color: '#ff6666' });
             this.castleCostGlow.setAlpha(0);
             this.drawCastleSpinner();
             return;
@@ -1590,9 +1567,9 @@ Lv.${currentLevel + 1}`;
         const effectiveMaxLevel = this.getEffectiveMaxCastleLevel();
         const isMaxLevel = currentLevel >= effectiveMaxLevel;
 
-        // Can't repair if enemies are too close (prevents fence exploit)
+        // Can't repair if castle emergency was used
         if (isMaxLevel && !this.canRepair()) {
-            this.showMessage('Clear enemies first!', '#ff6666');
+            this.showMessage('Repair disabled this battle', '#ff6666');
             return;
         }
 
