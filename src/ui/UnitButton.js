@@ -465,11 +465,11 @@ class UnitButton extends Phaser.GameObjects.Container {
 
         const stats = UNIT_TYPES[this.unitType.toUpperCase()];
 
-        // Get XP upgrade bonuses
+        // Get XP upgrade bonuses (swapped for tankier units)
         const saveData = saveSystem.load();
         const upgradeLevel = saveData.upgrades[this.unitType.toLowerCase()]?.level || 1;
-        const hpBonus = Math.pow(2, upgradeLevel - 1) - 1;
-        const dmgBonus = Math.pow(2, upgradeLevel) - 2;
+        const hpBonus = Math.pow(2, upgradeLevel) - 2;
+        const dmgBonus = Math.pow(2, upgradeLevel - 1) - 1;
         const upgradedHP = stats.health + hpBonus;
         const upgradedDMG = stats.damage + dmgBonus;
 
