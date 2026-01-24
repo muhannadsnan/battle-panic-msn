@@ -189,11 +189,11 @@ class CombatSystem {
     }
 
     getStatsWithUpgrades(baseStats, upgradeLevel) {
-        // Exponential upgrade bonuses:
-        // HP bonus: +1, +2, +4, +8, +16... (cumulative: 2^(level-1) - 1)
-        // DMG bonus: +2, +4, +8, +16, +32... (cumulative: 2^level - 2)
-        const hpBonus = Math.pow(2, upgradeLevel - 1) - 1;
-        const dmgBonus = Math.pow(2, upgradeLevel) - 2;
+        // Exponential upgrade bonuses (swapped for tankier units):
+        // HP bonus: +2, +4, +8, +16, +32... (cumulative: 2^level - 2)
+        // DMG bonus: +1, +2, +4, +8, +16... (cumulative: 2^(level-1) - 1)
+        const hpBonus = Math.pow(2, upgradeLevel) - 2;
+        const dmgBonus = Math.pow(2, upgradeLevel - 1) - 1;
 
         return {
             ...baseStats,
