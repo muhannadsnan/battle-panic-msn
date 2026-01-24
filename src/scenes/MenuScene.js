@@ -1091,6 +1091,14 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         dialog.add(title);
 
+        // Score display
+        const scoreText = this.add.text(0, -205, `Score: ${currentRankInfo.score}`, {
+            fontSize: '18px',
+            fontFamily: 'Arial',
+            color: '#aaaaaa'
+        }).setOrigin(0.5);
+        dialog.add(scoreText);
+
         // All rank tiers
         const rankTiers = [
             { name: 'Recruit', icon: '🔰', color: '#888888' },
@@ -1151,7 +1159,7 @@ class MenuScene extends Phaser.Scene {
 
             // Grade indicators (I, II, III)
             gradeNumerals.forEach((numeral, gradeIndex) => {
-                const gradeX = 70 + gradeIndex * 35;
+                const gradeX = 50 + gradeIndex * 40;
                 const isCurrentGrade = isCurrentTier && (gradeIndex + 1) === currentGrade;
                 const isPastGrade = isCurrentTier && (gradeIndex + 1) < currentGrade;
                 const isPastTier = currentTierIndex > index;
@@ -1164,7 +1172,7 @@ class MenuScene extends Phaser.Scene {
                 }
 
                 const gradeText = this.add.text(gradeX, y, numeral, {
-                    fontSize: '16px',
+                    fontSize: '20px',
                     fontFamily: 'Arial',
                     fontStyle: isCurrentGrade ? 'bold' : 'normal',
                     color: gradeColor
@@ -1173,7 +1181,7 @@ class MenuScene extends Phaser.Scene {
 
                 // Circle around current grade
                 if (isCurrentGrade) {
-                    const circle = this.add.circle(gradeX, y, 14);
+                    const circle = this.add.circle(gradeX, y, 16);
                     circle.setStrokeStyle(2, Phaser.Display.Color.HexStringToColor(tier.color).color);
                     dialog.add(circle);
                 }
