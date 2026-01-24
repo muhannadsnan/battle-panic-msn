@@ -1092,8 +1092,8 @@ class MenuScene extends Phaser.Scene {
         dialog.add(title);
 
         // Score display
-        const scoreText = this.add.text(0, -205, `Score: ${currentRankInfo.score}`, {
-            fontSize: '18px',
+        const scoreText = this.add.text(0, -200, `Score: ${currentRankInfo.score}`, {
+            fontSize: '22px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
         }).setOrigin(0.5);
