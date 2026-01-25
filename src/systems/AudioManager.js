@@ -1364,64 +1364,91 @@ class AudioManager {
         sizzle.stop(now + 0.5);
     }
 
-    // Hero ability activation - powerful magical energy burst
+    // Hero ability activation - epic power unleash
     playHeroAbility() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
         this.resume();
 
         const now = this.audioContext.currentTime;
 
-        // Deep power-up sweep
-        const sweep = this.audioContext.createOscillator();
-        const sweepGain = this.audioContext.createGain();
+        // Epic rising whoosh
+        const whoosh = this.audioContext.createOscillator();
+        const whooshGain = this.audioContext.createGain();
+        whoosh.connect(whooshGain);
+        whooshGain.connect(this.sfxGain);
+        whoosh.type = 'sawtooth';
+        whoosh.frequency.setValueAtTime(80, now);
+        whoosh.frequency.exponentialRampToValueAtTime(400, now + 0.3);
+        whoosh.frequency.exponentialRampToValueAtTime(200, now + 0.5);
+        whooshGain.gain.setValueAtTime(0.15, now);
+        whooshGain.gain.linearRampToValueAtTime(0.25, now + 0.2);
+        whooshGain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        whoosh.start(now);
+        whoosh.stop(now + 0.65);
 
-        sweep.connect(sweepGain);
-        sweepGain.connect(this.sfxGain);
+        // Power chord - root note
+        const chord1 = this.audioContext.createOscillator();
+        const chord1Gain = this.audioContext.createGain();
+        chord1.connect(chord1Gain);
+        chord1Gain.connect(this.sfxGain);
+        chord1.type = 'triangle';
+        chord1.frequency.setValueAtTime(220, now + 0.15); // A3
+        chord1Gain.gain.setValueAtTime(0.2, now + 0.15);
+        chord1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        chord1.start(now + 0.15);
+        chord1.stop(now + 0.85);
 
-        sweep.type = 'sine';
-        sweep.frequency.setValueAtTime(150, now);
-        sweep.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+        // Power chord - fifth
+        const chord2 = this.audioContext.createOscillator();
+        const chord2Gain = this.audioContext.createGain();
+        chord2.connect(chord2Gain);
+        chord2Gain.connect(this.sfxGain);
+        chord2.type = 'triangle';
+        chord2.frequency.setValueAtTime(330, now + 0.15); // E4
+        chord2Gain.gain.setValueAtTime(0.15, now + 0.15);
+        chord2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        chord2.start(now + 0.15);
+        chord2.stop(now + 0.85);
 
-        sweepGain.gain.setValueAtTime(0.2, now);
-        sweepGain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        // Power chord - octave
+        const chord3 = this.audioContext.createOscillator();
+        const chord3Gain = this.audioContext.createGain();
+        chord3.connect(chord3Gain);
+        chord3Gain.connect(this.sfxGain);
+        chord3.type = 'triangle';
+        chord3.frequency.setValueAtTime(440, now + 0.15); // A4
+        chord3Gain.gain.setValueAtTime(0.12, now + 0.15);
+        chord3Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        chord3.start(now + 0.15);
+        chord3.stop(now + 0.85);
 
-        sweep.start(now);
-        sweep.stop(now + 0.35);
+        // Deep impact boom
+        const boom = this.audioContext.createOscillator();
+        const boomGain = this.audioContext.createGain();
+        boom.connect(boomGain);
+        boomGain.connect(this.sfxGain);
+        boom.type = 'sine';
+        boom.frequency.setValueAtTime(60, now + 0.2);
+        boom.frequency.exponentialRampToValueAtTime(30, now + 0.5);
+        boomGain.gain.setValueAtTime(0.3, now + 0.2);
+        boomGain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        boom.start(now + 0.2);
+        boom.stop(now + 0.65);
 
-        // Magical shimmer overlay
-        const shimmer = this.audioContext.createOscillator();
-        const shimmerGain = this.audioContext.createGain();
-
-        shimmer.connect(shimmerGain);
-        shimmerGain.connect(this.sfxGain);
-
-        shimmer.type = 'triangle';
-        shimmer.frequency.setValueAtTime(800, now + 0.1);
-        shimmer.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
-
-        shimmerGain.gain.setValueAtTime(0, now + 0.1);
-        shimmerGain.gain.linearRampToValueAtTime(0.15, now + 0.15);
-        shimmerGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-
-        shimmer.start(now + 0.1);
-        shimmer.stop(now + 0.45);
-
-        // Impact thump
-        const thump = this.audioContext.createOscillator();
-        const thumpGain = this.audioContext.createGain();
-
-        thump.connect(thumpGain);
-        thumpGain.connect(this.sfxGain);
-
-        thump.type = 'sine';
-        thump.frequency.setValueAtTime(80, now + 0.15);
-        thump.frequency.exponentialRampToValueAtTime(40, now + 0.3);
-
-        thumpGain.gain.setValueAtTime(0.25, now + 0.15);
-        thumpGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-
-        thump.start(now + 0.15);
-        thump.stop(now + 0.4);
+        // Sparkle chimes
+        const chimeFreqs = [880, 1100, 1320, 1760];
+        chimeFreqs.forEach((freq, i) => {
+            const chime = this.audioContext.createOscillator();
+            const chimeGain = this.audioContext.createGain();
+            chime.connect(chimeGain);
+            chimeGain.connect(this.sfxGain);
+            chime.type = 'sine';
+            chime.frequency.setValueAtTime(freq, now + 0.25 + i * 0.05);
+            chimeGain.gain.setValueAtTime(0.08, now + 0.25 + i * 0.05);
+            chimeGain.gain.exponentialRampToValueAtTime(0.01, now + 0.6 + i * 0.05);
+            chime.start(now + 0.25 + i * 0.05);
+            chime.stop(now + 0.65 + i * 0.05);
+        });
     }
 
     // Castle upgrade complete - satisfying construction/level-up sound
