@@ -3331,47 +3331,17 @@ Lv.${level + 1}`;
 
     getWaveTip(waveNumber) {
         const tips = {
-            6: {
-                enemyType: 'SKELETON_ARCHER',
-                title: 'RANGED ENEMIES!',
-                message: 'Skeleton Archers are coming!\nPosition tanks in front to protect your ranged units.',
-                suggestion: 'Consider: Horsemen as fast frontline'
-            },
-            8: {
+            5: {
                 enemyType: 'TROLL',
-                title: 'TROLLS INCOMING!',
-                message: 'Trolls hit HARD and have high HP!\nPeasants will die in one hit.',
-                suggestion: 'Consider: Horsemen can charge and survive'
+                title: 'STRONGER ENEMIES AHEAD!',
+                message: 'New monster types appear as waves increase.\nArchers, Trolls, Dark Knights, Demons...',
+                suggestion: 'Upgrade units & castle to survive!'
             },
             10: {
                 enemyType: 'DRAGON',
                 title: 'BOSS WAVE!',
-                message: 'A DRAGON is coming!\nRing of fire damages groups of units!',
-                suggestion: 'Consider: Spread units out, use Horsemen to tank'
-            },
-            12: {
-                enemyType: 'DARK_KNIGHT',
-                title: 'DARK KNIGHTS!',
-                message: 'Armored enemies with high damage!\nThey will shred weak units.',
-                suggestion: 'Consider: Multiple Archers for ranged damage'
-            },
-            18: {
-                enemyType: 'DEMON',
-                title: 'DEMONS APPROACH!',
-                message: 'Demons are brutal! High HP and damage.\nYou need a balanced army.',
-                suggestion: 'Consider: Mix Horsemen, Archers, promoted units'
-            },
-            20: {
-                enemyType: 'DRAGON',
-                title: 'SECOND DRAGON!',
-                message: 'Another Dragon boss!\nRing of fire hits harder now.',
-                suggestion: 'Consider: Spread army, avoid clustering'
-            },
-            30: {
-                enemyType: 'DRAGON',
-                title: 'THIRD DRAGON!',
-                message: 'Powerful Dragon with devastating ring of fire!\nThis will be a tough fight.',
-                suggestion: 'Consider: Keep units spread, use promoted tanks'
+                message: 'A DRAGON boss appears every 10 waves!\nBosses get stronger each time.',
+                suggestion: 'Spread units to avoid ring of fire!'
             }
         };
 
