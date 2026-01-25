@@ -41,6 +41,7 @@ class Enemy extends Phaser.GameObjects.Container {
 
         // Rank-based scaling: +5% HP and damage per primary rank (Recruit = 0%)
         let rankMultiplier = 1;
+        let newPlayerEasyMode = false;
         if (scene.saveData && typeof saveSystem !== 'undefined') {
             const rankInfo = saveSystem.getRankInfo(scene.saveData);
             const rankOrder = ['Recruit', 'Soldier', 'Warrior', 'Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
@@ -48,6 +49,9 @@ class Enemy extends Phaser.GameObjects.Container {
             if (rankIndex > 0) {
                 rankMultiplier = 1 + (rankIndex * 0.05); // +5% per rank after Recruit
             }
+            // New players (Recruit, Soldier, Warrior) get easier enemies (50% HP)
+            const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+            newPlayerEasyMode = !experiencedRanks.includes(rankInfo.rank.name);
         }
 
         this.isBoss = baseStats.isBoss || false;
@@ -56,6 +60,11 @@ class Enemy extends Phaser.GameObjects.Container {
         // Boss 1 (wave 10) = 1x, Boss 2 (wave 20) = 2x, Boss 3 (wave 30) = 3x, etc.
         let healthMult = waveHealthMultiplier * rankMultiplier;
         let damageMult = waveDamageMultiplier * rankMultiplier;
+
+        // New players get 50% easier enemies (half HP)
+        if (newPlayerEasyMode) {
+            healthMult *= 0.5;
+        }
         let sizeMult = 1;
 
         let attackSpeedMult = 1;
