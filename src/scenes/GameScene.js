@@ -2416,14 +2416,14 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         container.add(tipText);
 
-        // Countdown number
+        // Countdown number (2x size)
         const countdownText = this.add.text(0, 10, '3', {
-            fontSize: '72px',
+            fontSize: '144px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 5
+            strokeThickness: 8
         }).setOrigin(0.5);
         container.add(countdownText);
 
@@ -3348,9 +3348,9 @@ class GameScene extends Phaser.Scene {
     getWaveTip(waveNumber) {
         const tips = {
             5: {
-                enemyType: 'TROLL',
+                enemyTypes: ['SKELETON_ARCHER', 'TROLL', 'DARK_KNIGHT', 'DEMON'],
                 title: 'STRONGER ENEMIES AHEAD!',
-                message: 'New monster types appear as waves increase.\nArchers, Trolls, Dark Knights, Demons...',
+                message: 'New monster types appear as waves increase.',
                 suggestion: 'Upgrade units & castle to survive!'
             },
             10: {
@@ -3390,11 +3390,24 @@ class GameScene extends Phaser.Scene {
         panel.setStrokeStyle(3, 0xffaa00);
         tipOverlay.add(panel);
 
-        // Create actual enemy preview instead of emoji
-        const enemyPreview = this.createEnemyPreview(tip.enemyType);
-        enemyPreview.setPosition(0, -120);
-        enemyPreview.setScale(1.8);
-        tipOverlay.add(enemyPreview);
+        // Create enemy preview(s)
+        if (tip.enemyTypes) {
+            // Multiple enemies (wave 5 tip)
+            const spacing = 90;
+            const startX = -((tip.enemyTypes.length - 1) * spacing) / 2;
+            tip.enemyTypes.forEach((type, i) => {
+                const preview = this.createEnemyPreview(type);
+                preview.setPosition(startX + i * spacing, -120);
+                preview.setScale(1.2);
+                tipOverlay.add(preview);
+            });
+        } else {
+            // Single enemy (boss tip)
+            const enemyPreview = this.createEnemyPreview(tip.enemyType);
+            enemyPreview.setPosition(0, -120);
+            enemyPreview.setScale(1.8);
+            tipOverlay.add(enemyPreview);
+        }
 
         // Title (larger for mobile)
         const title = this.add.text(0, -60, tip.title, {
@@ -3499,9 +3512,8 @@ class GameScene extends Phaser.Scene {
             this.playerCastle.updateHealthBar();
         }
 
-        // Bonus message for milestone waves
+        // Bonus for milestone waves (every 5 waves)
         if (waveNumber % 5 === 0) {
-            this.showMessage(`Wave ${waveNumber} complete! Bonus: +50g +30w`, '#ffd700');
             this.addGold(50);
             this.addWood(30);
         }

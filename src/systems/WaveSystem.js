@@ -240,34 +240,34 @@ class WaveSystem {
             return;
         }
 
-        // Create or update countdown text
+        // Create or update countdown text (2x size)
         if (!this.countdownText) {
             this.countdownText = this.scene.add.text(
                 GAME_WIDTH / 2,
                 GAME_HEIGHT / 2 - 20,
                 seconds.toString(),
                 {
-                    fontSize: '72px',
+                    fontSize: '144px',
                     fontFamily: 'Arial',
                     fontStyle: 'bold',
                     color: '#ffffff',
                     stroke: '#000000',
-                    strokeThickness: 6
+                    strokeThickness: 8
                 }
             ).setOrigin(0.5).setDepth(1000);
 
             // Add "Next Wave" label above
             this.countdownLabel = this.scene.add.text(
                 GAME_WIDTH / 2,
-                GAME_HEIGHT / 2 - 80,
+                GAME_HEIGHT / 2 - 100,
                 `Wave ${this.currentWave + 1}`,
                 {
-                    fontSize: '24px',
+                    fontSize: '48px',
                     fontFamily: 'Arial',
                     fontStyle: 'bold',
                     color: '#4169E1',
                     stroke: '#000000',
-                    strokeThickness: 3
+                    strokeThickness: 4
                 }
             ).setOrigin(0.5).setDepth(1000);
         } else {
