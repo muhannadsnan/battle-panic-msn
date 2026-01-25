@@ -166,8 +166,6 @@ class GameScene extends Phaser.Scene {
         // Start resource mining
         this.startResourceMining();
 
-        // Show game mode
-        this.showSurvivalIntro();
 
         // Start background music
         if (typeof audioManager !== 'undefined') {
@@ -2363,36 +2361,6 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    showSurvivalIntro() {
-        const introText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 50, 'SURVIVAL MODE', {
-            fontSize: '48px',
-            fontFamily: 'Arial',
-            color: '#ff6b6b',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setOrigin(0.5).setDepth(1000);
-
-        const subText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, 'Defend your castle! Mine gold & wood to spawn units!', {
-            fontSize: '18px',
-            fontFamily: 'Arial',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5).setDepth(1000);
-
-        this.tweens.add({
-            targets: [introText, subText],
-            alpha: 0,
-            y: '-=30',
-            duration: 2500,
-            delay: 500,
-            onComplete: () => {
-                introText.destroy();
-                subText.destroy();
-            }
-        });
-    }
-
     showStartCountdown() {
         // Block mining during countdown
         this.countdownActive = true;
@@ -2404,6 +2372,17 @@ class GameScene extends Phaser.Scene {
         // Show countdown with tip for all players
         const container = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80);
         container.setDepth(1100);
+
+        // Survival Mode title
+        const modeText = this.add.text(0, -100, 'SURVIVAL MODE', {
+            fontSize: '36px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6b6b',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5);
+        container.add(modeText);
 
         // Tip text above countdown
         const tipText = this.add.text(0, -60, 'Upgrade castle, Build army, Survive waves!', {
