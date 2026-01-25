@@ -174,10 +174,8 @@ class GameScene extends Phaser.Scene {
             audioManager.startMusic();
         }
 
-        // Start first wave after delay
-        this.time.delayedCall(3000, () => {
-            this.waveSystem.startWave();
-        });
+        // Start first wave - with countdown for new players
+        this.showStartCountdown();
 
         // Periodic session validation (check every 30s if another device took over)
         if (typeof supabaseClient !== 'undefined' && supabaseClient.isLoggedIn()) {
@@ -2392,6 +2390,92 @@ Lv.${level + 1}`;
                 introText.destroy();
                 subText.destroy();
             }
+        });
+    }
+
+    showStartCountdown() {
+        // Check if player is experienced (Knight and above)
+        const rankInfo = saveSystem.getRankInfo(this.saveData);
+        const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+        const isExperienced = experiencedRanks.includes(rankInfo.rank.name);
+
+        if (isExperienced) {
+            // Experienced players - just start after short delay
+            this.time.delayedCall(2000, () => {
+                this.waveSystem.startWave();
+            });
+            return;
+        }
+
+        // New players - show countdown with tip
+        const container = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80);
+        container.setDepth(1100);
+
+        // Tip text above countdown
+        const tipText = this.add.text(0, -60, 'Upgrade castle, Build army, Survive waves!', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffd700',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        container.add(tipText);
+
+        // Countdown number
+        const countdownText = this.add.text(0, 10, '3', {
+            fontSize: '72px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 5
+        }).setOrigin(0.5);
+        container.add(countdownText);
+
+        // Animate countdown
+        let count = 3;
+        const countdownInterval = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                count--;
+                if (count > 0) {
+                    countdownText.setText(count.toString());
+                    // Pulse animation
+                    countdownText.setScale(1.3);
+                    this.tweens.add({
+                        targets: countdownText,
+                        scale: 1,
+                        duration: 200,
+                        ease: 'Back.easeOut'
+                    });
+                } else {
+                    // Show GO! then start wave
+                    countdownText.setText('GO!');
+                    countdownText.setColor('#4ade80');
+                    countdownText.setScale(1.5);
+                    this.tweens.add({
+                        targets: countdownText,
+                        scale: 1.2,
+                        duration: 150,
+                        yoyo: true,
+                        onComplete: () => {
+                            this.tweens.add({
+                                targets: container,
+                                alpha: 0,
+                                y: '-=30',
+                                duration: 400,
+                                onComplete: () => {
+                                    container.destroy();
+                                    this.waveSystem.startWave();
+                                }
+                            });
+                        }
+                    });
+                    countdownInterval.remove();
+                }
+            },
+            repeat: 3
         });
     }
 
