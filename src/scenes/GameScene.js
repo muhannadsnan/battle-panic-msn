@@ -3051,6 +3051,15 @@ class GameScene extends Phaser.Scene {
         const rankInfo = saveSystem.getRankInfo(this.saveData);
         const isExperienced = EXPERIENCED_RANKS.includes(rankInfo.rank.name);
 
+        // Castle upgrade reminder for new players
+        if (!isExperienced) {
+            if (waveNumber === 3 && this.castleLevel === 1) {
+                this.showMessage('Tip: Hover castle to upgrade!', '#ffd700');
+            } else if (waveNumber === 7 && this.castleLevel < 4) {
+                this.showMessage('Tip: Upgrade castle for arrows & fence!', '#ffd700');
+            }
+        }
+
         if (tip && !isExperienced) {
             this.showWaveTip(tip, waveNumber, () => {
                 this.waveDisplay.showWaveStart(waveNumber);
