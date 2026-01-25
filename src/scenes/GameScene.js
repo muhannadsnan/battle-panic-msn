@@ -2220,7 +2220,7 @@ Lv.${level + 1}`;
     }
 
     updateMining(delta) {
-        if (this.isPaused) return;
+        if (this.isPaused || this.countdownActive) return;
 
         const progressPerFrame = (this.miningSpeed * delta) / 1000;
         const soundTickInterval = 200; // Play sound every 200ms while hovering
@@ -2394,6 +2394,13 @@ Lv.${level + 1}`;
     }
 
     showStartCountdown() {
+        // Block mining during countdown
+        this.countdownActive = true;
+
+        // Dark overlay to focus attention
+        const overlay = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.6);
+        overlay.setDepth(1099);
+
         // Show countdown with tip for all players
         const container = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80);
         container.setDepth(1100);
@@ -2447,6 +2454,13 @@ Lv.${level + 1}`;
                         duration: 150,
                         yoyo: true,
                         onComplete: () => {
+                            // Fade out overlay
+                            this.tweens.add({
+                                targets: overlay,
+                                alpha: 0,
+                                duration: 400
+                            });
+                            // Fade out and move up container
                             this.tweens.add({
                                 targets: container,
                                 alpha: 0,
@@ -2454,6 +2468,8 @@ Lv.${level + 1}`;
                                 duration: 400,
                                 onComplete: () => {
                                     container.destroy();
+                                    overlay.destroy();
+                                    this.countdownActive = false;
                                     this.waveSystem.startWave();
                                 }
                             });
