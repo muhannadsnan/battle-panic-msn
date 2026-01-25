@@ -244,45 +244,49 @@ class SaveSystem {
         const xpDivisor = this.getXPDivisorForRank(data);
         const xpEarned = Math.min(3, Math.floor(wave / xpDivisor)); // Max 3 XP per game
 
+        // New players (Recruit, Soldier, Warrior) earn half score since they have easier gameplay
+        const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+        const scoreMultiplier = experiencedRanks.includes(rankInfo.rank.name) ? 1 : 0.5;
+
         // Debug logging
-        console.log(`[XP Debug] Wave: ${wave}, Rank: ${rankInfo.rank.name}, Divisor: ${xpDivisor}, XP Earned: ${xpEarned}`);
+        console.log(`[XP Debug] Wave: ${wave}, Rank: ${rankInfo.rank.name}, Divisor: ${xpDivisor}, XP Earned: ${xpEarned}, Score Mult: ${scoreMultiplier}`);
 
         if (wave > data.highestWave) {
             data.highestWave = wave;
         }
-        data.totalGoldEarned += goldEarned;
-        data.totalEnemiesKilled += enemiesKilled;
+        data.totalGoldEarned += Math.floor(goldEarned * scoreMultiplier);
+        data.totalEnemiesKilled += Math.floor(enemiesKilled * scoreMultiplier);
 
-        // Update detailed kill stats per enemy type
+        // Update detailed kill stats per enemy type (with score multiplier)
         for (const enemyType in killStats) {
             if (data.killStats[enemyType] !== undefined) {
-                data.killStats[enemyType] += killStats[enemyType];
+                data.killStats[enemyType] += Math.floor(killStats[enemyType] * scoreMultiplier);
             }
         }
 
-        // Update lifetime stats
+        // Update lifetime stats (with score multiplier for score-relevant stats)
         data.stats.totalGamesPlayed += 1;
-        data.stats.totalWavesCompleted += wave;
-        data.stats.totalBossesKilled += (killStats.dragon || 0);
+        data.stats.totalWavesCompleted += Math.floor(wave * scoreMultiplier);
+        data.stats.totalBossesKilled += Math.floor((killStats.dragon || 0) * scoreMultiplier);
         if (gameStats.survivalTime && gameStats.survivalTime > data.stats.longestSurvivalTime) {
             data.stats.longestSurvivalTime = gameStats.survivalTime;
         }
-        data.stats.totalUnitsSpawned += (gameStats.unitsSpawned || 0);
+        data.stats.totalUnitsSpawned += Math.floor((gameStats.unitsSpawned || 0) * scoreMultiplier);
 
-        // Update unit spawn counts per type
+        // Update unit spawn counts per type (with score multiplier)
         if (gameStats.unitCounts) {
             for (const unitType in gameStats.unitCounts) {
                 if (data.stats.unitsSpawned[unitType] !== undefined) {
-                    data.stats.unitsSpawned[unitType] += gameStats.unitCounts[unitType];
+                    data.stats.unitsSpawned[unitType] += Math.floor(gameStats.unitCounts[unitType] * scoreMultiplier);
                 }
             }
         }
 
-        // Update resource stats
-        data.stats.totalGoldCollected += (gameStats.goldCollected || 0);
-        data.stats.totalWoodCollected += (gameStats.woodCollected || 0);
-        data.stats.totalGoldSpent += (gameStats.goldSpent || 0);
-        data.stats.totalWoodSpent += (gameStats.woodSpent || 0);
+        // Update resource stats (with score multiplier)
+        data.stats.totalGoldCollected += Math.floor((gameStats.goldCollected || 0) * scoreMultiplier);
+        data.stats.totalWoodCollected += Math.floor((gameStats.woodCollected || 0) * scoreMultiplier);
+        data.stats.totalGoldSpent += Math.floor((gameStats.goldSpent || 0) * scoreMultiplier);
+        data.stats.totalWoodSpent += Math.floor((gameStats.woodSpent || 0) * scoreMultiplier);
 
         // Award XP (calculated above before stat updates)
         data.xp = (data.xp || 0) + xpEarned;
