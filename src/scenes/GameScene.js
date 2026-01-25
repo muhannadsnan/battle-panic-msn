@@ -2394,20 +2394,7 @@ Lv.${level + 1}`;
     }
 
     showStartCountdown() {
-        // Check if player is experienced (Knight and above)
-        const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
-        const isExperienced = experiencedRanks.includes(rankInfo.rank.name);
-
-        if (isExperienced) {
-            // Experienced players - just start after short delay
-            this.time.delayedCall(2000, () => {
-                this.waveSystem.startWave();
-            });
-            return;
-        }
-
-        // New players - show countdown with tip
+        // Show countdown with tip for all players
         const container = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80);
         container.setDepth(1100);
 
@@ -3408,24 +3395,24 @@ Lv.${level + 1}`;
         const tipOverlay = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2);
         tipOverlay.setDepth(1100);
 
-        // Dark background
-        const bg = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.85);
+        // Dark background (less dark for mobile)
+        const bg = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.6);
         tipOverlay.add(bg);
 
-        // Tip panel
-        const panel = this.add.rectangle(0, 0, 500, 320, 0x1a2a3a, 0.95);
+        // Tip panel (larger with more padding)
+        const panel = this.add.rectangle(0, 0, 560, 400, 0x1a2a3a, 0.95);
         panel.setStrokeStyle(3, 0xffaa00);
         tipOverlay.add(panel);
 
         // Create actual enemy preview instead of emoji
         const enemyPreview = this.createEnemyPreview(tip.enemyType);
-        enemyPreview.setPosition(0, -100);
-        enemyPreview.setScale(1.5);
+        enemyPreview.setPosition(0, -120);
+        enemyPreview.setScale(1.8);
         tipOverlay.add(enemyPreview);
 
-        // Title
+        // Title (larger for mobile)
         const title = this.add.text(0, -60, tip.title, {
-            fontSize: '28px',
+            fontSize: '34px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffaa00',
@@ -3434,19 +3421,19 @@ Lv.${level + 1}`;
         }).setOrigin(0.5);
         tipOverlay.add(title);
 
-        // Message
-        const message = this.add.text(0, 10, tip.message, {
-            fontSize: '18px',
+        // Message (larger for mobile)
+        const message = this.add.text(0, 20, tip.message, {
+            fontSize: '24px',
             fontFamily: 'Arial',
             color: '#ffffff',
             align: 'center',
-            lineSpacing: 8
+            lineSpacing: 10
         }).setOrigin(0.5);
         tipOverlay.add(message);
 
-        // Suggestion
-        const suggestion = this.add.text(0, 80, tip.suggestion, {
-            fontSize: '16px',
+        // Suggestion (larger for mobile)
+        const suggestion = this.add.text(0, 100, tip.suggestion, {
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'italic',
             color: '#44ff44'
@@ -3454,15 +3441,15 @@ Lv.${level + 1}`;
         tipOverlay.add(suggestion);
 
         // Continue button (disabled initially)
-        const continueBtn = this.add.container(0, 130);
+        const continueBtn = this.add.container(0, 160);
         tipOverlay.add(continueBtn);
 
-        const btnBg = this.add.rectangle(0, 0, 200, 45, 0x333333);
+        const btnBg = this.add.rectangle(0, 0, 220, 50, 0x333333);
         btnBg.setStrokeStyle(2, 0x555555);
         continueBtn.add(btnBg);
 
         const btnText = this.add.text(0, 0, 'Please wait...', {
-            fontSize: '18px',
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#666666'
