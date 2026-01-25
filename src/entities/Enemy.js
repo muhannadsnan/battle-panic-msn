@@ -50,8 +50,7 @@ class Enemy extends Phaser.GameObjects.Container {
                 rankMultiplier = 1 + (rankIndex * 0.05); // +5% per rank after Recruit
             }
             // New players (Recruit, Soldier, Warrior) get easier enemies (50% HP)
-            const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
-            newPlayerEasyMode = !experiencedRanks.includes(rankInfo.rank.name);
+            newPlayerEasyMode = !EXPERIENCED_RANKS.includes(rankInfo.rank.name);
         }
 
         this.isBoss = baseStats.isBoss || false;

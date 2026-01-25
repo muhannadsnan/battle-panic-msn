@@ -37,8 +37,7 @@ class WaveSystem {
         // New players (Recruit, Soldier, Warrior) get 30% fewer enemies
         if (this.scene.saveData && typeof saveSystem !== 'undefined') {
             const rankInfo = saveSystem.getRankInfo(this.scene.saveData);
-            const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
-            if (!experiencedRanks.includes(rankInfo.rank.name)) {
+            if (!EXPERIENCED_RANKS.includes(rankInfo.rank.name)) {
                 waveMultiplier *= 0.7;  // 30% fewer enemies
             }
         }

@@ -3049,8 +3049,7 @@ class GameScene extends Phaser.Scene {
 
         // Skip tips for experienced players (Knight and above)
         const rankInfo = saveSystem.getRankInfo(this.saveData);
-        const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
-        const isExperienced = experiencedRanks.includes(rankInfo.rank.name);
+        const isExperienced = EXPERIENCED_RANKS.includes(rankInfo.rank.name);
 
         if (tip && !isExperienced) {
             this.showWaveTip(tip, waveNumber, () => {

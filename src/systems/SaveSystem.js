@@ -245,8 +245,7 @@ class SaveSystem {
         const xpEarned = Math.min(3, Math.floor(wave / xpDivisor)); // Max 3 XP per game
 
         // New players (Recruit, Soldier, Warrior) earn half score since they have easier gameplay
-        const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
-        const scoreMultiplier = experiencedRanks.includes(rankInfo.rank.name) ? 1 : 0.5;
+        const scoreMultiplier = EXPERIENCED_RANKS.includes(rankInfo.rank.name) ? 1 : 0.5;
 
         // Debug logging
         console.log(`[XP Debug] Wave: ${wave}, Rank: ${rankInfo.rank.name}, Divisor: ${xpDivisor}, XP Earned: ${xpEarned}, Score Mult: ${scoreMultiplier}`);

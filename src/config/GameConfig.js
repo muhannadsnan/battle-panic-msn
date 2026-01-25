@@ -1,7 +1,11 @@
 // Game Constants and Configuration
-const GAME_VERSION = 'v1.38.63';
+const GAME_VERSION = 'v1.38.64';
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
+
+// Rank Configuration
+// Experienced ranks face full difficulty; new players (Recruit, Soldier, Warrior) get easier gameplay
+const EXPERIENCED_RANKS = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
 
 // Unit Types Configuration (cost now includes gold and wood)
 // BALANCE: More expensive units, harder to snowball
