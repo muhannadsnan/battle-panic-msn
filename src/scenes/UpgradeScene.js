@@ -2144,7 +2144,7 @@ class UpgradeScene extends Phaser.Scene {
     getUnlockCost(unitKey) {
         // XP costs for unlocking units
         const costs = {
-            horseman: 2
+            horseman: 5
         };
         return costs[unitKey] || 1;
     }

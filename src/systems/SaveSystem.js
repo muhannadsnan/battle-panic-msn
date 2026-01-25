@@ -348,7 +348,7 @@ class SaveSystem {
             }
             // Unlock costs
             if (data.upgrades[key].unlocked && !defaults.upgrades[key].unlocked) {
-                const unlockCosts = { horseman: 2 };
+                const unlockCosts = { horseman: 5 };
                 spent += unlockCosts[key] || 0;
             }
         }
