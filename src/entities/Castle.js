@@ -473,12 +473,12 @@ class Castle extends Phaser.GameObjects.Container {
 
         // HP text above fence (replaces "FENCE" label)
         this.fenceHealthText = this.scene.add.text(0, -135, `${this.fenceCurrentHealth}`, {
-            fontSize: '14px',
+            fontSize: '22px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#8B4513',
             stroke: '#000000',
-            strokeThickness: 2
+            strokeThickness: 3
         }).setOrigin(0.5);
         this.fenceContainer.add(this.fenceHealthText);
 

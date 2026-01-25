@@ -724,14 +724,14 @@ class GameScene extends Phaser.Scene {
         this.heroPortraitContainer.setDepth(100);
 
         // Portrait background (frame) - make it a circle for ability button look
-        const frameBg = this.add.circle(0, 0, 35, 0x1a1a2e);
+        const frameBg = this.add.circle(0, 0, 42, 0x1a1a2e);
         frameBg.setStrokeStyle(3, this.hero.color);
         this.heroPortraitContainer.add(frameBg);
         this.heroPortraitBg = frameBg;
 
         // Draw pixel art hero portrait
         const heroArt = this.add.graphics();
-        this.drawPixelArtHero(heroArt, this.heroKey, 0, 0, 48);
+        this.drawPixelArtHero(heroArt, this.heroKey, 0, 0, 58);
         this.heroPortraitContainer.add(heroArt);
 
         // Pie timer spinner overlay (on top of hero art)
@@ -739,14 +739,14 @@ class GameScene extends Phaser.Scene {
         this.heroPortraitContainer.add(this.heroAbilitySpinner);
 
         // Lock icon (shown until ability unlocks at wave 20) - bottom-right corner, larger for mobile
-        this.heroAbilityLock = this.add.text(22, 22, '🔒', {
+        this.heroAbilityLock = this.add.text(26, 26, '🔒', {
             fontSize: '28px'
         }).setOrigin(0.5);
         this.heroPortraitContainer.add(this.heroAbilityLock);
 
         // Hero name below portrait
-        const nameText = this.add.text(0, 50, this.hero.name, {
-            fontSize: '12px',
+        const nameText = this.add.text(0, 58, this.hero.name, {
+            fontSize: '16px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
             color: '#ffffff',
@@ -1485,7 +1485,7 @@ class GameScene extends Phaser.Scene {
         const costText = isMaxLevel
             ? `${cost.gold}g ${cost.wood}w REPAIR`
             : `${cost.gold}g ${cost.wood}w
-Lv.${currentLevel + 1}`;
+⬆${currentLevel + 1}`;
 
         this.castleUpgradeCostText.setText(costText);
         this.castleCostGlow.setText(costText);
@@ -1649,7 +1649,7 @@ Lv.${currentLevel + 1}`;
             if (this.castleLevel >= effectiveMaxLevel) {
                 this.showMessage(`Castle MAX LEVEL!`, '#ffd700');
             } else {
-                this.showMessage(`Castle Lv.${this.castleLevel}!`, '#4ade80');
+                this.showMessage(`Castle ⬆${this.castleLevel}!`, '#4ade80');
             }
 
             // Glow effect
@@ -1688,7 +1688,7 @@ Lv.${currentLevel + 1}`;
         const costText = isMaxLevel
             ? `${cost.gold}g ${cost.wood}w REPAIR`
             : `${cost.gold}g ${cost.wood}w
-Lv.${level + 1}`;
+⬆${level + 1}`;
 
         this.castleUpgradeCostText.setText(costText);
         this.castleCostGlow.setText(costText);
