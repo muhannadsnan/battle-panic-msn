@@ -3055,8 +3055,10 @@ class GameScene extends Phaser.Scene {
         if (!isExperienced) {
             if (waveNumber === 3 && this.castleLevel === 1) {
                 this.showMessage('Tip: Hover castle to upgrade!', '#ffd700');
+                if (typeof audioManager !== 'undefined') audioManager.playTip();
             } else if (waveNumber === 7 && this.castleLevel < 4) {
                 this.showMessage('Tip: Upgrade castle for arrows & fence!', '#ffd700');
+                if (typeof audioManager !== 'undefined') audioManager.playTip();
             }
         }
 

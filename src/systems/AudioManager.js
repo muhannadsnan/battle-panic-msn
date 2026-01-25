@@ -599,6 +599,37 @@ class AudioManager {
         playBeep(120);
     }
 
+    // Play tip sound - gentle helpful chime
+    playTip() {
+        if (!this.sfxEnabled || !this.audioContext) return;
+        this.resume();
+
+        // Gentle ascending chime (friendly notification)
+        const playChime = (freq, delay) => {
+            setTimeout(() => {
+                if (!this.audioContext) return;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(this.sfxGain);
+
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+
+                gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+
+                osc.start();
+                osc.stop(this.audioContext.currentTime + 0.3);
+            }, delay);
+        };
+
+        // Two-note ascending chime (C5 → E5)
+        playChime(523, 0);    // C5
+        playChime(659, 100);  // E5
+    }
+
     // Play castle destroyed explosion - big dramatic boom
     playCastleDestroyed() {
         if (!this.sfxEnabled || !this.audioContext || this.allMuted) return;
