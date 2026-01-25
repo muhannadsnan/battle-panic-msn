@@ -61,9 +61,10 @@ class Enemy extends Phaser.GameObjects.Container {
         let healthMult = waveHealthMultiplier * rankMultiplier;
         let damageMult = waveDamageMultiplier * rankMultiplier;
 
-        // New players get 50% easier enemies (half HP)
+        // New players (Recruit, Soldier, Warrior) get easier enemies
         if (newPlayerEasyMode) {
-            healthMult *= 0.5;
+            healthMult *= 0.5;   // 50% HP
+            damageMult *= 0.5;   // 50% damage
         }
         let sizeMult = 1;
 

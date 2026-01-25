@@ -34,6 +34,15 @@ class WaveSystem {
         // Reduce enemy counts by 10%
         waveMultiplier *= 0.9;
 
+        // New players (Recruit, Soldier, Warrior) get 30% fewer enemies
+        if (this.scene.saveData && typeof saveSystem !== 'undefined') {
+            const rankInfo = saveSystem.getRankInfo(this.scene.saveData);
+            const experiencedRanks = ['Knight', 'Captain', 'Commander', 'General', 'Champion', 'Legend', 'Immortal'];
+            if (!experiencedRanks.includes(rankInfo.rank.name)) {
+                waveMultiplier *= 0.7;  // 30% fewer enemies
+            }
+        }
+
         // Wave 1 now starts with goblins + orcs
         // Each wave scales up from there
         const goblinCount = Math.max(3, Math.floor((2 + effectiveWave * 0.6) * waveMultiplier));
