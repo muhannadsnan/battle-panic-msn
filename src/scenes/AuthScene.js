@@ -900,6 +900,12 @@ class AuthScene extends Phaser.Scene {
     showMessage(message, color = '#ffffff') {
         const { width, height } = this.scale;
 
+        // Destroy previous message if exists
+        if (this.currentMessage) {
+            this.currentMessage.destroy();
+            this.currentMessage = null;
+        }
+
         const msgText = this.add.text(width / 2, height - 80, message, {
             fontSize: '18px',
             fontFamily: 'Arial',
@@ -909,13 +915,20 @@ class AuthScene extends Phaser.Scene {
             strokeThickness: 3
         }).setOrigin(0.5);
 
+        this.currentMessage = msgText;
+
         this.tweens.add({
             targets: msgText,
             alpha: 0,
             y: height - 120,
             duration: 2000,
             delay: 1000,
-            onComplete: () => msgText.destroy()
+            onComplete: () => {
+                msgText.destroy();
+                if (this.currentMessage === msgText) {
+                    this.currentMessage = null;
+                }
+            }
         });
     }
 
