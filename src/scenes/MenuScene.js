@@ -606,7 +606,7 @@ class MenuScene extends Phaser.Scene {
 
         // Login reminder if not logged in
         if (!supabaseClient.isLoggedIn()) {
-            const loginNote = this.add.text(0, 130, '⚠️ Please log in first to purchase XP', {
+            const loginNote = this.add.text(0, 170, '⚠️ Please log in first to purchase XP', {
                 fontSize: '14px',
                 fontFamily: 'Arial',
                 color: '#ff8888'
