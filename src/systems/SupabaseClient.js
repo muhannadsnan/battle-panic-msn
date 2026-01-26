@@ -131,58 +131,24 @@ class SupabaseClient {
         return this.sendMagicLink(this.user.email, 'delete_account');
     }
 
-    // Generate a 4-digit login code (for PWA/home screen users)
-    async generateLoginCode(email) {
+    // Verify email OTP code (6-digit code from Supabase email)
+    async verifyEmailOtp(email, code) {
         if (!this.initialized) {
             return { success: false, error: 'Supabase not initialized' };
         }
 
         try {
-            const { data, error } = await this.supabase.functions.invoke('generate-login-code', {
-                body: { email: email.toLowerCase() }
+            const { data, error } = await this.supabase.auth.verifyOtp({
+                email: email.toLowerCase(),
+                token: code,
+                type: 'email'
             });
 
             if (error) throw error;
 
-            if (data?.success && data?.code) {
-                return { success: true, code: data.code };
-            } else {
-                throw new Error(data?.error || 'Failed to generate code');
-            }
+            return { success: true, user: data.user };
         } catch (error) {
-            console.error('Generate login code error:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // Verify login code and sign in (for PWA/home screen users)
-    async verifyLoginCode(email, code) {
-        if (!this.initialized) {
-            return { success: false, error: 'Supabase not initialized' };
-        }
-
-        try {
-            const { data, error } = await this.supabase.functions.invoke('verify-login-code', {
-                body: { email: email.toLowerCase(), code }
-            });
-
-            if (error) throw error;
-
-            if (!data?.success || !data?.token_hash) {
-                throw new Error(data?.error || 'Invalid code');
-            }
-
-            // Use the token_hash to verify and sign in
-            const { data: authData, error: authError } = await this.supabase.auth.verifyOtp({
-                token_hash: data.token_hash,
-                type: 'magiclink'
-            });
-
-            if (authError) throw authError;
-
-            return { success: true, user: authData.user };
-        } catch (error) {
-            console.error('Verify login code error:', error);
+            console.error('Verify OTP error:', error);
             return { success: false, error: error.message };
         }
     }

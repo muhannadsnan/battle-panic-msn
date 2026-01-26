@@ -177,21 +177,20 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(this.statusText);
     }
 
-    showCheckEmailPanel(email, loginCode = null) {
+    showCheckEmailPanel(email) {
         this.clearPanel();
         this.pendingEmail = email; // Store for code verification
-        this.pendingLoginCode = loginCode; // Store the code
 
         const { width, height } = this.scale;
         this.panelContainer = this.add.container(width / 2, height / 2);
 
-        // Panel background - taller to fit code
-        const panelBg = this.add.rectangle(0, 0, 400, 420, 0x1a1a2e);
+        // Panel background
+        const panelBg = this.add.rectangle(0, 0, 400, 340, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
         // Close button - popping circle style outside panel
-        const closeBtnContainer = this.add.container(200 + 15, -210 + 15);
+        const closeBtnContainer = this.add.container(200 + 15, -170 + 15);
         const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
         closeBtnBg.setStrokeStyle(3, 0xff4444);
         closeBtnContainer.add(closeBtnBg);
@@ -226,7 +225,7 @@ class AuthScene extends Phaser.Scene {
         closeBtnBg.on('pointerdown', () => this.goBack());
 
         // Title
-        const title = this.add.text(0, -170, 'Check Your Email!', {
+        const title = this.add.text(0, -130, 'Check Your Email!', {
             fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -235,55 +234,23 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(title);
 
         // Email icon
-        const emailIcon = this.add.text(0, -120, '✉️', {
+        const emailIcon = this.add.text(0, -80, '✉️', {
             fontSize: '40px'
         }).setOrigin(0.5);
         this.panelContainer.add(emailIcon);
 
         // Message
-        const message = this.add.text(0, -60, `We sent a login link to:\n${email}`, {
-            fontSize: '15px',
+        const message = this.add.text(0, -20, `We sent a login link to:\n${email}\n\nClick the link OR use the 6-digit code\nin the email to sign in.`, {
+            fontSize: '14px',
             fontFamily: 'Arial',
             color: '#cccccc',
             align: 'center',
-            lineSpacing: 4
+            lineSpacing: 5
         }).setOrigin(0.5);
         this.panelContainer.add(message);
 
-        // Login code display (for PWA/home screen users)
-        if (loginCode) {
-            const codeLabel = this.add.text(0, -10, 'Or use this code (for app users):', {
-                fontSize: '13px',
-                fontFamily: 'Arial',
-                color: '#888888',
-                align: 'center'
-            }).setOrigin(0.5);
-            this.panelContainer.add(codeLabel);
-
-            // Code display box
-            const codeBox = this.add.rectangle(0, 35, 160, 55, 0x2a2a4a);
-            codeBox.setStrokeStyle(2, 0xffd700);
-            this.panelContainer.add(codeBox);
-
-            const codeText = this.add.text(0, 35, loginCode, {
-                fontSize: '36px',
-                fontFamily: 'Arial',
-                fontStyle: 'bold',
-                color: '#ffd700',
-                letterSpacing: 8
-            }).setOrigin(0.5);
-            this.panelContainer.add(codeText);
-
-            const codeExpiry = this.add.text(0, 75, 'Code expires in 10 minutes', {
-                fontSize: '11px',
-                fontFamily: 'Arial',
-                color: '#666666'
-            }).setOrigin(0.5);
-            this.panelContainer.add(codeExpiry);
-        }
-
         // Status text for feedback
-        this.checkEmailStatus = this.add.text(0, 110, '', {
+        this.checkEmailStatus = this.add.text(0, 55, '', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ffd700',
@@ -292,18 +259,18 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(this.checkEmailStatus);
 
         // Buttons row
-        const resendBtn = this.createButton(-90, 150, 'Resend', () => {
+        const resendBtn = this.createButton(-90, 95, 'Resend', () => {
             this.resendMagicLink(email);
         }, 0x4a4a8e, 90, 35);
         this.panelContainer.add(resendBtn);
 
         // Enter Code button (for PWA users who can't click the magic link)
-        const enterCodeBtn = this.createButton(90, 150, 'Enter Code', () => {
+        const enterCodeBtn = this.createButton(90, 95, 'Enter Code', () => {
             this.showEnterCodePanel();
         }, 0x6a5a2e, 110, 35);
         this.panelContainer.add(enterCodeBtn);
 
-        const cancelBtn = this.createButton(0, 190, '← Re-enter Email', () => {
+        const cancelBtn = this.createButton(0, 140, '← Re-enter Email', () => {
             this.clearPanel();
             this.showLoginPanel();
         }, 0x666666, 140, 35);
@@ -657,19 +624,13 @@ class AuthScene extends Phaser.Scene {
 
         this.showStatus('Sending magic link...', '#ffd700');
 
-        // Send magic link AND generate login code in parallel
-        const [magicResult, codeResult] = await Promise.all([
-            supabaseClient.sendMagicLink(emailValue),
-            supabaseClient.generateLoginCode(emailValue)
-        ]);
+        const result = await supabaseClient.sendMagicLink(emailValue);
 
-        if (magicResult.success) {
+        if (result.success) {
             this.removeEmailInput();
-            // Pass the login code to the panel (if generated successfully)
-            const loginCode = codeResult.success ? codeResult.code : null;
-            this.showCheckEmailPanel(emailValue, loginCode);
+            this.showCheckEmailPanel(emailValue);
         } else {
-            this.showStatus(magicResult.error || 'Failed to send magic link', '#ff6b6b');
+            this.showStatus(result.error || 'Failed to send magic link', '#ff6b6b');
         }
     }
 
@@ -679,22 +640,14 @@ class AuthScene extends Phaser.Scene {
             this.checkEmailStatus.setColor('#ffd700');
         }
 
-        // Also regenerate a new code
-        const [magicResult, codeResult] = await Promise.all([
-            supabaseClient.sendMagicLink(email),
-            supabaseClient.generateLoginCode(email)
-        ]);
+        const result = await supabaseClient.sendMagicLink(email);
 
         if (this.checkEmailStatus) {
-            if (magicResult.success) {
-                this.checkEmailStatus.setText('New link sent! Check your email.');
+            if (result.success) {
+                this.checkEmailStatus.setText('New email sent! Check your inbox.');
                 this.checkEmailStatus.setColor('#4ade80');
-                // Update the stored code
-                if (codeResult.success) {
-                    this.pendingLoginCode = codeResult.code;
-                }
             } else {
-                this.checkEmailStatus.setText(magicResult.error || 'Failed to resend');
+                this.checkEmailStatus.setText(result.error || 'Failed to resend');
                 this.checkEmailStatus.setColor('#ff6b6b');
             }
         }
@@ -736,7 +689,7 @@ class AuthScene extends Phaser.Scene {
         });
         closeBtnBg.on('pointerdown', () => {
             // Go back to check email panel
-            this.showCheckEmailPanel(this.pendingEmail, this.pendingLoginCode);
+            this.showCheckEmailPanel(this.pendingEmail);
         });
 
         // Title
@@ -749,7 +702,7 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(title);
 
         // Instructions
-        const instructions = this.add.text(0, -70, 'Enter the 4-digit code shown earlier:', {
+        const instructions = this.add.text(0, -70, 'Enter the 6-digit code from your email:', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
@@ -793,21 +746,21 @@ class AuthScene extends Phaser.Scene {
         this.codeInput.type = 'text';
         this.codeInput.inputMode = 'numeric';
         this.codeInput.pattern = '[0-9]*';
-        this.codeInput.maxLength = 4;
-        this.codeInput.placeholder = '____';
+        this.codeInput.maxLength = 6;
+        this.codeInput.placeholder = '______';
         this.codeInput.style.cssText = `
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 140px;
+            width: 180px;
             height: 50px;
-            font-size: 32px;
+            font-size: 28px;
             font-family: Arial, sans-serif;
             font-weight: bold;
             text-align: center;
-            letter-spacing: 12px;
-            padding-left: 12px;
+            letter-spacing: 10px;
+            padding-left: 10px;
             background: #2a2a4a;
             border: 2px solid #ffd700;
             border-radius: 8px;
@@ -823,16 +776,16 @@ class AuthScene extends Phaser.Scene {
 
         this.codeInput.style.left = `${rect.left + (width / 2) * scaleX}px`;
         this.codeInput.style.top = `${rect.top + (height / 2 - 15) * scaleY}px`;
-        this.codeInput.style.width = `${140 * scaleX}px`;
+        this.codeInput.style.width = `${180 * scaleX}px`;
         this.codeInput.style.height = `${50 * scaleY}px`;
-        this.codeInput.style.fontSize = `${28 * Math.min(scaleX, scaleY)}px`;
+        this.codeInput.style.fontSize = `${24 * Math.min(scaleX, scaleY)}px`;
 
         document.body.appendChild(this.codeInput);
         this.codeInput.focus();
 
-        // Auto-verify when 4 digits entered
+        // Auto-verify when 6 digits entered
         this.codeInput.addEventListener('input', () => {
-            if (this.codeInput.value.length === 4) {
+            if (this.codeInput.value.length === 6) {
                 this.verifyLoginCode();
             }
         });
@@ -848,9 +801,9 @@ class AuthScene extends Phaser.Scene {
     async verifyLoginCode() {
         const code = this.codeInput?.value?.trim();
 
-        if (!code || code.length !== 4) {
+        if (!code || code.length !== 6) {
             if (this.codeStatus) {
-                this.codeStatus.setText('Please enter a 4-digit code');
+                this.codeStatus.setText('Please enter the 6-digit code');
                 this.codeStatus.setColor('#ff6b6b');
             }
             return;
@@ -861,7 +814,7 @@ class AuthScene extends Phaser.Scene {
             this.codeStatus.setColor('#ffd700');
         }
 
-        const result = await supabaseClient.verifyLoginCode(this.pendingEmail, code);
+        const result = await supabaseClient.verifyEmailOtp(this.pendingEmail, code);
 
         if (result.success) {
             if (this.codeStatus) {
