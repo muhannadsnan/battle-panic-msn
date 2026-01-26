@@ -783,12 +783,10 @@ class AuthScene extends Phaser.Scene {
         document.body.appendChild(this.codeInput);
         this.codeInput.focus();
 
-        // Auto-verify when 6-8 digits entered (Supabase uses variable length)
-        this.codeInput.addEventListener('input', () => {
-            if (this.codeInput.value.length >= 6) {
-                // Small delay to allow typing full code
-                clearTimeout(this.codeVerifyTimeout);
-                this.codeVerifyTimeout = setTimeout(() => this.verifyLoginCode(), 500);
+        // Allow Enter key to verify
+        this.codeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                this.verifyLoginCode();
             }
         });
     }
@@ -838,10 +836,10 @@ class AuthScene extends Phaser.Scene {
                 this.codeStatus.setText(result.error || 'Invalid or expired code');
                 this.codeStatus.setColor('#ff6b6b');
             }
-            // Clear input for retry
+            // Focus input for retry (don't clear - let user see what they typed)
             if (this.codeInput) {
-                this.codeInput.value = '';
                 this.codeInput.focus();
+                this.codeInput.select();
             }
         }
     }
