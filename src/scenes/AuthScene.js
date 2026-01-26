@@ -702,7 +702,7 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(title);
 
         // Instructions
-        const instructions = this.add.text(0, -70, 'Enter the 6-digit code from your email:', {
+        const instructions = this.add.text(0, -70, 'Enter the code from your email:', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#aaaaaa'
@@ -746,21 +746,21 @@ class AuthScene extends Phaser.Scene {
         this.codeInput.type = 'text';
         this.codeInput.inputMode = 'numeric';
         this.codeInput.pattern = '[0-9]*';
-        this.codeInput.maxLength = 6;
-        this.codeInput.placeholder = '______';
+        this.codeInput.maxLength = 8;
+        this.codeInput.placeholder = '________';
         this.codeInput.style.cssText = `
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 180px;
+            width: 220px;
             height: 50px;
-            font-size: 28px;
+            font-size: 24px;
             font-family: Arial, sans-serif;
             font-weight: bold;
             text-align: center;
-            letter-spacing: 10px;
-            padding-left: 10px;
+            letter-spacing: 8px;
+            padding-left: 8px;
             background: #2a2a4a;
             border: 2px solid #ffd700;
             border-radius: 8px;
@@ -776,17 +776,19 @@ class AuthScene extends Phaser.Scene {
 
         this.codeInput.style.left = `${rect.left + (width / 2) * scaleX}px`;
         this.codeInput.style.top = `${rect.top + (height / 2 - 15) * scaleY}px`;
-        this.codeInput.style.width = `${180 * scaleX}px`;
+        this.codeInput.style.width = `${220 * scaleX}px`;
         this.codeInput.style.height = `${50 * scaleY}px`;
-        this.codeInput.style.fontSize = `${24 * Math.min(scaleX, scaleY)}px`;
+        this.codeInput.style.fontSize = `${22 * Math.min(scaleX, scaleY)}px`;
 
         document.body.appendChild(this.codeInput);
         this.codeInput.focus();
 
-        // Auto-verify when 6 digits entered
+        // Auto-verify when 6-8 digits entered (Supabase uses variable length)
         this.codeInput.addEventListener('input', () => {
-            if (this.codeInput.value.length === 6) {
-                this.verifyLoginCode();
+            if (this.codeInput.value.length >= 6) {
+                // Small delay to allow typing full code
+                clearTimeout(this.codeVerifyTimeout);
+                this.codeVerifyTimeout = setTimeout(() => this.verifyLoginCode(), 500);
             }
         });
     }
@@ -801,9 +803,9 @@ class AuthScene extends Phaser.Scene {
     async verifyLoginCode() {
         const code = this.codeInput?.value?.trim();
 
-        if (!code || code.length !== 6) {
+        if (!code || code.length < 6) {
             if (this.codeStatus) {
-                this.codeStatus.setText('Please enter the 6-digit code');
+                this.codeStatus.setText('Please enter the code from your email');
                 this.codeStatus.setColor('#ff6b6b');
             }
             return;
