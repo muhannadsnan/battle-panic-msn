@@ -177,19 +177,21 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(this.statusText);
     }
 
-    showCheckEmailPanel(email) {
+    showCheckEmailPanel(email, loginCode = null) {
         this.clearPanel();
+        this.pendingEmail = email; // Store for code verification
+        this.pendingLoginCode = loginCode; // Store the code
 
         const { width, height } = this.scale;
         this.panelContainer = this.add.container(width / 2, height / 2);
 
-        // Panel background
-        const panelBg = this.add.rectangle(0, 0, 400, 320, 0x1a1a2e);
+        // Panel background - taller to fit code
+        const panelBg = this.add.rectangle(0, 0, 400, 420, 0x1a1a2e);
         panelBg.setStrokeStyle(3, 0x4ade80);
         this.panelContainer.add(panelBg);
 
         // Close button - popping circle style outside panel
-        const closeBtnContainer = this.add.container(200 + 15, -160 + 15);
+        const closeBtnContainer = this.add.container(200 + 15, -210 + 15);
         const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
         closeBtnBg.setStrokeStyle(3, 0xff4444);
         closeBtnContainer.add(closeBtnBg);
@@ -224,7 +226,7 @@ class AuthScene extends Phaser.Scene {
         closeBtnBg.on('pointerdown', () => this.goBack());
 
         // Title
-        const title = this.add.text(0, -120, 'Check Your Email!', {
+        const title = this.add.text(0, -170, 'Check Your Email!', {
             fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -233,23 +235,55 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(title);
 
         // Email icon
-        const emailIcon = this.add.text(0, -70, '✉️', {
-            fontSize: '48px'
+        const emailIcon = this.add.text(0, -120, '✉️', {
+            fontSize: '40px'
         }).setOrigin(0.5);
         this.panelContainer.add(emailIcon);
 
-        // Message - moved down to avoid overlap
-        const message = this.add.text(0, 20, `We sent a login link to:\n${email}\n\nClick the link in your email to login.\nLink expires in 15 minutes.`, {
-            fontSize: '16px',
+        // Message
+        const message = this.add.text(0, -60, `We sent a login link to:\n${email}`, {
+            fontSize: '15px',
             fontFamily: 'Arial',
             color: '#cccccc',
             align: 'center',
-            lineSpacing: 6
+            lineSpacing: 4
         }).setOrigin(0.5);
         this.panelContainer.add(message);
 
-        // Status text for resend feedback
-        this.checkEmailStatus = this.add.text(0, 85, '', {
+        // Login code display (for PWA/home screen users)
+        if (loginCode) {
+            const codeLabel = this.add.text(0, -10, 'Or use this code (for app users):', {
+                fontSize: '13px',
+                fontFamily: 'Arial',
+                color: '#888888',
+                align: 'center'
+            }).setOrigin(0.5);
+            this.panelContainer.add(codeLabel);
+
+            // Code display box
+            const codeBox = this.add.rectangle(0, 35, 160, 55, 0x2a2a4a);
+            codeBox.setStrokeStyle(2, 0xffd700);
+            this.panelContainer.add(codeBox);
+
+            const codeText = this.add.text(0, 35, loginCode, {
+                fontSize: '36px',
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+                color: '#ffd700',
+                letterSpacing: 8
+            }).setOrigin(0.5);
+            this.panelContainer.add(codeText);
+
+            const codeExpiry = this.add.text(0, 75, 'Code expires in 10 minutes', {
+                fontSize: '11px',
+                fontFamily: 'Arial',
+                color: '#666666'
+            }).setOrigin(0.5);
+            this.panelContainer.add(codeExpiry);
+        }
+
+        // Status text for feedback
+        this.checkEmailStatus = this.add.text(0, 110, '', {
             fontSize: '14px',
             fontFamily: 'Arial',
             color: '#ffd700',
@@ -258,15 +292,21 @@ class AuthScene extends Phaser.Scene {
         this.panelContainer.add(this.checkEmailStatus);
 
         // Buttons row
-        const resendBtn = this.createButton(-80, 115, 'Resend', () => {
+        const resendBtn = this.createButton(-90, 150, 'Resend', () => {
             this.resendMagicLink(email);
-        }, 0x4a4a8e, 100, 35);
+        }, 0x4a4a8e, 90, 35);
         this.panelContainer.add(resendBtn);
 
-        const cancelBtn = this.createButton(80, 115, '← Re-enter', () => {
+        // Enter Code button (for PWA users who can't click the magic link)
+        const enterCodeBtn = this.createButton(90, 150, 'Enter Code', () => {
+            this.showEnterCodePanel();
+        }, 0x6a5a2e, 110, 35);
+        this.panelContainer.add(enterCodeBtn);
+
+        const cancelBtn = this.createButton(0, 190, '← Re-enter Email', () => {
             this.clearPanel();
             this.showLoginPanel();
-        }, 0x666666, 110, 35);
+        }, 0x666666, 140, 35);
         this.panelContainer.add(cancelBtn);
     }
 
@@ -617,13 +657,19 @@ class AuthScene extends Phaser.Scene {
 
         this.showStatus('Sending magic link...', '#ffd700');
 
-        const result = await supabaseClient.sendMagicLink(emailValue);
+        // Send magic link AND generate login code in parallel
+        const [magicResult, codeResult] = await Promise.all([
+            supabaseClient.sendMagicLink(emailValue),
+            supabaseClient.generateLoginCode(emailValue)
+        ]);
 
-        if (result.success) {
+        if (magicResult.success) {
             this.removeEmailInput();
-            this.showCheckEmailPanel(emailValue);
+            // Pass the login code to the panel (if generated successfully)
+            const loginCode = codeResult.success ? codeResult.code : null;
+            this.showCheckEmailPanel(emailValue, loginCode);
         } else {
-            this.showStatus(result.error || 'Failed to send magic link', '#ff6b6b');
+            this.showStatus(magicResult.error || 'Failed to send magic link', '#ff6b6b');
         }
     }
 
@@ -633,15 +679,214 @@ class AuthScene extends Phaser.Scene {
             this.checkEmailStatus.setColor('#ffd700');
         }
 
-        const result = await supabaseClient.sendMagicLink(email);
+        // Also regenerate a new code
+        const [magicResult, codeResult] = await Promise.all([
+            supabaseClient.sendMagicLink(email),
+            supabaseClient.generateLoginCode(email)
+        ]);
 
         if (this.checkEmailStatus) {
-            if (result.success) {
+            if (magicResult.success) {
                 this.checkEmailStatus.setText('New link sent! Check your email.');
                 this.checkEmailStatus.setColor('#4ade80');
+                // Update the stored code
+                if (codeResult.success) {
+                    this.pendingLoginCode = codeResult.code;
+                }
             } else {
-                this.checkEmailStatus.setText(result.error || 'Failed to resend');
+                this.checkEmailStatus.setText(magicResult.error || 'Failed to resend');
                 this.checkEmailStatus.setColor('#ff6b6b');
+            }
+        }
+    }
+
+    showEnterCodePanel() {
+        this.clearPanel();
+
+        const { width, height } = this.scale;
+        this.panelContainer = this.add.container(width / 2, height / 2);
+
+        // Panel background
+        const panelBg = this.add.rectangle(0, 0, 360, 300, 0x1a1a2e);
+        panelBg.setStrokeStyle(3, 0xffd700);
+        this.panelContainer.add(panelBg);
+
+        // Close button
+        const closeBtnContainer = this.add.container(180 + 15, -150 + 15);
+        const closeBtnBg = this.add.circle(0, 0, 28, 0x442222);
+        closeBtnBg.setStrokeStyle(3, 0xff4444);
+        closeBtnContainer.add(closeBtnBg);
+        const closeBtnText = this.add.text(0, 0, '✕', {
+            fontSize: '32px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        closeBtnContainer.add(closeBtnText);
+        closeBtnBg.setInteractive({ useHandCursor: true });
+        this.panelContainer.add(closeBtnContainer);
+
+        closeBtnBg.on('pointerover', () => {
+            closeBtnBg.setFillStyle(0x663333);
+            closeBtnText.setColor('#ff8888');
+        });
+        closeBtnBg.on('pointerout', () => {
+            closeBtnBg.setFillStyle(0x442222);
+            closeBtnText.setColor('#ff6666');
+        });
+        closeBtnBg.on('pointerdown', () => {
+            // Go back to check email panel
+            this.showCheckEmailPanel(this.pendingEmail, this.pendingLoginCode);
+        });
+
+        // Title
+        const title = this.add.text(0, -110, 'Enter Login Code', {
+            fontSize: '26px',
+            fontFamily: 'Arial',
+            fontStyle: 'bold',
+            color: '#ffd700'
+        }).setOrigin(0.5);
+        this.panelContainer.add(title);
+
+        // Instructions
+        const instructions = this.add.text(0, -70, 'Enter the 4-digit code shown earlier:', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#aaaaaa'
+        }).setOrigin(0.5);
+        this.panelContainer.add(instructions);
+
+        // Code input (HTML input for mobile keyboard)
+        this.createCodeInput();
+
+        // Status text
+        this.codeStatus = this.add.text(0, 50, '', {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: '#ff6b6b',
+            align: 'center'
+        }).setOrigin(0.5);
+        this.panelContainer.add(this.codeStatus);
+
+        // Verify button
+        const verifyBtn = this.createButton(0, 95, 'Verify & Login', () => {
+            this.verifyLoginCode();
+        }, 0x4a8a4e, 150, 40);
+        this.panelContainer.add(verifyBtn);
+
+        // Back button
+        const backBtn = this.createButton(0, 140, '← Back', () => {
+            this.removeCodeInput();
+            this.showCheckEmailPanel(this.pendingEmail, this.pendingLoginCode);
+        }, 0x666666, 100, 35);
+        this.panelContainer.add(backBtn);
+    }
+
+    createCodeInput() {
+        const { width, height } = this.scale;
+
+        // Remove existing input if any
+        this.removeCodeInput();
+
+        // Create HTML input for code
+        this.codeInput = document.createElement('input');
+        this.codeInput.type = 'text';
+        this.codeInput.inputMode = 'numeric';
+        this.codeInput.pattern = '[0-9]*';
+        this.codeInput.maxLength = 4;
+        this.codeInput.placeholder = '____';
+        this.codeInput.style.cssText = `
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 50px;
+            font-size: 32px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 12px;
+            padding-left: 12px;
+            background: #2a2a4a;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            color: #ffd700;
+            outline: none;
+        `;
+
+        // Position relative to game canvas
+        const canvas = this.game.canvas;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = rect.width / width;
+        const scaleY = rect.height / height;
+
+        this.codeInput.style.left = `${rect.left + (width / 2) * scaleX}px`;
+        this.codeInput.style.top = `${rect.top + (height / 2 - 15) * scaleY}px`;
+        this.codeInput.style.width = `${140 * scaleX}px`;
+        this.codeInput.style.height = `${50 * scaleY}px`;
+        this.codeInput.style.fontSize = `${28 * Math.min(scaleX, scaleY)}px`;
+
+        document.body.appendChild(this.codeInput);
+        this.codeInput.focus();
+
+        // Auto-verify when 4 digits entered
+        this.codeInput.addEventListener('input', () => {
+            if (this.codeInput.value.length === 4) {
+                this.verifyLoginCode();
+            }
+        });
+    }
+
+    removeCodeInput() {
+        if (this.codeInput && this.codeInput.parentNode) {
+            this.codeInput.parentNode.removeChild(this.codeInput);
+            this.codeInput = null;
+        }
+    }
+
+    async verifyLoginCode() {
+        const code = this.codeInput?.value?.trim();
+
+        if (!code || code.length !== 4) {
+            if (this.codeStatus) {
+                this.codeStatus.setText('Please enter a 4-digit code');
+                this.codeStatus.setColor('#ff6b6b');
+            }
+            return;
+        }
+
+        if (this.codeStatus) {
+            this.codeStatus.setText('Verifying...');
+            this.codeStatus.setColor('#ffd700');
+        }
+
+        const result = await supabaseClient.verifyLoginCode(this.pendingEmail, code);
+
+        if (result.success) {
+            if (this.codeStatus) {
+                this.codeStatus.setText('Success! Logging in...');
+                this.codeStatus.setColor('#4ade80');
+            }
+            this.removeCodeInput();
+
+            // Start session and show logged-in panel
+            await supabaseClient.startSession();
+
+            // Short delay to show success message
+            this.time.delayedCall(500, () => {
+                this.clearPanel();
+                this.showLoggedInPanel();
+            });
+        } else {
+            if (this.codeStatus) {
+                this.codeStatus.setText(result.error || 'Invalid or expired code');
+                this.codeStatus.setColor('#ff6b6b');
+            }
+            // Clear input for retry
+            if (this.codeInput) {
+                this.codeInput.value = '';
+                this.codeInput.focus();
             }
         }
     }
@@ -727,15 +972,18 @@ class AuthScene extends Phaser.Scene {
             this.panelContainer = null;
         }
         this.removeEmailInput();
+        this.removeCodeInput();
     }
 
     goBack() {
         this.clearPanel();
+        this.removeCodeInput();
         this.scene.start('MenuScene');
     }
 
     shutdown() {
         this.removeEmailInput();
+        this.removeCodeInput();
         if (this.authListener) {
             window.removeEventListener('authStateChanged', this.authListener);
         }
