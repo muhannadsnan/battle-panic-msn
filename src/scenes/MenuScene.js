@@ -2606,6 +2606,16 @@ class MenuScene extends Phaser.Scene {
                 ]
             },
             {
+                title: 'HEROES',
+                tips: [
+                    { icon: '🌿', text: 'Druid: +10% archer dmg, -10% enemy speed' },
+                    { icon: '⚔️', text: 'Warlord: +15% melee dmg, 15% faster production' },
+                    { icon: '🧪', text: 'Alchemist: +10% horsemen dmg, -5% unit costs' },
+                    { icon: '🎯', text: 'Wave 20: Each hero unlocks a unique ability!' },
+                    { icon: '💡', text: 'Check hero select screen before battle' }
+                ]
+            },
+            {
                 title: 'UNIT PROMOTION',
                 tips: [
                     { icon: '⭐', text: 'Spawning the same unit type promotes it!' },

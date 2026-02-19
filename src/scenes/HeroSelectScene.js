@@ -33,14 +33,14 @@ class HeroSelectScene extends Phaser.Scene {
         this.heroCards = [];
 
         const heroes = ['DRUID', 'WARLORD', 'ALCHEMIST'];
-        const cardWidth = 280;
-        const cardSpacing = 30;
+        const cardWidth = 200;
+        const cardSpacing = 40;
         const totalWidth = (cardWidth * 3) + (cardSpacing * 2);
         const startX = (width - totalWidth) / 2 + cardWidth / 2;
 
         heroes.forEach((heroKey, index) => {
             const x = startX + index * (cardWidth + cardSpacing);
-            const card = this.createHeroCard(x, 310, heroKey);
+            const card = this.createHeroCard(x, 280, heroKey);
             this.heroCards.push(card);
         });
 
@@ -53,8 +53,8 @@ class HeroSelectScene extends Phaser.Scene {
 
     createHeroCard(x, y, heroKey) {
         const hero = HERO_TYPES[heroKey];
-        const cardWidth = 280;
-        const cardHeight = 380;
+        const cardWidth = 200;
+        const cardHeight = 200;
 
         // Card container
         const container = this.add.container(x, y);
@@ -65,18 +65,18 @@ class HeroSelectScene extends Phaser.Scene {
         container.add(bg);
 
         // Hero portrait area with pixel art
-        const portraitSize = 90;
-        const portrait = this.add.rectangle(0, -100, portraitSize, portraitSize, 0x1a1a2e);
+        const portraitSize = 100;
+        const portrait = this.add.rectangle(0, -20, portraitSize, portraitSize, 0x1a1a2e);
         portrait.setStrokeStyle(3, hero.color);
         container.add(portrait);
 
         // Draw pixel art hero portrait
         const heroArt = this.add.graphics();
-        this.drawPixelArtHero(heroArt, heroKey, 0, -100, 80);
+        this.drawPixelArtHero(heroArt, heroKey, 0, -20, 90);
         container.add(heroArt);
 
         // Hero name
-        const nameText = this.add.text(0, -35, hero.name.toUpperCase(), {
+        const nameText = this.add.text(0, 60, hero.name.toUpperCase(), {
             fontSize: '28px',
             fontFamily: 'Arial',
             fontStyle: 'bold',
@@ -85,59 +85,6 @@ class HeroSelectScene extends Phaser.Scene {
             strokeThickness: 3
         }).setOrigin(0.5);
         container.add(nameText);
-
-        // Hero quote
-        const quoteText = this.add.text(0, -5, hero.quote, {
-            fontSize: '14px',
-            fontFamily: 'Arial',
-            color: '#aaaaaa',
-            fontStyle: 'italic'
-        }).setOrigin(0.5);
-        container.add(quoteText);
-
-        // Passive effects header
-        const passiveHeader = this.add.text(0, 25, '~ Passive Powers ~', {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#88aaff'
-        }).setOrigin(0.5);
-        container.add(passiveHeader);
-
-        // Passive effects list
-        const passives = this.getPassiveDescriptions(heroKey);
-        passives.forEach((passive, i) => {
-            const passiveText = this.add.text(0, 50 + i * 24, passive, {
-                fontSize: '15px',
-                fontFamily: 'Arial',
-                color: '#ccffcc'
-            }).setOrigin(0.5);
-            container.add(passiveText);
-        });
-
-        // Wave 20 ability
-        const abilityHeader = this.add.text(0, 110, '~ Wave 20 Ability ~', {
-            fontSize: '16px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ffaa44'
-        }).setOrigin(0.5);
-        container.add(abilityHeader);
-
-        const abilityName = this.add.text(0, 135, hero.abilityName, {
-            fontSize: '18px',
-            fontFamily: 'Arial',
-            fontStyle: 'bold',
-            color: '#ffffff'
-        }).setOrigin(0.5);
-        container.add(abilityName);
-
-        const abilityDesc = this.add.text(0, 158, hero.abilityDescription, {
-            fontSize: '13px',
-            fontFamily: 'Arial',
-            color: '#cccccc'
-        }).setOrigin(0.5);
-        container.add(abilityDesc);
 
         // Make card interactive
         bg.setInteractive({ useHandCursor: true });

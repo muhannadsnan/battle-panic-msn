@@ -92,7 +92,7 @@ Main menu with navigation and monetization.
 | Stats display | Center | Shows highest wave |
 | PLAY button | Center | Starts GameScene |
 | UPGRADES button | Center | Opens UpgradeScene |
-| TIPS & INFO button | Center | Opens tips modal (mobile-friendly) |
+| TIPS & INFO button | Center | Opens tips modal (9 pages, mobile-friendly) |
 | Reset Upgrades | Bottom center | Opens reset dialog |
 | Settings gear | Top left | Opens account panel |
 | Buy XP ($2) | Bottom left | Disabled (Coming Soon) |
@@ -243,8 +243,9 @@ Hero selection screen before battle.
 
 ### Purpose
 - Allow player to choose a hero before starting battle
-- Display hero information, passives, and abilities
+- Display hero name and pixel art portrait
 - Pass selected hero to GameScene
+- Detailed hero info (passives, abilities) available in Tips & Info panel
 
 ### Heroes
 
@@ -253,6 +254,11 @@ Hero selection screen before battle.
 | Druid | Green | +10% archer damage, -10% enemy speed | Nature's Wrath (AoE kill) |
 | Warlord | Red | +15% melee damage, -15% production time | Battle Charge (8s buff) |
 | Alchemist | Gold | +10% horsemen damage, -5% unit costs | Volatile Concoction (AoE) |
+
+### UI
+- Simplified cards (200x200px) showing only hero icon and name
+- Click to select, green border on selected card
+- BATTLE button enabled after selection
 
 ### Flow
 ```javascript
